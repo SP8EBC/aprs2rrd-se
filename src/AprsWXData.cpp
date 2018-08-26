@@ -12,6 +12,12 @@ AprsWXData::AprsWXData() {
     wind_gusts = 0.0;
     wind_direction = 0;
     humidity = 0;
+    temperature = 0;
+    pressure = 0;
+    rain60 = 0;
+    rain24 = 0;
+    rain_day = 0;
+    val = false;
 }
 
 AprsWXData::~AprsWXData() {

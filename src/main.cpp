@@ -16,6 +16,7 @@
 #include "AprsThread.h"
 #include "AprsWXData.h"
 #include "DataPresence.h"
+#include "Telemetry.h"
 
 
 using namespace libconfig;
@@ -36,6 +37,7 @@ int main(int argc, char **argv)
 	AprsThread cAprs;
 	MySqlConnInterface cDB;
 	DataPresence cPresence;
+	Telemetry cTelemetry;
 
 	RRDFileDefinition sVectorRRDTemp;
 	PlotFileDefinition cVectorPNGTemp;
@@ -51,6 +53,11 @@ int main(int argc, char **argv)
 	bool booltemp = false;
 	int PlotsCount = 0;
 	int RRDCount = 0;
+
+	bool useFifthTelemAsTemperature = true;
+	float telemA = 0.0f;
+	float telemB = 0.0f;
+	float telemC = 0.0f;
 
 	try {
 		cLibConfig.readFile("config.conf");
@@ -72,6 +79,16 @@ int main(int argc, char **argv)
 	cLibConfig.lookupValue("Debug", Debug);
 	cLibConfig.lookupValue("DebugToFile", DebugToFile);
 	cLibConfig.lookupValue("DebugLogFile", LogFile);
+
+	cLibConfig.lookupValue("FifthTelemAsTemperature", useFifthTelemAsTemperature);
+	cLibConfig.lookupValue("TelemAScaling", telemA);
+	cLibConfig.lookupValue("TelemBScaling", telemB);
+	cLibConfig.lookupValue("TelemCScaling", telemC);
+
+	cTelemetry.ch5a = telemA;
+	cTelemetry.ch5b = telemB;
+	cTelemetry.ch5c = telemC;
+
 
 	try {
 		Setting &rBaza = rRoot["MySQL"];
@@ -402,46 +419,68 @@ int main(int argc, char **argv)
 
 			cWXtemp = new AprsWXData;
 			if (cWXtemp != NULL) {
-				try {
-					cout << "--- Przetwarzanie danych pogodowych..." << endl;
-					cWXtemp->ParseData(cPKTtemp);
-				}
-				catch(NotValidWXData &e) {
-					cout << "--- To nie jest poprawny pakiet pogodowy" << endl;
-				}
-				catch(WXDataOK &e) {
-					if (Debug == true && doZeroCorrection == true)
-						cout << "--- ZeroCorrection" << endl;
-					if (doZeroCorrection == true)
-						cWXtemp->ZeroCorrection(qMeteo);
-                    if ((short)correction != 0)
-                        cWXtemp->DirectionCorrection((short)correction);
-//					if (Debug == true)
-//						cout << "--- QnhQfeCorrection" << endl;
-//					cWXtemp->pressure = cWXtemp->QnhQfeCorrection(cWXtemp->pressure, 960);
-					//cout << cWXtemp->QnhQfeCorrection(cWXtemp->pressure, 960) << endl;
-					if (Debug == true)
-						cout << "--- FetchDataInRRD" << endl;
-					cPresence.FetchDataInRRD(cWXtemp);
-					if (Debug == true)
-						cout << "--- PlotGraphs" << endl;
-					cPresence.PlotGraphsFromRRD();
-					if (Debug == true)
-						cout << "--- GenerateWebsite" << endl;
-					cPresence.GenerateWebiste(cWXtemp);
-					if (cDB.enable == true) {
+				if(useFifthTelemAsTemperature == false) {
+					try {
+						cout << "--- Przetwarzanie danych pogodowych..." << endl;
+						cWXtemp->ParseData(cPKTtemp);
+					}
+					catch(NotValidWXData &e) {
+						cout << "--- To nie jest poprawny pakiet pogodowy" << endl;
+					}
+					catch(WXDataOK &e) {
+						if (Debug == true && doZeroCorrection == true)
+							cout << "--- ZeroCorrection" << endl;
+						if (doZeroCorrection == true)
+							cWXtemp->ZeroCorrection(qMeteo);
+						if ((short)correction != 0)
+							cWXtemp->DirectionCorrection((short)correction);
+	//					if (Debug == true)
+	//						cout << "--- QnhQfeCorrection" << endl;
+	//					cWXtemp->pressure = cWXtemp->QnhQfeCorrection(cWXtemp->pressure, 960);
+						//cout << cWXtemp->QnhQfeCorrection(cWXtemp->pressure, 960) << endl;
 						if (Debug == true)
-							cout << "--- InsertIntoDb" << endl;
-						cDB.InsertIntoDb(cWXtemp);
+							cout << "--- FetchDataInRRD" << endl;
+						cPresence.FetchDataInRRD(cWXtemp);
+						if (Debug == true)
+							cout << "--- PlotGraphs" << endl;
+						cPresence.PlotGraphsFromRRD();
+						if (Debug == true)
+							cout << "--- GenerateWebsite" << endl;
+						cPresence.GenerateWebiste(cWXtemp);
+						if (cDB.enable == true) {
+							if (Debug == true)
+								cout << "--- InsertIntoDb" << endl;
+							cDB.InsertIntoDb(cWXtemp);
+						}
+						qMeteo.push(*cWXtemp);
+						if (qMeteo.size() >= 4)
+							qMeteo.pop();
+						if (Debug == true) {
+							cout << "--- Liczba obiektów w kolejce qMeteo: " << qMeteo.size() << endl;
+							cout << "--- Liczba obiektów w kolejce qPackets: " << qPackets.size() << endl;
+						}
+						cWXtemp->PrintData();
 					}
-					qMeteo.push(*cWXtemp);
-					if (qMeteo.size() >= 4)
-						qMeteo.pop();
-					if (Debug == true) {
-						cout << "--- Liczba obiektów w kolejce qMeteo: " << qMeteo.size() << endl;
-						cout << "--- Liczba obiektów w kolejce qPackets: " << qPackets.size() << endl;
+				}
+
+				else if(useFifthTelemAsTemperature == true) {
+					char result = cTelemetry.ParseData(cPKTtemp);
+
+					if (result == 0) {
+						if (Debug == true)
+							cout << "--- Przetworzono temperature z telemetrii: " << cTelemetry.getCh5() << endl;
+						cWXtemp->temperature = cTelemetry.getCh5();
+
+						if (Debug == true)
+							cout << "--- FetchDataInRRD" << endl;
+						cPresence.FetchDataInRRD(cWXtemp);
+						if (Debug == true)
+							cout << "--- PlotGraphs" << endl;
+						cPresence.PlotGraphsFromRRD();
+						if (Debug == true)
+							cout << "--- GenerateWebsite" << endl;
+						cPresence.GenerateWebiste(cWXtemp);
 					}
-					cWXtemp->PrintData();
 				}
 
 				delete cWXtemp;

@@ -2,6 +2,7 @@
 #define APRSWXDATA_H
 
 #include "AprsPacket.h"
+#include "NotValidWXDataEx.h"
 #include <exception>
 #include <queue>
 
@@ -34,11 +35,11 @@ class AprsWXData
 
 };
 
-class NotValidWXData: public std::exception {
-    virtual const char* what() const throw() {
-		return "\n--- Niepoprawny pakiet pogodowy\n";
-    }
-};
+//class NotValidWXData: public std::exception {
+//    virtual const char* what() const throw() {
+//		return "\n--- Niepoprawny pakiet pogodowy\n";
+//    }
+//};
 
 class WXDataOK: public std::exception {
 
