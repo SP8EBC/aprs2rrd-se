@@ -54,7 +54,7 @@ int main(int argc, char **argv)
 	int PlotsCount = 0;
 	int RRDCount = 0;
 
-	bool useFifthTelemAsTemperature = true;
+	bool useFifthTelemAsTemperature = false;
 	float telemA = 0.0f;
 	float telemB = 0.0f;
 	float telemC = 0.0f;
@@ -231,6 +231,11 @@ int main(int argc, char **argv)
 			freopen(LogFile.c_str(), "w", stdout);
 		}
 
+		cout << "--------KONFIGURACJA TELEMETRII------" << endl;
+		cout << "--- FifthTelemAsTemperature: " << useFifthTelemAsTemperature << endl;
+		cout << "--- scalingA: " << telemA << endl;
+		cout << "--- scalingB: " << telemB << endl;
+		cout << "--- scalingC: " << telemC << endl;
 		cout << "--------KONFIGURACJA BAZY DANYCH-----" << endl;
 		cout << "--- Adres Serwera: " << cDB.IP << endl;
 		cout << "--- Port: " << cDB.port << endl;

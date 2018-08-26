@@ -33,7 +33,7 @@ class AprsPacket
         char qOrigin[4];        // APRS-IS originator
         PathElement ToISOriginator;     // APRS-IS originator. It might be Igate callsign or APRS server name, if packet
                                         // was sent directly to Internet from some APRS client.
-        char Data[128];         // Data from frame
+        char Data[1024];         // Data from frame
         void PrintPacketData();     // Function witch print data from processed packet
         
 		short ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cTarget);
