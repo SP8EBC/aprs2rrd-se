@@ -93,7 +93,13 @@ void DataPresence::FetchDataInRRD(AprsWXData* cInput) {
 			if (Debug == true)
 				cout << command << endl;
 		}
-		else return;
+		else {
+			if (Debug == true) {
+				cout << "---- Nothing" << endl;
+			}
+
+			return;
+		}
 		system(command);
 		memset(command, 0x00, sizeof(command));
 		sprintf(command, "rrdtool dump %s > %s.dmp", this->vRRDFiles[i].sPath.c_str(), this->vRRDFiles[i].sPath.c_str());
