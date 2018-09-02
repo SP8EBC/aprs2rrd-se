@@ -34,10 +34,6 @@ void DataPresence::FetchDataInRRD(AprsWXData* cInput) {
 
 	for (unsigned i = 0; i < this->vRRDFiles.size(); i++) {
 		if (this->vRRDFiles[i].eType == TEMPERATURE && cInput->useTemperature == true) {
-			if (Debug == true) {
-				cout << "---- Fetching temperature" << endl;
-			}
-
 			currtime =time(NULL);
 			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
@@ -46,10 +42,6 @@ void DataPresence::FetchDataInRRD(AprsWXData* cInput) {
 				cout << command << endl;
 		}
 		else if (this->vRRDFiles[i].eType == QNH && cInput->usePressure == true) {
-			if (Debug == true) {
-				cout << "---- Fetching pressure" << endl;
-			}
-
 			currtime =time(NULL);
 			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
@@ -58,10 +50,6 @@ void DataPresence::FetchDataInRRD(AprsWXData* cInput) {
 				cout << command << endl;
 		}
 		else if (this->vRRDFiles[i].eType == WIND_DIR && cInput->useWind == true) {
-			if (Debug == true) {
-				cout << "---- Fetching wind direction" << endl;
-			}
-
 			currtime =time(NULL);
 			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
@@ -70,10 +58,6 @@ void DataPresence::FetchDataInRRD(AprsWXData* cInput) {
 				cout << command << endl;
 		}
 		else if (this->vRRDFiles[i].eType == WIND_SPD && cInput->useWind == true) {
-			if (Debug == true) {
-				cout << "---- Fetching wind speed" << endl;
-			}
-
 			currtime =time(NULL);
 			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
@@ -82,10 +66,6 @@ void DataPresence::FetchDataInRRD(AprsWXData* cInput) {
 				cout << command << endl;
 		}
 		else if (this->vRRDFiles[i].eType == WIND_GST && cInput->useWind == true) {
-			if (Debug == true) {
-				cout << "---- Fetching wind gusts" << endl;
-			}
-
 			currtime =time(NULL);
 			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
@@ -93,13 +73,8 @@ void DataPresence::FetchDataInRRD(AprsWXData* cInput) {
 			if (Debug == true)
 				cout << command << endl;
 		}
-		else {
-			if (Debug == true) {
-				cout << "---- Nothing" << endl;
-			}
+		else continue;
 
-			return;
-		}
 		system(command);
 		memset(command, 0x00, sizeof(command));
 		sprintf(command, "rrdtool dump %s > %s.dmp", this->vRRDFiles[i].sPath.c_str(), this->vRRDFiles[i].sPath.c_str());

@@ -475,6 +475,7 @@ int main(int argc, char **argv)
 
 					if (result == 0 && useFifthTelemAsTemperature == true) {
 
+						cWXtemp->useTemperature = true;
 						cWXtemp->useHumidity = false;
 						cWXtemp->usePressure = false;
 						cWXtemp->useWind = false;
