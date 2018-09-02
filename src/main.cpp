@@ -424,7 +424,6 @@ int main(int argc, char **argv)
 
 			cWXtemp = new AprsWXData;
 			if (cWXtemp != NULL) {
-				if(useFifthTelemAsTemperature == false) {
 					try {
 						cout << "--- Przetwarzanie danych pogodowych..." << endl;
 						cWXtemp->ParseData(cPKTtemp);
@@ -433,16 +432,21 @@ int main(int argc, char **argv)
 						cout << "--- To nie jest poprawny pakiet pogodowy" << endl;
 					}
 					catch(WXDataOK &e) {
+						if (useFifthTelemAsTemperature == true)
+							cWXtemp->useTemperature = false;
+						else
+							cWXtemp->useTemperature = true;
+
+						cWXtemp->useHumidity = true;
+						cWXtemp->usePressure = true;
+						cWXtemp->useWind = true;
+
 						if (Debug == true && doZeroCorrection == true)
 							cout << "--- ZeroCorrection" << endl;
 						if (doZeroCorrection == true)
 							cWXtemp->ZeroCorrection(qMeteo);
 						if ((short)correction != 0)
 							cWXtemp->DirectionCorrection((short)correction);
-	//					if (Debug == true)
-	//						cout << "--- QnhQfeCorrection" << endl;
-	//					cWXtemp->pressure = cWXtemp->QnhQfeCorrection(cWXtemp->pressure, 960);
-						//cout << cWXtemp->QnhQfeCorrection(cWXtemp->pressure, 960) << endl;
 						if (Debug == true)
 							cout << "--- FetchDataInRRD" << endl;
 						cPresence.FetchDataInRRD(cWXtemp);
@@ -466,12 +470,15 @@ int main(int argc, char **argv)
 						}
 						cWXtemp->PrintData();
 					}
-				}
 
-				else if(useFifthTelemAsTemperature == true) {
 					char result = cTelemetry.ParseData(cPKTtemp);
 
-					if (result == 0) {
+					if (result == 0 && useFifthTelemAsTemperature == true) {
+
+						cWXtemp->useHumidity = false;
+						cWXtemp->usePressure = false;
+						cWXtemp->useWind = false;
+
 						if (Debug == true)
 							cout << "--- Przetworzono temperature z telemetrii: " << cTelemetry.getCh5() << endl;
 						cWXtemp->temperature = cTelemetry.getCh5();
@@ -486,7 +493,6 @@ int main(int argc, char **argv)
 							cout << "--- GenerateWebsite" << endl;
 						cPresence.GenerateWebiste(cWXtemp);
 					}
-				}
 
 				delete cWXtemp;
 

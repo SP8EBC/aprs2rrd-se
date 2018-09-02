@@ -20,6 +20,11 @@ class AprsWXData
         short rain24;
         short rain_day;
         unsigned short humidity;
+
+        bool useTemperature;	// ustawianie na true jeżeli program ma użyć zapisanej wartości temperatury
+        bool useWind;
+        bool usePressure;
+        bool useHumidity;
     public:
         bool val;
         AprsWXData();

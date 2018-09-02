@@ -33,7 +33,7 @@ void DataPresence::FetchDataInRRD(AprsWXData* cInput) {
 	time_t currtime;
 
 	for (unsigned i = 0; i < this->vRRDFiles.size(); i++) {
-		if (this->vRRDFiles[i].eType == TEMPERATURE) {
+		if (this->vRRDFiles[i].eType == TEMPERATURE && cInput->useTemperature == true) {
 			currtime =time(NULL);
 			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
@@ -41,7 +41,7 @@ void DataPresence::FetchDataInRRD(AprsWXData* cInput) {
 			if (Debug == true)
 				cout << command << endl;
 		}
-		else if (this->vRRDFiles[i].eType == QNH) {
+		else if (this->vRRDFiles[i].eType == QNH && cInput->usePressure == true) {
 			currtime =time(NULL);
 			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
@@ -49,7 +49,7 @@ void DataPresence::FetchDataInRRD(AprsWXData* cInput) {
 			if (Debug == true)
 				cout << command << endl;
 		}
-		else if (this->vRRDFiles[i].eType == WIND_DIR) {
+		else if (this->vRRDFiles[i].eType == WIND_DIR && cInput->useWind == true) {
 			currtime =time(NULL);
 			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
@@ -57,7 +57,7 @@ void DataPresence::FetchDataInRRD(AprsWXData* cInput) {
 			if (Debug == true)
 				cout << command << endl;
 		}
-		else if (this->vRRDFiles[i].eType == WIND_SPD) {
+		else if (this->vRRDFiles[i].eType == WIND_SPD && cInput->useWind == true) {
 			currtime =time(NULL);
 			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
@@ -65,7 +65,7 @@ void DataPresence::FetchDataInRRD(AprsWXData* cInput) {
 			if (Debug == true)
 				cout << command << endl;
 		}
-		else if (this->vRRDFiles[i].eType == WIND_GST) {
+		else if (this->vRRDFiles[i].eType == WIND_GST && cInput->useWind == true) {
 			currtime =time(NULL);
 			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
@@ -73,6 +73,7 @@ void DataPresence::FetchDataInRRD(AprsWXData* cInput) {
 			if (Debug == true)
 				cout << command << endl;
 		}
+		else return;
 		system(command);
 		memset(command, 0x00, sizeof(command));
 		sprintf(command, "rrdtool dump %s > %s.dmp", this->vRRDFiles[i].sPath.c_str(), this->vRRDFiles[i].sPath.c_str());
