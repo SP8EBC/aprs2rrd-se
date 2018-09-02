@@ -490,7 +490,7 @@ int main(int argc, char **argv)
 
 						if (Debug == true)
 							cout << "--- FetchDataInRRD" << endl;
-						cPresence.FetchDataInRRD(&cWXtemp);
+						cPresence.FetchDataInRRD(&cWXtelemetry);
 						if (Debug == true)
 							cout << "--- PlotGraphs" << endl;
 						cPresence.PlotGraphsFromRRD();
@@ -506,7 +506,7 @@ int main(int argc, char **argv)
 						cWXtelemetry.wind_gusts 	= cWXtemp.wind_gusts;
 						cWXtelemetry.wind_speed 	= cWXtemp.wind_speed;
 
-						cPresence.GenerateWebiste(&cWXtemp);
+						cPresence.GenerateWebiste(&cWXtelemetry);
 					}
 
 				//delete cWXtemp;
