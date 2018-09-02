@@ -24,12 +24,10 @@ AprsWXData::~AprsWXData() {
 }
 
 char AprsWXData::ParseData(AprsPacket* input) {
+
     int i = 0;
-//    int j = 0;
     int conv_temp;
-//    char tempbuff[9];
     char *src;
-//    memset(tempbuff, 0x00, sizeof(tempbuff));
     if (*(input->Data) != '!') {
         this->val = false;
         throw NotValidWXData();     // to nie sa dane pogodowe
@@ -42,6 +40,18 @@ char AprsWXData::ParseData(AprsPacket* input) {
 		if (i > 30)
 			throw NotValidWXData();
     } while (*(src + i) != '_'); // pominiecie pozycji i przejsce od razu do danych meteo
+
+    wind_speed = 0.0;
+    wind_gusts = 0.0;
+    wind_direction = 0;
+    humidity = 0;
+    temperature = 0;
+    pressure = 0;
+    rain60 = 0;
+    rain24 = 0;
+    rain_day = 0;
+    val = false;
+
     i++;    // przeskoczenie na pierwszy znak danych meteo
     if (this->CopyConvert('/',src,&conv_temp,&i) == 0)   // kierunek    this->wind_direction = conv_temp;
 		this->wind_direction = conv_temp;

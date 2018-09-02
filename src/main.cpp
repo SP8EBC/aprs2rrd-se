@@ -42,7 +42,7 @@ int main(int argc, char **argv)
 	RRDFileDefinition sVectorRRDTemp;
 	PlotFileDefinition cVectorPNGTemp;
 
-	AprsWXData* cWXtemp;
+	AprsWXData cWXtemp, cWXtelemetry;
 	AprsPacket* cPKTtemp;
 
 	queue <AprsPacket> qPackets;
@@ -422,80 +422,94 @@ int main(int argc, char **argv)
 					qPackets.pop();
 			}
 
-			cWXtemp = new AprsWXData;
-			if (cWXtemp != NULL) {
+			//cWXtemp = new AprsWXData;
 					try {
 						cout << "--- Przetwarzanie danych pogodowych..." << endl;
-						cWXtemp->ParseData(cPKTtemp);
+						cWXtemp.ParseData(cPKTtemp);
 					}
 					catch(NotValidWXData &e) {
 						cout << "--- To nie jest poprawny pakiet pogodowy" << endl;
 					}
 					catch(WXDataOK &e) {
 						if (useFifthTelemAsTemperature == true)
-							cWXtemp->useTemperature = false;
+							cWXtemp.useTemperature = false;
 						else
-							cWXtemp->useTemperature = true;
+							cWXtemp.useTemperature = true;
 
-						cWXtemp->useHumidity = true;
-						cWXtemp->usePressure = true;
-						cWXtemp->useWind = true;
+						cWXtemp.useHumidity = true;
+						cWXtemp.usePressure = true;
+						cWXtemp.useWind = true;
 
 						if (Debug == true && doZeroCorrection == true)
 							cout << "--- ZeroCorrection" << endl;
 						if (doZeroCorrection == true)
-							cWXtemp->ZeroCorrection(qMeteo);
+							cWXtemp.ZeroCorrection(qMeteo);
 						if ((short)correction != 0)
-							cWXtemp->DirectionCorrection((short)correction);
+							cWXtemp.DirectionCorrection((short)correction);
 						if (Debug == true)
 							cout << "--- FetchDataInRRD" << endl;
-						cPresence.FetchDataInRRD(cWXtemp);
+						cPresence.FetchDataInRRD(&cWXtemp);
 						if (Debug == true)
 							cout << "--- PlotGraphs" << endl;
 						cPresence.PlotGraphsFromRRD();
 						if (Debug == true)
 							cout << "--- GenerateWebsite" << endl;
-						cPresence.GenerateWebiste(cWXtemp);
+
+						if (useFifthTelemAsTemperature == true) {
+							cWXtemp.temperature = cWXtelemetry.temperature;
+						}
+
+						cPresence.GenerateWebiste(&cWXtemp);
 						if (cDB.enable == true) {
 							if (Debug == true)
 								cout << "--- InsertIntoDb" << endl;
-							cDB.InsertIntoDb(cWXtemp);
+							cDB.InsertIntoDb(&cWXtemp);
 						}
-						qMeteo.push(*cWXtemp);
+						qMeteo.push(cWXtemp);
 						if (qMeteo.size() >= 4)
 							qMeteo.pop();
 						if (Debug == true) {
 							cout << "--- Liczba obiektów w kolejce qMeteo: " << qMeteo.size() << endl;
 							cout << "--- Liczba obiektów w kolejce qPackets: " << qPackets.size() << endl;
 						}
-						cWXtemp->PrintData();
+						cWXtemp.PrintData();
 					}
 
 					char result = cTelemetry.ParseData(cPKTtemp);
 
 					if (result == 0 && useFifthTelemAsTemperature == true) {
 
-						cWXtemp->useTemperature = true;
-						cWXtemp->useHumidity = false;
-						cWXtemp->usePressure = false;
-						cWXtemp->useWind = false;
+						cWXtelemetry.useTemperature = true;
+						cWXtelemetry.useHumidity = false;
+						cWXtelemetry.usePressure = false;
+						cWXtelemetry.useWind = false;
 
 						if (Debug == true)
 							cout << "--- Przetworzono temperature z telemetrii: " << cTelemetry.getCh5() << endl;
-						cWXtemp->temperature = cTelemetry.getCh5();
+						cWXtelemetry.temperature = cTelemetry.getCh5();
 
 						if (Debug == true)
 							cout << "--- FetchDataInRRD" << endl;
-						cPresence.FetchDataInRRD(cWXtemp);
+						cPresence.FetchDataInRRD(&cWXtemp);
 						if (Debug == true)
 							cout << "--- PlotGraphs" << endl;
 						cPresence.PlotGraphsFromRRD();
 						if (Debug == true)
 							cout << "--- GenerateWebsite" << endl;
-						cPresence.GenerateWebiste(cWXtemp);
+
+						cWXtelemetry.humidity 		= cWXtemp.humidity;
+						cWXtelemetry.pressure 		= cWXtemp.pressure;
+						cWXtelemetry.rain24 		= cWXtemp.rain24;
+						cWXtelemetry.rain60 		= cWXtemp.rain60;
+						cWXtelemetry.rain_day 		= cWXtemp.rain_day;
+						cWXtelemetry.wind_direction = cWXtemp.wind_direction;
+						cWXtelemetry.wind_gusts 	= cWXtemp.wind_gusts;
+						cWXtelemetry.wind_speed 	= cWXtemp.wind_speed;
+
+						cPresence.GenerateWebiste(&cWXtemp);
 					}
 
-				delete cWXtemp;
+				//delete cWXtemp;
 
 			}
 			else
@@ -503,9 +517,7 @@ int main(int argc, char **argv)
 
 
 			delete cPKTtemp;
-			}
-		else
-			cout << "--- Błąd alokacji przy:: cPKTtemp = new AprsPacket;";
+
 	}
 	cout << "--- ZAMYKANIE";
 	cDB.CloseDBConnection();
