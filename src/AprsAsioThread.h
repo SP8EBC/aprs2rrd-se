@@ -22,10 +22,11 @@ class AprsAsioThread {
 	boost::asio::ip::tcp::socket tsocket {ioservice};
 	boost::asio::ip::tcp::resolver::iterator resolverIterator;
 
-	void workerThread();
+	void connectedCallback(const boost::system::error_code &ec);
 
 public:
 	void connect();
+	void workerThread();
 
 	AprsAsioThread(AprsThreadConfig & config);
 	virtual ~AprsAsioThread();
