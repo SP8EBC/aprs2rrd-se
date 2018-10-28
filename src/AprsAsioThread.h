@@ -12,9 +12,16 @@
 #include <boost/asio/write.hpp>
 #include <boost/asio/buffer.hpp>
 #include <boost/asio/ip/tcp.hpp>
+#include <boost/asio/deadline_timer.hpp>
+#include <boost/thread.hpp>
+#include <boost/asio/buffer.hpp>
+#include <boost/asio/streambuf.hpp>
 #include <boost/thread.hpp>
 
+
+
 #include "AprsThreadConfig.h"
+#include "AprsPacket.h"
 
 class AprsAsioThread {
 	AprsThreadConfig & conf;
@@ -30,19 +37,35 @@ class AprsAsioThread {
 	boost::asio::ip::tcp::socket tsocket {ioservice};
 	boost::asio::ip::tcp::resolver::iterator resolverIterator;
 
+	// timer używany do obsługi timeotów przy nawiązywaniu połączenia i komunikacji z serwerem APRS-IS
+	boost::asio::deadline_timer timer {ioservice};
+
+	// timer ustawiony na nieskończość do synchronizacji - sygnalizacji
+	boost::asio::deadline_timer rxSyncTimer {ioservice};
+
+	boost::mutex mutex;
+
 	boost::thread_group workersGroup;
 
 	std::string loginString;
 
+	// bufor do którego ciepane będa odierane dane
+    boost::asio::streambuf in_buf;
+
+
 	void connectedCallback(const boost::system::error_code &ec);
 
+	void newLineCallback(const boost::system::error_code &ec);
+
 	static void writeCallback(const boost::system::error_code &ec, std::size_t butesTxed);
+
 
 	// metoda wywoływana w wątku (grupie wątków) służąca do obsługi io_service
 	void workerThread();
 
 public:
 	void connect();
+	void receive();
 
 	AprsAsioThread(AprsThreadConfig & config);
 	virtual ~AprsAsioThread();

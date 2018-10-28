@@ -27,6 +27,7 @@ BOOST_AUTO_TEST_CASE(basic) {
 
 	AprsAsioThread t(conf);
 	t.connect();
+	t.receive();
 
 	BOOST_CHECK(a == b);
 }
