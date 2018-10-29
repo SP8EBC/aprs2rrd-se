@@ -12,6 +12,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/bind.hpp>
 #include <boost/asio/read_until.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <iostream>
 #include <cstdio>
 
@@ -89,8 +90,13 @@ void AprsAsioThread::writeCallback(const boost::system::error_code& ec,
 
 void AprsAsioThread::receive() {
 
+	bool result = false;
+
+	this->mutexRxSync.lock();
 
 	boost::asio::async_read_until(this->tsocket, this->in_buf, "\r\n", boost::bind(&AprsAsioThread::newLineCallback, this, _1));
+
+	result = this->mutexRxSync.timed_lock(boost::posix_time::seconds(99));
 
 	this->workersGroup.join_all();
 
@@ -101,6 +107,8 @@ void AprsAsioThread::newLineCallback(const boost::system::error_code& ec) {
 		return;
 	}
 	else {
+		this->mutexRxSync.unlock();
+		//this->rxSyncTimer.cancel();
 		return;
 	}
 }

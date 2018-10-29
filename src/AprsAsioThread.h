@@ -43,7 +43,7 @@ class AprsAsioThread {
 	// timer ustawiony na nieskończość do synchronizacji - sygnalizacji
 	boost::asio::deadline_timer rxSyncTimer {ioservice};
 
-	boost::mutex mutex;
+	boost::timed_mutex mutexRxSync;
 
 	boost::thread_group workersGroup;
 
