@@ -6,6 +6,7 @@
  */
 
 #include "AprsAsioThread.h"
+#include "ReturnValues.h"
 
 #include "SOFTWARE_VERSION.h"
 
@@ -15,8 +16,9 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <iostream>
 #include <cstdio>
+#include <vector>
 
-AprsAsioThread::AprsAsioThread(AprsThreadConfig & config) : conf(config) {
+AprsAsioThread::AprsAsioThread(AprsThreadConfig & config) : conf(config), outputPacketValid(false) {
 	char buffer[256];
 
 	if (config.StationSSID == 0)
@@ -37,16 +39,14 @@ void AprsAsioThread::workerThread() {
 }
 
 void AprsAsioThread::connect() {
+	// creating a copy of query class which is then used by the resolver to 'convert' a domain addres to ip
 	boost::asio::ip::tcp::resolver::query q(this->conf.ServerURL, boost::lexical_cast<std::string>(this->conf.ServerPort));
 
-	// ustawianie timera obsługującego timeout
-	this->timer.expires_from_now(boost::posix_time::seconds(15));
-
-	// resolver do odpytywania o adres ip na podstawie nazwy DNSs
+	// resolver which will convert a domain name to ip
 	boost::asio::ip::tcp::resolver resolver(this->ioservice);
 
 	try {
-		// wyciąganie adresu IP na podstawie
+		// resolving IP address
 		this->resolverIterator = resolver.resolve(q);
 	}
 	catch (std::runtime_error &e) {
@@ -54,23 +54,19 @@ void AprsAsioThread::connect() {
 		return;
 	}
 
-	// boost::resolver prawdopodobnie potrafi zwracać więcej niż jeden adres IP, jeżeli serwer DNS
-	// zwrócił więcej niż jeden rekrd A na zapytanie
+	// resolver returns an iterator, because the DNS server could return more than one A record
 	boost::asio::ip::tcp::endpoint endpoint = *this->resolverIterator;
 
-	// zestawienie połączenia
+	// connecting
 	this->tsocket.async_connect(endpoint, boost::bind(&AprsAsioThread::connectedCallback, this, _1));
 
-	// tworzenie wątków które będa odsługiwały we/wy
+	// creating a thread which will handle i/o
 	this->workersGroup.create_thread(boost::bind(&AprsAsioThread::workerThread, this));
-
-//	this->workersGroup.join_all();
 
 	std::cout << "koniec" << std::endl;
 }
 
 void AprsAsioThread::connectedCallback(const boost::system::error_code& ec) {
-	std::size_t bytes;
 
 	if (ec) {
 		std::cout << ec.message() << std::endl;
@@ -92,13 +88,21 @@ void AprsAsioThread::receive() {
 
 	bool result = false;
 
+	// locking a mutex which will be used to synchronize
 	this->mutexRxSync.lock();
 
+	// starting asynchronous read which will last until end of line will be received
 	boost::asio::async_read_until(this->tsocket, this->in_buf, "\r\n", boost::bind(&AprsAsioThread::newLineCallback, this, _1));
 
+	// waiting for receive
 	result = this->mutexRxSync.timed_lock(boost::posix_time::seconds(99));
 
-	this->workersGroup.join_all();
+	if (result) {
+		;
+	}
+	else return;
+
+//	this->workersGroup.join_all();
 
 }
 
@@ -107,8 +111,32 @@ void AprsAsioThread::newLineCallback(const boost::system::error_code& ec) {
 		return;
 	}
 	else {
+
+		// temporary vector used for converting data received from the aprs-is server
+		// to form which is acceptable by the APRS packet parser
+		vector<char> tempVctForParsing;
+
+		// const buffer with data from streambuf
+		boost::asio::streambuf::const_buffers_type data = this->in_buf.data();
+
+		// iterators to the begining and the end of streambuf data
+		auto begin = boost::asio::buffers_begin(data);	// this iterator will be incremented
+		auto end = boost::asio::buffers_end(data);
+
+
+		do {
+			tempVctForParsing.push_back(*begin);	// adding a current content of the iterator
+			begin++;	// incrementing an iterator to the next element
+		} while (begin != end);	// until we reach the end of the streambuf
+
+		// parsing the data to AprsPacket
+		int status = AprsPacket::ParseAPRSISData(tempVctForParsing.data(), tempVctForParsing.size(), &this->outputPacket);
+
+		if (status == OK) {
+			this->outputPacketValid = false;
+		}
+
 		this->mutexRxSync.unlock();
-		//this->rxSyncTimer.cancel();
 		return;
 	}
 }

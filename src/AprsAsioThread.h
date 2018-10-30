@@ -40,17 +40,21 @@ class AprsAsioThread {
 	// timer używany do obsługi timeotów przy nawiązywaniu połączenia i komunikacji z serwerem APRS-IS
 	boost::asio::deadline_timer timer {ioservice};
 
-	// timer ustawiony na nieskończość do synchronizacji - sygnalizacji
-	boost::asio::deadline_timer rxSyncTimer {ioservice};
-
 	boost::timed_mutex mutexRxSync;
 
 	boost::thread_group workersGroup;
 
+	// string with login string, to be send to server after connection will been established
 	std::string loginString;
 
-	// bufor do którego ciepane będa odierane dane
+	// input buffer for data received from server
     boost::asio::streambuf in_buf;
+
+    // AprsPacket copy to store data received
+    AprsPacket outputPacket;
+
+    // flag which will confirm that data stored inside 'outputPacket' are valid
+    bool outputPacketValid;
 
 
 	void connectedCallback(const boost::system::error_code &ec);

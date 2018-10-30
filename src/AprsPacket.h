@@ -36,8 +36,10 @@ class AprsPacket
         char Data[1024];         // Data from frame
         void PrintPacketData();     // Function witch print data from processed packet
         
-		short ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cTarget);
+		static int ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cTarget);
 		
+		void clear();
+
 		AprsPacket();          // Class constructor. It prepares all variables by writing zeros to it
 		~AprsPacket();
 };

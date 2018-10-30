@@ -5,6 +5,8 @@
 #include <exception>
 #include <iostream>
 
+#include "ReturnValues.h"
+
 using namespace std;
 
 AprsPacket::AprsPacket() {
@@ -39,14 +41,14 @@ void AprsPacket::PrintPacketData() {
 }
 
 
-short AprsPacket::ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cTarget) {
+int AprsPacket::ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cTarget) {
    int i,ii;  // liczniki do petli
     int pos = 0;    // pozycja w przetwarzanej ramce
     int ctemp;
     char tmp[2];
     char *src_t, *dst_t; // pomocnicze wskazniki do kopiowania danych pomiedzy tabelami
     if (*tInputBuffer == '#' || *tInputBuffer == 0x00 || buff_len > 1000 || buff_len < 5)
-		throw NotValidAprsPacket();
+		return NOT_VALID_APRS_PACKET;
     src_t = tInputBuffer;
     ///////// Adres nadawcy
     dst_t = cTarget->SrcAddr;
@@ -65,7 +67,7 @@ short AprsPacket::ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* 
             cTarget->SrcSSID = ctemp;
             do {
 				if (*(src_t + i + pos) == 0x00 || (i + pos > buff_len))
-					return -1;
+					return CORRUPTED_APRS_PACKET;
                  // zwiekszanie licznika i do momentu dojscia do >
                  i++;
             } while (*(src_t + i + pos) != '>');
@@ -182,7 +184,19 @@ short AprsPacket::ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* 
     dst_t = cTarget->Data;
     for (i = 0; (i <= buff_len && *(src_t + i + pos) != '\n') ; i++)
         *(dst_t + i) = *(src_t + i + pos);
-    throw PacketParsedOK();
-	return 0;
+	return OK;
 }
 
+void AprsPacket::clear() {
+    unsigned i;
+    memset(this->DestAddr,0x00,sizeof(this->DestAddr));
+    memset(this->SrcAddr,0x00,sizeof(this->SrcAddr));
+    this->SrcSSID = 0;
+    memset(this->Data,0x00,sizeof(this->Data));
+    for (i = 0; i<=5; i++) {
+        memset(this->Path[i].Call, 0x00, sizeof(this->Path[i].Call));
+        this->Path[i].SSID = 0;
+    }
+    memset(this->ToISOriginator.Call, 0x00, sizeof(this->ToISOriginator.Call));
+    this->PathLng = 0;
+}
