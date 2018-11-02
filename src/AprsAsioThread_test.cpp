@@ -17,6 +17,8 @@ bool Debug = false;
 BOOST_AUTO_TEST_CASE(basic) {
 	int a = 1, b = 1;
 
+	int counter = 0;
+
 	AprsThreadConfig conf;
 	conf.Call = "SP8EBC";
 	conf.Passwd = 23220;
@@ -28,6 +30,7 @@ BOOST_AUTO_TEST_CASE(basic) {
 	AprsAsioThread t(conf);
 	t.connect();
 	for (;;) {
+		counter++;
 		t.receive();
 	}
 

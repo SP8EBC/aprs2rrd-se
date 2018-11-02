@@ -17,6 +17,7 @@
 #include <iostream>
 #include <cstdio>
 #include <vector>
+#include <string>
 
 AprsAsioThread::AprsAsioThread(AprsThreadConfig & config) : conf(config), outputPacketValid(false) {
 	char buffer[256];
@@ -31,7 +32,6 @@ AprsAsioThread::AprsAsioThread(AprsThreadConfig & config) : conf(config), output
 }
 
 void AprsAsioThread::workerThread() {
-	std::cout << "watek" << std::endl;
 
 	while (true) {
 		this->ioservice.run();
@@ -63,7 +63,7 @@ void AprsAsioThread::connect() {
 	// creating a thread which will handle i/o
 	this->workersGroup.create_thread(boost::bind(&AprsAsioThread::workerThread, this));
 
-	std::cout << "koniec" << std::endl;
+	std::cout << "połączono" << std::endl;
 }
 
 void AprsAsioThread::connectedCallback(const boost::system::error_code& ec) {
@@ -91,6 +91,8 @@ void AprsAsioThread::receive() {
 	// locking a mutex which will be used to synchronize
 	this->mutexRxSync.lock();
 
+	std::cout << "rx started" << std::endl;
+
 	// starting asynchronous read which will last until end of line will be received
 	boost::asio::async_read_until(this->tsocket, this->in_buf, "\r\n", boost::bind(&AprsAsioThread::newLineCallback, this, _1));
 
@@ -98,9 +100,16 @@ void AprsAsioThread::receive() {
 	result = this->mutexRxSync.timed_lock(boost::posix_time::seconds(99));
 
 	if (result) {
-		;
+		std::cout << "mutex unlocked" << std::endl;
+		this->mutexRxSync.unlock();
+
+		return;
 	}
-	else return;
+	else {
+		std::cout << "mutex NOT unlocked" << std::endl;
+		this->mutexRxSync.unlock();
+		return;
+	}
 
 //	this->workersGroup.join_all();
 
@@ -126,17 +135,21 @@ void AprsAsioThread::newLineCallback(const boost::system::error_code& ec) {
 
 		do {
 			tempVctForParsing.push_back(*begin);	// adding a current content of the iterator
+			std::cout << *begin;
 			begin++;	// incrementing an iterator to the next element
 		} while (begin != end);	// until we reach the end of the streambuf
 
 		// parsing the data to AprsPacket
 		int status = AprsPacket::ParseAPRSISData(tempVctForParsing.data(), tempVctForParsing.size(), &this->outputPacket);
 
+		this->in_buf.consume(this->in_buf.size());
+
 		if (status == OK) {
 			this->outputPacketValid = false;
 		}
 
 		this->mutexRxSync.unlock();
+		std::cout << "rx done" << std::endl;
 		return;
 	}
 }
