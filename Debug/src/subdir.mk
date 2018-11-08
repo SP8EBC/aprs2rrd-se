@@ -5,7 +5,6 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
 ../src/AprsAsioThread.cpp \
-../src/AprsAsioThread_test.cpp \
 ../src/AprsPacket.cpp \
 ../src/AprsThread.cpp \
 ../src/AprsThreadConfig.cpp \
@@ -13,11 +12,11 @@ CPP_SRCS += \
 ../src/ConnectionTimeoutEx.cpp \
 ../src/DataPresence.cpp \
 ../src/MySqlConnInterface.cpp \
-../src/Telemetry.cpp 
+../src/Telemetry.cpp \
+../src/main.cpp 
 
 OBJS += \
 ./src/AprsAsioThread.o \
-./src/AprsAsioThread_test.o \
 ./src/AprsPacket.o \
 ./src/AprsThread.o \
 ./src/AprsThreadConfig.o \
@@ -25,11 +24,11 @@ OBJS += \
 ./src/ConnectionTimeoutEx.o \
 ./src/DataPresence.o \
 ./src/MySqlConnInterface.o \
-./src/Telemetry.o 
+./src/Telemetry.o \
+./src/main.o 
 
 CPP_DEPS += \
 ./src/AprsAsioThread.d \
-./src/AprsAsioThread_test.d \
 ./src/AprsPacket.d \
 ./src/AprsThread.d \
 ./src/AprsThreadConfig.d \
@@ -37,7 +36,8 @@ CPP_DEPS += \
 ./src/ConnectionTimeoutEx.d \
 ./src/DataPresence.d \
 ./src/MySqlConnInterface.d \
-./src/Telemetry.d 
+./src/Telemetry.d \
+./src/main.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

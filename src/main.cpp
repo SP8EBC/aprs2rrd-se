@@ -17,6 +17,7 @@
 #include "AprsWXData.h"
 #include "DataPresence.h"
 #include "Telemetry.h"
+#include "AprsAsioThread.h"
 
 
 using namespace libconfig;
@@ -32,12 +33,14 @@ int correction = 0;
 int main(int argc, char **argv)
 {
 
-	Config cLibConfig;
-	AprsThreadConfig cAprsConfig;
-	AprsThread cAprs;
-	MySqlConnInterface cDB;
-	DataPresence cPresence;
-	Telemetry cTelemetry;
+	Config config;
+	AprsThreadConfig aprsConfig;
+	AprsThread aprsThread;
+	MySqlConnInterface mysqlDb;
+	DataPresence dataPresence;
+	Telemetry telemetry;
+	AprsAsioThread * asioThread;
+
 
 	RRDFileDefinition sVectorRRDTemp;
 	PlotFileDefinition cVectorPNGTemp;
@@ -50,6 +53,9 @@ int main(int argc, char **argv)
 
 	string LogFile;
 
+	bool mainLoopExit = true;
+	bool isConnectionAlive = false;
+
 	bool booltemp = false;
 	int PlotsCount = 0;
 	int RRDCount = 0;
@@ -60,7 +66,7 @@ int main(int argc, char **argv)
 	float telemC = 0.0f;
 
 	try {
-		cLibConfig.readFile("config.conf");
+		config.readFile("config.conf");
 		cout << "--- libconfig++: Otwieram plik konfiguracyjny..." << endl;
 	}
 
@@ -74,45 +80,45 @@ int main(int argc, char **argv)
 		return -2;
 	}
 
-	Setting &rRoot = cLibConfig.getRoot();
+	Setting &rRoot = config.getRoot();
 
-	cLibConfig.lookupValue("Debug", Debug);
-	cLibConfig.lookupValue("DebugToFile", DebugToFile);
-	cLibConfig.lookupValue("DebugLogFile", LogFile);
+	config.lookupValue("Debug", Debug);
+	config.lookupValue("DebugToFile", DebugToFile);
+	config.lookupValue("DebugLogFile", LogFile);
 
-	cLibConfig.lookupValue("FifthTelemAsTemperature", useFifthTelemAsTemperature);
-	cLibConfig.lookupValue("TelemAScaling", telemA);
-	cLibConfig.lookupValue("TelemBScaling", telemB);
-	cLibConfig.lookupValue("TelemCScaling", telemC);
+	config.lookupValue("FifthTelemAsTemperature", useFifthTelemAsTemperature);
+	config.lookupValue("TelemAScaling", telemA);
+	config.lookupValue("TelemBScaling", telemB);
+	config.lookupValue("TelemCScaling", telemC);
 
-	cTelemetry.ch5a = telemA;
-	cTelemetry.ch5b = telemB;
-	cTelemetry.ch5c = telemC;
+	telemetry.ch5a = telemA;
+	telemetry.ch5b = telemB;
+	telemetry.ch5c = telemC;
 
 
 	try {
 		Setting &rBaza = rRoot["MySQL"];
 
-		rBaza.lookupValue("Enable", cDB.enable);
-		if (cDB.enable) {
-			rBaza.lookupValue("IpAddress", cDB.IP);
-			rBaza.lookupValue("Port", cDB.port);
-			rBaza.lookupValue("DbName", cDB.dbName);
-			rBaza.lookupValue("DbUser", cDB.Username);
-			rBaza.lookupValue("DbPassword", cDB.Password);
-			rBaza.lookupValue("DbTable", cDB.tableName);
-			rBaza.lookupValue("ExecBeforeInsert", cDB.execBeforeInsert);
-			rBaza.lookupValue("ExecBeforeInsertPath", cDB.execBeforeInsertPath);
+		rBaza.lookupValue("Enable", mysqlDb.enable);
+		if (mysqlDb.enable) {
+			rBaza.lookupValue("IpAddress", mysqlDb.IP);
+			rBaza.lookupValue("Port", mysqlDb.port);
+			rBaza.lookupValue("DbName", mysqlDb.dbName);
+			rBaza.lookupValue("DbUser", mysqlDb.Username);
+			rBaza.lookupValue("DbPassword", mysqlDb.Password);
+			rBaza.lookupValue("DbTable", mysqlDb.tableName);
+			rBaza.lookupValue("ExecBeforeInsert", mysqlDb.execBeforeInsert);
+			rBaza.lookupValue("ExecBeforeInsertPath", mysqlDb.execBeforeInsertPath);
 		}
 
 		Setting &rAprsIS = rRoot["AprsIS"];
 
-		rAprsIS.lookupValue("StationCall", cAprsConfig.StationCall);
-		rAprsIS.lookupValue("StationSSID", cAprsConfig.StationSSID);
-		rAprsIS.lookupValue("ServerAddr", cAprsConfig.ServerURL);
-		rAprsIS.lookupValue("ServerPort", cAprsConfig.ServerPort);
-		rAprsIS.lookupValue("MyCALL", cAprsConfig.Call);
-		rAprsIS.lookupValue("MyPasswd", cAprsConfig.Passwd);
+		rAprsIS.lookupValue("StationCall", aprsConfig.StationCall);
+		rAprsIS.lookupValue("StationSSID", aprsConfig.StationSSID);
+		rAprsIS.lookupValue("ServerAddr", aprsConfig.ServerURL);
+		rAprsIS.lookupValue("ServerPort", aprsConfig.ServerPort);
+		rAprsIS.lookupValue("MyCALL", aprsConfig.Call);
+		rAprsIS.lookupValue("MyPasswd", aprsConfig.Passwd);
 
 		Setting &rRRD = rRoot["RRD"];
 		RRDCount = rRRD.getLength();
@@ -122,9 +128,9 @@ int main(int argc, char **argv)
 			string temp;
 
 			rRRD[ii].lookupValue("Type", temp);
-			sVectorRRDTemp.eType = cPresence.SwitchPlotType(temp);
+			sVectorRRDTemp.eType = dataPresence.SwitchPlotType(temp);
 			rRRD[ii].lookupValue("Path", sVectorRRDTemp.sPath);
-			cPresence.vRRDFiles.push_back(sVectorRRDTemp);
+			dataPresence.vRRDFiles.push_back(sVectorRRDTemp);
 
 			}
 
@@ -143,19 +149,19 @@ int main(int argc, char **argv)
 */
 		Setting &rWWW = rRoot["Website"];
 
-		rWWW.lookupValue("IndexHtml", cPresence.WebsitePath);
-		rWWW.lookupValue("Title", cPresence.WebsiteTitle);
-		rWWW.lookupValue("HeadingTitle", cPresence.WebsiteHeadingTitle);
-		rWWW.lookupValue("SubHeading", cPresence.WebsiteSubHeading);
-		rWWW.lookupValue("LinkToMoreInfo", cPresence.WebsiteLinkToMoreInfo);
-		rWWW.lookupValue("Footer", cPresence.WebisteFooter);
-		rWWW.lookupValue("Plot0", cPresence.Plot0Path);
-		rWWW.lookupValue("Plot1", cPresence.Plot1Path);
-		rWWW.lookupValue("Plot2", cPresence.Plot2Path);
-		rWWW.lookupValue("Plot3", cPresence.Plot3Path);
-		rWWW.lookupValue("PrintTemperature", cPresence.PrintTemperature);
-		rWWW.lookupValue("PrintPressure", cPresence.PrintPressure);
-		rWWW.lookupValue("PrintHumidity", cPresence.PrintHumidity);
+		rWWW.lookupValue("IndexHtml", dataPresence.WebsitePath);
+		rWWW.lookupValue("Title", dataPresence.WebsiteTitle);
+		rWWW.lookupValue("HeadingTitle", dataPresence.WebsiteHeadingTitle);
+		rWWW.lookupValue("SubHeading", dataPresence.WebsiteSubHeading);
+		rWWW.lookupValue("LinkToMoreInfo", dataPresence.WebsiteLinkToMoreInfo);
+		rWWW.lookupValue("Footer", dataPresence.WebisteFooter);
+		rWWW.lookupValue("Plot0", dataPresence.Plot0Path);
+		rWWW.lookupValue("Plot1", dataPresence.Plot1Path);
+		rWWW.lookupValue("Plot2", dataPresence.Plot2Path);
+		rWWW.lookupValue("Plot3", dataPresence.Plot3Path);
+		rWWW.lookupValue("PrintTemperature", dataPresence.PrintTemperature);
+		rWWW.lookupValue("PrintPressure", dataPresence.PrintPressure);
+		rWWW.lookupValue("PrintHumidity", dataPresence.PrintHumidity);
 		rWWW.lookupValue("TemperatureCorrection", doZeroCorrection);
         rWWW.lookupValue("DirectionCorrection", correction);
 
@@ -167,23 +173,23 @@ int main(int argc, char **argv)
 			cVectorPNGTemp.Zero();
 
 			rPlots[ii].lookupValue("Type", temp);
-			cVectorPNGTemp.eType = cPresence.SwitchPlotType(temp);
+			cVectorPNGTemp.eType = dataPresence.SwitchPlotType(temp);
 			rPlots[ii].lookupValue("Path", cVectorPNGTemp.sPath);
 			rPlots[ii].lookupValue("DS0", cVectorPNGTemp.sDS0Path);
 			rPlots[ii].lookupValue("DS0Name", cVectorPNGTemp.sDS0Name);
 			rPlots[ii].lookupValue("DS0RRAType", temp);
-			cVectorPNGTemp.eDS0RRAType = cPresence.SwitchRRAType(temp);
+			cVectorPNGTemp.eDS0RRAType = dataPresence.SwitchRRAType(temp);
 			rPlots[ii].lookupValue("DS0PlotType", temp);
-			cVectorPNGTemp.eDS0PlotType = cPresence.SwitchPlotGraphType(temp);
+			cVectorPNGTemp.eDS0PlotType = dataPresence.SwitchPlotGraphType(temp);
 			rPlots[ii].lookupValue("DS0PlotColor", cVectorPNGTemp.DS0PlotColor);
 			rPlots[ii].lookupValue("DS0Label", cVectorPNGTemp.sDS0Label);
 
 			rPlots[ii].lookupValue("DS1", cVectorPNGTemp.sDS1Path);
 			rPlots[ii].lookupValue("DS1Name", cVectorPNGTemp.sDS1Name);
 			rPlots[ii].lookupValue("DS1RRAType", temp);
-			cVectorPNGTemp.eDS1RRAType = cPresence.SwitchRRAType(temp);
+			cVectorPNGTemp.eDS1RRAType = dataPresence.SwitchRRAType(temp);
 			rPlots[ii].lookupValue("DS1PlotType", temp);
-			cVectorPNGTemp.eDS1PlotType = cPresence.SwitchPlotGraphType(temp);
+			cVectorPNGTemp.eDS1PlotType = dataPresence.SwitchPlotGraphType(temp);
 			rPlots[ii].lookupValue("DS1PlotColor", cVectorPNGTemp.DS1PlotColor);
 			rPlots[ii].lookupValue("DS1Label", cVectorPNGTemp.sDS1Label);
 
@@ -208,7 +214,7 @@ int main(int argc, char **argv)
 			else
 				cVectorPNGTemp.DoubleDS = true;
 
-			cPresence.vPNGFiles.push_back(cVectorPNGTemp);
+			dataPresence.vPNGFiles.push_back(cVectorPNGTemp);
 		}
 
 	}
@@ -216,7 +222,7 @@ int main(int argc, char **argv)
 	//	return -3;
 	}
 
-	cAprsConfig.RetryServerLookup = true;
+	aprsConfig.RetryServerLookup = true;
 
 	cout << "--- libconfig++: Konfiguracja odczytana" << endl;
 
@@ -237,40 +243,40 @@ int main(int argc, char **argv)
 		cout << "--- scalingB: " << telemB << endl;
 		cout << "--- scalingC: " << telemC << endl;
 		cout << "--------KONFIGURACJA BAZY DANYCH-----" << endl;
-		cout << "--- Adres Serwera: " << cDB.IP << endl;
-		cout << "--- Port: " << cDB.port << endl;
-		cout << "--- Użytkownik: " << cDB.Username << endl;
-		cout << "--- Nazwa bazy: " << cDB.dbName << endl;
-		cout << "--- Nazwa tabeli: " << cDB.tableName << endl;
+		cout << "--- Adres Serwera: " << mysqlDb.IP << endl;
+		cout << "--- Port: " << mysqlDb.port << endl;
+		cout << "--- Użytkownik: " << mysqlDb.Username << endl;
+		cout << "--- Nazwa bazy: " << mysqlDb.dbName << endl;
+		cout << "--- Nazwa tabeli: " << mysqlDb.tableName << endl;
 		cout << "--- Hasło nie jest wyświetlane" << endl;
-		if (cDB.execBeforeInsert == true)
+		if (mysqlDb.execBeforeInsert == true)
 			cout << "--- rc.preinsert zostanie wykonany" << endl;
 		cout << endl;
 		cout << "--------KONFIGURACJA ŁĄCZNOŚCI Z SERWEREM APRS-----" << endl;
-		cout << "--- Adres Serwera: " << cAprsConfig.ServerURL << endl;
-		cout << "--- Port Serwera: " << cAprsConfig.ServerPort << endl;
-		cout << "--- Znak monitorowanej stacji: " << cAprsConfig.StationCall << endl;
-		cout << "--- SSID monitorowanej stacji: " << cAprsConfig.StationSSID << endl;
-		cout << "--- Własny znak: " << cAprsConfig.Call << endl;
-		cout << "--- Aprs Secret: " << cAprsConfig.Passwd << endl;
+		cout << "--- Adres Serwera: " << aprsConfig.ServerURL << endl;
+		cout << "--- Port Serwera: " << aprsConfig.ServerPort << endl;
+		cout << "--- Znak monitorowanej stacji: " << aprsConfig.StationCall << endl;
+		cout << "--- SSID monitorowanej stacji: " << aprsConfig.StationSSID << endl;
+		cout << "--- Własny znak: " << aprsConfig.Call << endl;
+		cout << "--- Aprs Secret: " << aprsConfig.Passwd << endl;
 		cout << endl;
 		cout << "--------KONFIGURACJA PLIKÓW RRD-----" << endl;
-		for (unsigned i = 0; i < cPresence.vRRDFiles.size(); i++) {
-			cout << "--- Ścieżka: " << cPresence.vRRDFiles[i].sPath << endl;
-			cout << "--- Typ: " << cPresence.vRRDFiles[i].eType << endl;
+		for (unsigned i = 0; i < dataPresence.vRRDFiles.size(); i++) {
+			cout << "--- Ścieżka: " << dataPresence.vRRDFiles[i].sPath << endl;
+			cout << "--- Typ: " << dataPresence.vRRDFiles[i].eType << endl;
 		}
 		cout << endl;
 		cout << "--------KONFIGURACJA GENEROWANEJ STRONY-----" << endl;
-		cout << "--- Ścieżka zapisu pliku html: " << cPresence.WebsitePath << endl;
-		cout << "--- Tytuł generowanej strony: " << cPresence.WebsiteTitle << endl;
-		cout << "--- Nagłówek: " << cPresence.WebsiteHeadingTitle << endl;
-		cout << "--- Wiersz pomimędzy danymi num. a wykresami: " << cPresence.WebsiteSubHeading << endl;
-		cout << "--- Stopka: " << cPresence.WebisteFooter << endl;
-		if (cPresence.WebsiteLinkToMoreInfo == true)
+		cout << "--- Ścieżka zapisu pliku html: " << dataPresence.WebsitePath << endl;
+		cout << "--- Tytuł generowanej strony: " << dataPresence.WebsiteTitle << endl;
+		cout << "--- Nagłówek: " << dataPresence.WebsiteHeadingTitle << endl;
+		cout << "--- Wiersz pomimędzy danymi num. a wykresami: " << dataPresence.WebsiteSubHeading << endl;
+		cout << "--- Stopka: " << dataPresence.WebisteFooter << endl;
+		if (dataPresence.WebsiteLinkToMoreInfo == true)
 			cout << "--- Link do dodatkowych info zostanie wygenerowany" << endl;
-		if (cPresence.PrintPressure == true)
+		if (dataPresence.PrintPressure == true)
 			cout << "--- Wyświetlanie ciśnienia włączone" << endl;
-		if (cPresence.PrintTemperature == true)
+		if (dataPresence.PrintTemperature == true)
 			cout << "--- Wyświetlanie temperatury włączone" << endl;
 		if (doZeroCorrection == true)
 			cout << "--- Korekcja przekłamań temperatury włączona" << endl;
@@ -279,35 +285,35 @@ int main(int argc, char **argv)
 		cout << endl;
 		cout << "--------KONFIGURACJA WYKRESÓW-----" << endl;
 		cout << "--- Ilość wykresów do wygenerowania: " << PlotsCount << endl;
-		for (unsigned ii = 0; ii < cPresence.vPNGFiles.size(); ii++) {
+		for (unsigned ii = 0; ii < dataPresence.vPNGFiles.size(); ii++) {
 			cout << "-----------------------" << endl;
 			cout << "--- WYKRES NUMER: " << ii << endl;
-			cout << "--- Tytuł wykresu: " << cPresence.vPNGFiles[ii].Title << endl;
-			cout << "--- Opis osi Y: " << cPresence.vPNGFiles[ii].Axis << endl;
-			cout << "--- Krok Osi i etykiet osi Y: " << cPresence.vPNGFiles[ii].ScaleStep << ":" << cPresence.vPNGFiles[ii].LabelStep << endl;
-			cout << "--- Ścieżka do zapisu pliku PNG: " << cPresence.vPNGFiles[ii].sPath << endl;
-			cout << "--- Typ wykresu: " << cPresence.vPNGFiles[ii].eType << " / " << cPresence.RevSwitchPlotType(cPresence.vPNGFiles[ii].eType) <<  endl;
-			cout << "--- Ścieżka do PIERWSZEGO DS: " << cPresence.vPNGFiles[ii].sDS0Path << endl;
-			cout << "--- Opis pierwszego DS: " << cPresence.vPNGFiles[ii].sDS0Name << endl;
-			cout << "--- Typ RRA w pierwszym DS: " << cPresence.RevSwitchRRAType(cPresence.vPNGFiles[ii].eDS0RRAType) << endl; ;
-			cout << "--- Rodzaj kreślenia pierwszego DS: " << cPresence.vPNGFiles[ii].eDS0PlotType << " / " << cPresence.RevSwitchPlotGraphType(cPresence.vPNGFiles[ii].eDS0PlotType) << endl;
-			cout << "--- Kolor kreślenia pierwszego DS: " <<  hex << cPresence.vPNGFiles[ii].DS0PlotColor << endl;
-			if (cPresence.vPNGFiles[ii].DoubleDS == false)
+			cout << "--- Tytuł wykresu: " << dataPresence.vPNGFiles[ii].Title << endl;
+			cout << "--- Opis osi Y: " << dataPresence.vPNGFiles[ii].Axis << endl;
+			cout << "--- Krok Osi i etykiet osi Y: " << dataPresence.vPNGFiles[ii].ScaleStep << ":" << dataPresence.vPNGFiles[ii].LabelStep << endl;
+			cout << "--- Ścieżka do zapisu pliku PNG: " << dataPresence.vPNGFiles[ii].sPath << endl;
+			cout << "--- Typ wykresu: " << dataPresence.vPNGFiles[ii].eType << " / " << dataPresence.RevSwitchPlotType(dataPresence.vPNGFiles[ii].eType) <<  endl;
+			cout << "--- Ścieżka do PIERWSZEGO DS: " << dataPresence.vPNGFiles[ii].sDS0Path << endl;
+			cout << "--- Opis pierwszego DS: " << dataPresence.vPNGFiles[ii].sDS0Name << endl;
+			cout << "--- Typ RRA w pierwszym DS: " << dataPresence.RevSwitchRRAType(dataPresence.vPNGFiles[ii].eDS0RRAType) << endl; ;
+			cout << "--- Rodzaj kreślenia pierwszego DS: " << dataPresence.vPNGFiles[ii].eDS0PlotType << " / " << dataPresence.RevSwitchPlotGraphType(dataPresence.vPNGFiles[ii].eDS0PlotType) << endl;
+			cout << "--- Kolor kreślenia pierwszego DS: " <<  hex << dataPresence.vPNGFiles[ii].DS0PlotColor << endl;
+			if (dataPresence.vPNGFiles[ii].DoubleDS == false)
 				continue;
-			cout << "--- Ścieżka do DRUGIEGO DS: " << cPresence.vPNGFiles[ii].sDS1Path << endl;
-			cout << "--- Opis drugiego DS: " << cPresence.vPNGFiles[ii].sDS1Name << endl;
-			cout << "--- Typ RRA w drugim DS: " << cPresence.RevSwitchRRAType(cPresence.vPNGFiles[ii].eDS1RRAType) << endl; ;
-			cout << "--- Rodzaj kreślenia drugiego DS: " << cPresence.vPNGFiles[ii].eDS1PlotType << " / " << cPresence.RevSwitchPlotGraphType(cPresence.vPNGFiles[ii].eDS1PlotType) << endl;
-			cout << "--- Kolor kreślenia drugiego DS: " <<  hex << cPresence.vPNGFiles[ii].DS1PlotColor << endl;
-			cout << "--- Wysokość wykresu: " << dec << cPresence.vPNGFiles[ii].Height << endl;
-			cout << "--- Szerokość wykresu: " << dec << cPresence.vPNGFiles[ii].Width << endl;
+			cout << "--- Ścieżka do DRUGIEGO DS: " << dataPresence.vPNGFiles[ii].sDS1Path << endl;
+			cout << "--- Opis drugiego DS: " << dataPresence.vPNGFiles[ii].sDS1Name << endl;
+			cout << "--- Typ RRA w drugim DS: " << dataPresence.RevSwitchRRAType(dataPresence.vPNGFiles[ii].eDS1RRAType) << endl; ;
+			cout << "--- Rodzaj kreślenia drugiego DS: " << dataPresence.vPNGFiles[ii].eDS1PlotType << " / " << dataPresence.RevSwitchPlotGraphType(dataPresence.vPNGFiles[ii].eDS1PlotType) << endl;
+			cout << "--- Kolor kreślenia drugiego DS: " <<  hex << dataPresence.vPNGFiles[ii].DS1PlotColor << endl;
+			cout << "--- Wysokość wykresu: " << dec << dataPresence.vPNGFiles[ii].Height << endl;
+			cout << "--- Szerokość wykresu: " << dec << dataPresence.vPNGFiles[ii].Width << endl;
 
 		}
 	}
 
-	if (cDB.enable == true) {
+	if (mysqlDb.enable == true) {
 		try {
-			cDB.OpenDBConnection();
+			mysqlDb.OpenDBConnection();
 		}
 		catch(UnsufficientConfig &e) {
 
@@ -326,40 +332,30 @@ int main(int argc, char **argv)
 		}
 	}
 
-	try {
-		cAprs.AprsISConnect(&cAprsConfig);
-	}
-	catch (AprsServerNotFound &e) {
-		cout << e.what() << endl;
-		if (cAprsConfig.ServerPort == false)
-			return -3;
-		else
-			booltemp = true;
-	}
-	catch (AprsServerConnected &e) {
-		if (Debug == true)
-			cout << "--- Połączono i zalogowano" << endl;
-	}
-	if (booltemp == true) {
-		for (;;) {
-			try {
-				cAprs.AprsISConnect(&cAprsConfig);
-			}
-			catch (AprsServerConnected &e) {
-				if (Debug == true)
-					cout << "--- Połączono i zalogowano" << endl;
-				break;
-			}
-			catch (AprsServerNotFound &e) {
-				cout << e.what() << endl;
-				sleep(10);
-			}
+	// main loop
+	do {
+		// creating a new copy of ASIO thread
+		asioThread = new AprsAsioThread(aprsConfig, 99);
+
+		// initializing connection
+		asioThread->connect();
+
+		// a timeout handling shall be included here
+		while (!asioThread->isConnected());
+
+		// here the connection shall be full OK
+		isConnectionAlive = true;
+
+		while (isConnectionAlive) {
+
 		}
-	}
+
+		delete asioThread;
+	} while (mainLoopExit);
 
 	for(;;) {
 		try {
-			cAprs.AprsISThread(true);
+			aprsThread.AprsISThread(true);
 		}
 		catch (AprsConnectionFrozen &e) {
 			cout << e.what() << endl;
@@ -381,16 +377,16 @@ int main(int argc, char **argv)
 		catch (BufferOverflow &e) {
 			cout << e.what() << endl;
 			e.error();
-			cAprs.zero();
+			aprsThread.zero();
 			//continue;
-			cAprs.BufferLen = 0;
+			aprsThread.BufferLen = 0;
 		}
 		catch (ReadRetZero &e) {
 			cout << e.what() << endl;
 			e.error();
-			cAprs.AprsISDisconnect();
+			aprsThread.AprsISDisconnect();
 			try {
-				cAprs.AprsISConnect();
+				aprsThread.AprsISConnect();
 			}
 			catch (AprsServerConnected &e) {
 				if (Debug == true)
@@ -398,18 +394,18 @@ int main(int argc, char **argv)
 				sleep(2);
 			}
 			//continue;
-			cAprs.BufferLen = 0;
+			aprsThread.BufferLen = 0;
 		}
 		catch (...) {
 			cout << "--- Nieznany wyjątek rzucony z cAprs.AprsISThread(true);" << endl;
 		}
 		cPKTtemp = new AprsPacket;
 		if (cPKTtemp != NULL) {
-			if (cDB.enable == true) {
-				cDB.Keepalive();
+			if (mysqlDb.enable == true) {
+				mysqlDb.Keepalive();
 			}
 			try {
-				cPKTtemp->ParseAPRSISData(cAprs.Buffer, cAprs.BufferLen, cPKTtemp);
+				cPKTtemp->ParseAPRSISData(aprsThread.Buffer, aprsThread.BufferLen, cPKTtemp);
 			}
 			catch (NotValidAprsPacket &e) {
 				if (Debug == true)
@@ -448,10 +444,10 @@ int main(int argc, char **argv)
 							cWXtemp.DirectionCorrection((short)correction);
 						if (Debug == true)
 							cout << "--- FetchDataInRRD" << endl;
-						cPresence.FetchDataInRRD(&cWXtemp);
+						dataPresence.FetchDataInRRD(&cWXtemp);
 						if (Debug == true)
 							cout << "--- PlotGraphs" << endl;
-						cPresence.PlotGraphsFromRRD();
+						dataPresence.PlotGraphsFromRRD();
 						if (Debug == true)
 							cout << "--- GenerateWebsite" << endl;
 
@@ -459,11 +455,11 @@ int main(int argc, char **argv)
 							cWXtemp.temperature = cWXtelemetry.temperature;
 						}
 
-						cPresence.GenerateWebiste(&cWXtemp);
-						if (cDB.enable == true) {
+						dataPresence.GenerateWebiste(&cWXtemp);
+						if (mysqlDb.enable == true) {
 							if (Debug == true)
 								cout << "--- InsertIntoDb" << endl;
-							cDB.InsertIntoDb(&cWXtemp);
+							mysqlDb.InsertIntoDb(&cWXtemp);
 						}
 						qMeteo.push(cWXtemp);
 						if (qMeteo.size() >= 4)
@@ -475,7 +471,7 @@ int main(int argc, char **argv)
 						cWXtemp.PrintData();
 					}
 
-					char result = cTelemetry.ParseData(cPKTtemp);
+					char result = telemetry.ParseData(cPKTtemp);
 
 					if (result == 0 && useFifthTelemAsTemperature == true) {
 
@@ -485,15 +481,15 @@ int main(int argc, char **argv)
 						cWXtelemetry.useWind = false;
 
 						if (Debug == true)
-							cout << "--- Przetworzono temperature z telemetrii: " << cTelemetry.getCh5() << endl;
-						cWXtelemetry.temperature = cTelemetry.getCh5();
+							cout << "--- Przetworzono temperature z telemetrii: " << telemetry.getCh5() << endl;
+						cWXtelemetry.temperature = telemetry.getCh5();
 
 						if (Debug == true)
 							cout << "--- FetchDataInRRD" << endl;
-						cPresence.FetchDataInRRD(&cWXtelemetry);
+						dataPresence.FetchDataInRRD(&cWXtelemetry);
 						if (Debug == true)
 							cout << "--- PlotGraphs" << endl;
-						cPresence.PlotGraphsFromRRD();
+						dataPresence.PlotGraphsFromRRD();
 						if (Debug == true)
 							cout << "--- GenerateWebsite" << endl;
 
@@ -506,7 +502,7 @@ int main(int argc, char **argv)
 						cWXtelemetry.wind_gusts 	= cWXtemp.wind_gusts;
 						cWXtelemetry.wind_speed 	= cWXtemp.wind_speed;
 
-						cPresence.GenerateWebiste(&cWXtelemetry);
+						dataPresence.GenerateWebiste(&cWXtelemetry);
 					}
 
 				//delete cWXtemp;
@@ -520,7 +516,7 @@ int main(int argc, char **argv)
 
 	}
 	cout << "--- ZAMYKANIE";
-	cDB.CloseDBConnection();
+	mysqlDb.CloseDBConnection();
 	fDebug.close();
 	return 0;
 }

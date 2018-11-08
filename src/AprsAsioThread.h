@@ -56,6 +56,8 @@ class AprsAsioThread {
     // flag which will confirm that data stored inside 'outputPacket' are valid
     bool outputPacketValid;
 
+    bool connected;
+
     // timeout value in seconds
     uint8_t timeout;
 
@@ -72,6 +74,9 @@ class AprsAsioThread {
 public:
 	void connect();
 	void receive();
+	void disconnect();
+
+	bool isConnected();
 
 	AprsAsioThread(AprsThreadConfig & config, uint8_t timeoutInSeconds);
 	virtual ~AprsAsioThread();

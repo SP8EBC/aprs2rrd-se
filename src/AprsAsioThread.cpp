@@ -20,7 +20,11 @@
 #include <vector>
 #include <string>
 
-AprsAsioThread::AprsAsioThread(AprsThreadConfig & config, uint8_t timeoutInSeconds) : conf(config), outputPacketValid(false) {
+AprsAsioThread::AprsAsioThread(AprsThreadConfig & config, uint8_t timeoutInSeconds) :
+																						conf(config),
+																						outputPacketValid(false),
+																						timeout(timeoutInSeconds)
+{
 	char buffer[256];
 
 	if (config.StationSSID == 0)
@@ -30,13 +34,15 @@ AprsAsioThread::AprsAsioThread(AprsThreadConfig & config, uint8_t timeoutInSecon
 
 	this->loginString = std::string(buffer);
 
+	this->connected = false;
+
 }
 
 void AprsAsioThread::workerThread() {
 
-	while (true) {
+//	while (true) {
 		this->ioservice.run();
-	}
+//	}
 }
 
 void AprsAsioThread::connect() {
@@ -61,10 +67,11 @@ void AprsAsioThread::connect() {
 	// connecting
 	this->tsocket.async_connect(endpoint, boost::bind(&AprsAsioThread::connectedCallback, this, _1));
 
-	// creating a thread which will handle i/o
-	this->workersGroup.create_thread(boost::bind(&AprsAsioThread::workerThread, this));
+	// checking if there is any thread already
+	if (this->workersGroup.size() == 0)
+		// creating a thread which will handle i/o
+		this->workersGroup.create_thread(boost::bind(&AprsAsioThread::workerThread, this));
 
-	std::cout << "połączono" << std::endl;
 }
 
 void AprsAsioThread::connectedCallback(const boost::system::error_code& ec) {
@@ -76,6 +83,8 @@ void AprsAsioThread::connectedCallback(const boost::system::error_code& ec) {
 	else {
 		this->tsocket.async_send(boost::asio::buffer(this->loginString), &AprsAsioThread::writeCallback);
 	}
+
+
 
 	return;
 }
@@ -91,8 +100,6 @@ void AprsAsioThread::receive() {
 
 	// locking a mutex which will be used to synchronize
 	this->mutexRxSync.lock();
-
-	std::cout << "rx started" << std::endl;
 
 	// starting asynchronous read which will last until end of line will be received
 	boost::asio::async_read_until(this->tsocket, this->in_buf, "\r\n", boost::bind(&AprsAsioThread::newLineCallback, this, _1));
@@ -153,7 +160,17 @@ void AprsAsioThread::newLineCallback(const boost::system::error_code& ec) {
 	}
 }
 
+void AprsAsioThread::disconnect() {
+	this->tsocket.close();
+	this->ioservice.stop();
+}
+
+bool AprsAsioThread::isConnected() {
+	return connected;
+}
+
 AprsAsioThread::~AprsAsioThread() {
-	// TODO Auto-generated destructor stub
+	this->tsocket.close();
+	this->ioservice.stop();
 }
 
