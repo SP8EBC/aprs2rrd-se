@@ -7,6 +7,7 @@
 
 #include "AprsAsioThread.h"
 #include "ReturnValues.h"
+#include "ConnectionTimeoutEx.h"
 
 #include "SOFTWARE_VERSION.h"
 
@@ -19,7 +20,7 @@
 #include <vector>
 #include <string>
 
-AprsAsioThread::AprsAsioThread(AprsThreadConfig & config) : conf(config), outputPacketValid(false) {
+AprsAsioThread::AprsAsioThread(AprsThreadConfig & config, uint8_t timeoutInSeconds) : conf(config), outputPacketValid(false) {
 	char buffer[256];
 
 	if (config.StationSSID == 0)
@@ -97,21 +98,16 @@ void AprsAsioThread::receive() {
 	boost::asio::async_read_until(this->tsocket, this->in_buf, "\r\n", boost::bind(&AprsAsioThread::newLineCallback, this, _1));
 
 	// waiting for receive
-	result = this->mutexRxSync.timed_lock(boost::posix_time::seconds(99));
+	result = this->mutexRxSync.timed_lock(boost::posix_time::seconds(this->timeout));
 
 	if (result) {
-		std::cout << "mutex unlocked" << std::endl;
 		this->mutexRxSync.unlock();
-
 		return;
 	}
 	else {
-		std::cout << "mutex NOT unlocked" << std::endl;
 		this->mutexRxSync.unlock();
-		return;
+		throw ConnectionTimeoutEx();
 	}
-
-//	this->workersGroup.join_all();
 
 }
 
@@ -145,6 +141,9 @@ void AprsAsioThread::newLineCallback(const boost::system::error_code& ec) {
 		this->in_buf.consume(this->in_buf.size());
 
 		if (status == OK) {
+			this->outputPacketValid = true;
+		}
+		else {
 			this->outputPacketValid = false;
 		}
 

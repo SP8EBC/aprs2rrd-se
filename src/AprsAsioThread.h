@@ -56,6 +56,8 @@ class AprsAsioThread {
     // flag which will confirm that data stored inside 'outputPacket' are valid
     bool outputPacketValid;
 
+    // timeout value in seconds
+    uint8_t timeout;
 
 	void connectedCallback(const boost::system::error_code &ec);
 
@@ -71,7 +73,7 @@ public:
 	void connect();
 	void receive();
 
-	AprsAsioThread(AprsThreadConfig & config);
+	AprsAsioThread(AprsThreadConfig & config, uint8_t timeoutInSeconds);
 	virtual ~AprsAsioThread();
 };
 
