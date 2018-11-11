@@ -23,97 +23,83 @@ AprsWXData::AprsWXData() {
 AprsWXData::~AprsWXData() {
 }
 
-char AprsWXData::ParseData(AprsPacket* input) {
+int AprsWXData::ParseData(AprsPacket input, AprsWXData* output) {
 
     int i = 0;
     int conv_temp;
     char *src;
-    if (*(input->Data) != '!') {
-        this->val = false;
-        throw NotValidWXData();     // to nie sa dane pogodowe
+
+    output->val = false;
+
+    if (*(input.Data) != '!') {
+        output->val = false;
+        return -1;     // to nie sa dane pogodowe
     }
-    src = input->Data;
+    src = input.Data;
     do {
         i++;
 		if (*(src + i) == 0x00)
-			throw NotValidWXData();
+			return -1;
 		if (i > 30)
-			throw NotValidWXData();
+			return -1;
     } while (*(src + i) != '_'); // pominiecie pozycji i przejsce od razu do danych meteo
 
-    wind_speed = 0.0;
-    wind_gusts = 0.0;
-    wind_direction = 0;
-    humidity = 0;
-    temperature = 0;
-    pressure = 0;
-    rain60 = 0;
-    rain24 = 0;
-    rain_day = 0;
-    val = false;
+    output->wind_speed = 0.0;
+    output->wind_gusts = 0.0;
+    output->wind_direction = 0;
+    output->humidity = 0;
+    output->temperature = 0;
+    output->pressure = 0;
+    output->rain60 = 0;
+    output->rain24 = 0;
+    output->rain_day = 0;
+    output->val = false;
 
     i++;    // przeskoczenie na pierwszy znak danych meteo
-    if (this->CopyConvert('/',src,&conv_temp,&i) == 0)   // kierunek    this->wind_direction = conv_temp;
-		this->wind_direction = conv_temp;
+    if (AprsWXData::CopyConvert('/',src,&conv_temp,&i) == 0)   // kierunek    this->wind_direction = conv_temp;
+    	output->wind_direction = conv_temp;
 	else
-		throw NotValidWXData();
+		return -1;
     i++;
-    if (this->CopyConvert('g',src,&conv_temp,&i) == 0)   // siła
-		this->wind_speed = (float)conv_temp * 0.44;
+    if (AprsWXData::CopyConvert('g',src,&conv_temp,&i) == 0)   // siła
+    	output->wind_speed = (float)conv_temp * 0.44;
 	else
-		throw NotValidWXData();
+		return -1;
     i++;
-    if (this->CopyConvert('t',src,&conv_temp,&i) == 0)       // porywy
-		this->wind_gusts = (float)conv_temp * 0.44;
+    if (AprsWXData::CopyConvert('t',src,&conv_temp,&i) == 0)       // porywy
+    	output->wind_gusts = (float)conv_temp * 0.44;
 	else
-		throw NotValidWXData();
+		return -1;
     i++;
-    if (this->CopyConvert('r',src,&conv_temp,&i) == 0)   // temperatura
-		this->temperature = ((float)conv_temp - 32) / 9 * 5;
+    if (AprsWXData::CopyConvert('r',src,&conv_temp,&i) == 0)   // temperatura
+    	output->temperature = ((float)conv_temp - 32) / 9 * 5;
 	else
-		throw NotValidWXData();
+		return -1;
     i++;
-    if (this->CopyConvert('p',src,&conv_temp,&i) == 0)   // deszcz przez ostania godzine
-		this->rain60 = conv_temp;
+    if (AprsWXData::CopyConvert('p',src,&conv_temp,&i) == 0)   // deszcz przez ostania godzine
+    	output->rain60 = conv_temp;
 	else
-		throw NotValidWXData();
+		return -1;
 	i++;
-    if (this->CopyConvert('P',src,&conv_temp,&i) == 0)   // deszcz przez ostania godzine
-		this->rain24 = conv_temp;
+    if (AprsWXData::CopyConvert('P',src,&conv_temp,&i) == 0)   // deszcz przez ostania godzine
+    	output->rain24 = conv_temp;
 	else
-		throw NotValidWXData();
+		return -1;
 	i++;
-    if (this->CopyConvert('b',src,&conv_temp,&i) == 0)   // deszcz przez ostania godzine
-		this->rain_day = conv_temp;
+    if (AprsWXData::CopyConvert('b',src,&conv_temp,&i) == 0)   // deszcz przez ostania godzine
+    	output->rain_day = conv_temp;
 	else
-		throw NotValidWXData();
+		return -1;
 	i++;
-    if (this->CopyConvert((unsigned)5,src,&conv_temp,&i) == 0)   // ciśnienie
-		this->pressure = conv_temp / 10;
+    if (AprsWXData::CopyConvert((unsigned)5,src,&conv_temp,&i) == 0)   // ciśnienie
+    	output->pressure = conv_temp / 10;
 	else;
 	i++;
-    if (this->CopyConvert((unsigned)2,src,&conv_temp,&i) == 0)
-		this->humidity = conv_temp;
+    if (AprsWXData::CopyConvert((unsigned)2,src,&conv_temp,&i) == 0)
+    	output->humidity = conv_temp;
 	else;
-    this->val = true;
-	if (this->temperature < -1900) {
-		printf("-- minusC - %f", this->temperature);
-		this->temperature = this->temperature + 4023;
-		printf(" - %f\r\n", this->temperature);
-
-	}
-	else if (this->temperature > 1000) {
-		printf("-- plusC - %f", this->temperature);
-		int temp2;
-		float temp = this->temperature;
-		float temp3 = 0.0f;
-		temp /= 0.0625f;
-		temp2 = 264368 - (int)temp;
-		temp3 = temp2 / 256;
-		this->temperature = -0.0625f * abs(temp3);
-		printf(" - %f - temp: %f - temp2: %d - temp3: %f", this->temperature, temp, temp2, temp3);
-	}
-    throw WXDataOK();
+    output->val = true;
+    return 0;
 }
 
 void AprsWXData::PrintData(void) {

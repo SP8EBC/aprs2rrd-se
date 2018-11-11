@@ -29,22 +29,17 @@ class AprsWXData
         bool val;
         AprsWXData();
         ~AprsWXData();
-        char ParseData(AprsPacket* input);
 		void PrintData(void);
 		void ZeroCorrection(queue <AprsWXData> & qMeteo);
 		float QnhQfeCorrection(float qnh, float alti);
-        int CopyConvert(char sign, char* input, int* output, int* counter);
-		int CopyConvert(unsigned num, char* input, int* output, int* counter);
 		short DirectionCorrection(short direction, short correction);
 		void DirectionCorrection(short correction);
 
-};
+		static int ParseData(AprsPacket input, AprsWXData* output);
+        static int CopyConvert(char sign, char* input, int* output, int* counter);
+		static int CopyConvert(unsigned num, char* input, int* output, int* counter);
 
-//class NotValidWXData: public std::exception {
-//    virtual const char* what() const throw() {
-//		return "\n--- Niepoprawny pakiet pogodowy\n";
-//    }
-//};
+};
 
 class WXDataOK: public std::exception {
 

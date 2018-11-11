@@ -78,6 +78,9 @@ public:
 
 	bool isConnected();
 
+	AprsPacket getPacket();
+	bool isPacketValid();
+
 	AprsAsioThread(AprsThreadConfig & config, uint8_t timeoutInSeconds);
 	virtual ~AprsAsioThread();
 };

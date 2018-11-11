@@ -169,6 +169,14 @@ bool AprsAsioThread::isConnected() {
 	return connected;
 }
 
+AprsPacket AprsAsioThread::getPacket() {
+	return this->outputPacket;
+}
+
+bool AprsAsioThread::isPacketValid() {
+	return this->outputPacketValid;
+}
+
 AprsAsioThread::~AprsAsioThread() {
 	this->tsocket.close();
 	this->ioservice.stop();

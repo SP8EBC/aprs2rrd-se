@@ -19,6 +19,8 @@
 #include "Telemetry.h"
 #include "AprsAsioThread.h"
 
+#include "ConnectionTimeoutEx.h"
+
 
 using namespace libconfig;
 using namespace std;
@@ -45,7 +47,7 @@ int main(int argc, char **argv)
 	RRDFileDefinition sVectorRRDTemp;
 	PlotFileDefinition cVectorPNGTemp;
 
-	AprsWXData cWXtemp, cWXtelemetry;
+	AprsWXData wxTemp, wxTelemetry;
 	AprsPacket* cPKTtemp;
 
 	queue <AprsPacket> qPackets;
@@ -56,7 +58,6 @@ int main(int argc, char **argv)
 	bool mainLoopExit = true;
 	bool isConnectionAlive = false;
 
-	bool booltemp = false;
 	int PlotsCount = 0;
 	int RRDCount = 0;
 
@@ -340,19 +341,75 @@ int main(int argc, char **argv)
 		// initializing connection
 		asioThread->connect();
 
-		// a timeout handling shall be included here
+		// a timeout handling shall be included here. Now it is only waiting
 		while (!asioThread->isConnected());
 
 		// here the connection shall be full OK
 		isConnectionAlive = true;
 
 		while (isConnectionAlive) {
+			try {
+				// waiting for new frame to be reveived
+				asioThread->receive();
+			}
+			catch (ConnectionTimeoutEx &e) {
+				// if connection is timed out break internal loop to allow reconnecting
+				isConnectionAlive = false;
+				break;
+			}
+
+			// checkig if correct data has been received
+			if (asioThread->isPacketValid()) {
+				// Parsing wheater data. If this is not correct APRS wx packet the method will set
+				// the internal validity flag to false
+				AprsWXData::ParseData(asioThread->getPacket(), &wxTemp);
+
+				// if temperature value shall be retrieved from the telemetry instead of wx packet
+				if (useFifthTelemAsTemperature) {
+					// unset a flag to prevent inserting this data to RRD and generated webpage
+					wxTemp.useTemperature = false;
+				}
+				else {
+					// or set this if user won't use a telemetry as a source of temperature readings
+					wxTemp.useTemperature = true;
+				}
+
+				// set rest of flags
+				wxTemp.useHumidity = true;
+				wxTemp.usePressure = true;
+				wxTemp.useWind = true;
+
+				// each method below checks if passed WX packet is valid and if no they will
+				// exit immediately witoud performing any changes
+
+				// applying wind direction correction if it was enabled by user
+				if ((short)correction != 0)
+					wxTemp.DirectionCorrection((short)correction);
+
+				// inserting the data inside a RRD file
+				if (Debug == true)
+					cout << "--- FetchDataInRRD" << endl;
+				dataPresence.FetchDataInRRD(&wxTemp);
+
+
+
+			}
+			else {
+				if (Debug == true)
+					cout << "--- To nie jest poprawna ramka APRS" << endl;
+			}
+
 
 		}
 
 		delete asioThread;
-	} while (mainLoopExit);
+	} while (mainLoopExit);		// end of main loop
 
+	/////
+	/////
+	///// OLD GARBAGE TO BE REFACTORED
+	/////
+	/////
 	for(;;) {
 		try {
 			aprsThread.AprsISThread(true);
@@ -421,30 +478,30 @@ int main(int argc, char **argv)
 			//cWXtemp = new AprsWXData;
 					try {
 						cout << "--- Przetwarzanie danych pogodowych..." << endl;
-						cWXtemp.ParseData(cPKTtemp);
+						//cWXtemp.ParseData(cPKTtemp);
 					}
 					catch(NotValidWXData &e) {
 						cout << "--- To nie jest poprawny pakiet pogodowy" << endl;
 					}
 					catch(WXDataOK &e) {
 						if (useFifthTelemAsTemperature == true)
-							cWXtemp.useTemperature = false;
+							wxTemp.useTemperature = false;
 						else
-							cWXtemp.useTemperature = true;
+							wxTemp.useTemperature = true;
 
-						cWXtemp.useHumidity = true;
-						cWXtemp.usePressure = true;
-						cWXtemp.useWind = true;
+						wxTemp.useHumidity = true;
+						wxTemp.usePressure = true;
+						wxTemp.useWind = true;
 
 						if (Debug == true && doZeroCorrection == true)
 							cout << "--- ZeroCorrection" << endl;
 						if (doZeroCorrection == true)
-							cWXtemp.ZeroCorrection(qMeteo);
+							wxTemp.ZeroCorrection(qMeteo);
 						if ((short)correction != 0)
-							cWXtemp.DirectionCorrection((short)correction);
+							wxTemp.DirectionCorrection((short)correction);
 						if (Debug == true)
 							cout << "--- FetchDataInRRD" << endl;
-						dataPresence.FetchDataInRRD(&cWXtemp);
+						dataPresence.FetchDataInRRD(&wxTemp);
 						if (Debug == true)
 							cout << "--- PlotGraphs" << endl;
 						dataPresence.PlotGraphsFromRRD();
@@ -452,57 +509,57 @@ int main(int argc, char **argv)
 							cout << "--- GenerateWebsite" << endl;
 
 						if (useFifthTelemAsTemperature == true) {
-							cWXtemp.temperature = cWXtelemetry.temperature;
+							wxTemp.temperature = wxTelemetry.temperature;
 						}
 
-						dataPresence.GenerateWebiste(&cWXtemp);
+						dataPresence.GenerateWebiste(&wxTemp);
 						if (mysqlDb.enable == true) {
 							if (Debug == true)
 								cout << "--- InsertIntoDb" << endl;
-							mysqlDb.InsertIntoDb(&cWXtemp);
+							mysqlDb.InsertIntoDb(&wxTemp);
 						}
-						qMeteo.push(cWXtemp);
+						qMeteo.push(wxTemp);
 						if (qMeteo.size() >= 4)
 							qMeteo.pop();
 						if (Debug == true) {
 							cout << "--- Liczba obiektów w kolejce qMeteo: " << qMeteo.size() << endl;
 							cout << "--- Liczba obiektów w kolejce qPackets: " << qPackets.size() << endl;
 						}
-						cWXtemp.PrintData();
+						wxTemp.PrintData();
 					}
 
 					char result = telemetry.ParseData(cPKTtemp);
 
 					if (result == 0 && useFifthTelemAsTemperature == true) {
 
-						cWXtelemetry.useTemperature = true;
-						cWXtelemetry.useHumidity = false;
-						cWXtelemetry.usePressure = false;
-						cWXtelemetry.useWind = false;
+						wxTelemetry.useTemperature = true;
+						wxTelemetry.useHumidity = false;
+						wxTelemetry.usePressure = false;
+						wxTelemetry.useWind = false;
 
 						if (Debug == true)
 							cout << "--- Przetworzono temperature z telemetrii: " << telemetry.getCh5() << endl;
-						cWXtelemetry.temperature = telemetry.getCh5();
+						wxTelemetry.temperature = telemetry.getCh5();
 
 						if (Debug == true)
 							cout << "--- FetchDataInRRD" << endl;
-						dataPresence.FetchDataInRRD(&cWXtelemetry);
+						dataPresence.FetchDataInRRD(&wxTelemetry);
 						if (Debug == true)
 							cout << "--- PlotGraphs" << endl;
 						dataPresence.PlotGraphsFromRRD();
 						if (Debug == true)
 							cout << "--- GenerateWebsite" << endl;
 
-						cWXtelemetry.humidity 		= cWXtemp.humidity;
-						cWXtelemetry.pressure 		= cWXtemp.pressure;
-						cWXtelemetry.rain24 		= cWXtemp.rain24;
-						cWXtelemetry.rain60 		= cWXtemp.rain60;
-						cWXtelemetry.rain_day 		= cWXtemp.rain_day;
-						cWXtelemetry.wind_direction = cWXtemp.wind_direction;
-						cWXtelemetry.wind_gusts 	= cWXtemp.wind_gusts;
-						cWXtelemetry.wind_speed 	= cWXtemp.wind_speed;
+						wxTelemetry.humidity 		= wxTemp.humidity;
+						wxTelemetry.pressure 		= wxTemp.pressure;
+						wxTelemetry.rain24 		= wxTemp.rain24;
+						wxTelemetry.rain60 		= wxTemp.rain60;
+						wxTelemetry.rain_day 		= wxTemp.rain_day;
+						wxTelemetry.wind_direction = wxTemp.wind_direction;
+						wxTelemetry.wind_gusts 	= wxTemp.wind_gusts;
+						wxTelemetry.wind_speed 	= wxTemp.wind_speed;
 
-						dataPresence.GenerateWebiste(&cWXtelemetry);
+						dataPresence.GenerateWebiste(&wxTelemetry);
 					}
 
 				//delete cWXtemp;

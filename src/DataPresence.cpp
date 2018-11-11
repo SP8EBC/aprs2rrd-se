@@ -32,6 +32,9 @@ void DataPresence::FetchDataInRRD(AprsWXData* cInput) {
 	int currtimeint;
 	time_t currtime;
 
+	if (!cInput->val)
+		return;
+
 	for (unsigned i = 0; i < this->vRRDFiles.size(); i++) {
 		if (this->vRRDFiles[i].eType == TEMPERATURE && cInput->useTemperature == true) {
 			currtime =time(NULL);
