@@ -39,6 +39,8 @@ class AprsWXData
         static int CopyConvert(char sign, char* input, int* output, int* counter);
 		static int CopyConvert(unsigned num, char* input, int* output, int* counter);
 
+		bool DebugOutput;
+
 };
 
 class WXDataOK: public std::exception {

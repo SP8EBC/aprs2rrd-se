@@ -19,7 +19,7 @@ Telemetry::~Telemetry() {
 	// TODO Auto-generated destructor stub
 }
 
-char Telemetry::Telemetry::ParseData(AprsPacket* input) {
+int Telemetry::Telemetry::ParseData(AprsPacket* input) {
     char *src;
     int numi, c1i, c2i, c3i, c4i, c5i;
 

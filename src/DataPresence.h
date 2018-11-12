@@ -108,6 +108,8 @@ public:
 	bool WebsiteLinkToMoreInfo;
 	string WebisteFooter;
 
+	bool DebugOutput;
+
 };
 
 

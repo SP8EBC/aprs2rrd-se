@@ -16,7 +16,7 @@ public:
 	Telemetry();
 	virtual ~Telemetry();
 
-	char ParseData(AprsPacket* input);
+	int ParseData(AprsPacket* input);
 	float getCh1();
 	float getCh2();
 	float getCh3();

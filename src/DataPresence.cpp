@@ -7,7 +7,7 @@
 #include <sstream>
 #include <iostream>
 
-#include "main.h"
+//#include "main.h"
 
 PlotFileDefinition::PlotFileDefinition() {
 	this->ScaleStep = 0;
@@ -41,7 +41,7 @@ void DataPresence::FetchDataInRRD(AprsWXData* cInput) {
 			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
 			sprintf(command, "rrdtool update %s %d:%f", this->vRRDFiles[i].sPath.c_str(), currtimeint, cInput->temperature);
-			if (Debug == true)
+			if (this->DebugOutput == true)
 				cout << command << endl;
 		}
 		else if (this->vRRDFiles[i].eType == QNH && cInput->usePressure == true) {
@@ -49,7 +49,7 @@ void DataPresence::FetchDataInRRD(AprsWXData* cInput) {
 			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
 			sprintf(command, "rrdtool update %s %d:%d", this->vRRDFiles[i].sPath.c_str(), currtimeint, cInput->pressure);
-			if (Debug == true)
+			if (this->DebugOutput == true)
 				cout << command << endl;
 		}
 		else if (this->vRRDFiles[i].eType == WIND_DIR && cInput->useWind == true) {
@@ -57,7 +57,7 @@ void DataPresence::FetchDataInRRD(AprsWXData* cInput) {
 			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
 			sprintf(command, "rrdtool update %s %d:%d", this->vRRDFiles[i].sPath.c_str(), currtimeint, cInput->wind_direction);
-			if (Debug == true)
+			if (this->DebugOutput == true)
 				cout << command << endl;
 		}
 		else if (this->vRRDFiles[i].eType == WIND_SPD && cInput->useWind == true) {
@@ -65,7 +65,7 @@ void DataPresence::FetchDataInRRD(AprsWXData* cInput) {
 			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
 			sprintf(command, "rrdtool update %s %d:%f", this->vRRDFiles[i].sPath.c_str(), currtimeint, cInput->wind_speed);
-			if (Debug == true)
+			if (this->DebugOutput == true)
 				cout << command << endl;
 		}
 		else if (this->vRRDFiles[i].eType == WIND_GST && cInput->useWind == true) {
@@ -73,7 +73,7 @@ void DataPresence::FetchDataInRRD(AprsWXData* cInput) {
 			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
 			sprintf(command, "rrdtool update %s %d:%f", this->vRRDFiles[i].sPath.c_str(), currtimeint, cInput->wind_gusts);
-			if (Debug == true)
+			if (this->DebugOutput == true)
 				cout << command << endl;
 		}
 		else continue;
@@ -99,7 +99,7 @@ void DataPresence::PlotGraphsFromRRD() {
 	stringstream exp;
 
 
-	if (Debug == true) {
+	if (this->DebugOutput == true) {
 		cout << "----- Liczba wykresów do wygenerowania: " <<  this->vPNGFiles.size() << endl;
 	}
 
@@ -154,7 +154,7 @@ void DataPresence::PlotGraphsFromRRD() {
 					this->vPNGFiles[i].DS1PlotColor, this->vPNGFiles[i].sDS1Label.c_str());
 
 
-		if (Debug == true)
+		if (this->DebugOutput == true)
 			cout << command << endl;
 		system(command);
 	}

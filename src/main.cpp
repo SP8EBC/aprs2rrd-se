@@ -387,8 +387,6 @@ int main(int argc, char **argv)
 					wxTemp.DirectionCorrection((short)correction);
 
 				// inserting the data inside a RRD file
-				if (Debug == true)
-					cout << "--- FetchDataInRRD" << endl;
 				dataPresence.FetchDataInRRD(&wxTemp);
 
 

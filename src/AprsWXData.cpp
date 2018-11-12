@@ -18,6 +18,8 @@ AprsWXData::AprsWXData() {
     rain24 = 0;
     rain_day = 0;
     val = false;
+
+    DebugOutput = false;
 }
 
 AprsWXData::~AprsWXData() {
@@ -120,22 +122,22 @@ void AprsWXData::ZeroCorrection(queue <AprsWXData> & qMeteo) {
 	if (qMeteo.size() != 0) {
 		if (this->temperature == 0 || this->humidity == 0 || this->pressure == 0) {
 			temp = qMeteo.back();
-			if (Debug == true)
+			if (this->DebugOutput == true)
 				cout << "----- Korekcja ";
 		}
 		else;
 		if (this->temperature == 0) {
-			if (Debug == true)
+			if (this->DebugOutput == true)
 				cout << "t: " << this->temperature << " -> " << temp.temperature << "; ";
 			this->temperature = temp.temperature;
 		}
 		if (this->humidity == 0) {
-			if (Debug == true)
+			if (this->DebugOutput == true)
 				cout << "h: " << this->humidity << " -> " << temp.humidity << "; ";
 			this->humidity = temp.humidity;
 		}
 		if (this->pressure == 0) {
-			if (Debug == true)
+			if (this->DebugOutput == true)
 				cout << "p: " << this->humidity << " -> " << temp.humidity << "; ";
 			this->pressure = temp.pressure;
 		}
@@ -203,6 +205,9 @@ short AprsWXData::DirectionCorrection(short direction, short correction) {
 }
 
 void AprsWXData::DirectionCorrection(short correction) {
+	if (!this->val)
+		return;
+
     short direction = this->wind_direction;
     short out;
 

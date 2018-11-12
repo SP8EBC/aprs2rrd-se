@@ -83,6 +83,8 @@ public:
 
 	AprsAsioThread(AprsThreadConfig & config, uint8_t timeoutInSeconds);
 	virtual ~AprsAsioThread();
+
+	bool DebugOutput;
 };
 
 #endif /* APRSASIOTHREAD_H_ */
