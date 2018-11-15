@@ -364,20 +364,30 @@ int main(int argc, char **argv)
 				// the internal validity flag to false
 				AprsWXData::ParseData(asioThread->getPacket(), &wxTemp);
 
-				// if temperature value shall be retrieved from the telemetry instead of wx packet
-				if (useFifthTelemAsTemperature) {
-					// unset a flag to prevent inserting this data to RRD and generated webpage
-					wxTemp.useTemperature = false;
-				}
-				else {
-					// or set this if user won't use a telemetry as a source of temperature readings
-					wxTemp.useTemperature = true;
+				// Parsing telemetry data
+				Telemetry::ParseData(asioThread->getPacket(), &telemetry);
+
+				// if this is data from WX Packet
+				if (wxTemp.valid) {
+					// if temperature value shall be retrieved from the telemetry instead of wx packet
+					if (useFifthTelemAsTemperature) {
+						// unset a flag to prevent inserting this data to RRD and generated webpage
+						wxTemp.useTemperature = false;
+					}
+					else {
+						// or set this if user won't use a telemetry as a source of temperature readings
+						wxTemp.useTemperature = true;
+					}
+
+					// set rest of flags
+					wxTemp.useHumidity = true;
+					wxTemp.usePressure = true;
+					wxTemp.useWind = true;
 				}
 
-				// set rest of flags
-				wxTemp.useHumidity = true;
-				wxTemp.usePressure = true;
-				wxTemp.useWind = true;
+				if (telemetry.valid) {
+					wxTelemetry = wxTemp;
+				}
 
 				// each method below checks if passed WX packet is valid and if no they will
 				// exit immediately witoud performing any changes
@@ -388,6 +398,8 @@ int main(int argc, char **argv)
 
 				// inserting the data inside a RRD file
 				dataPresence.FetchDataInRRD(&wxTemp);
+
+
 
 
 
@@ -526,8 +538,8 @@ int main(int argc, char **argv)
 						wxTemp.PrintData();
 					}
 
-					char result = telemetry.ParseData(cPKTtemp);
-
+					//char result = telemetry.ParseData(cPKTtemp);
+/*
 					if (result == 0 && useFifthTelemAsTemperature == true) {
 
 						wxTelemetry.useTemperature = true;
@@ -559,7 +571,7 @@ int main(int argc, char **argv)
 
 						dataPresence.GenerateWebiste(&wxTelemetry);
 					}
-
+*/
 				//delete cWXtemp;
 
 			}

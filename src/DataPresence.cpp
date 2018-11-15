@@ -32,7 +32,7 @@ void DataPresence::FetchDataInRRD(AprsWXData* cInput) {
 	int currtimeint;
 	time_t currtime;
 
-	if (!cInput->val)
+	if (!cInput->valid)
 		return;
 
 	for (unsigned i = 0; i < this->vRRDFiles.size(); i++) {

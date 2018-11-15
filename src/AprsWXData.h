@@ -26,8 +26,17 @@ class AprsWXData
         bool usePressure;
         bool useHumidity;
     public:
-        bool val;
+        bool valid;
+
+        // default constructor
         AprsWXData();
+
+        // copy constructor
+        AprsWXData(const AprsWXData& in);
+
+        // assigment operator
+        AprsWXData& operator= (AprsWXData&);
+
         ~AprsWXData();
 		void PrintData(void);
 		void ZeroCorrection(queue <AprsWXData> & qMeteo);

@@ -16,14 +16,15 @@ public:
 	Telemetry();
 	virtual ~Telemetry();
 
-	int ParseData(AprsPacket* input);
+	static int ParseData(AprsPacket input, Telemetry* output);
+
 	float getCh1();
 	float getCh2();
 	float getCh3();
 	float getCh4();
 	float getCh5();
 
-	bool val;
+	bool valid;
 
 	uint16_t num;
 

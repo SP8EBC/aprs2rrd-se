@@ -19,15 +19,15 @@ Telemetry::~Telemetry() {
 	// TODO Auto-generated destructor stub
 }
 
-int Telemetry::Telemetry::ParseData(AprsPacket* input) {
+int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
     char *src;
     int numi, c1i, c2i, c3i, c4i, c5i;
 
-    if (*(input->Data) != 'T') {
-        this->val = false;
+    if (*(input.Data) != 'T') {
+        output->valid = false;
         return -1;
     }
-    src = input->Data;
+    src = input.Data;
 
     std::string *str = new std::string(src);
 
@@ -51,7 +51,7 @@ int Telemetry::Telemetry::ParseData(AprsPacket* input) {
     }
     std::string c1 = str->substr(firstComma + 1, 3);
     c1i = std::stoi(c1, nullptr, 10);
-    this->ch1 = c1i;
+    output->ch1 = c1i;
 
     // kanał drugi
     std::size_t secondComma = str->find_first_of(",", firstComma + 1);
@@ -62,7 +62,7 @@ int Telemetry::Telemetry::ParseData(AprsPacket* input) {
     }
     std::string c2 = str->substr(secondComma + 1, 3);
     c2i = std::stoi(c2, nullptr, 10);
-    this->ch2 = c2i;
+    output->ch2 = c2i;
 
     // kanał trzeci
     std::size_t thirdComma = str->find_first_of(",", secondComma + 1);
@@ -73,7 +73,7 @@ int Telemetry::Telemetry::ParseData(AprsPacket* input) {
     }
     std::string c3 = str->substr(thirdComma + 1, 3);
     c3i = std::stoi(c3, nullptr, 10);
-    this->ch3 = c3i;
+    output->ch3 = c3i;
 
     // kanał czwarty
     std::size_t fourthComma = str->find_first_of(",", thirdComma + 1);
@@ -84,7 +84,7 @@ int Telemetry::Telemetry::ParseData(AprsPacket* input) {
     }
     std::string c4 = str->substr(fourthComma + 1, 3);
     c4i = std::stoi(c4, nullptr, 10);
-    this->ch4 = c4i;
+    output->ch4 = c4i;
 
     // kanał piąty
     std::size_t fifthComma = str->find_first_of(",", fourthComma + 1);
@@ -95,7 +95,7 @@ int Telemetry::Telemetry::ParseData(AprsPacket* input) {
     }
     std::string c5 = str->substr(fifthComma + 1, 3);
     c5i = std::stoi(c5, nullptr, 10);
-    this->ch5 = c5i;
+    output->ch5 = c5i;
 
 	delete str;
     return 0;

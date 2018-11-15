@@ -17,7 +17,12 @@ AprsWXData::AprsWXData() {
     rain60 = 0;
     rain24 = 0;
     rain_day = 0;
-    val = false;
+    valid = false;
+
+    useHumidity = false;
+    usePressure = false;
+    useTemperature = false;
+    useWind = false;
 
     DebugOutput = false;
 }
@@ -31,10 +36,10 @@ int AprsWXData::ParseData(AprsPacket input, AprsWXData* output) {
     int conv_temp;
     char *src;
 
-    output->val = false;
+    output->valid = false;
 
     if (*(input.Data) != '!') {
-        output->val = false;
+        output->valid = false;
         return -1;     // to nie sa dane pogodowe
     }
     src = input.Data;
@@ -55,7 +60,7 @@ int AprsWXData::ParseData(AprsPacket input, AprsWXData* output) {
     output->rain60 = 0;
     output->rain24 = 0;
     output->rain_day = 0;
-    output->val = false;
+    output->valid = false;
 
     i++;    // przeskoczenie na pierwszy znak danych meteo
     if (AprsWXData::CopyConvert('/',src,&conv_temp,&i) == 0)   // kierunek    this->wind_direction = conv_temp;
@@ -100,12 +105,12 @@ int AprsWXData::ParseData(AprsPacket input, AprsWXData* output) {
     if (AprsWXData::CopyConvert((unsigned)2,src,&conv_temp,&i) == 0)
     	output->humidity = conv_temp;
 	else;
-    output->val = true;
+    output->valid = true;
     return 0;
 }
 
 void AprsWXData::PrintData(void) {
-    if (this->val == true) {
+    if (this->valid == true) {
         printf("--------- DANE POGODOWE ------- \r\n");
         printf("-- Siła wiatru: %f \r\n", this->wind_speed);
         printf("-- Porywy: %f \r\n", this->wind_gusts);
@@ -169,6 +174,22 @@ int AprsWXData::CopyConvert(char sign, char* input, int* output, int* counter) {
 	return 0;
 }
 
+AprsWXData::AprsWXData(const AprsWXData& in) {
+
+	this->humidity = in.humidity;
+	this->pressure = in.pressure;
+	this->rain24 = in.rain24;
+	this->rain60 = in.rain60;
+	this->rain_day = in.rain_day;
+	this->temperature = in.temperature;
+
+	this->useHumidity = in.useHumidity;
+	this->usePressure = in.usePressure;
+}
+
+AprsWXData& AprsWXData::operator =(AprsWXData& _in) {
+}
+
 int AprsWXData::CopyConvert(unsigned num, char* input, int* output, int* counter) {
     unsigned j = 0;
     char tempbuff[9];
@@ -205,7 +226,7 @@ short AprsWXData::DirectionCorrection(short direction, short correction) {
 }
 
 void AprsWXData::DirectionCorrection(short correction) {
-	if (!this->val)
+	if (!this->valid)
 		return;
 
     short direction = this->wind_direction;
