@@ -44,6 +44,10 @@ class AprsWXData
 		short DirectionCorrection(short direction, short correction);
 		void DirectionCorrection(short correction);
 
+		void copy(AprsWXData & source, bool withoutTemperature, bool onlyTemperature);
+		void copy(float temperature, bool onlyTemperature);
+
+
 		static int ParseData(AprsPacket input, AprsWXData* output);
         static int CopyConvert(char sign, char* input, int* output, int* counter);
 		static int CopyConvert(unsigned num, char* input, int* output, int* counter);

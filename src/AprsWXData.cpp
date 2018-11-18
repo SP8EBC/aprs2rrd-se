@@ -182,12 +182,96 @@ AprsWXData::AprsWXData(const AprsWXData& in) {
 	this->rain60 = in.rain60;
 	this->rain_day = in.rain_day;
 	this->temperature = in.temperature;
+	this->wind_direction = in.wind_direction;
+	this->wind_gusts = in.wind_gusts;
+	this->wind_speed = in.wind_speed;
+
+	this->valid = in.valid;
 
 	this->useHumidity = in.useHumidity;
 	this->usePressure = in.usePressure;
+	this->useWind = in.useWind;
+	this->useTemperature = in.useTemperature;
+
+	this->DebugOutput = in.DebugOutput;
 }
 
 AprsWXData& AprsWXData::operator =(AprsWXData& _in) {
+
+	this->humidity = _in.humidity;
+	this->pressure = _in.pressure;
+	this->rain24 = _in.rain24;
+	this->rain60 = _in.rain60;
+	this->rain_day = _in.rain_day;
+	this->temperature = _in.temperature;
+	this->wind_direction = _in.wind_direction;
+	this->wind_gusts = _in.wind_gusts;
+	this->wind_speed = _in.wind_speed;
+
+	this->valid = _in.valid;
+
+	this->useHumidity = _in.useHumidity;
+	this->usePressure = _in.usePressure;
+	this->useWind = _in.useWind;
+	this->useTemperature = _in.useTemperature;
+
+	this->DebugOutput = _in.DebugOutput;
+
+	return * this;
+}
+
+void AprsWXData::copy(AprsWXData& source, bool withoutTemperature, bool onlyTemperature) {
+
+	if (onlyTemperature) {
+		this->useTemperature = true;
+		this->usePressure = false;
+		this->useWind = false;
+		this->useHumidity = false;
+
+		this->temperature = source.temperature;
+
+		return;
+	}
+
+	if (withoutTemperature) {
+		this->useTemperature = false;
+		this->usePressure = true;
+		this->useWind = true;
+		this->useHumidity = true;
+	}
+	else {
+		this->useTemperature = true;
+		this->usePressure = true;
+		this->useWind = true;
+		this->useHumidity = true;
+
+		this->temperature = source.temperature;
+	}
+
+	this->humidity = source.humidity;
+	this->pressure = source.pressure;
+	this->rain24 = source.rain24;
+	this->rain60 = source.rain60;
+	this->rain_day = source.rain_day;
+	this->wind_direction = source.wind_direction;
+	this->wind_gusts = source.wind_gusts;
+	this->wind_speed = source.wind_speed;
+
+	return;
+
+}
+
+void AprsWXData::copy(float temperature, bool onlyTemperature) {
+	if (onlyTemperature) {
+		this->useTemperature = true;
+		this->usePressure = false;
+		this->useWind = false;
+		this->useHumidity = false;
+	}
+
+	this->useTemperature = true;
+	this->temperature = temperature;
+
 }
 
 int AprsWXData::CopyConvert(unsigned num, char* input, int* output, int* counter) {

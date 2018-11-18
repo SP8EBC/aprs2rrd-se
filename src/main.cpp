@@ -48,6 +48,7 @@ int main(int argc, char **argv)
 	PlotFileDefinition cVectorPNGTemp;
 
 	AprsWXData wxTemp, wxTelemetry;
+	AprsWXData wxTarget; // target wx data to be inserted into RRD DB & inserted into website
 	AprsPacket* cPKTtemp;
 
 	queue <AprsPacket> qPackets;
@@ -369,24 +370,12 @@ int main(int argc, char **argv)
 
 				// if this is data from WX Packet
 				if (wxTemp.valid) {
-					// if temperature value shall be retrieved from the telemetry instead of wx packet
-					if (useFifthTelemAsTemperature) {
-						// unset a flag to prevent inserting this data to RRD and generated webpage
-						wxTemp.useTemperature = false;
-					}
-					else {
-						// or set this if user won't use a telemetry as a source of temperature readings
-						wxTemp.useTemperature = true;
-					}
+					wxTarget.copy(wxTemp, useFifthTelemAsTemperature, false);
 
-					// set rest of flags
-					wxTemp.useHumidity = true;
-					wxTemp.usePressure = true;
-					wxTemp.useWind = true;
 				}
 
 				if (telemetry.valid) {
-					wxTelemetry = wxTemp;
+					wxTarget.copy(telemetry.getCh5(), useFifthTelemAsTemperature);
 				}
 
 				// each method below checks if passed WX packet is valid and if no they will
