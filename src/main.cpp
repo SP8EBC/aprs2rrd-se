@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <string>
 #include <queue>
+#include <unistd.h>
 #include <libconfig.h++>
 
 #include "MySqlConnInterface.h"
@@ -343,7 +344,7 @@ int main(int argc, char **argv)
 		asioThread->connect();
 
 		// a timeout handling shall be included here. Now it is only waiting
-		while (!asioThread->isConnected());
+		while (!asioThread->isConnected()) { sleep(1);};
 
 		// here the connection shall be full OK
 		isConnectionAlive = true;
@@ -386,7 +387,7 @@ int main(int argc, char **argv)
 					wxTemp.DirectionCorrection((short)correction);
 
 				// inserting the data inside a RRD file
-				dataPresence.FetchDataInRRD(&wxTemp);
+				dataPresence.FetchDataInRRD(&wxTarget);
 
 
 
@@ -409,6 +410,7 @@ int main(int argc, char **argv)
 	///// OLD GARBAGE TO BE REFACTORED
 	/////
 	/////
+	/*
 	for(;;) {
 		try {
 			aprsThread.AprsISThread(true);
@@ -560,7 +562,7 @@ int main(int argc, char **argv)
 
 						dataPresence.GenerateWebiste(&wxTelemetry);
 					}
-*/
+
 				//delete cWXtemp;
 
 			}
@@ -573,6 +575,10 @@ int main(int argc, char **argv)
 	}
 	cout << "--- ZAMYKANIE";
 	mysqlDb.CloseDBConnection();
+	*/
+
 	fDebug.close();
+
+
 	return 0;
 }

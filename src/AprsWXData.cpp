@@ -222,6 +222,12 @@ AprsWXData& AprsWXData::operator =(AprsWXData& _in) {
 
 void AprsWXData::copy(AprsWXData& source, bool withoutTemperature, bool onlyTemperature) {
 
+	if (!source.valid) {
+		return;
+	}
+
+	this->valid = true;
+
 	if (onlyTemperature) {
 		this->useTemperature = true;
 		this->usePressure = false;

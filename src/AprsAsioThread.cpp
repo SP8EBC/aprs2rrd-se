@@ -36,6 +36,8 @@ AprsAsioThread::AprsAsioThread(AprsThreadConfig & config, uint8_t timeoutInSecon
 
 	this->connected = false;
 
+	this->DebugOutput = false;
+
 }
 
 void AprsAsioThread::workerThread() {
@@ -82,6 +84,7 @@ void AprsAsioThread::connectedCallback(const boost::system::error_code& ec) {
 	}
 	else {
 		this->tsocket.async_send(boost::asio::buffer(this->loginString), &AprsAsioThread::writeCallback);
+		this->connected = true;
 	}
 
 
