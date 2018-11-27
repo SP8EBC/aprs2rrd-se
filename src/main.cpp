@@ -19,6 +19,7 @@
 #include "DataPresence.h"
 #include "Telemetry.h"
 #include "AprsAsioThread.h"
+#include "SlewRateLimiter.h"
 
 #include "ConnectionTimeoutEx.h"
 
@@ -50,6 +51,7 @@ int main(int argc, char **argv)
 
 	AprsWXData wxTemp, wxTelemetry;
 	AprsWXData wxTarget; // target wx data to be inserted into RRD DB & inserted into website
+	AprsWXData wxLastTarget;
 	AprsPacket* cPKTtemp;
 
 	queue <AprsPacket> qPackets;
@@ -389,6 +391,9 @@ int main(int argc, char **argv)
 				// inserting the data inside a RRD file
 				dataPresence.FetchDataInRRD(&wxTarget);
 
+
+				// archivizing values for slew rate corrections
+				wxLastTarget = wxTarget;
 
 
 

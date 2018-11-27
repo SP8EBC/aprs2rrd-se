@@ -12,6 +12,7 @@ CPP_SRCS += \
 ../src/ConnectionTimeoutEx.cpp \
 ../src/DataPresence.cpp \
 ../src/MySqlConnInterface.cpp \
+../src/SlewRateLimiter.cpp \
 ../src/Telemetry.cpp \
 ../src/main.cpp 
 
@@ -24,6 +25,7 @@ OBJS += \
 ./src/ConnectionTimeoutEx.o \
 ./src/DataPresence.o \
 ./src/MySqlConnInterface.o \
+./src/SlewRateLimiter.o \
 ./src/Telemetry.o \
 ./src/main.o 
 
@@ -36,6 +38,7 @@ CPP_DEPS += \
 ./src/ConnectionTimeoutEx.d \
 ./src/DataPresence.d \
 ./src/MySqlConnInterface.d \
+./src/SlewRateLimiter.d \
 ./src/Telemetry.d \
 ./src/main.d 
 
