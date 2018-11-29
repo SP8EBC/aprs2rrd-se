@@ -82,7 +82,7 @@ void MySqlConnInterface::InsertIntoDb(AprsWXData* cInput) {
 		cInput->pressure << ", " << \
 		cInput->humidity << ");" << endl;
 
-	if (Debug == true)
+	if (this->Debug == true)
 		cout << temp.str();
 
 	try {

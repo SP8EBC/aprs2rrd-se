@@ -27,7 +27,7 @@ int main() {
 
 	strcpy(testpacket, testo);
 
-	test.ParseData(&packet);
+//	test.ParseData(&packet);
 }
 
 

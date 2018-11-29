@@ -65,6 +65,8 @@ public:
 	bool execBeforeInsert;
 	string execBeforeInsertPath;
 	
+	bool Debug = false;
+
 };
 
 #endif // MYSQLCONNINTERFACE_H

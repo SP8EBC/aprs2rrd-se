@@ -6,6 +6,7 @@
  */
 
 #include "SlewRateLimiter.h"
+#include <cmath>
 
 SlewRateLimiter::SlewRateLimiter() {
 	// TODO Auto-generated constructor stub
@@ -44,12 +45,23 @@ void SlewRateLimiter::limitFromSingleFrame(const AprsWXData& previous,
 	// simmilar thing for gusts
 	if (abs(windGstDiff) > maxSpeedSleew) {
 		// if the wind speed changed above the maximum speed limit apply a correction
-		if (windSpdDiff < 0)
+		if (windGstDiff < 0)
 			// if difference is negative it means that previous value of wind speed is greater than current
 			// so a trend is negative (value is falling)
-			current.wind_speed -= maxSpeedSleew;
+			current.wind_gusts -= maxSpeedSleew;
 		else
-			current.wind_speed += maxSpeedSleew;
+			current.wind_gusts += maxSpeedSleew;
+	}
+
+	// simmilar thing for gusts
+	if (abs(temperatureDiff) > maxTempSlew) {
+		// if the wind speed changed above the maximum speed limit apply a correction
+		if (temperatureDiff < 0)
+			// if difference is negative it means that previous value of wind speed is greater than current
+			// so a trend is negative (value is falling)
+			current.temperature -= maxSpeedSleew;
+		else
+			current.temperature += maxSpeedSleew;
 	}
 
 }
