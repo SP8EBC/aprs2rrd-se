@@ -14,6 +14,7 @@ SlewRateLimiter::SlewRateLimiter() {
 	maxPressureSlew = MAX_PRESSURE_SLEW;
 	maxSpeedSleew = MAX_SPEED_SLEW;
 	maxDirectionSleew = MAX_DIRECTION_SLEW;
+	maxGustsSleew = MAX_GUSTS_SLEW;
 
 }
 
@@ -31,37 +32,37 @@ void SlewRateLimiter::limitFromSingleFrame(const AprsWXData& previous,
 	float temperatureDiff = current.temperature - previous.temperature;
 	float pressureDiff = current.pressure - previous.pressure;
 
-	if (abs(windSpdDiff) > maxSpeedSleew)
+	if (current.useWind && abs(windSpdDiff) > maxSpeedSleew)
 	{
 		// if the wind speed changed above the maximum speed limit apply a correction
 		if (windSpdDiff < 0)
 			// if difference is negative it means that previous value of wind speed is greater than current
 			// so a trend is negative (value is falling)
-			current.wind_speed -= maxSpeedSleew;
+			current.wind_speed = previous.wind_speed - maxSpeedSleew;
 		else
-			current.wind_speed += maxSpeedSleew;
+			current.wind_speed = previous.wind_speed + maxSpeedSleew;
 	}
 
 	// simmilar thing for gusts
-	if (abs(windGstDiff) > maxSpeedSleew) {
+	if (current.useWind && abs(windGstDiff) > maxGustsSleew) {
 		// if the wind speed changed above the maximum speed limit apply a correction
 		if (windGstDiff < 0)
 			// if difference is negative it means that previous value of wind speed is greater than current
 			// so a trend is negative (value is falling)
-			current.wind_gusts -= maxSpeedSleew;
+			current.wind_gusts = previous.wind_gusts - maxGustsSleew;
 		else
-			current.wind_gusts += maxSpeedSleew;
+			current.wind_gusts = previous.wind_gusts + maxGustsSleew;
 	}
 
 	// simmilar thing for gusts
-	if (abs(temperatureDiff) > maxTempSlew) {
+	if (current.useTemperature && abs(temperatureDiff) > maxTempSlew) {
 		// if the wind speed changed above the maximum speed limit apply a correction
 		if (temperatureDiff < 0)
 			// if difference is negative it means that previous value of wind speed is greater than current
 			// so a trend is negative (value is falling)
-			current.temperature -= maxSpeedSleew;
+			current.temperature = previous.temperature - maxTempSlew;
 		else
-			current.temperature += maxSpeedSleew;
+			current.temperature = previous.temperature + maxTempSlew;
 	}
 
 }

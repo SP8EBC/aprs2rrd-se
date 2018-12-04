@@ -14,7 +14,8 @@
 
 #define MAX_TEMP_SLEW 3.0f
 #define MAX_PRESSURE_SLEW 5.0f
-#define MAX_SPEED_SLEW 10.0f
+#define MAX_SPEED_SLEW 5.0f
+#define MAX_GUSTS_SLEW 12.0f
 #define MAX_DIRECTION_SLEW 0
 
 /**
@@ -27,6 +28,7 @@ private:
 	float maxTempSlew;
 	int16_t maxPressureSlew;
 	float maxSpeedSleew;
+	float maxGustsSleew;
 	int32_t maxDirectionSleew;
 
 
