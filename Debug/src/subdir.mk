@@ -12,9 +12,11 @@ CPP_SRCS += \
 ../src/ConnectionTimeoutEx.cpp \
 ../src/DataPresence.cpp \
 ../src/MySqlConnInterface.cpp \
+../src/ProgramConfig.cpp \
+../src/ProgramConfig_test.cpp \
 ../src/SlewRateLimiter.cpp \
-../src/SlewRateLimiter_test.cpp \
-../src/Telemetry.cpp 
+../src/Telemetry.cpp \
+../src/main.cpp 
 
 OBJS += \
 ./src/AprsAsioThread.o \
@@ -25,9 +27,11 @@ OBJS += \
 ./src/ConnectionTimeoutEx.o \
 ./src/DataPresence.o \
 ./src/MySqlConnInterface.o \
+./src/ProgramConfig.o \
+./src/ProgramConfig_test.o \
 ./src/SlewRateLimiter.o \
-./src/SlewRateLimiter_test.o \
-./src/Telemetry.o 
+./src/Telemetry.o \
+./src/main.o 
 
 CPP_DEPS += \
 ./src/AprsAsioThread.d \
@@ -38,9 +42,11 @@ CPP_DEPS += \
 ./src/ConnectionTimeoutEx.d \
 ./src/DataPresence.d \
 ./src/MySqlConnInterface.d \
+./src/ProgramConfig.d \
+./src/ProgramConfig_test.d \
 ./src/SlewRateLimiter.d \
-./src/SlewRateLimiter_test.d \
-./src/Telemetry.d 
+./src/Telemetry.d \
+./src/main.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

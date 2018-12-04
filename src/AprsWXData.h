@@ -41,8 +41,6 @@ class AprsWXData
 		void PrintData(void);
 		void ZeroCorrection(queue <AprsWXData> & qMeteo);
 		float QnhQfeCorrection(float qnh, float alti);
-		short DirectionCorrection(short direction, short correction);
-		void DirectionCorrection(short correction);
 
 		void copy(AprsWXData & source, bool withoutTemperature, bool onlyTemperature);
 		void copy(float temperature, bool onlyTemperature);
@@ -51,6 +49,8 @@ class AprsWXData
 		static int ParseData(AprsPacket input, AprsWXData* output);
         static int CopyConvert(char sign, char* input, int* output, int* counter);
 		static int CopyConvert(unsigned num, char* input, int* output, int* counter);
+		static short DirectionCorrection(AprsWXData& packet, short direction, short correction);
+		static void DirectionCorrection(AprsWXData& packet, short correction);
 
 		bool DebugOutput;
 

@@ -44,13 +44,13 @@ int main(int argc, char **argv)
 	DataPresence dataPresence;
 	Telemetry telemetry;
 	AprsAsioThread * asioThread;
-
+	SlewRateLimiter limiter;
 
 	RRDFileDefinition sVectorRRDTemp;
 	PlotFileDefinition cVectorPNGTemp;
 
 	AprsWXData wxTemp, wxTelemetry;
-	AprsWXData wxTarget; // target wx data to be inserted into RRD DB & inserted into website
+	AprsWXData wxTarget; // target wx data to be inserted into RRD DB & printed onto website
 	AprsWXData wxLastTarget;
 	AprsPacket* cPKTtemp;
 
@@ -385,14 +385,18 @@ int main(int argc, char **argv)
 				// exit immediately witoud performing any changes
 
 				// applying wind direction correction if it was enabled by user
-				if ((short)correction != 0)
-					wxTemp.DirectionCorrection((short)correction);
+				AprsWXData::DirectionCorrection(wxTarget, (short)correction);
+
+				// limiting slew rates for measurements
+				limiter.limitFromSingleFrame(wxLastTarget, wxTarget);
 
 				// inserting the data inside a RRD file
 				dataPresence.FetchDataInRRD(&wxTarget);
 
+				// replotting the graphs set
+				dataPresence.PlotGraphsFromRRD();
 
-				// archivizing values for slew rate corrections
+				// storing values for slew rate corrections
 				wxLastTarget = wxTarget;
 
 

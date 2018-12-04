@@ -32,6 +32,17 @@ void SlewRateLimiter::limitFromSingleFrame(const AprsWXData& previous,
 	float temperatureDiff = current.temperature - previous.temperature;
 	float pressureDiff = current.pressure - previous.pressure;
 
+	if (previous.wind_direction == 0 &&
+			previous.wind_gusts == 0.0f &&
+			previous.wind_speed == 0.0f &&
+			previous.pressure == 0 &&
+			previous.temperature == 0.0f)
+	{
+		// if previous values of measurements are only zeros assume that this is
+		// first call after program startup
+		return;
+	}
+
 	if (current.useWind && abs(windSpdDiff) > maxSpeedSleew)
 	{
 		// if the wind speed changed above the maximum speed limit apply a correction

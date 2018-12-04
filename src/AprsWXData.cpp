@@ -298,8 +298,14 @@ int AprsWXData::CopyConvert(unsigned num, char* input, int* output, int* counter
 	return 0;
 }
 
-short AprsWXData::DirectionCorrection(short direction, short correction) {
+short AprsWXData::DirectionCorrection(AprsWXData& packet, short direction, short correction) {
     short out;
+
+	if (!packet.valid)
+		return -255;	// in case of error return invalid wind direction
+
+	if (correction == 0)
+		return -255;
 
     if (direction + correction > 360)
     {
@@ -315,11 +321,14 @@ short AprsWXData::DirectionCorrection(short direction, short correction) {
     return out;
 }
 
-void AprsWXData::DirectionCorrection(short correction) {
-	if (!this->valid)
+void AprsWXData::DirectionCorrection(AprsWXData& packet, short correction) {
+	if (!packet.valid)
 		return;
 
-    short direction = this->wind_direction;
+	if (correction == 0)
+		return;
+
+    short direction = packet.wind_direction;
     short out;
 
     if (direction + correction > 360)
@@ -333,5 +342,5 @@ void AprsWXData::DirectionCorrection(short correction) {
     else
         out = direction + correction;
 
-    this->wind_direction = out;
+    packet.wind_direction = out;
 }
