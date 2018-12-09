@@ -1,4 +1,5 @@
-#include "DataPresence.h"
+#include "DataPresentation.h"
+
 #include "SOFTWARE_VERSION.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,7 +16,7 @@ PlotFileDefinition::PlotFileDefinition() {
 	this->Exponent = -1;
 }
 
-DataPresence::DataPresence()
+DataPresentation::DataPresentation()
 {
 	this->Plot0Path.clear();
 	this->Plot1Path.clear();
@@ -23,11 +24,11 @@ DataPresence::DataPresence()
 	this->Plot3Path.clear();
 }
 
-DataPresence::~DataPresence()
+DataPresentation::~DataPresentation()
 {
 }
 
-void DataPresence::FetchDataInRRD(AprsWXData* cInput) {
+void DataPresentation::FetchDataInRRD(AprsWXData* cInput) {
 	char command[512];
 	int currtimeint;
 	time_t currtime;
@@ -85,7 +86,7 @@ void DataPresence::FetchDataInRRD(AprsWXData* cInput) {
 	}
 }
 
-void DataPresence::PlotGraphsFromRRD() {
+void DataPresentation::PlotGraphsFromRRD() {
 	char command[1024];
 	int currtimeint;
 	unsigned i;
@@ -160,7 +161,7 @@ void DataPresence::PlotGraphsFromRRD() {
 	}
 }
 
-void DataPresence::GenerateWebiste(AprsWXData* WX) {
+void DataPresentation::GenerateWebiste(AprsWXData* WX) {
 	FILE* plik;
 	time_t currtime;
     struct tm* local;
@@ -239,7 +240,7 @@ void DataPresence::GenerateWebiste(AprsWXData* WX) {
 	}
 }
 
-PlotType DataPresence::SwitchPlotType(string input) {
+PlotType DataPresentation::SwitchPlotType(string input) {
 	PlotType out;
 
 	if (input == "WIND_SPD_GST")
@@ -258,7 +259,7 @@ PlotType DataPresence::SwitchPlotType(string input) {
 
 }
 
-const char* DataPresence::RevSwitchPlotType(PlotType in) {
+const std::string DataPresentation::RevSwitchPlotType(PlotType in) {
 
 	if (in == WIND_SPD_GST)
 		return "WIND_SPD_GST";
@@ -269,7 +270,7 @@ const char* DataPresence::RevSwitchPlotType(PlotType in) {
 	return "unknown";
 }
 
-PlotGraphType DataPresence::SwitchPlotGraphType(string input) {
+PlotGraphType DataPresentation::SwitchPlotGraphType(string input) {
 	PlotGraphType out;
 
 	if (input == "AREA")
@@ -279,7 +280,7 @@ PlotGraphType DataPresence::SwitchPlotGraphType(string input) {
 	return out;
 }
 
-RRAType DataPresence::SwitchRRAType(string input) {
+RRAType DataPresentation::SwitchRRAType(string input) {
 	RRAType out;
 
 	if (input == "AVERAGE")
@@ -289,7 +290,7 @@ RRAType DataPresence::SwitchRRAType(string input) {
 	return out;
 }
 
-const char* DataPresence::RevSwitchRRAType(RRAType in) {
+const std::string DataPresentation::RevSwitchRRAType(RRAType in) {
 
 	if (in == AVERAGE)
 		return "AVERAGE";
@@ -298,7 +299,7 @@ const char* DataPresence::RevSwitchRRAType(RRAType in) {
 	return "unknown";
 }
 
-const char* DataPresence::RevSwitchPlotGraphType(PlotGraphType in) {
+const std::string DataPresentation::RevSwitchPlotGraphType(PlotGraphType in) {
 
 	if (in == AREA)
 		return "AREA";

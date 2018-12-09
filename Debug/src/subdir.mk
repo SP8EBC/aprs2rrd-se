@@ -10,7 +10,7 @@ CPP_SRCS += \
 ../src/AprsThreadConfig.cpp \
 ../src/AprsWXData.cpp \
 ../src/ConnectionTimeoutEx.cpp \
-../src/DataPresence.cpp \
+../src/DataPresentation.cpp \
 ../src/MySqlConnInterface.cpp \
 ../src/ProgramConfig.cpp \
 ../src/ProgramConfig_test.cpp \
@@ -25,7 +25,7 @@ OBJS += \
 ./src/AprsThreadConfig.o \
 ./src/AprsWXData.o \
 ./src/ConnectionTimeoutEx.o \
-./src/DataPresence.o \
+./src/DataPresentation.o \
 ./src/MySqlConnInterface.o \
 ./src/ProgramConfig.o \
 ./src/ProgramConfig_test.o \
@@ -40,7 +40,7 @@ CPP_DEPS += \
 ./src/AprsThreadConfig.d \
 ./src/AprsWXData.d \
 ./src/ConnectionTimeoutEx.d \
-./src/DataPresence.d \
+./src/DataPresentation.d \
 ./src/MySqlConnInterface.d \
 ./src/ProgramConfig.d \
 ./src/ProgramConfig_test.d \

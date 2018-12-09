@@ -76,11 +76,11 @@ public:
 };
 
 
-class DataPresence
+class DataPresentation
 {
 public:
-	DataPresence();
-	~DataPresence();
+	DataPresentation();
+	~DataPresentation();
 
 	void FetchDataInRRD(AprsWXData* cInput);
 	void PlotGraphsFromRRD(void);
@@ -89,15 +89,16 @@ public:
 	PlotGraphType SwitchPlotGraphType(string input);
 	RRAType SwitchRRAType(string input);
 
-	const char* RevSwitchPlotType(PlotType in);
-	const char* RevSwitchPlotGraphType(PlotGraphType in);
-	const char* RevSwitchRRAType(RRAType in);
+	const std::string RevSwitchPlotType(PlotType in);
+	const std::string RevSwitchPlotGraphType(PlotGraphType in);
+	const std::string RevSwitchRRAType(RRAType in);
 
 	vector <RRDFileDefinition> vRRDFiles;
 	vector <PlotFileDefinition> vPNGFiles;
 
-	string WebsitePath;
+	int8_t directionCorrection;
 
+	string WebsitePath;
 	string Plot0Path, Plot1Path, Plot2Path, Plot3Path;
 
 	bool PrintTemperature, PrintPressure, PrintHumidity;

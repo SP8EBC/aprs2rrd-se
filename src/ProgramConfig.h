@@ -13,11 +13,19 @@
 
 #include "MySqlConnInterface.h"
 #include "AprsThreadConfig.h"
-#include "DataPresence.h"
+#include "DataPresentation.h"
+#include "Telemetry.h"
 
 class ProgramConfig {
 	std::string configFilename;
 	libconfig::Config config;
+
+	RRDFileDefinition sVectorRRDTemp;
+	PlotFileDefinition cVectorPNGTemp;
+
+	bool Debug = false;
+	bool DebugToFile = false;
+	std::string DebugLogFn = "";
 
 public:
 	ProgramConfig(std::string fn);
@@ -26,7 +34,22 @@ public:
 	void parseFile();
 	void getDbConfig(MySqlConnInterface& db);
 	void getAprsThreadConfig(AprsThreadConfig& aprs);
-	void getDataPresenceConfig(DataPresence& data);
+	void getDataPresentationConfig(DataPresentation& data, int& rrdCount, int& plotCount);
+	void getTelemetryConfig(Telemetry& data, bool& useAsTemperature);
+
+	void configureLogOutput();
+
+	bool getDebug();
+	bool getDebugToFile();
+	std::string getDebugLogFn();
+
+	static void printConfigInPl(	MySqlConnInterface& mysqlDb,
+									AprsThreadConfig& aprsConfig,
+									DataPresentation& dataPresence,
+									int& rrdCount,
+									int& plotCount,
+									Telemetry& telemetry,
+									bool& useAsTemperature);
 
 
 
