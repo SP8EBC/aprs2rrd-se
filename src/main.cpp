@@ -109,6 +109,8 @@ int main(int argc, char **argv)
 
 	programConfig.configureLogOutput();
 
+	ProgramConfig::printConfigInPl(mysqlDb, aprsConfig, dataPresence, RRDCount, PlotsCount, telemetry, useFifthTelemAsTemperature);
+
 	if (mysqlDb.enable == true) {
 		try {
 			mysqlDb.OpenDBConnection();

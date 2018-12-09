@@ -4,6 +4,9 @@
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
+#include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
+
 
 #include "main.h"
 
@@ -35,6 +38,7 @@ int AprsWXData::ParseData(AprsPacket input, AprsWXData* output) {
     int i = 0;
     int conv_temp;
     char *src;
+    std::vector<std::string> extractedWx;	// this vector will be used as an output from boost::split method
 
     output->valid = false;
 
@@ -43,6 +47,25 @@ int AprsWXData::ParseData(AprsPacket input, AprsWXData* output) {
         return -1;     // to nie sa dane pogodowe
     }
     src = input.Data;
+
+    // converting char array to copy of string class for convinence
+    std::string source(input.Data);
+
+    // the 'split' method doesn't copy a character which was used as split point!
+    boost::split(extractedWx, source, boost::is_any_of("_"));
+
+    // if the extracted vector has less than 2 elements it means that this is not
+    // valid frame
+    if (extractedWx.size() < 2)
+    	return -1;
+
+    // Underscore '_' divides an APRS wx frame to part with position data (first one) and
+    // the second one which holds measurement data
+    std::string wxData = extractedWx.at(1);
+
+
+
+/*
     do {
         i++;
 		if (*(src + i) == 0x00)
@@ -50,6 +73,7 @@ int AprsWXData::ParseData(AprsPacket input, AprsWXData* output) {
 		if (i > 30)
 			return -1;
     } while (*(src + i) != '_'); // pominiecie pozycji i przejsce od razu do danych meteo
+*/
 
     output->wind_speed = 0.0;
     output->wind_gusts = 0.0;
@@ -62,47 +86,47 @@ int AprsWXData::ParseData(AprsPacket input, AprsWXData* output) {
     output->rain_day = 0;
     output->valid = false;
 
-    i++;    // przeskoczenie na pierwszy znak danych meteo
-    if (AprsWXData::CopyConvert('/',src,&conv_temp,&i) == 0)   // kierunek    this->wind_direction = conv_temp;
+    //i++;    // przeskoczenie na pierwszy znak danych meteo
+    if (AprsWXData::CopyConvert('/',wxData,conv_temp,i) == 0)   // kierunek    this->wind_direction = conv_temp;
     	output->wind_direction = conv_temp;
 	else
 		return -1;
     i++;
-    if (AprsWXData::CopyConvert('g',src,&conv_temp,&i) == 0)   // siła
+    if (AprsWXData::CopyConvert('g',wxData,conv_temp,i) == 0)   // siła
     	output->wind_speed = (float)conv_temp * 0.44;
 	else
 		return -1;
     i++;
-    if (AprsWXData::CopyConvert('t',src,&conv_temp,&i) == 0)       // porywy
+    if (AprsWXData::CopyConvert('t',wxData,conv_temp,i) == 0)       // porywy
     	output->wind_gusts = (float)conv_temp * 0.44;
 	else
 		return -1;
     i++;
-    if (AprsWXData::CopyConvert('r',src,&conv_temp,&i) == 0)   // temperatura
+    if (AprsWXData::CopyConvert('r',wxData,conv_temp,i) == 0)   // temperatura
     	output->temperature = ((float)conv_temp - 32) / 9 * 5;
 	else
 		return -1;
     i++;
-    if (AprsWXData::CopyConvert('p',src,&conv_temp,&i) == 0)   // deszcz przez ostania godzine
+    if (AprsWXData::CopyConvert('p',wxData,conv_temp,i) == 0)   // deszcz przez ostania godzine
     	output->rain60 = conv_temp;
 	else
 		return -1;
 	i++;
-    if (AprsWXData::CopyConvert('P',src,&conv_temp,&i) == 0)   // deszcz przez ostania godzine
+    if (AprsWXData::CopyConvert('P',wxData,conv_temp,i) == 0)   // deszcz przez ostania godzine
     	output->rain24 = conv_temp;
 	else
 		return -1;
 	i++;
-    if (AprsWXData::CopyConvert('b',src,&conv_temp,&i) == 0)   // deszcz przez ostania godzine
+    if (AprsWXData::CopyConvert('b',wxData,conv_temp,i) == 0)   // deszcz przez ostania godzine
     	output->rain_day = conv_temp;
 	else
 		return -1;
 	i++;
-    if (AprsWXData::CopyConvert((unsigned)5,src,&conv_temp,&i) == 0)   // ciśnienie
+    if (AprsWXData::CopyConvert((unsigned)5,wxData,conv_temp,i) == 0)   // ciśnienie
     	output->pressure = conv_temp / 10;
 	else;
 	i++;
-    if (AprsWXData::CopyConvert((unsigned)2,src,&conv_temp,&i) == 0)
+    if (AprsWXData::CopyConvert((unsigned)2,wxData,conv_temp,i) == 0)
     	output->humidity = conv_temp;
 	else;
     output->valid = true;
@@ -156,21 +180,68 @@ float AprsWXData::QnhQfeCorrection(float qnh, float alti) {
 	return (qnh / pow (2.7182818f, (-0.000127605011f * alti) ));
 }
 
-int AprsWXData::CopyConvert(char sign, char* input, int* output, int* counter) {
-    int j = 0;
+/**
+ * This method shall read an input string, starting from position given by value of 'counter'
+ * parameter and ends at first presence of 'sign' character. Read numerical value shall be
+ * lexical casted to int and stored at 'output' value
+ */
+int AprsWXData::CopyConvert(char sign, std::string& input, int& output, int& counter) {
+    size_t position;
+
+    // finding a position of character 'sign' in input string starting from given position 'counter'
+    position = input.find_first_of(sign, counter);
+
+    // checking if character 'sign' is present in an input string or not
+    if (position == std::string::npos)
+    	return -1;
+
+    // creating aux substring with value for converrsion
+    std::string valueToConv = input.substr(counter, position - counter);
+
+    try {
+    	// converting value
+    	output = boost::lexical_cast<int>(valueToConv);
+    }
+    catch (const boost::bad_lexical_cast& ex) {
+    	std::cout << ex.what() << std::endl;
+    	output = 0;
+    }
+
+    // storing a position where 'sign' was found
+    counter = (int)position;
+
+	return 0;
+}
+
+/**
+ * This method shall read an input string, starting from position given by value of 'counter'
+ * parameter and ends at position 'counter' + 'num'. Read numerical value shall be
+ * lexical casted to int and stored at 'output' value
+ */
+int AprsWXData::CopyConvert(unsigned num, std::string& input, int& output, int& counter) {
+    unsigned j = 0;
     char tempbuff[9];
     memset(tempbuff, 0x00, sizeof(tempbuff));
-    do {
-		if (*(input + *counter) == 0x00)
-			return -1;
-        // siła wiatru
-        tempbuff[j] = *(input + *counter);
-        *counter += 1;
-        j++;
-		if (j > 8)
-			return -1;
-    } while(*(input + *counter) != sign);
-    *output = atoi(tempbuff);
+
+    // if caler want to read more characters than input string stores
+    if (input.length() < num + counter)
+    	return -1;
+
+    // creating aux substring with value for converrsion
+    std::string valueToConv = input.substr(counter, num);
+
+    try {
+    	// converting value
+    	output = boost::lexical_cast<int>(valueToConv);
+    }
+    catch (const boost::bad_lexical_cast& ex) {
+    	std::cout << ex.what() << std::endl;
+    	output = 0;
+    }
+
+    // storing a position where 'sign' was found
+    counter = (int)num + counter;
+
 	return 0;
 }
 
@@ -280,23 +351,7 @@ void AprsWXData::copy(float temperature, bool onlyTemperature) {
 
 }
 
-int AprsWXData::CopyConvert(unsigned num, char* input, int* output, int* counter) {
-    unsigned j = 0;
-    char tempbuff[9];
-    memset(tempbuff, 0x00, sizeof(tempbuff));
-    do {
-		if (*(input + *counter) == 0x00)
-			return -1;
-        // siła wiatru
-        tempbuff[j] = *(input + *counter);
-        *counter += 1;
-        j++;
-		if (j > 8)
-			return -1;
-    } while(j < num);
-    *output = atoi(tempbuff);
-	return 0;
-}
+
 
 short AprsWXData::DirectionCorrection(AprsWXData& packet, short direction, short correction) {
     short out;

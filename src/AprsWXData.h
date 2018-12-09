@@ -5,6 +5,7 @@
 #include "NotValidWXDataEx.h"
 #include <exception>
 #include <queue>
+#include <string>
 
 using namespace std;
 
@@ -47,8 +48,8 @@ class AprsWXData
 
 
 		static int ParseData(AprsPacket input, AprsWXData* output);
-        static int CopyConvert(char sign, char* input, int* output, int* counter);
-		static int CopyConvert(unsigned num, char* input, int* output, int* counter);
+        static int CopyConvert(char sign, std::string& input, int& output, int& counter);
+		static int CopyConvert(unsigned num, std::string& input, int& output, int& counter);
 		static short DirectionCorrection(AprsWXData& packet, short direction, short correction);
 		static void DirectionCorrection(AprsWXData& packet, short correction);
 
