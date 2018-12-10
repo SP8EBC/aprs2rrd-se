@@ -10,6 +10,8 @@
 
 #include "main.h"
 
+bool AprsWXData::DebugOutput = false;
+
 AprsWXData::AprsWXData() {
     wind_speed = 0.0;
     wind_gusts = 0.0;
@@ -27,7 +29,7 @@ AprsWXData::AprsWXData() {
     useTemperature = false;
     useWind = false;
 
-    DebugOutput = false;
+    //DebugOutput = false;
 }
 
 AprsWXData::~AprsWXData() {
@@ -134,7 +136,7 @@ int AprsWXData::ParseData(AprsPacket input, AprsWXData* output) {
 }
 
 void AprsWXData::PrintData(void) {
-    if (this->valid == true) {
+    if (this->valid == true && AprsWXData::DebugOutput == true) {
         printf("--------- DANE POGODOWE ------- \r\n");
         printf("-- Siła wiatru: %f \r\n", this->wind_speed);
         printf("-- Porywy: %f \r\n", this->wind_gusts);

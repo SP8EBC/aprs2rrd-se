@@ -148,6 +148,10 @@ void AprsAsioThread::newLineCallback(const boost::system::error_code& ec) {
 		// parsing the data to AprsPacket
 		int status = AprsPacket::ParseAPRSISData(tempVctForParsing.data(), tempVctForParsing.size(), &this->outputPacket);
 
+		if (this->DebugOutput)
+			this->outputPacket.PrintPacketData();
+
+		// this call is required to remove parsed data from buffer
 		this->in_buf.consume(this->in_buf.size());
 
 		if (status == OK) {

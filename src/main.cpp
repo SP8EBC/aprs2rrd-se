@@ -98,6 +98,10 @@ int main(int argc, char **argv)
 		programConfig.getAprsThreadConfig(aprsConfig);
 		programConfig.getDataPresentationConfig(dataPresence, RRDCount, PlotsCount);
 
+		dataPresence.DebugOutput = Debug;
+		mysqlDb.Debug = Debug;
+		AprsWXData::DebugOutput = Debug;
+
 	}
 	catch (const SettingNotFoundException &ex) {
 	//	return -3;
@@ -136,6 +140,9 @@ int main(int argc, char **argv)
 	do {
 		// creating a new copy of ASIO thread
 		asioThread = new AprsAsioThread(aprsConfig, 99);
+
+		// setting a logging level
+		asioThread->DebugOutput = Debug;
 
 		// initializing connection
 		asioThread->connect();
@@ -178,6 +185,8 @@ int main(int argc, char **argv)
 
 				// each method below checks if passed WX packet is valid and if no they will
 				// exit immediately witoud performing any changes
+
+				wxTarget.PrintData();
 
 				// applying wind direction correction if it was enabled by user
 				AprsWXData::DirectionCorrection(wxTarget, (int16_t)dataPresence.directionCorrection);
