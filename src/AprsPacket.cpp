@@ -4,6 +4,11 @@
 #include <cstdlib>
 #include <exception>
 #include <iostream>
+#include <vector>
+
+#include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/regex.hpp>
 
 #include "ReturnValues.h"
 
@@ -21,6 +26,57 @@ AprsPacket::AprsPacket() {
     }
     memset(this->ToISOriginator.Call, 0x00, sizeof(this->ToISOriginator.Call));
     this->PathLng = 0;
+}
+
+bool AprsPacket::SeparateCallSsid(const std::string& input, std::string& call,
+		uint8_t& ssid) {
+
+	bool out = false;
+	bool hasSsid = (input.find("-") != std::string::npos) ? true : false;
+
+	if (hasSsid) {
+		std::vector<std::string> callAndSsid;
+
+		boost::split(callAndSsid, input, boost::is_any_of("-"));
+
+		// check if Ssid has a valid leght, not greater than 6 characters
+		if (callAndSsid.at(0).size() > 6)
+			return false;
+
+		call = callAndSsid.at(0);
+
+		ssid = boost::lexical_cast<int>(callAndSsid.at(1));
+	}
+	else {
+		call = input;
+		ssid = 0;
+	}
+
+	// validating SSID value
+	if (ssid > 15)
+		out = false;
+
+	// validating lenght of string
+	if (input.size() > 6)
+		out = false;
+
+	out = true;
+	return out;
+}
+
+bool AprsPacket::SeparateCallSsid(const std::string& input, char (&call)[7],
+		uint8_t& ssid) {
+
+	std::string intermediate;
+
+	AprsPacket::SeparateCallSsid(input, intermediate, ssid);
+
+	if (intermediate.size() > 6)
+		return false;
+
+	std::copy(intermediate.begin(), intermediate.end(), call);
+
+	return true;
 }
 
 AprsPacket::~AprsPacket()
@@ -42,6 +98,33 @@ void AprsPacket::PrintPacketData() {
 
 
 int AprsPacket::ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cTarget) {
+
+	// simple regex to match most of callsign systems
+	boost::regex callsignPattern("^[A-Z1-9]{3}[A-Z]{1,3}", boost::regex::icase);
+
+	// check if input buffer is valid
+    if (*tInputBuffer == '#' || *tInputBuffer == 0x00 || buff_len > 1000 || buff_len < 5)
+		return NOT_VALID_APRS_PACKET;
+
+    // converting to string
+	std::string input(tInputBuffer, buff_len);
+
+	// vector which will hold source call separated from the rest of frame
+	std::vector<std::string> sepratedBySource;
+
+	// spltting input frame basing on '>' character
+	boost::split(sepratedBySource, input, boost::is_any_of(">"));
+
+	// there must be at least one '>' character which will separate soruce from
+	// the rest of frame
+	if (sepratedBySource.size() < 2)
+		return NOT_VALID_APRS_PACKET;
+
+	if (!boost::regex_match(sepratedBySource.at(0), callsignPattern))
+		return NOT_VALID_APRS_PACKET;
+
+	AprsPacket::SeparateCallSsid(sepratedBySource.at(0), cTarget->SrcAddr, cTarget->SrcSSID);
+
    int i,ii;  // liczniki do petli
     int pos = 0;    // pozycja w przetwarzanej ramce
     int ctemp;

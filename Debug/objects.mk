@@ -4,5 +4,5 @@
 
 USER_OBJS :=
 
-LIBS := -lconfig -lboost_thread -lpthread -lboost_system -lboost_unit_test_framework -lconfig++ -lmysqlpp -lmysqlclient
+LIBS := -lconfig -lboost_regex -lboost_thread -lpthread -lboost_system -lboost_unit_test_framework -lconfig++ -lmysqlpp -lmysqlclient
 

@@ -2,6 +2,8 @@
 #define APRSPACKET_H
 
 #include <exception>
+#include <cstdint>
+#include <string>
 
 
 class NotValidAprsPacket: public std::exception {
@@ -37,6 +39,8 @@ class AprsPacket
         void PrintPacketData();     // Function witch print data from processed packet
         
 		static int ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cTarget);
+		static bool SeparateCallSsid(const std::string& input, std::string& call, uint8_t& ssid);
+		static bool SeparateCallSsid(const std::string& input, char (&call)[7], uint8_t& ssid);
 		
 		void clear();
 
