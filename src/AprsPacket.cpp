@@ -112,6 +112,9 @@ int AprsPacket::ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cT
 	// vector which will hold source call separated from the rest of frame
 	std::vector<std::string> sepratedBySource;
 
+	// vector to keep separated path elements
+	std::vector<std::string> pathElements;
+
 	// spltting input frame basing on '>' character
 	boost::split(sepratedBySource, input, boost::is_any_of(">"));
 
@@ -120,10 +123,26 @@ int AprsPacket::ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cT
 	if (sepratedBySource.size() < 2)
 		return NOT_VALID_APRS_PACKET;
 
+	// separating a callsign from the SSID
+	AprsPacket::SeparateCallSsid(sepratedBySource.at(0), cTarget->SrcAddr, cTarget->SrcSSID);
+
+	// checking if the callsign match with regex
 	if (!boost::regex_match(sepratedBySource.at(0), callsignPattern))
 		return NOT_VALID_APRS_PACKET;
 
-	AprsPacket::SeparateCallSsid(sepratedBySource.at(0), cTarget->SrcAddr, cTarget->SrcSSID);
+	// the 'sepratedBySource' vector may consist more than 2 elements if received frame consist
+	// status message which is identified by '>' character before it. All in all the APRS2RRD
+	// is focused to work on wx frames, so we can just ignore everything after second element.
+	std::string path = sepratedBySource.at(1);
+
+	// splitting path elements
+	boost::split(pathElements, path, boost::is_any_of(","));
+
+	// checking if source identifier is valid
+	if (pathElements.at(0).size() > 6)
+		return NOT_VALID_APRS_PACKET;
+
+	AprsPacket::SeparateCallSsid(pathElements.at(0), cTarget->DestAddr, cTarget->DstSSID);
 
    int i,ii;  // liczniki do petli
     int pos = 0;    // pozycja w przetwarzanej ramce

@@ -30,6 +30,7 @@ class AprsPacket
         char DestAddr[7];   // Destination address, sliced from packer. In APRS it works as Device-ID
         char SrcAddr[7];    // Source address
         unsigned char SrcSSID;  // SSID of Source
+        uint8_t DstSSID;
         PathElement Path[5];        // Routing Path
         unsigned char PathLng;      // Number of elements in path
         char qOrigin[4];        // APRS-IS originator
