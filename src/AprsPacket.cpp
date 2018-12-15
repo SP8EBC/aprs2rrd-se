@@ -18,6 +18,8 @@ AprsPacket::AprsPacket() {
     this->SrcSSID = 0;
     this->DstSSID = 0;
     memset(this->Data,0x00,sizeof(this->Data));
+
+    this->ToISOriginator.Call = "UNINITIALIZED";
 }
 
 bool AprsPacket::SeparateCallSsid(const std::string& input, std::string& call,
@@ -100,8 +102,13 @@ int AprsPacket::ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cT
 	// simple regex to match most of callsign systems
 	boost::regex callsignPattern("^[A-Z1-9]{3}[A-Z]{1,3}", boost::regex::icase);
 
+	// q-construct regex
+	boost::regex qc("q[A-Z]{2}");
+
 	// frame payload
 	std::string payload = "";
+
+	bool parseOrginator = false;
 
 	// checkig if input buffer is valid
 	if (tInputBuffer == nullptr)
@@ -159,31 +166,52 @@ int AprsPacket::ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cT
 	// splitting
 	for (std::string e : pathElements) {
 
-		// the last element in the vector should consist frame payload
-		if (e == pathElements.back()) {	// 'back()' returns a value of the last element in vector
-			payload = e;
+		// when the originator is already parsed it means that all subseqent elements
+		// in the vector will comes from frame payload
+		if (cTarget->ToISOriginator.Call != "UNINITIALIZED") {
+
+			// checking if the payload is in initialized state
+			if (payload == "")
+				payload = e;
+			else {
+				// if not and there is any content stored in 'payload' object
+				payload += ("," + e);
+			}
+
 			continue;
 		}
 
+		// the last element in the vector should consist frame payload
+		//if (e == pathElements.back()) {	// 'back()' returns a value of the last element in vector
+		//	payload = e;
+		//	continue;
+		//}
+
 		// the one before last element in the path consist the callsign of a station which
 		// sent this packet from RF to APRS-IS
-		if (e == *(pathElements.end() - 2)) {	// 'end()' return an iterator to the after-the-end element
+		if (parseOrginator) {
 
 			// copying the callsign and the ssid to appropriate fields inside an output object
 			AprsPacket::SeparateCallSsid(e, cTarget->ToISOriginator.Call, cTarget->ToISOriginator.SSID);
+
+			parseOrginator = false;
 
 			continue;
 		}
 
 		// this will be a 'qXX' construct which takes some information about the way this packet entered the IS
 		// more details about q constructs here: http://www.aprs-is.net/q.aspx
-		if (e == *(pathElements.end() - 3)) {
+		if (boost::regex_match(e, qc)) {
 
 			// the q-construct never has any ssid
 			uint8_t dummy;
 
 			// copying the callsign and the ssid to appropriate fields inside an output object
 			AprsPacket::SeparateCallSsid(e, cTarget->qOrigin, dummy);
+
+			// setting this flag to true to tell a routine that next element in this loop
+			// will consist a callsign of the station which sent this packet to the IS
+			parseOrginator = true;
 
 			continue;
 		}
@@ -364,4 +392,7 @@ void AprsPacket::clear() {
     this->qOrigin = "";
 
     memset(this->Data,0x00,sizeof(this->Data));
+
+    this->ToISOriginator.Call = "UNINITIALIZED";
+
 }

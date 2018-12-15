@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(FirstPacketWithCompressedData)
 
 	AprsPacket::ParseAPRSISData((char*)input.c_str(), input.size(), &out);
 
-	BOOST_CHECK(strcmp(out.Data, "`0,Cmq;>/]\"5v}=") == 0);
+	BOOST_CHECK(strcmp(out.Data, "`0,Cmq;>/]\"5v}=") == 0);	// this will fail becaue this frame conssist '>' in compressed data
 	BOOST_CHECK(out.SrcAddr == "SQ9FQJ");
 	BOOST_CHECK(out.SrcSSID == 0);
 	BOOST_CHECK(out.DestAddr == "UP0S66");
@@ -68,3 +68,40 @@ BOOST_AUTO_TEST_CASE(FirstPacketWithCompressedData)
 
 }
 
+BOOST_AUTO_TEST_CASE(SecondPacketWithCompressedData)
+{
+	std::string input = "SQ9FQJ>UP0S16,WIDE1-1,WIDE2-2,qAS,SQ9ZAY-3:`0,Yl w>/]\"6%}=";
+
+	AprsPacket out;
+
+	AprsPacket::ParseAPRSISData((char*)input.c_str(), input.size(), &out);
+
+	BOOST_CHECK(strcmp(out.Data, "`0,Cmq;>/]\"5v}=") == 0);	// this will fail becaue this frame conssist '>' in compressed data
+	BOOST_CHECK(out.SrcAddr == "SQ9FQJ");
+	BOOST_CHECK(out.SrcSSID == 0);
+	BOOST_CHECK(out.DestAddr == "UP0S66");
+	BOOST_CHECK(out.DstSSID == 0);
+	BOOST_CHECK_EQUAL(out.Path.size(), 2);
+	BOOST_CHECK(out.ToISOriginator.Call == "SQ9ZAY");
+	BOOST_CHECK(out.ToISOriginator.SSID == 3);
+
+}
+
+BOOST_AUTO_TEST_CASE(wxPacketWoPath)
+{
+	std::string input = "SR8WXO>AKLPRZ,qAR,SR9NFB:!4944.20N/02150.45E_000/000g000t...r...p...P...b...";
+
+	AprsPacket out;
+
+	AprsPacket::ParseAPRSISData((char*)input.c_str(), input.size(), &out);
+
+	BOOST_CHECK(strcmp(out.Data, "!4944.20N/02150.45E_000/000g000t...r...p...P...b...") == 0);
+	BOOST_CHECK(out.SrcAddr == "SR8WXO");
+	BOOST_CHECK(out.SrcSSID == 0);
+	BOOST_CHECK(out.DestAddr == "AKLPRZ");
+	BOOST_CHECK(out.DstSSID == 0);
+	BOOST_CHECK_EQUAL(out.Path.size(), 0);
+	BOOST_CHECK(out.ToISOriginator.Call == "SR9NFB");
+	BOOST_CHECK(out.ToISOriginator.SSID == 0);
+
+}
