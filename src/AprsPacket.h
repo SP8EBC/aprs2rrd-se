@@ -4,6 +4,7 @@
 #include <exception>
 #include <cstdint>
 #include <string>
+#include <vector>
 
 
 class NotValidAprsPacket: public std::exception {
@@ -19,24 +20,23 @@ class PacketParsedOK: public std::exception {
 };
 
 struct PathElement {
-    char Call[10];
-    unsigned char SSID;
+    std::string Call;
+    uint8_t SSID;
 };
 
 class AprsPacket
 {
     private:
     public:
-        char DestAddr[7];   // Destination address, sliced from packer. In APRS it works as Device-ID
-        char SrcAddr[7];    // Source address
-        unsigned char SrcSSID;  // SSID of Source
+        std::string DestAddr;   // Destination address, sliced from packer. In APRS it works as Device-ID
+        std::string SrcAddr;    // Source address
+        uint8_t SrcSSID;  // SSID of Source
         uint8_t DstSSID;
-        PathElement Path[5];        // Routing Path
-        unsigned char PathLng;      // Number of elements in path
-        char qOrigin[4];        // APRS-IS originator
+        std::vector<PathElement> Path;        // Routing Path
+        std::string qOrigin;        // APRS-IS originator
         PathElement ToISOriginator;     // APRS-IS originator. It might be Igate callsign or APRS server name, if packet
                                         // was sent directly to Internet from some APRS client.
-        char Data[1024];         // Data from frame
+        char Data[1024];         // Frame payload
         void PrintPacketData();     // Function witch print data from processed packet
         
 		static int ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cTarget);

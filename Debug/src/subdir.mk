@@ -6,6 +6,7 @@
 CPP_SRCS += \
 ../src/AprsAsioThread.cpp \
 ../src/AprsPacket.cpp \
+../src/AprsPacket_test.cpp \
 ../src/AprsThread.cpp \
 ../src/AprsThreadConfig.cpp \
 ../src/AprsWXData.cpp \
@@ -15,12 +16,12 @@ CPP_SRCS += \
 ../src/ProgramConfig.cpp \
 ../src/ProgramConfig_test.cpp \
 ../src/SlewRateLimiter.cpp \
-../src/Telemetry.cpp \
-../src/main.cpp 
+../src/Telemetry.cpp 
 
 OBJS += \
 ./src/AprsAsioThread.o \
 ./src/AprsPacket.o \
+./src/AprsPacket_test.o \
 ./src/AprsThread.o \
 ./src/AprsThreadConfig.o \
 ./src/AprsWXData.o \
@@ -30,12 +31,12 @@ OBJS += \
 ./src/ProgramConfig.o \
 ./src/ProgramConfig_test.o \
 ./src/SlewRateLimiter.o \
-./src/Telemetry.o \
-./src/main.o 
+./src/Telemetry.o 
 
 CPP_DEPS += \
 ./src/AprsAsioThread.d \
 ./src/AprsPacket.d \
+./src/AprsPacket_test.d \
 ./src/AprsThread.d \
 ./src/AprsThreadConfig.d \
 ./src/AprsWXData.d \
@@ -45,8 +46,7 @@ CPP_DEPS += \
 ./src/ProgramConfig.d \
 ./src/ProgramConfig_test.d \
 ./src/SlewRateLimiter.d \
-./src/Telemetry.d \
-./src/main.d 
+./src/Telemetry.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
