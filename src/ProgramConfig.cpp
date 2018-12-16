@@ -223,16 +223,18 @@ void ProgramConfig::printConfigInPl(
 		cout << "--- scalingA: " << data.ch5a << endl;
 		cout << "--- scalingB: " << data.ch5b << endl;
 		cout << "--- scalingC: " << data.ch5c << endl;
-		cout << "--------KONFIGURACJA BAZY DANYCH-----" << endl;
-		cout << "--- Adres Serwera: " << mysqlDb.IP << endl;
-		cout << "--- Port: " << mysqlDb.port << endl;
-		cout << "--- Użytkownik: " << mysqlDb.Username << endl;
-		cout << "--- Nazwa bazy: " << mysqlDb.dbName << endl;
-		cout << "--- Nazwa tabeli: " << mysqlDb.tableName << endl;
-		cout << "--- Hasło nie jest wyświetlane" << endl;
-		if (mysqlDb.execBeforeInsert == true)
-			cout << "--- rc.preinsert zostanie wykonany" << endl;
-		cout << endl;
+		if (mysqlDb.enable) {
+			cout << "--------KONFIGURACJA BAZY DANYCH-----" << endl;
+			cout << "--- Adres Serwera: " << mysqlDb.IP << endl;
+			cout << "--- Port: " << mysqlDb.port << endl;
+			cout << "--- Użytkownik: " << mysqlDb.Username << endl;
+			cout << "--- Nazwa bazy: " << mysqlDb.dbName << endl;
+			cout << "--- Nazwa tabeli: " << mysqlDb.tableName << endl;
+			cout << "--- Hasło nie jest wyświetlane" << endl;
+			if (mysqlDb.execBeforeInsert == true)
+				cout << "--- rc.preinsert zostanie wykonany" << endl;
+			cout << endl;
+		}
 		cout << "--------KONFIGURACJA ŁĄCZNOŚCI Z SERWEREM APRS-----" << endl;
 		cout << "--- Adres Serwera: " << aprsConfig.ServerURL << endl;
 		cout << "--- Port Serwera: " << aprsConfig.ServerPort << endl;

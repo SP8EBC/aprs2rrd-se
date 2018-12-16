@@ -206,6 +206,10 @@ int main(int argc, char **argv){
 				// storing values for slew rate corrections
 				wxLastTarget = wxTarget;
 
+				if (mysqlDb.enable == true) {
+					mysqlDb.InsertIntoDb(&wxTarget);
+				}
+
 
 
 
