@@ -35,8 +35,7 @@ ofstream fDebug;
 bool doZeroCorrection = false;
 int correction = 0;
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv){
 
 	Config config;
 	ProgramConfig programConfig("config.conf");
@@ -199,6 +198,9 @@ int main(int argc, char **argv)
 
 				// replotting the graphs set
 				dataPresence.PlotGraphsFromRRD();
+
+				// generating the website
+				dataPresence.GenerateWebiste(&wxTarget);
 
 				// storing values for slew rate corrections
 				wxLastTarget = wxTarget;

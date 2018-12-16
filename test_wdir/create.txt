@@ -1,0 +1,3 @@
+rrdtool create temperatura.rrd --start N --step 230 DS:temperatura:GAUGE:300:U:U RRA:AVERAGE:0.5:1:950
+rrdtool create cisnienie.rrd --start N --step 230 DS:cisnienie:GAUGE:300:U:U RRA:AVERAGE:0.5:1:950
+

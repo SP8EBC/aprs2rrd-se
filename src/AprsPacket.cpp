@@ -85,12 +85,14 @@ AprsPacket::~AprsPacket()
 }
 
 void AprsPacket::PrintPacketData() {
+	int i = 0;
     cout << "-----------------------------------------------" << endl;
     cout << "-- Przetworzone dane stacji: " << this->SrcAddr << "-" << this->SrcSSID << endl;
     cout << "-- Id urządzenia: " << this->DestAddr << endl;
     cout << "-- Długość Ścieżki: " << this->Path.size() << endl;
-//    for (int i = 0; i<= this->Path.size() && i <= 5; i++)
-//        cout << "---- Element Numer: " << i << " = " << this->Path[i].Call << "-" << this->Path[i].SSID << endl;
+    for (PathElement elem: this->Path) {
+        cout << "------ Element Numer: " << ++i << " = " << elem.Call << "-" << elem.SSID << endl;
+    }
     cout << "-- Typ wysyłającego do APRS-IS: " << this->qOrigin << endl;
     cout << "-- Wysyłający do APRS-IS: " << this->ToISOriginator.Call << endl;
     cout << "-- Dane: " << this->Data << endl;

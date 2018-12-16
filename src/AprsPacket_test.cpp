@@ -15,9 +15,9 @@
 
 struct MyConfig
 {
-  MyConfig() : test_log( "aprspacket_test.log" )
+  MyConfig() : test_log( "./test_reports/aprspacket_test.log" )
   {
-    //boost::unit_test::unit_test_log.set_stream( test_log );
+    boost::unit_test::unit_test_log.set_stream( test_log );
     boost::unit_test::unit_test_log.set_threshold_level(boost::unit_test::log_level::log_successful_tests);
 
   }

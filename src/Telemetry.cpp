@@ -9,6 +9,7 @@
 #include "NotValidWXDataEx.h"
 
 #include <string>
+#include <stdexcept>
 
 Telemetry::Telemetry() {
 	// TODO Auto-generated constructor stub
@@ -40,8 +41,13 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
 
     }
     std::string num = str->substr(hashPosition + 1, 3);
-    numi = std::stoi(num, nullptr, 10);
-
+    try {
+    	numi = std::stoi(num, nullptr, 10);
+    }
+    catch (std::invalid_argument &e) {
+    	delete str;
+    	return -1;
+    }
 
     // kanał pierwszy
     std::size_t firstComma = str->find_first_of(",", hashPosition);
@@ -51,7 +57,13 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
 
     }
     std::string c1 = str->substr(firstComma + 1, 3);
-    c1i = std::stoi(c1, nullptr, 10);
+    try {
+    	c1i = std::stoi(c1, nullptr, 10);
+	}
+	catch (std::invalid_argument &e) {
+		delete str;
+		return -1;
+	}
     output->ch1 = c1i;
 
     // kanał drugi
@@ -62,7 +74,13 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
 
     }
     std::string c2 = str->substr(secondComma + 1, 3);
-    c2i = std::stoi(c2, nullptr, 10);
+    try {
+		c2i = std::stoi(c2, nullptr, 10);
+	}
+	catch (std::invalid_argument &e) {
+		delete str;
+		return -1;
+	}
     output->ch2 = c2i;
 
     // kanał trzeci
@@ -73,7 +91,13 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
 
     }
     std::string c3 = str->substr(thirdComma + 1, 3);
-    c3i = std::stoi(c3, nullptr, 10);
+    try {
+		c3i = std::stoi(c3, nullptr, 10);
+	}
+	catch (std::invalid_argument &e) {
+		delete str;
+		return -1;
+	}
     output->ch3 = c3i;
 
     // kanał czwarty
@@ -84,7 +108,13 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
 
     }
     std::string c4 = str->substr(fourthComma + 1, 3);
-    c4i = std::stoi(c4, nullptr, 10);
+    try {
+    	c4i = std::stoi(c4, nullptr, 10);
+	}
+	catch (std::invalid_argument &e) {
+		delete str;
+		return -1;
+	}
     output->ch4 = c4i;
 
     // kanał piąty
@@ -95,7 +125,13 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
 
     }
     std::string c5 = str->substr(fifthComma + 1, 3);
-    c5i = std::stoi(c5, nullptr, 10);
+    try {
+		c5i = std::stoi(c5, nullptr, 10);
+	}
+	catch (std::invalid_argument &e) {
+		delete str;
+		return -1;
+	}
     output->ch5 = c5i;
 
 	delete str;

@@ -137,13 +137,14 @@ int AprsWXData::ParseData(AprsPacket input, AprsWXData* output) {
 
 void AprsWXData::PrintData(void) {
     if (this->valid == true && AprsWXData::DebugOutput == true) {
-        printf("--------- DANE POGODOWE ------- \r\n");
-        printf("-- Siła wiatru: %f \r\n", this->wind_speed);
-        printf("-- Porywy: %f \r\n", this->wind_gusts);
-        printf("-- Kierunek: %d \r\n", this->wind_direction);
-        printf("-- Temperatura: %f \r\n", this->temperature);
-        printf("-- Cisnienie: %d \r\n", this->pressure);
-        printf("-- Wilgotność: %d \r\n", this->humidity);
+        printf("--------- DANE POGODOWE -------\r");
+        printf("-- Siła wiatru: %f \r", this->wind_speed);
+        printf("-- Porywy: %f \r", this->wind_gusts);
+        printf("-- Kierunek: %d \r", this->wind_direction);
+        printf("-- Temperatura: %f \r", this->temperature);
+        printf("-- Cisnienie: %d \r", this->pressure);
+        printf("-- Wilgotność: %d \r", this->humidity);
+        printf("--------------------------------\r");
     }
 }
 

@@ -99,6 +99,11 @@ void DataPresentation::PlotGraphsFromRRD() {
 	stringstream scalestep;
 	stringstream exp;
 
+	std::string rraType;
+	std::string graphType;
+
+	std::string rra2Type;
+	std::string graph2Type;
 
 	if (this->DebugOutput == true) {
 		cout << "----- Liczba wykresów do wygenerowania: " <<  this->vPNGFiles.size() << endl;
@@ -129,30 +134,41 @@ void DataPresentation::PlotGraphsFromRRD() {
 		exp << " ";
 
 		memset(command, 0x00, sizeof(command));
-		if (this->vPNGFiles[i].DoubleDS == false)
+		if (this->vPNGFiles[i].DoubleDS == false) {
+			rraType = this->RevSwitchRRAType(this->vPNGFiles[i].eDS0RRAType);
+			graphType = this->RevSwitchPlotGraphType(this->vPNGFiles[i].eDS0PlotType);
+
 			sprintf(command, "rrdtool graph %s -w %d -h %d -t \"%s\" -v \"%s\" -l %.4e -u %.4e -r %s %s --right-axis 1:0 --right-axis-label \"%s\" --x-grid %s --start %d --end %d DEF:%s=%s:%s:%s %s:%s#%.6x", \
 					this->vPNGFiles[i].sPath.c_str(), this->vPNGFiles[i].Width, this->vPNGFiles[i].Height, \
 					this->vPNGFiles[i].Title.c_str(), this->vPNGFiles[i].Axis.c_str() , this->vPNGFiles[i].MinScale, \
 					this->vPNGFiles[i].MaxScale, scalestep.str().c_str(), exp.str().c_str(), 
 					this->vPNGFiles[i].Axis.c_str(), xgrid.str().c_str(), currtimeint- (this->vPNGFiles[i].timeScaleLn * 60), currtimeint, \
 					this->vPNGFiles[i].sDS0Name.c_str(), this->vPNGFiles[i].sDS0Path.c_str(), this->vPNGFiles[i].sDS0Name.c_str(), \
-					this->RevSwitchRRAType(this->vPNGFiles[i].eDS0RRAType), \
-					this->RevSwitchPlotGraphType(this->vPNGFiles[i].eDS0PlotType), \
+					rraType.c_str(), \
+					graphType.c_str(), \
 					this->vPNGFiles[i].sDS0Name.c_str(), this->vPNGFiles[i].DS0PlotColor);
-		else
+		}
+		else {
+			rraType = this->RevSwitchRRAType(this->vPNGFiles[i].eDS0RRAType);
+			graphType = this->RevSwitchPlotGraphType(this->vPNGFiles[i].eDS0PlotType);
+
+			rra2Type = this->RevSwitchRRAType(this->vPNGFiles[i].eDS1RRAType);
+			graph2Type = this->RevSwitchPlotGraphType(this->vPNGFiles[i].eDS1PlotType);
+
 			sprintf(command, "rrdtool graph %s -w %d -h %d -t \"%s\" -v \"%s\" -l %.4e -u %.4e -r %s %s --right-axis 1:0 --right-axis-label \"%s\" --x-grid %s --start %d --end %d DEF:%s=%s:%s:%s DEF:%s=%s:%s:%s %s:%s#%.6x:%s %s:%s#%.6x:%s", \
 					this->vPNGFiles[i].sPath.c_str(), this->vPNGFiles[i].Width, this->vPNGFiles[i].Height, \
 					this->vPNGFiles[i].Title.c_str(), this->vPNGFiles[i].Axis.c_str() , this->vPNGFiles[i].MinScale, \
 					this->vPNGFiles[i].MaxScale, scalestep.str().c_str(), exp.str().c_str(), 
 					this->vPNGFiles[i].Axis.c_str(), xgrid.str().c_str(), currtimeint- (this->vPNGFiles[i].timeScaleLn * 60), currtimeint, \
 					this->vPNGFiles[i].sDS0Name.c_str(), this->vPNGFiles[i].sDS0Path.c_str(), this->vPNGFiles[i].sDS0Name.c_str(), \
-										this->RevSwitchRRAType(this->vPNGFiles[i].eDS0RRAType), \
+										rraType.c_str(), \
 					this->vPNGFiles[i].sDS1Name.c_str(), this->vPNGFiles[i].sDS1Path.c_str(), this->vPNGFiles[i].sDS1Name.c_str(), \
-										this->RevSwitchRRAType(this->vPNGFiles[i].eDS1RRAType), \
-					this->RevSwitchPlotGraphType(this->vPNGFiles[i].eDS0PlotType), this->vPNGFiles[i].sDS0Name.c_str(), \
+										rra2Type.c_str(), \
+					graphType.c_str(), this->vPNGFiles[i].sDS0Name.c_str(), \
 					this->vPNGFiles[i].DS0PlotColor, this->vPNGFiles[i].sDS0Label.c_str(), \
-					this->RevSwitchPlotGraphType(this->vPNGFiles[i].eDS1PlotType), this->vPNGFiles[i].sDS1Name.c_str(), \
+					graph2Type.c_str(), this->vPNGFiles[i].sDS1Name.c_str(), \
 					this->vPNGFiles[i].DS1PlotColor, this->vPNGFiles[i].sDS1Label.c_str());
+		}
 
 
 		if (this->DebugOutput == true)

@@ -145,10 +145,13 @@ void AprsAsioThread::newLineCallback(const boost::system::error_code& ec) {
 			begin++;	// incrementing an iterator to the next element
 		} while (begin != end);	// until we reach the end of the streambuf
 
+		// clearing target object
+		this->outputPacket.clear();
+
 		// parsing the data to AprsPacket
 		int status = AprsPacket::ParseAPRSISData(tempVctForParsing.data(), tempVctForParsing.size(), &this->outputPacket);
 
-		if (this->DebugOutput)
+		if (this->DebugOutput && status == OK)
 			this->outputPacket.PrintPacketData();
 
 		// this call is required to remove parsed data from buffer
