@@ -18,6 +18,8 @@ public:
 
 	static int ParseData(AprsPacket input, Telemetry* output);
 
+	static bool Debug;
+
 	float getCh1();
 	float getCh2();
 	float getCh3();

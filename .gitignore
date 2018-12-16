@@ -35,3 +35,4 @@ APRS2RRD
 *.app
 /Debug/
 #/Release/
+/Release/

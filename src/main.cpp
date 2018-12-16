@@ -100,6 +100,7 @@ int main(int argc, char **argv){
 		dataPresence.DebugOutput = Debug;
 		mysqlDb.Debug = Debug;
 		AprsWXData::DebugOutput = Debug;
+		Telemetry::Debug = Debug;
 
 	}
 	catch (const SettingNotFoundException &ex) {

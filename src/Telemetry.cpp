@@ -10,6 +10,9 @@
 
 #include <string>
 #include <stdexcept>
+#include <iostream>
+
+bool Telemetry::Debug = false;
 
 Telemetry::Telemetry() {
 	// TODO Auto-generated constructor stub
@@ -36,6 +39,7 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
     // numer kolejny ramki telemetrycznej
     std::size_t hashPosition = str->find_first_of("#");
     if (hashPosition == std::string::npos) {
+        output->valid = false;
     	delete str;
         return -1;
 
@@ -45,6 +49,7 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
     	numi = std::stoi(num, nullptr, 10);
     }
     catch (std::invalid_argument &e) {
+        output->valid = false;
     	delete str;
     	return -1;
     }
@@ -52,6 +57,7 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
     // kanał pierwszy
     std::size_t firstComma = str->find_first_of(",", hashPosition);
     if (firstComma == std::string::npos) {
+        output->valid = false;
     	delete str;
         return -1;
 
@@ -61,6 +67,7 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
     	c1i = std::stoi(c1, nullptr, 10);
 	}
 	catch (std::invalid_argument &e) {
+        output->valid = false;
 		delete str;
 		return -1;
 	}
@@ -69,6 +76,7 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
     // kanał drugi
     std::size_t secondComma = str->find_first_of(",", firstComma + 1);
     if (secondComma == std::string::npos) {
+        output->valid = false;
     	delete str;
         return -1;
 
@@ -78,6 +86,7 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
 		c2i = std::stoi(c2, nullptr, 10);
 	}
 	catch (std::invalid_argument &e) {
+        output->valid = false;
 		delete str;
 		return -1;
 	}
@@ -86,6 +95,7 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
     // kanał trzeci
     std::size_t thirdComma = str->find_first_of(",", secondComma + 1);
     if (secondComma == std::string::npos) {
+        output->valid = false;
     	delete str;
         return -1;
 
@@ -95,6 +105,7 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
 		c3i = std::stoi(c3, nullptr, 10);
 	}
 	catch (std::invalid_argument &e) {
+        output->valid = false;
 		delete str;
 		return -1;
 	}
@@ -103,6 +114,7 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
     // kanał czwarty
     std::size_t fourthComma = str->find_first_of(",", thirdComma + 1);
     if (secondComma == std::string::npos) {
+        output->valid = false;
     	delete str;
         return -1;
 
@@ -112,6 +124,7 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
     	c4i = std::stoi(c4, nullptr, 10);
 	}
 	catch (std::invalid_argument &e) {
+        output->valid = false;
 		delete str;
 		return -1;
 	}
@@ -120,6 +133,7 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
     // kanał piąty
     std::size_t fifthComma = str->find_first_of(",", fourthComma + 1);
     if (secondComma == std::string::npos) {
+        output->valid = false;
     	delete str;
         return -1;
 
@@ -129,10 +143,25 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
 		c5i = std::stoi(c5, nullptr, 10);
 	}
 	catch (std::invalid_argument &e) {
+        output->valid = false;
 		delete str;
 		return -1;
 	}
     output->ch5 = c5i;
+
+	if (Debug) {
+		std::cout << "-----------------------------------------" << std::endl;
+		std::cout << "--- Przetworzono dane telemetryczne -----" << std::endl;
+		std::cout << "--- Kanal 1 =  " << output->getCh1() << std::endl;
+		std::cout << "--- Kanal 2 =  " << output->getCh2() << std::endl;
+		std::cout << "--- Kanal 3 =  " << output->getCh3() << std::endl;
+		std::cout << "--- Kanal 4 =  " << output->getCh4() << std::endl;
+		std::cout << "--- Kanal 5 =  " << output->getCh5() << std::endl;
+		std::cout << "-----------------------------------------" << std::endl;
+
+	}
+
+	output->valid = true;
 
 	delete str;
     return 0;
