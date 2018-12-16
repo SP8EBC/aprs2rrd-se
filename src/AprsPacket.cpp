@@ -46,6 +46,7 @@ bool AprsPacket::SeparateCallSsid(const std::string& input, std::string& call,
 		call = callAndSsid.at(0);
 
 		ssid = boost::lexical_cast<int>(callAndSsid.at(1));
+
 	}
 	else {
 		call = in;
@@ -108,6 +109,8 @@ int AprsPacket::ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cT
 	// frame payload
 	std::string payload = "";
 
+	// a flag set to true when q-construct is detected in path, to signalize
+	// that the next element will consist originator callsign
 	bool parseOrginator = false;
 
 	// checkig if input buffer is valid
@@ -166,65 +169,75 @@ int AprsPacket::ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cT
 	// splitting
 	for (std::string e : pathElements) {
 
-		// when the originator is already parsed it means that all subseqent elements
-		// in the vector will comes from frame payload
-		if (cTarget->ToISOriginator.Call != "UNINITIALIZED") {
+		// try...catch block to catch lexical_cast exceptions
+		try {
 
-			// checking if the payload is in initialized state
-			if (payload == "")
-				payload = e;
-			else {
-				// if not and there is any content stored in 'payload' object
-				payload += ("," + e);
+			// when the originator is already parsed it means that all subseqent elements
+			// in the vector will comes from frame payload
+			if (cTarget->ToISOriginator.Call != "UNINITIALIZED") {
+
+				// checking if the payload is in initialized state
+				if (payload == "")
+					payload = e;
+				else {
+					// if not and there is any content stored in 'payload' object
+					payload += ("," + e);
+				}
+
+				continue;
+			}
+			// the one before last element in the path consist the callsign of a station which
+			// sent this packet from RF to APRS-IS
+			if (parseOrginator) {
+
+				// copying the callsign and the ssid to appropriate fields inside an output object
+				AprsPacket::SeparateCallSsid(e, cTarget->ToISOriginator.Call, cTarget->ToISOriginator.SSID);
+
+				parseOrginator = false;
+
+				continue;
 			}
 
-			continue;
+			// this will be a 'qXX' construct which takes some information about the way this packet entered the IS
+			// more details about q constructs here: http://www.aprs-is.net/q.aspx
+			if (boost::regex_match(e, qc)) {
+
+				// the q-construct never has any ssid
+				uint8_t dummy;
+
+				// copying the callsign and the ssid to appropriate fields inside an output object
+				AprsPacket::SeparateCallSsid(e, cTarget->qOrigin, dummy);
+
+				// setting this flag to true to tell a routine that next element in this loop
+				// will consist a callsign of the station which sent this packet to the IS
+				parseOrginator = true;
+
+				continue;
+			}
+
+			// object to store path element
+			PathElement pelem;
+
+			// separating callsign from the ssid or WIDEx from 'remaining hops' value
+			AprsPacket::SeparateCallSsid(e, pelem.Call, pelem.SSID);
+
+			// storing element in Path vector
+			cTarget->Path.push_back(pelem);
+		}
+		catch (const boost::bad_lexical_cast& ex) {
+			return NOT_VALID_APRS_PACKET;
 		}
 
-		// the last element in the vector should consist frame payload
-		//if (e == pathElements.back()) {	// 'back()' returns a value of the last element in vector
-		//	payload = e;
-		//	continue;
-		//}
+	}
 
-		// the one before last element in the path consist the callsign of a station which
-		// sent this packet from RF to APRS-IS
-		if (parseOrginator) {
+	// if there is any additional part of frame, any remainder after separating source callsign
+	// by '>' just append this to payload.
+	if (sepratedBySource.size() > 2) {
+		for (auto it = sepratedBySource.begin() + 2; it != sepratedBySource.end(); it++) {
+			payload.append(">");
 
-			// copying the callsign and the ssid to appropriate fields inside an output object
-			AprsPacket::SeparateCallSsid(e, cTarget->ToISOriginator.Call, cTarget->ToISOriginator.SSID);
-
-			parseOrginator = false;
-
-			continue;
+			payload.append(*it);
 		}
-
-		// this will be a 'qXX' construct which takes some information about the way this packet entered the IS
-		// more details about q constructs here: http://www.aprs-is.net/q.aspx
-		if (boost::regex_match(e, qc)) {
-
-			// the q-construct never has any ssid
-			uint8_t dummy;
-
-			// copying the callsign and the ssid to appropriate fields inside an output object
-			AprsPacket::SeparateCallSsid(e, cTarget->qOrigin, dummy);
-
-			// setting this flag to true to tell a routine that next element in this loop
-			// will consist a callsign of the station which sent this packet to the IS
-			parseOrginator = true;
-
-			continue;
-		}
-
-		// object to store path element
-		PathElement pelem;
-
-		// separating callsign from the ssid or WIDEx from 'remaining hops' value
-		AprsPacket::SeparateCallSsid(e, pelem.Call, pelem.SSID);
-
-		// storing element in Path vector
-		cTarget->Path.push_back(pelem);
-
 	}
 
 	// copying the payload to the output object. There is no need to check the lenght of

@@ -11,6 +11,7 @@
 #include <fstream>
 
 #include "AprsPacket.h"
+#include "ReturnValues.h"
 
 struct MyConfig
 {
@@ -49,6 +50,25 @@ BOOST_AUTO_TEST_CASE(PacketFromUncompressPositionData)
 
 }
 
+BOOST_AUTO_TEST_CASE(SecondPacketFromUncompressPositionData)
+{
+	std::string input = "SQ9MYX-9>APMT01,WIDE1-1,WIDE2-1,qAR,SR9NSK:=4937.44N/01911.13E>PHG1030172";
+
+	AprsPacket out;
+
+	AprsPacket::ParseAPRSISData((char*)input.c_str(), input.size(), &out);
+
+	BOOST_CHECK(strcmp(out.Data, "=4937.44N/01911.13E>PHG1030172") == 0);
+	BOOST_CHECK(out.SrcAddr == "SQ9MYX");
+	BOOST_CHECK(out.SrcSSID == 9);
+	BOOST_CHECK(out.DestAddr == "APMT01");
+	BOOST_CHECK(out.DstSSID == 0);
+	BOOST_CHECK_EQUAL(out.Path.size(), 2);
+	BOOST_CHECK(out.ToISOriginator.Call == "SR9NSK");
+	BOOST_CHECK(out.ToISOriginator.SSID == 0);
+
+}
+
 BOOST_AUTO_TEST_CASE(FirstPacketWithCompressedData)
 {
 	std::string input = "SQ9FQJ>UP0S66,WIDE1-1,WIDE2-2,qAR,SR9NSK:`0,Cmq;>/]\"5v}=";
@@ -76,10 +96,10 @@ BOOST_AUTO_TEST_CASE(SecondPacketWithCompressedData)
 
 	AprsPacket::ParseAPRSISData((char*)input.c_str(), input.size(), &out);
 
-	BOOST_CHECK(strcmp(out.Data, "`0,Cmq;>/]\"5v}=") == 0);	// this will fail becaue this frame conssist '>' in compressed data
+	BOOST_CHECK(strcmp(out.Data, "`0,Yl w>/]\"6%}=") == 0);	// this will fail becaue this frame conssist '>' in compressed data
 	BOOST_CHECK(out.SrcAddr == "SQ9FQJ");
 	BOOST_CHECK(out.SrcSSID == 0);
-	BOOST_CHECK(out.DestAddr == "UP0S66");
+	BOOST_CHECK(out.DestAddr == "UP0S16");
 	BOOST_CHECK(out.DstSSID == 0);
 	BOOST_CHECK_EQUAL(out.Path.size(), 2);
 	BOOST_CHECK(out.ToISOriginator.Call == "SQ9ZAY");
@@ -103,5 +123,35 @@ BOOST_AUTO_TEST_CASE(wxPacketWoPath)
 	BOOST_CHECK_EQUAL(out.Path.size(), 0);
 	BOOST_CHECK(out.ToISOriginator.Call == "SR9NFB");
 	BOOST_CHECK(out.ToISOriginator.SSID == 0);
+
+}
+
+BOOST_AUTO_TEST_CASE(packetWithBrokenSrcCall)
+{
+	std::string input = "SQ99Q_>UP0S16,WIDE1-1,WIDE2-2,qAS,SQ9ZAY-3:`0,Yl w>/]\"6%}=";
+
+	AprsPacket out;
+
+	int parsingResult = -1;
+
+	parsingResult = AprsPacket::ParseAPRSISData((char*)input.c_str(), input.size(), &out);
+
+	BOOST_CHECK_EQUAL(parsingResult, NOT_VALID_APRS_PACKET);
+
+
+}
+
+BOOST_AUTO_TEST_CASE(packetWithBrokenPath)
+{
+	std::string input = "SQ9FQJ>UP0S16,WIDE1-1=IDE2-2,qAS,SQ9ZAY-3:`0,Yl w>/]\"6%}=";
+
+	AprsPacket out;
+
+	int parsingResult = -1;
+
+	parsingResult = AprsPacket::ParseAPRSISData((char*)input.c_str(), input.size(), &out);
+
+	BOOST_CHECK_EQUAL(parsingResult, NOT_VALID_APRS_PACKET);
+
 
 }

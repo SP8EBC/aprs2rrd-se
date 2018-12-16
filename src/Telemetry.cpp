@@ -12,6 +12,7 @@
 
 Telemetry::Telemetry() {
 	// TODO Auto-generated constructor stub
+	this->valid = false;
 
 }
 

@@ -39,7 +39,7 @@ int AprsWXData::ParseData(AprsPacket input, AprsWXData* output) {
 
     int i = 0;
     int conv_temp;
-    char *src;
+    //char *src;
     std::vector<std::string> extractedWx;	// this vector will be used as an output from boost::split method
 
     output->valid = false;
@@ -48,7 +48,7 @@ int AprsWXData::ParseData(AprsPacket input, AprsWXData* output) {
         output->valid = false;
         return -1;     // to nie sa dane pogodowe
     }
-    src = input.Data;
+    //src = input.Data;
 
     // converting char array to copy of string class for convinence
     std::string source(input.Data);
@@ -221,7 +221,6 @@ int AprsWXData::CopyConvert(char sign, std::string& input, int& output, int& cou
  * lexical casted to int and stored at 'output' value
  */
 int AprsWXData::CopyConvert(unsigned num, std::string& input, int& output, int& counter) {
-    unsigned j = 0;
     char tempbuff[9];
     memset(tempbuff, 0x00, sizeof(tempbuff));
 
