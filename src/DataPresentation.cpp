@@ -106,7 +106,7 @@ void DataPresentation::PlotGraphsFromRRD() {
 	std::string graph2Type;
 
 	if (this->DebugOutput == true) {
-		cout << "----- Liczba wykresów do wygenerowania: " <<  this->vPNGFiles.size() << endl;
+		cout << "----- Count of plots to be generated: " <<  this->vPNGFiles.size() << endl;
 	}
 
 	for (i = 0; i < this->vPNGFiles.size(); i++) {

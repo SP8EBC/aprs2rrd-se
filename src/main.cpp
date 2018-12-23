@@ -35,6 +35,8 @@ ofstream fDebug;
 bool doZeroCorrection = false;
 int correction = 0;
 
+#define DEFAULT_APRS_SERVER_TIMEOUT_SECONDS 73
+
 int main(int argc, char **argv){
 
 	Config config;
@@ -109,7 +111,7 @@ int main(int argc, char **argv){
 
 	aprsConfig.RetryServerLookup = true;
 
-	cout << "--- libconfig++: Konfiguracja odczytana" << endl;
+	cout << "--- libconfig++: Configuration parsed successfully" << endl;
 
 	programConfig.configureLogOutput();
 
@@ -139,7 +141,7 @@ int main(int argc, char **argv){
 	// main loop
 	do {
 		// creating a new copy of ASIO thread
-		asioThread = new AprsAsioThread(aprsConfig, 99);
+		asioThread = new AprsAsioThread(aprsConfig, DEFAULT_APRS_SERVER_TIMEOUT_SECONDS);
 
 		// setting a logging level
 		asioThread->DebugOutput = Debug;
@@ -216,11 +218,13 @@ int main(int argc, char **argv){
 			}
 			else {
 				if (Debug == true)
-					cout << "--- To nie jest poprawna ramka APRS" << endl;
+					cout << "--- This is not valid APRS packet" << endl;
 			}
 
 
 		}
+
+		std::cout << "--- Connection to APRS server died. Reconnecting.." << std::endl;
 
 		delete asioThread;
 	} while (mainLoopExit);		// end of main loop

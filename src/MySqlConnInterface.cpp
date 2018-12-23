@@ -63,7 +63,7 @@ void MySqlConnInterface::InsertIntoDb(AprsWXData* cInput) {
 	local = localtime(&currtime);
 
 	if (this->execBeforeInsert == true) {
-		cout << "--- Wykonanie: " << this->execBeforeInsertPath.c_str();
+		cout << "--- Executing: " << this->execBeforeInsertPath.c_str();
 		system(this->execBeforeInsertPath.c_str());
 		cout << endl;
 	}
@@ -99,7 +99,7 @@ void MySqlConnInterface::InsertIntoDb(AprsWXData* cInput) {
 		//delete this->dbQuery;
 	}
 	catch (...) {
-		cout << "--- libmysql++ - nieznany wyjątek" << endl;
+		cout << "--- libmysql++ - unknown exception" << endl;
 	}
 
 	cout << this->dbSimpleResult.info();
