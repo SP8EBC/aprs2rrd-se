@@ -1,0 +1,5 @@
+#!/bin/bash
+screen -S aprs2rrd_kozia -X quit
+screen -dmS aprs2rrd_kozia /home/aprs/kozia/bin/aprs2rrd
+echo "done...\r\n"
+uptime
