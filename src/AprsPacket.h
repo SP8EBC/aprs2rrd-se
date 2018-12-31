@@ -40,8 +40,9 @@ class AprsPacket
         void PrintPacketData();     // Function witch print data from processed packet
         
 		static int ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cTarget);
-		static bool SeparateCallSsid(const std::string& input, std::string& call, uint8_t& ssid);
-		static bool SeparateCallSsid(const std::string& input, char (&call)[7], uint8_t& ssid);
+		static bool SeparateCallSsid(const std::string& input, std::string& call, uint8_t& ssid, bool exception);
+		//static bool SeparateCallSsid(const std::string& input, std::string& call, uint8_t& ssid);
+		static bool SeparateCallSsid(const std::string& input, char (&call)[7], uint8_t& ssid, bool exception);
 		
 		void clear();
 

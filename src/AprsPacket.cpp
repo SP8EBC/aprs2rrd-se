@@ -23,7 +23,7 @@ AprsPacket::AprsPacket() {
 }
 
 bool AprsPacket::SeparateCallSsid(const std::string& input, std::string& call,
-		uint8_t& ssid) {
+		uint8_t& ssid, bool exception) {
 
 	// copying the input string to editable local object
 	std::string in = input;
@@ -45,8 +45,17 @@ bool AprsPacket::SeparateCallSsid(const std::string& input, std::string& call,
 
 		call = callAndSsid.at(0);
 
-		ssid = boost::lexical_cast<int>(callAndSsid.at(1));
-
+		try {
+			ssid = boost::lexical_cast<int>(callAndSsid.at(1));
+		}
+		catch (std::bad_cast &e) {
+			if (exception)
+				// if an user want to have an exception on bad_cast
+				throw e;
+			else
+				// if an user rather prefer to receive only false return value
+				return false;
+		}
 	}
 	else {
 		call = in;
@@ -66,11 +75,16 @@ bool AprsPacket::SeparateCallSsid(const std::string& input, std::string& call,
 }
 
 bool AprsPacket::SeparateCallSsid(const std::string& input, char (&call)[7],
-		uint8_t& ssid) {
+		uint8_t& ssid, bool exception) {
 
 	std::string intermediate;
 
-	AprsPacket::SeparateCallSsid(input, intermediate, ssid);
+	bool separatingReturn;
+
+	separatingReturn = AprsPacket::SeparateCallSsid(input, intermediate, ssid, exception);
+
+	if (!separatingReturn)
+		return false;
 
 	if (intermediate.size() > 6)
 		return false;
@@ -115,6 +129,9 @@ int AprsPacket::ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cT
 	// that the next element will consist originator callsign
 	bool parseOrginator = false;
 
+	// a value returned from call separating method
+	bool separatingReturn = true;
+
 	// checkig if input buffer is valid
 	if (tInputBuffer == nullptr)
 		return NOT_VALID_APRS_PACKET;
@@ -141,7 +158,10 @@ int AprsPacket::ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cT
 		return NOT_VALID_APRS_PACKET;
 
 	// separating a callsign from the SSID
-	AprsPacket::SeparateCallSsid(sepratedBySource.at(0), cTarget->SrcAddr, cTarget->SrcSSID);
+	separatingReturn = AprsPacket::SeparateCallSsid(sepratedBySource.at(0), cTarget->SrcAddr, cTarget->SrcSSID, false);
+
+	if (!separatingReturn)
+		return NOT_VALID_APRS_PACKET;
 
 	// checking if the callsign match with regex
 	if (!boost::regex_match(cTarget->SrcAddr, callsignPattern))
@@ -163,7 +183,7 @@ int AprsPacket::ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cT
 	if (pathElements.at(0).size() > 6)
 		return NOT_VALID_APRS_PACKET;
 
-	AprsPacket::SeparateCallSsid(pathElements.at(0), cTarget->DestAddr, cTarget->DstSSID);
+	AprsPacket::SeparateCallSsid(pathElements.at(0), cTarget->DestAddr, cTarget->DstSSID, false);
 
 	// removing the first element which which consist target address
 	pathElements.erase(pathElements.begin());
@@ -193,7 +213,7 @@ int AprsPacket::ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cT
 			if (parseOrginator) {
 
 				// copying the callsign and the ssid to appropriate fields inside an output object
-				AprsPacket::SeparateCallSsid(e, cTarget->ToISOriginator.Call, cTarget->ToISOriginator.SSID);
+				AprsPacket::SeparateCallSsid(e, cTarget->ToISOriginator.Call, cTarget->ToISOriginator.SSID, true);
 
 				parseOrginator = false;
 
@@ -208,7 +228,7 @@ int AprsPacket::ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cT
 				uint8_t dummy;
 
 				// copying the callsign and the ssid to appropriate fields inside an output object
-				AprsPacket::SeparateCallSsid(e, cTarget->qOrigin, dummy);
+				AprsPacket::SeparateCallSsid(e, cTarget->qOrigin, dummy, true);
 
 				// setting this flag to true to tell a routine that next element in this loop
 				// will consist a callsign of the station which sent this packet to the IS
@@ -221,7 +241,7 @@ int AprsPacket::ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cT
 			PathElement pelem;
 
 			// separating callsign from the ssid or WIDEx from 'remaining hops' value
-			AprsPacket::SeparateCallSsid(e, pelem.Call, pelem.SSID);
+			AprsPacket::SeparateCallSsid(e, pelem.Call, pelem.SSID, true);
 
 			// storing element in Path vector
 			cTarget->Path.push_back(pelem);

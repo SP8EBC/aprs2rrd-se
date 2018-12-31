@@ -50,6 +50,25 @@ BOOST_AUTO_TEST_CASE(PacketFromUncompressPositionData)
 
 }
 
+BOOST_AUTO_TEST_CASE(brokenSSID)
+{
+	std::string input = "SQ9GPS-F>APRX29,SR9DZB*,WIDE2-2,qAR,SR6NKB:!5037.74N/01837.78E-145.275MHz Lubomir";
+
+	AprsPacket out;
+
+	AprsPacket::ParseAPRSISData((char*)input.c_str(), input.size(), &out);
+
+	BOOST_CHECK(strcmp(out.Data, "!5037.74N/01837.78E-145.275MHz Lubomir") == 0);
+	BOOST_CHECK(out.SrcAddr == "SQ9GPS");
+	BOOST_CHECK(out.SrcSSID == 1);
+	BOOST_CHECK(out.DestAddr == "APRX29");
+	BOOST_CHECK(out.DstSSID == 0);
+	BOOST_CHECK_EQUAL(out.Path.size(), 2);
+	BOOST_CHECK(out.ToISOriginator.Call == "SR6NKB");
+	BOOST_CHECK(out.ToISOriginator.SSID == 0);
+
+}
+
 BOOST_AUTO_TEST_CASE(SecondPacketFromUncompressPositionData)
 {
 	std::string input = "SQ9MYX-9>APMT01,WIDE1-1,WIDE2-1,qAR,SR9NSK:=4937.44N/01911.13E>PHG1030172";
