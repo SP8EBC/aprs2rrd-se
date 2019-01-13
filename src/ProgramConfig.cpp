@@ -190,6 +190,7 @@ void ProgramConfig::configureLogOutput() {
 				//fDebug.open(LogFile.c_str());
 				//cout.rdbuf(fDebug.rdbuf());
 				freopen(this->DebugLogFn.c_str(), "w", stdout);
+				freopen(this->DebugLogFn.c_str(), "w", stderr);
 		}
 	}
 }
