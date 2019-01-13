@@ -129,7 +129,7 @@ int AprsWXData::ParseData(AprsPacket input, AprsWXData* output) {
     	output->pressure = conv_temp / 10;
 	else;
 	i++;
-    if (AprsWXData::CopyConvert((unsigned)2,wxData,conv_temp,i) == 0)
+    if (AprsWXData::CopyConvert((unsigned)3,wxData,conv_temp,i) == 0)
     	output->humidity = conv_temp;
 	else;
     output->valid = true;
@@ -242,7 +242,7 @@ int AprsWXData::CopyConvert(unsigned num, std::string& input, int& output, int& 
     std::string valueToConv = input.substr(counter, num);
 
     // removing any non digits
-    //std::regex_replace(valueToConv, std::regex(R"([\D])"), "");
+    valueToConv = std::regex_replace(valueToConv, std::regex(R"([\D])"), "");
 
     try {
     	// converting value
