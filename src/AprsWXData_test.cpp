@@ -80,3 +80,19 @@ BOOST_AUTO_TEST_CASE(correct_wx_without_h) {
 
 	BOOST_CHECK(wx.valid);
 }
+
+BOOST_AUTO_TEST_CASE(correct_wx_less_than100hpa) {
+	AprsPacket packet;
+	AprsWXData wx;
+
+	memcpy(packet.Data, "!4946.09N/01902.33E_313/002g004t037r...p...P...b9970", 54);
+
+	AprsWXData::ParseData(packet, &wx);
+
+	//BOOST_CHECK(wx.humidity == 99);
+	BOOST_CHECK_CLOSE(wx.temperature, 2.7, 3);	// the third parameter is a maximum percentage deviation which is acceptable
+	BOOST_CHECK(wx.pressure == 997);
+	BOOST_CHECK(wx.wind_direction == 313);
+
+	BOOST_CHECK(wx.valid);
+}

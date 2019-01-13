@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
+#include <regex>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -226,12 +227,22 @@ int AprsWXData::CopyConvert(unsigned num, std::string& input, int& output, int& 
     char tempbuff[9];
     memset(tempbuff, 0x00, sizeof(tempbuff));
 
-    // if caler want to read more characters than input string stores
-    if (input.length() < num + counter)
+    std::size_t input_size = input.length();
+
+    // if the input string counter exceed its size
+    if (counter > input_size)
     	return -1;
+
+    // if caler want to read more characters than input string stores
+    if (input_size < num + counter) {
+    	num = input.length() - counter;
+    }
 
     // creating aux substring with value for converrsion
     std::string valueToConv = input.substr(counter, num);
+
+    // removing any non digits
+    //std::regex_replace(valueToConv, std::regex(R"([\D])"), "");
 
     try {
     	// converting value
