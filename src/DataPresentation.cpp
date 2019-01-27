@@ -184,13 +184,21 @@ void DataPresentation::GenerateWebiste(AprsWXData* WX) {
 	currtime =time(NULL);
 	local = localtime(&currtime);
 
+	if (WX == nullptr)
+		return;
+
 	static const char mon_name[][13] = {
     "Stycznia", "Lutego", "Marca", "Kwietnia", "Maja", "Czerwca",
     "Lipca", "Sierpnia", "Wrzesnia", "Pazdziernika", "Listopada", "Grudnia"
     };
 
-	if ((plik=fopen(this->WebsitePath.c_str(),"wt")) != NULL) {
-		fprintf(plik, " <!DOCTYPE html><HTML><head>\r\n<TITLE>%s</TITLE> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">", this->WebsiteTitle.c_str());
+	plik=fopen(this->WebsitePath.c_str(),"wt");
+
+	if (plik == nullptr || plik == NULL)
+		return;
+
+		fprintf(plik, "<!DOCTYPE html>");
+		fprintf(plik, "<HTML><head>\r\n<TITLE>%s</TITLE> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">", this->WebsiteTitle.c_str());
 		fprintf(plik, "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\"></head>");
 		fprintf(plik, "<P><H2>%s</H2></P>\r\n", this->WebsiteHeadingTitle.c_str());
 		fprintf(plik, "<table><tr><td class=table_caption><b>Aktualna Prędkość Wiatru (średnia za 3 minuty):</b></td><td class=table_value id=srednia> %.1f m/s </td></tr>\r\n", WX->wind_speed);
@@ -253,7 +261,7 @@ void DataPresentation::GenerateWebiste(AprsWXData* WX) {
 		fprintf(plik, "<p>Strona wygenerowna przy pomocy programu %s %s <a href=\"http://ebc41.elektroda.eu/aprs/aprs2rrd/changelog\">CHANGELOG</a></p>", SW_NAME, SW_VER);
 		fprintf(plik, "<p>%s</p>", this->WebisteFooter.c_str());
 		fclose(plik);
-	}
+
 }
 
 PlotType DataPresentation::SwitchPlotType(string input) {

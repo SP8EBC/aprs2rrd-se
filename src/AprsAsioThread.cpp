@@ -191,5 +191,7 @@ bool AprsAsioThread::isPacketValid() {
 AprsAsioThread::~AprsAsioThread() {
 	this->tsocket.close();
 	this->ioservice.stop();
+
+	std::cout << "--- Connection closed" << endl;
 }
 
