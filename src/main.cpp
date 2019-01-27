@@ -9,6 +9,7 @@
 #include <string>
 #include <queue>
 #include <unistd.h>
+#include <signal.h>	// linux specific
 #include <libconfig.h++>
 
 #include "MySqlConnInterface.h"
@@ -36,6 +37,13 @@ bool doZeroCorrection = false;
 int correction = 0;
 
 #define DEFAULT_APRS_SERVER_TIMEOUT_SECONDS 73
+
+void main_segfault_sigaction(int signal, siginfo_t *si, void *arg)
+{
+    //printf("Caught segfault at address %p\n", si->si_addr);
+    std::cout << "!!!!Caught segfault at address" << std::hex << si->si_addr << std::endl;
+//    exit(0);
+}
 
 int main(int argc, char **argv){
 
@@ -73,6 +81,15 @@ int main(int argc, char **argv){
 	float telemA = 0.0f;
 	float telemB = 0.0f;
 	float telemC = 0.0f;
+
+	struct sigaction sa;
+
+	memset(&sa, 0, sizeof(struct sigaction));
+	sigemptyset(&sa.sa_mask);
+	sa.sa_sigaction = main_segfault_sigaction;
+	sa.sa_flags   = SA_SIGINFO;
+
+	sigaction(SIGSEGV, &sa, NULL);
 
 	try {
 		programConfig.parseFile();
