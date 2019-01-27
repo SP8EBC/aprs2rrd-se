@@ -192,6 +192,8 @@ AprsAsioThread::~AprsAsioThread() {
 	this->tsocket.close();
 	this->ioservice.stop();
 
+	this->in_buf.sync();
+
 	std::cout << "--- Connection closed" << endl;
 }
 

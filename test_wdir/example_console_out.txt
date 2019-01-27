@@ -99,728 +99,528 @@
 --- Rodzaj kreślenia pierwszego DS: 1 / LINE2
 --- Kolor kreślenia pierwszego DS: ff
 # aprsc 2.1.4-g408ed49
-# logresp NOCALL unverified, server T2POLC
-rx done
---- To nie jest poprawna ramka APRS
-SR9WXS>APRX29,TCPIP*,qAC,T2PARIS:=4946.09N101902.33E# DigiW1 + WX - Lugetel @ Kozia Gora / Schronisko Stefanka - by Mateusz SP8EBC
+# logresp NOCALL unverified, server T2DENMARK
+--- rx done
+--- This is not valid APRS packet
+# aprsc 2.1.4-g408ed49 27 Jan 2019 18:47:09 GMT T2DENMARK 185.134.30.182:14580
+--- rx done
+--- This is not valid APRS packet
+SR9WXS>APRX29,TCPIP*,qAC,T2KRAKOW:!4946.09N/01902.33E_292/004g006t031r...p...P...b9970h99
 -----------------------------------------------
--- Przetworzone dane stacji: SR9WXS-0
--- Id urządzenia: APRX29
--- Długość Ścieżki: 1
------- Element Numer: 1 = TCPIP-0
--- Typ wysyłającego do APRS-IS: qAC
--- Wysyłający do APRS-IS: T2PARIS
--- Dane: =4946.09N101902.33E# DigiW1 + WX - Lugetel @ Kozia Gora / Schronisko Stefanka - by Mateusz SP8EBC
+-- Callsign: SR9WXS-0
+-- Device identifier: APRX29
+-- Packet path length: 1
+------ Element number: 1 = TCPIP-0
+-- APRS originator type: qAC
+-- APRS originator callsign: T2KRAKOW
+-- Frame payload: !4946.09N/01902.33E_292/004g006t031r...p...P...b9970h99
 
 ----------------------------------------------- 
-rx done
------ Liczba wykresów do wygenerowania: 4
-rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730380 --end 1544989580 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
-1149x459
-rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730380 --end 1544989580 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
-1149x459
-rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940380 --end 1544989580 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
-1149x623
-rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940380 --end 1544989580 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
-1149x459
-SR9WXS>APRX29,TCPIP*,qAC,T2PARIS:!4946.09N/01902.33E_164/000g000t022r...p...P...b10220h99
------------------------------------------------
--- Przetworzone dane stacji: SR9WXS-0
--- Id urządzenia: APRX29
--- Długość Ścieżki: 1
------- Element Numer: 1 = TCPIP-0
--- Typ wysyłającego do APRS-IS: qAC
--- Wysyłający do APRS-IS: T2PARIS
--- Dane: !4946.09N/01902.33E_164/000g000t022r...p...P...b10220h99
-
------------------------------------------------ 
-rx done
+--- rx done
 bad lexical cast: source type value could not be interpreted as target
 bad lexical cast: source type value could not be interpreted as target
 bad lexical cast: source type value could not be interpreted as target
---------- DANE POGODOWE -------
--- Siła wiatru: 0
--- Porywy: 0
--- Kierunek: 164
--- Temperatura: 0
--- Cisnienie: 1022
--- Wilgotność: 99
+--------- WX DATA -------
+-- Wind speed: 1.76
+-- Wind gusts: 2.64
+-- Direction: 292
+-- Temperature: 0
+-- Pressure: 997
+-- Humidity: 9
 --------------------------------
-rrdtool update ./test_wdir/cisnienie.rrd 1544989585:1022
-rrdtool update ./test_wdir/predkosc.rrd 1544989586:0.000000
-rrdtool update ./test_wdir/szkwaly.rrd 1544989586:0.000000
-rrdtool update ./test_wdir/kierunek.rrd 1544989586:164
------ Liczba wykresów do wygenerowania: 4
-rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730386 --end 1544989586 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
+rrdtool update ./test_wdir/cisnienie.rrd 1548614853:997
+rrdtool update ./test_wdir/predkosc.rrd 1548614854:1.760000
+rrdtool update ./test_wdir/szkwaly.rrd 1548614854:2.640000
+rrdtool update ./test_wdir/kierunek.rrd 1548614854:292
+----- Count of plots to be generated: 4
+rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1548355654 --end 1548614854 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
 1149x459
-rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730386 --end 1544989586 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
+rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1548355654 --end 1548614854 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
 1149x459
-rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940386 --end 1544989586 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
+rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1548565654 --end 1548614854 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
 1149x623
-rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940386 --end 1544989586 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
+rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1548565654 --end 1548614854 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
 1149x459
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:46:30 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:46:50 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:47:10 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-SR9WXS>APRX29,TCPIP*,qAC,T2PARIS:!4946.09N/01902.33E_164/000g000t022r...p...P...b10220h99
+INSERT INTO `meteo`.`kozia` (`Id`, `TimestampEpoch`, `TimestampDate`, `Temp`, `WindSpeed`, `WindGusts`, `WindDir`, `QNH`, `Humidity`) VALUES (NULL, CURRENT_TIMESTAMP, '2019-01-27 19:47:37', 0, 1.76, 2.64, 292, 997, 9);
+MySQL server has gone away# aprsc 2.1.4-g408ed49 27 Jan 2019 18:47:29 GMT T2DENMARK 185.134.30.182:14580
+--- rx done
+--- This is not valid APRS packet
+# aprsc 2.1.4-g408ed49 27 Jan 2019 18:47:49 GMT T2DENMARK 185.134.30.182:14580
+--- rx done
+--- This is not valid APRS packet
+# aprsc 2.1.4-g408ed49 27 Jan 2019 18:48:09 GMT T2DENMARK 185.134.30.182:14580
+--- rx done
+--- This is not valid APRS packet
+SR9WXS>APRX29,TCPIP*,qAC,T2KRAKOW:!4946.09N/01902.33E_315/004g005t031r...p...P...b9960h99
 -----------------------------------------------
--- Przetworzone dane stacji: SR9WXS-0
--- Id urządzenia: APRX29
--- Długość Ścieżki: 1
------- Element Numer: 1 = TCPIP-0
--- Typ wysyłającego do APRS-IS: qAC
--- Wysyłający do APRS-IS: T2PARIS
--- Dane: !4946.09N/01902.33E_164/000g000t022r...p...P...b10220h99
+-- Callsign: SR9WXS-0
+-- Device identifier: APRX29
+-- Packet path length: 1
+------ Element number: 1 = TCPIP-0
+-- APRS originator type: qAC
+-- APRS originator callsign: T2KRAKOW
+-- Frame payload: !4946.09N/01902.33E_315/004g005t031r...p...P...b9960h99
 
 ----------------------------------------------- 
-rx done
+--- rx done
 bad lexical cast: source type value could not be interpreted as target
 bad lexical cast: source type value could not be interpreted as target
 bad lexical cast: source type value could not be interpreted as target
---------- DANE POGODOWE -------
--- Siła wiatru: 0
--- Porywy: 0
--- Kierunek: 164
--- Temperatura: 0
--- Cisnienie: 1022
--- Wilgotność: 99
+--------- WX DATA -------
+-- Wind speed: 1.76
+-- Wind gusts: 2.2
+-- Direction: 315
+-- Temperature: 0
+-- Pressure: 996
+-- Humidity: 9
 --------------------------------
-rrdtool update ./test_wdir/cisnienie.rrd 1544989638:1022
-rrdtool update ./test_wdir/predkosc.rrd 1544989638:0.000000
-rrdtool update ./test_wdir/szkwaly.rrd 1544989638:0.000000
-rrdtool update ./test_wdir/kierunek.rrd 1544989638:164
------ Liczba wykresów do wygenerowania: 4
-rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730438 --end 1544989638 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
+rrdtool update ./test_wdir/cisnienie.rrd 1548614898:996
+rrdtool update ./test_wdir/predkosc.rrd 1548614898:1.760000
+rrdtool update ./test_wdir/szkwaly.rrd 1548614898:2.200000
+rrdtool update ./test_wdir/kierunek.rrd 1548614898:315
+----- Count of plots to be generated: 4
+rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1548355698 --end 1548614898 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
 1149x459
-rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730438 --end 1544989638 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
+rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1548355698 --end 1548614898 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
 1149x459
-rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940438 --end 1544989638 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
+rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1548565698 --end 1548614898 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
 1149x623
-rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940438 --end 1544989638 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
+rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1548565698 --end 1548614898 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
 1149x459
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:47:30 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:47:50 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:48:10 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-SR9WXS>APRX29,TCPIP*,qAC,T2PARIS:!4946.09N/01902.33E_180/000g000t022r...p...P...b10220h99
+INSERT INTO `meteo`.`kozia` (`Id`, `TimestampEpoch`, `TimestampDate`, `Temp`, `WindSpeed`, `WindGusts`, `WindDir`, `QNH`, `Humidity`) VALUES (NULL, CURRENT_TIMESTAMP, '2019-01-27 19:48:22', 0, 1.76, 2.2, 315, 996, 9);
+MySQL server has gone away# aprsc 2.1.4-g408ed49 27 Jan 2019 18:48:29 GMT T2DENMARK 185.134.30.182:14580
+--- rx done
+--- This is not valid APRS packet
+# aprsc 2.1.4-g408ed49 27 Jan 2019 18:48:49 GMT T2DENMARK 185.134.30.182:14580
+--- rx done
+--- This is not valid APRS packet
+# aprsc 2.1.4-g408ed49 27 Jan 2019 18:49:09 GMT T2DENMARK 185.134.30.182:14580
+--- rx done
+--- This is not valid APRS packet
+SR9WXS>APRX29,TCPIP*,qAC,T2KRAKOW:!4946.09N/01902.33E_315/004g005t031r...p...P...b9960h99
 -----------------------------------------------
--- Przetworzone dane stacji: SR9WXS-0
--- Id urządzenia: APRX29
--- Długość Ścieżki: 1
------- Element Numer: 1 = TCPIP-0
--- Typ wysyłającego do APRS-IS: qAC
--- Wysyłający do APRS-IS: T2PARIS
--- Dane: !4946.09N/01902.33E_180/000g000t022r...p...P...b10220h99
+-- Callsign: SR9WXS-0
+-- Device identifier: APRX29
+-- Packet path length: 1
+------ Element number: 1 = TCPIP-0
+-- APRS originator type: qAC
+-- APRS originator callsign: T2KRAKOW
+-- Frame payload: !4946.09N/01902.33E_315/004g005t031r...p...P...b9960h99
 
 ----------------------------------------------- 
-rx done
+--- rx done
 bad lexical cast: source type value could not be interpreted as target
 bad lexical cast: source type value could not be interpreted as target
 bad lexical cast: source type value could not be interpreted as target
---------- DANE POGODOWE -------
--- Siła wiatru: 0
--- Porywy: 0
--- Kierunek: 180
--- Temperatura: 0
--- Cisnienie: 1022
--- Wilgotność: 99
+--------- WX DATA -------
+-- Wind speed: 1.76
+-- Wind gusts: 2.2
+-- Direction: 315
+-- Temperature: 0
+-- Pressure: 996
+-- Humidity: 9
 --------------------------------
-rrdtool update ./test_wdir/cisnienie.rrd 1544989694:1022
-rrdtool update ./test_wdir/predkosc.rrd 1544989694:0.000000
-rrdtool update ./test_wdir/szkwaly.rrd 1544989694:0.000000
-rrdtool update ./test_wdir/kierunek.rrd 1544989694:180
------ Liczba wykresów do wygenerowania: 4
-rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730494 --end 1544989694 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
+rrdtool update ./test_wdir/cisnienie.rrd 1548614956:996
+rrdtool update ./test_wdir/predkosc.rrd 1548614956:1.760000
+rrdtool update ./test_wdir/szkwaly.rrd 1548614956:2.200000
+rrdtool update ./test_wdir/kierunek.rrd 1548614956:315
+----- Count of plots to be generated: 4
+rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1548355756 --end 1548614956 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
 1149x459
-rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730494 --end 1544989694 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
+rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1548355756 --end 1548614956 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
 1149x459
-rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940494 --end 1544989694 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
+rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1548565756 --end 1548614956 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
 1149x623
-rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940494 --end 1544989694 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
+rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1548565756 --end 1548614956 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
 1149x459
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:48:30 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:48:50 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:49:10 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-SR9WXS>APRX29,TCPIP*,qAC,T2PARIS:!4946.09N/01902.33E_180/000g000t022r...p...P...b10220h99
+INSERT INTO `meteo`.`kozia` (`Id`, `TimestampEpoch`, `TimestampDate`, `Temp`, `WindSpeed`, `WindGusts`, `WindDir`, `QNH`, `Humidity`) VALUES (NULL, CURRENT_TIMESTAMP, '2019-01-27 19:49:19', 0, 1.76, 2.2, 315, 996, 9);
+MySQL server has gone away# aprsc 2.1.4-g408ed49 27 Jan 2019 18:49:29 GMT T2DENMARK 185.134.30.182:14580
+--- rx done
+--- This is not valid APRS packet
+SR9WXS>APRX29,TCPIP*,qAC,T2KRAKOW:=4946.09N101902.33E# DigiW1 + WX - Lugetel @ Kozia Gora / Schronisko Stefanka - by Mateusz SP8EBC
 -----------------------------------------------
--- Przetworzone dane stacji: SR9WXS-0
--- Id urządzenia: APRX29
--- Długość Ścieżki: 1
------- Element Numer: 1 = TCPIP-0
--- Typ wysyłającego do APRS-IS: qAC
--- Wysyłający do APRS-IS: T2PARIS
--- Dane: !4946.09N/01902.33E_180/000g000t022r...p...P...b10220h99
+-- Callsign: SR9WXS-0
+-- Device identifier: APRX29
+-- Packet path length: 1
+------ Element number: 1 = TCPIP-0
+-- APRS originator type: qAC
+-- APRS originator callsign: T2KRAKOW
+-- Frame payload: =4946.09N101902.33E# DigiW1 + WX - Lugetel @ Kozia Gora / Schronisko Stefanka - by Mateusz SP8EBC
 
 ----------------------------------------------- 
-rx done
-bad lexical cast: source type value could not be interpreted as target
-bad lexical cast: source type value could not be interpreted as target
-bad lexical cast: source type value could not be interpreted as target
---------- DANE POGODOWE -------
--- Siła wiatru: 0
--- Porywy: 0
--- Kierunek: 180
--- Temperatura: 0
--- Cisnienie: 1022
--- Wilgotność: 99
+--- rx done
+--------- WX DATA -------
+-- Wind speed: 1.76
+-- Wind gusts: 2.2
+-- Direction: 315
+-- Temperature: 0
+-- Pressure: 996
+-- Humidity: 9
 --------------------------------
-rrdtool update ./test_wdir/cisnienie.rrd 1544989753:1022
-rrdtool update ./test_wdir/predkosc.rrd 1544989753:0.000000
-rrdtool update ./test_wdir/szkwaly.rrd 1544989753:0.000000
-rrdtool update ./test_wdir/kierunek.rrd 1544989753:180
------ Liczba wykresów do wygenerowania: 4
-rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730553 --end 1544989753 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
+rrdtool update ./test_wdir/cisnienie.rrd 1548614975:996
+rrdtool update ./test_wdir/predkosc.rrd 1548614975:1.760000
+rrdtool update ./test_wdir/szkwaly.rrd 1548614975:2.200000
+rrdtool update ./test_wdir/kierunek.rrd 1548614975:315
+----- Count of plots to be generated: 4
+rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1548355775 --end 1548614975 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
 1149x459
-rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730553 --end 1544989753 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
+rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1548355775 --end 1548614975 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
 1149x459
-rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940553 --end 1544989753 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
+rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1548565775 --end 1548614975 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
 1149x623
-rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940553 --end 1544989753 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
+rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1548565775 --end 1548614975 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
 1149x459
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:49:30 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:49:50 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-SR9WXS>APRX29,TCPIP*,qAC,T2PARIS:!4946.09N/01902.33E_180/000g000t022r...p...P...b10220h99
+INSERT INTO `meteo`.`kozia` (`Id`, `TimestampEpoch`, `TimestampDate`, `Temp`, `WindSpeed`, `WindGusts`, `WindDir`, `QNH`, `Humidity`) VALUES (NULL, CURRENT_TIMESTAMP, '2019-01-27 19:49:38', 0, 1.76, 2.2, 315, 996, 9);
+MySQL server has gone away# aprsc 2.1.4-g408ed49 27 Jan 2019 18:49:49 GMT T2DENMARK 185.134.30.182:14580
+--- rx done
+--- This is not valid APRS packet
+# aprsc 2.1.4-g408ed49 27 Jan 2019 18:50:09 GMT T2DENMARK 185.134.30.182:14580
+--- rx done
+--- This is not valid APRS packet
+SR9WXS>APRX29,TCPIP*,qAC,T2KRAKOW:!4946.09N/01902.33E_288/003g008t031r...p...P...b9960h99
 -----------------------------------------------
--- Przetworzone dane stacji: SR9WXS-0
--- Id urządzenia: APRX29
--- Długość Ścieżki: 1
------- Element Numer: 1 = TCPIP-0
--- Typ wysyłającego do APRS-IS: qAC
--- Wysyłający do APRS-IS: T2PARIS
--- Dane: !4946.09N/01902.33E_180/000g000t022r...p...P...b10220h99
+-- Callsign: SR9WXS-0
+-- Device identifier: APRX29
+-- Packet path length: 1
+------ Element number: 1 = TCPIP-0
+-- APRS originator type: qAC
+-- APRS originator callsign: T2KRAKOW
+-- Frame payload: !4946.09N/01902.33E_288/003g008t031r...p...P...b9960h99
 
 ----------------------------------------------- 
-rx done
+--- rx done
 bad lexical cast: source type value could not be interpreted as target
 bad lexical cast: source type value could not be interpreted as target
 bad lexical cast: source type value could not be interpreted as target
---------- DANE POGODOWE -------
--- Siła wiatru: 0
--- Porywy: 0
--- Kierunek: 180
--- Temperatura: 0
--- Cisnienie: 1022
--- Wilgotność: 99
+--------- WX DATA -------
+-- Wind speed: 1.32
+-- Wind gusts: 3.52
+-- Direction: 288
+-- Temperature: 0
+-- Pressure: 996
+-- Humidity: 9
 --------------------------------
-rrdtool update ./test_wdir/cisnienie.rrd 1544989801:1022
-rrdtool update ./test_wdir/predkosc.rrd 1544989801:0.000000
-rrdtool update ./test_wdir/szkwaly.rrd 1544989801:0.000000
-rrdtool update ./test_wdir/kierunek.rrd 1544989801:180
------ Liczba wykresów do wygenerowania: 4
-rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730601 --end 1544989801 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
+rrdtool update ./test_wdir/cisnienie.rrd 1548615014:996
+rrdtool update ./test_wdir/predkosc.rrd 1548615014:1.320000
+rrdtool update ./test_wdir/szkwaly.rrd 1548615014:3.520000
+rrdtool update ./test_wdir/kierunek.rrd 1548615014:288
+----- Count of plots to be generated: 4
+rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1548355814 --end 1548615014 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
 1149x459
-rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730601 --end 1544989801 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
+rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1548355814 --end 1548615014 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
 1149x459
-rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940601 --end 1544989801 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
+rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1548565814 --end 1548615014 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
 1149x623
-rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940601 --end 1544989801 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
+rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1548565814 --end 1548615014 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
 1149x459
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:50:10 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:50:30 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-SR9WXS>APRX29,TCPIP*,qAC,T2PARIS:=4946.09N101902.33E# DigiW1 + WX - Lugetel @ Kozia Gora / Schronisko Stefanka - by Mateusz SP8EBC
+INSERT INTO `meteo`.`kozia` (`Id`, `TimestampEpoch`, `TimestampDate`, `Temp`, `WindSpeed`, `WindGusts`, `WindDir`, `QNH`, `Humidity`) VALUES (NULL, CURRENT_TIMESTAMP, '2019-01-27 19:50:26', 0, 1.32, 3.52, 288, 996, 9);
+MySQL server has gone away# aprsc 2.1.4-g408ed49 27 Jan 2019 18:50:29 GMT T2DENMARK 185.134.30.182:14580
+--- rx done
+--- This is not valid APRS packet
+# aprsc 2.1.4-g408ed49 27 Jan 2019 18:50:49 GMT T2DENMARK 185.134.30.182:14580
+--- rx done
+--- This is not valid APRS packet
+SR9WXS>APRX29,TCPIP*,qAC,T2KRAKOW:!4946.09N/01902.33E_288/003g008t031r...p...P...b9960h99
 -----------------------------------------------
--- Przetworzone dane stacji: SR9WXS-0
--- Id urządzenia: APRX29
--- Długość Ścieżki: 1
------- Element Numer: 1 = TCPIP-0
--- Typ wysyłającego do APRS-IS: qAC
--- Wysyłający do APRS-IS: T2PARIS
--- Dane: =4946.09N101902.33E# DigiW1 + WX - Lugetel @ Kozia Gora / Schronisko Stefanka - by Mateusz SP8EBC
+-- Callsign: SR9WXS-0
+-- Device identifier: APRX29
+-- Packet path length: 1
+------ Element number: 1 = TCPIP-0
+-- APRS originator type: qAC
+-- APRS originator callsign: T2KRAKOW
+-- Frame payload: !4946.09N/01902.33E_288/003g008t031r...p...P...b9960h99
 
 ----------------------------------------------- 
-rx done
---------- DANE POGODOWE -------
--- Siła wiatru: 0
--- Porywy: 0
--- Kierunek: 180
--- Temperatura: 0
--- Cisnienie: 1022
--- Wilgotność: 99
+--- rx done
+bad lexical cast: source type value could not be interpreted as target
+bad lexical cast: source type value could not be interpreted as target
+bad lexical cast: source type value could not be interpreted as target
+--------- WX DATA -------
+-- Wind speed: 1.32
+-- Wind gusts: 3.52
+-- Direction: 288
+-- Temperature: 0
+-- Pressure: 996
+-- Humidity: 9
 --------------------------------
-rrdtool update ./test_wdir/cisnienie.rrd 1544989842:1022
-rrdtool update ./test_wdir/predkosc.rrd 1544989843:0.000000
-rrdtool update ./test_wdir/szkwaly.rrd 1544989843:0.000000
-rrdtool update ./test_wdir/kierunek.rrd 1544989843:180
------ Liczba wykresów do wygenerowania: 4
-rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730643 --end 1544989843 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
+rrdtool update ./test_wdir/cisnienie.rrd 1548615062:996
+rrdtool update ./test_wdir/predkosc.rrd 1548615062:1.320000
+rrdtool update ./test_wdir/szkwaly.rrd 1548615062:3.520000
+rrdtool update ./test_wdir/kierunek.rrd 1548615062:288
+----- Count of plots to be generated: 4
+rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1548355862 --end 1548615062 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
 1149x459
-rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730643 --end 1544989843 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
+rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1548355862 --end 1548615062 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
 1149x459
-rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940643 --end 1544989843 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
+rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1548565862 --end 1548615062 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
 1149x623
-rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940643 --end 1544989843 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
+rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1548565862 --end 1548615062 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
 1149x459
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:50:50 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-SR9WXS>APRX29,TCPIP*,qAC,T2PARIS:!4946.09N/01902.33E_248/000g000t022r...p...P...b10220h99
+INSERT INTO `meteo`.`kozia` (`Id`, `TimestampEpoch`, `TimestampDate`, `Temp`, `WindSpeed`, `WindGusts`, `WindDir`, `QNH`, `Humidity`) VALUES (NULL, CURRENT_TIMESTAMP, '2019-01-27 19:51:14', 0, 1.32, 3.52, 288, 996, 9);
+MySQL server has gone away# aprsc 2.1.4-g408ed49 27 Jan 2019 18:51:09 GMT T2DENMARK 185.134.30.182:14580
+--- rx done
+--- This is not valid APRS packet
+# aprsc 2.1.4-g408ed49 27 Jan 2019 18:51:29 GMT T2DENMARK 185.134.30.182:14580
+--- rx done
+--- This is not valid APRS packet
+# aprsc 2.1.4-g408ed49 27 Jan 2019 18:51:49 GMT T2DENMARK 185.134.30.182:14580
+--- rx done
+--- This is not valid APRS packet
+SR9WXS>APRX29,TCPIP*,qAC,T2KRAKOW:!4946.09N/01902.33E_288/003g008t031r...p...P...b9960h99
 -----------------------------------------------
--- Przetworzone dane stacji: SR9WXS-0
--- Id urządzenia: APRX29
--- Długość Ścieżki: 1
------- Element Numer: 1 = TCPIP-0
--- Typ wysyłającego do APRS-IS: qAC
--- Wysyłający do APRS-IS: T2PARIS
--- Dane: !4946.09N/01902.33E_248/000g000t022r...p...P...b10220h99
+-- Callsign: SR9WXS-0
+-- Device identifier: APRX29
+-- Packet path length: 1
+------ Element number: 1 = TCPIP-0
+-- APRS originator type: qAC
+-- APRS originator callsign: T2KRAKOW
+-- Frame payload: !4946.09N/01902.33E_288/003g008t031r...p...P...b9960h99
 
 ----------------------------------------------- 
-rx done
+--- rx done
 bad lexical cast: source type value could not be interpreted as target
 bad lexical cast: source type value could not be interpreted as target
 bad lexical cast: source type value could not be interpreted as target
---------- DANE POGODOWE -------
--- Siła wiatru: 0
--- Porywy: 0
--- Kierunek: 248
--- Temperatura: 0
--- Cisnienie: 1022
--- Wilgotność: 99
+--------- WX DATA -------
+-- Wind speed: 1.32
+-- Wind gusts: 3.52
+-- Direction: 288
+-- Temperature: 0
+-- Pressure: 996
+-- Humidity: 9
 --------------------------------
-rrdtool update ./test_wdir/cisnienie.rrd 1544989857:1022
-rrdtool update ./test_wdir/predkosc.rrd 1544989857:0.000000
-rrdtool update ./test_wdir/szkwaly.rrd 1544989857:0.000000
-rrdtool update ./test_wdir/kierunek.rrd 1544989857:248
------ Liczba wykresów do wygenerowania: 4
-rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730657 --end 1544989857 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
+rrdtool update ./test_wdir/cisnienie.rrd 1548615116:996
+rrdtool update ./test_wdir/predkosc.rrd 1548615116:1.320000
+rrdtool update ./test_wdir/szkwaly.rrd 1548615116:3.520000
+rrdtool update ./test_wdir/kierunek.rrd 1548615116:288
+----- Count of plots to be generated: 4
+rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1548355916 --end 1548615116 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
 1149x459
-rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730657 --end 1544989857 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
+rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1548355916 --end 1548615116 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
 1149x459
-rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940657 --end 1544989857 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
+rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1548565916 --end 1548615116 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
 1149x623
-rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940657 --end 1544989857 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
+rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1548565916 --end 1548615116 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
 1149x459
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:51:10 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:51:30 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:51:50 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-SR9WXS>APRX29,TCPIP*,qAC,T2PARIS:!4946.09N/01902.33E_248/000g000t022r...p...P...b10220h99
+INSERT INTO `meteo`.`kozia` (`Id`, `TimestampEpoch`, `TimestampDate`, `Temp`, `WindSpeed`, `WindGusts`, `WindDir`, `QNH`, `Humidity`) VALUES (NULL, CURRENT_TIMESTAMP, '2019-01-27 19:52:00', 0, 1.32, 3.52, 288, 996, 9);
+MySQL server has gone away# aprsc 2.1.4-g408ed49 27 Jan 2019 18:52:09 GMT T2DENMARK 185.134.30.182:14580
+--- rx done
+--- This is not valid APRS packet
+--- Connection to APRS server died. Reconnecting..
+# aprsc 2.1.4-g408ed49
+# logresp NOCALL unverified, server T2LONDON
+--- rx done
+--- This is not valid APRS packet
+# aprsc 2.1.4-g408ed49 27 Jan 2019 18:53:51 GMT T2LONDON 10.16.0.5:14580
+--- rx done
+--- This is not valid APRS packet
+SR9WXS>APRX29,TCPIP*,qAC,T2KRAKOW:!4946.09N/01902.33E_307/002g006t031r...p...P...b9970h99
 -----------------------------------------------
--- Przetworzone dane stacji: SR9WXS-0
--- Id urządzenia: APRX29
--- Długość Ścieżki: 1
------- Element Numer: 1 = TCPIP-0
--- Typ wysyłającego do APRS-IS: qAC
--- Wysyłający do APRS-IS: T2PARIS
--- Dane: !4946.09N/01902.33E_248/000g000t022r...p...P...b10220h99
+-- Callsign: SR9WXS-0
+-- Device identifier: APRX29
+-- Packet path length: 1
+------ Element number: 1 = TCPIP-0
+-- APRS originator type: qAC
+-- APRS originator callsign: T2KRAKOW
+-- Frame payload: !4946.09N/01902.33E_307/002g006t031r...p...P...b9970h99
 
 ----------------------------------------------- 
-rx done
+--- rx done
 bad lexical cast: source type value could not be interpreted as target
 bad lexical cast: source type value could not be interpreted as target
 bad lexical cast: source type value could not be interpreted as target
---------- DANE POGODOWE -------
--- Siła wiatru: 0
--- Porywy: 0
--- Kierunek: 248
--- Temperatura: 0
--- Cisnienie: 1022
--- Wilgotność: 99
+--------- WX DATA -------
+-- Wind speed: 0.88
+-- Wind gusts: 2.64
+-- Direction: 307
+-- Temperature: 0
+-- Pressure: 997
+-- Humidity: 9
 --------------------------------
-rrdtool update ./test_wdir/cisnienie.rrd 1544989912:1022
-rrdtool update ./test_wdir/predkosc.rrd 1544989912:0.000000
-rrdtool update ./test_wdir/szkwaly.rrd 1544989912:0.000000
-rrdtool update ./test_wdir/kierunek.rrd 1544989912:248
------ Liczba wykresów do wygenerowania: 4
-rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730712 --end 1544989912 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
+rrdtool update ./test_wdir/cisnienie.rrd 1548615231:997
+rrdtool update ./test_wdir/predkosc.rrd 1548615231:0.880000
+rrdtool update ./test_wdir/szkwaly.rrd 1548615232:2.640000
+rrdtool update ./test_wdir/kierunek.rrd 1548615232:307
+----- Count of plots to be generated: 4
+rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1548356032 --end 1548615232 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
 1149x459
-rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730712 --end 1544989912 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
+rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1548356032 --end 1548615232 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
 1149x459
-rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940712 --end 1544989912 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
+rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1548566032 --end 1548615232 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
 1149x623
-rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940712 --end 1544989912 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
+rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1548566032 --end 1548615232 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
 1149x459
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:52:10 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:52:30 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-SR9WXS>APRX29,TCPIP*,qAC,T2PARIS:!4946.09N/01902.33E_233/000g000t022r...p...P...b10220h99
+INSERT INTO `meteo`.`kozia` (`Id`, `TimestampEpoch`, `TimestampDate`, `Temp`, `WindSpeed`, `WindGusts`, `WindDir`, `QNH`, `Humidity`) VALUES (NULL, CURRENT_TIMESTAMP, '2019-01-27 19:53:57', 0, 0.88, 2.64, 307, 997, 9);
+MySQL server has gone away# aprsc 2.1.4-g408ed49 27 Jan 2019 18:54:11 GMT T2LONDON 10.16.0.5:14580
+--- rx done
+--- This is not valid APRS packet
+SR9WXS>APRX29,TCPIP*,qAC,T2KRAKOW:=4946.09N101902.33E# DigiW1 + WX - Lugetel @ Kozia Gora / Schronisko Stefanka - by Mateusz SP8EBC
 -----------------------------------------------
--- Przetworzone dane stacji: SR9WXS-0
--- Id urządzenia: APRX29
--- Długość Ścieżki: 1
------- Element Numer: 1 = TCPIP-0
--- Typ wysyłającego do APRS-IS: qAC
--- Wysyłający do APRS-IS: T2PARIS
--- Dane: !4946.09N/01902.33E_233/000g000t022r...p...P...b10220h99
+-- Callsign: SR9WXS-0
+-- Device identifier: APRX29
+-- Packet path length: 1
+------ Element number: 1 = TCPIP-0
+-- APRS originator type: qAC
+-- APRS originator callsign: T2KRAKOW
+-- Frame payload: =4946.09N101902.33E# DigiW1 + WX - Lugetel @ Kozia Gora / Schronisko Stefanka - by Mateusz SP8EBC
 
 ----------------------------------------------- 
-rx done
-bad lexical cast: source type value could not be interpreted as target
-bad lexical cast: source type value could not be interpreted as target
-bad lexical cast: source type value could not be interpreted as target
---------- DANE POGODOWE -------
--- Siła wiatru: 0
--- Porywy: 0
--- Kierunek: 233
--- Temperatura: 0
--- Cisnienie: 1022
--- Wilgotność: 99
+--- rx done
+--------- WX DATA -------
+-- Wind speed: 0.88
+-- Wind gusts: 2.64
+-- Direction: 307
+-- Temperature: 0
+-- Pressure: 997
+-- Humidity: 9
 --------------------------------
-rrdtool update ./test_wdir/cisnienie.rrd 1544989961:1022
-rrdtool update ./test_wdir/predkosc.rrd 1544989961:0.000000
-rrdtool update ./test_wdir/szkwaly.rrd 1544989961:0.000000
-rrdtool update ./test_wdir/kierunek.rrd 1544989961:233
------ Liczba wykresów do wygenerowania: 4
-rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730761 --end 1544989961 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
+rrdtool update ./test_wdir/cisnienie.rrd 1548615254:997
+rrdtool update ./test_wdir/predkosc.rrd 1548615254:0.880000
+rrdtool update ./test_wdir/szkwaly.rrd 1548615254:2.640000
+rrdtool update ./test_wdir/kierunek.rrd 1548615254:307
+----- Count of plots to be generated: 4
+rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1548356054 --end 1548615254 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
 1149x459
-rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730761 --end 1544989961 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
+rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1548356054 --end 1548615254 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
 1149x459
-rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940761 --end 1544989961 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
+rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1548566054 --end 1548615254 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
 1149x623
-rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940761 --end 1544989961 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
+rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1548566054 --end 1548615254 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
 1149x459
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:52:50 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:53:10 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:53:30 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-SR9WXS>APRX29,TCPIP*,qAC,T2PARIS:!4946.09N/01902.33E_233/000g000t022r...p...P...b10220h99
+INSERT INTO `meteo`.`kozia` (`Id`, `TimestampEpoch`, `TimestampDate`, `Temp`, `WindSpeed`, `WindGusts`, `WindDir`, `QNH`, `Humidity`) VALUES (NULL, CURRENT_TIMESTAMP, '2019-01-27 19:54:17', 0, 0.88, 2.64, 307, 997, 9);
+MySQL server has gone away# aprsc 2.1.4-g408ed49 27 Jan 2019 18:54:32 GMT T2LONDON 10.16.0.5:14580
+--- rx done
+--- This is not valid APRS packet
+SR9WXS>APRX29,TCPIP*,qAC,T2KRAKOW:!4946.09N/01902.33E_315/004g009t031r...p...P...b9970h99
 -----------------------------------------------
--- Przetworzone dane stacji: SR9WXS-0
--- Id urządzenia: APRX29
--- Długość Ścieżki: 1
------- Element Numer: 1 = TCPIP-0
--- Typ wysyłającego do APRS-IS: qAC
--- Wysyłający do APRS-IS: T2PARIS
--- Dane: !4946.09N/01902.33E_233/000g000t022r...p...P...b10220h99
+-- Callsign: SR9WXS-0
+-- Device identifier: APRX29
+-- Packet path length: 1
+------ Element number: 1 = TCPIP-0
+-- APRS originator type: qAC
+-- APRS originator callsign: T2KRAKOW
+-- Frame payload: !4946.09N/01902.33E_315/004g009t031r...p...P...b9970h99
 
 ----------------------------------------------- 
-rx done
+--- rx done
 bad lexical cast: source type value could not be interpreted as target
 bad lexical cast: source type value could not be interpreted as target
 bad lexical cast: source type value could not be interpreted as target
---------- DANE POGODOWE -------
--- Siła wiatru: 0
--- Porywy: 0
--- Kierunek: 233
--- Temperatura: 0
--- Cisnienie: 1022
--- Wilgotność: 99
+--------- WX DATA -------
+-- Wind speed: 1.76
+-- Wind gusts: 3.96
+-- Direction: 315
+-- Temperature: 0
+-- Pressure: 997
+-- Humidity: 9
 --------------------------------
-rrdtool update ./test_wdir/cisnienie.rrd 1544990013:1022
-rrdtool update ./test_wdir/predkosc.rrd 1544990013:0.000000
-rrdtool update ./test_wdir/szkwaly.rrd 1544990013:0.000000
-rrdtool update ./test_wdir/kierunek.rrd 1544990013:233
------ Liczba wykresów do wygenerowania: 4
-rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730813 --end 1544990013 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
+rrdtool update ./test_wdir/cisnienie.rrd 1548615287:997
+rrdtool update ./test_wdir/predkosc.rrd 1548615287:1.760000
+rrdtool update ./test_wdir/szkwaly.rrd 1548615287:3.960000
+rrdtool update ./test_wdir/kierunek.rrd 1548615288:315
+----- Count of plots to be generated: 4
+rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1548356088 --end 1548615288 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
 1149x459
-rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730813 --end 1544990013 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
+rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1548356088 --end 1548615288 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
 1149x459
-rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940813 --end 1544990013 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
+rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1548566088 --end 1548615288 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
 1149x623
-rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940813 --end 1544990013 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
+rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1548566088 --end 1548615288 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
 1149x459
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:53:50 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:54:10 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-SR9WXS>APRX29,TCPIP*,qAC,T2PARIS:!4946.09N/01902.33E_199/000g000t022r...p...P...b10220h99
+INSERT INTO `meteo`.`kozia` (`Id`, `TimestampEpoch`, `TimestampDate`, `Temp`, `WindSpeed`, `WindGusts`, `WindDir`, `QNH`, `Humidity`) VALUES (NULL, CURRENT_TIMESTAMP, '2019-01-27 19:54:52', 0, 1.76, 3.96, 315, 997, 9);
+MySQL server has gone away# aprsc 2.1.4-g408ed49 27 Jan 2019 18:54:51 GMT T2LONDON 10.16.0.5:14580
+--- rx done
+--- This is not valid APRS packet
+SR9WXS>AKLPRZ,WIDE2-1,qAR,OK8UOF:T#013,068,006,003,000,104,10000000
 -----------------------------------------------
--- Przetworzone dane stacji: SR9WXS-0
--- Id urządzenia: APRX29
--- Długość Ścieżki: 1
------- Element Numer: 1 = TCPIP-0
--- Typ wysyłającego do APRS-IS: qAC
--- Wysyłający do APRS-IS: T2PARIS
--- Dane: !4946.09N/01902.33E_199/000g000t022r...p...P...b10220h99
+-- Callsign: SR9WXS-0
+-- Device identifier: AKLPRZ
+-- Packet path length: 1
+------ Element number: 1 = WIDE2-1
+-- APRS originator type: qAR
+-- APRS originator callsign: OK8UOF
+-- Frame payload: T#013,068,006,003,000,104,10000000
 
 ----------------------------------------------- 
-rx done
-bad lexical cast: source type value could not be interpreted as target
-bad lexical cast: source type value could not be interpreted as target
-bad lexical cast: source type value could not be interpreted as target
---------- DANE POGODOWE -------
--- Siła wiatru: 0
--- Porywy: 0
--- Kierunek: 199
--- Temperatura: 0
--- Cisnienie: 1022
--- Wilgotność: 99
---------------------------------
-rrdtool update ./test_wdir/cisnienie.rrd 1544990065:1022
-rrdtool update ./test_wdir/predkosc.rrd 1544990065:0.000000
-rrdtool update ./test_wdir/szkwaly.rrd 1544990065:0.000000
-rrdtool update ./test_wdir/kierunek.rrd 1544990065:199
------ Liczba wykresów do wygenerowania: 4
-rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730865 --end 1544990065 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
-1149x459
-rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730865 --end 1544990065 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
-1149x459
-rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940865 --end 1544990065 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
-1149x623
-rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940865 --end 1544990065 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
-1149x459
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:54:30 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-SR9WXS>AKLPRZ,WIDE2-1,qAR,SP9UOB-15:T#019,090,004,004,000,087,10000000
------------------------------------------------
--- Przetworzone dane stacji: SR9WXS-0
--- Id urządzenia: AKLPRZ
--- Długość Ścieżki: 1
------- Element Numer: 1 = WIDE2-1
--- Typ wysyłającego do APRS-IS: qAR
--- Wysyłający do APRS-IS: SP9UOB
--- Dane: T#019,090,004,004,000,087,10000000
-
------------------------------------------------ 
-rx done
+--- rx done
 -----------------------------------------
 --- Przetworzono dane telemetryczne -----
 --- Kanal 1 =  0
 --- Kanal 2 =  0
 --- Kanal 3 =  0
 --- Kanal 4 =  0
---- Kanal 5 =  -3.25
+--- Kanal 5 =  1
 -----------------------------------------
---------- DANE POGODOWE -------
--- Siła wiatru: 0
--- Porywy: 0
--- Kierunek: 199
--- Temperatura: -3.25
--- Cisnienie: 1022
--- Wilgotność: 99
+--------- WX DATA -------
+-- Wind speed: 1.76
+-- Wind gusts: 3.96
+-- Direction: 315
+-- Temperature: 1
+-- Pressure: 997
+-- Humidity: 9
 --------------------------------
-rrdtool update ./test_wdir/temperatura.rrd 1544990077:-3.000000
------ Liczba wykresów do wygenerowania: 4
-rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730877 --end 1544990077 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
+rrdtool update ./test_wdir/temperatura.rrd 1548615307:1.000000
+----- Count of plots to be generated: 4
+rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1548356108 --end 1548615308 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
 1149x459
-rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730877 --end 1544990077 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
+rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1548356108 --end 1548615308 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
 1149x459
-rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940877 --end 1544990077 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
+rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1548566108 --end 1548615308 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
 1149x623
-rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940877 --end 1544990077 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
+rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1548566108 --end 1548615308 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
 1149x459
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:54:50 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-SR9WXS>APRX29,TCPIP*,qAC,T2PARIS:=4946.09N101902.33E# DigiW1 + WX - Lugetel @ Kozia Gora / Schronisko Stefanka - by Mateusz SP8EBC
+INSERT INTO `meteo`.`kozia` (`Id`, `TimestampEpoch`, `TimestampDate`, `Temp`, `WindSpeed`, `WindGusts`, `WindDir`, `QNH`, `Humidity`) VALUES (NULL, CURRENT_TIMESTAMP, '2019-01-27 19:55:10', 1, 1.76, 3.96, 315, 997, 9);
+MySQL server has gone away# aprsc 2.1.4-g408ed49 27 Jan 2019 18:55:11 GMT T2LONDON 10.16.0.5:14580
+--- rx done
+--- This is not valid APRS packet
+# aprsc 2.1.4-g408ed49 27 Jan 2019 18:55:31 GMT T2LONDON 10.16.0.5:14580
+--- rx done
+--- This is not valid APRS packet
+--- Connection to APRS server died. Reconnecting..
+# aprsc 2.1.4-g408ed49
+# logresp NOCALL unverified, server T2HUN
+--- rx done
+--- This is not valid APRS packet
+# aprsc 2.1.4-g408ed49 27 Jan 2019 18:57:04 GMT T2HUN 185.43.207.219:14580
+--- rx done
+--- This is not valid APRS packet
+SR9WXS>APRX29,TCPIP*,qAC,T2KRAKOW:!4946.09N/01902.33E_311/004g007t031r...p...P...b9970h99
 -----------------------------------------------
--- Przetworzone dane stacji: SR9WXS-0
--- Id urządzenia: APRX29
--- Długość Ścieżki: 1
------- Element Numer: 1 = TCPIP-0
--- Typ wysyłającego do APRS-IS: qAC
--- Wysyłający do APRS-IS: T2PARIS
--- Dane: =4946.09N101902.33E# DigiW1 + WX - Lugetel @ Kozia Gora / Schronisko Stefanka - by Mateusz SP8EBC
+-- Callsign: SR9WXS-0
+-- Device identifier: APRX29
+-- Packet path length: 1
+------ Element number: 1 = TCPIP-0
+-- APRS originator type: qAC
+-- APRS originator callsign: T2KRAKOW
+-- Frame payload: !4946.09N/01902.33E_311/004g007t031r...p...P...b9970h99
 
 ----------------------------------------------- 
-rx done
---------- DANE POGODOWE -------
--- Siła wiatru: 0
--- Porywy: 0
--- Kierunek: 199
--- Temperatura: -3
--- Cisnienie: 1022
--- Wilgotność: 99
+--- rx done
+bad lexical cast: source type value could not be interpreted as target
+bad lexical cast: source type value could not be interpreted as target
+bad lexical cast: source type value could not be interpreted as target
+--------- WX DATA -------
+-- Wind speed: 1.76
+-- Wind gusts: 3.08
+-- Direction: 311
+-- Temperature: 1
+-- Pressure: 997
+-- Humidity: 9
 --------------------------------
-rrdtool update ./test_wdir/temperatura.rrd 1544990110:-3.000000
------ Liczba wykresów do wygenerowania: 4
-rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730910 --end 1544990110 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
+rrdtool update ./test_wdir/cisnienie.rrd 1548615435:997
+rrdtool update ./test_wdir/predkosc.rrd 1548615436:1.760000
+rrdtool update ./test_wdir/szkwaly.rrd 1548615436:3.080000
+rrdtool update ./test_wdir/kierunek.rrd 1548615436:311
+----- Count of plots to be generated: 4
+rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1548356236 --end 1548615436 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
 1149x459
-rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730910 --end 1544990110 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
+rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1548356236 --end 1548615436 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
 1149x459
-rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940910 --end 1544990110 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
+rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1548566236 --end 1548615436 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
 1149x623
-rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940910 --end 1544990110 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
+rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1548566236 --end 1548615436 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
 1149x459
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:55:10 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-SR9WXS>APRX29,TCPIP*,qAC,T2PARIS:!4946.09N/01902.33E_199/000g000t022r...p...P...b10220h99
------------------------------------------------
--- Przetworzone dane stacji: SR9WXS-0
--- Id urządzenia: APRX29
--- Długość Ścieżki: 1
------- Element Numer: 1 = TCPIP-0
--- Typ wysyłającego do APRS-IS: qAC
--- Wysyłający do APRS-IS: T2PARIS
--- Dane: !4946.09N/01902.33E_199/000g000t022r...p...P...b10220h99
-
------------------------------------------------ 
-rx done
-bad lexical cast: source type value could not be interpreted as target
-bad lexical cast: source type value could not be interpreted as target
-bad lexical cast: source type value could not be interpreted as target
---------- DANE POGODOWE -------
--- Siła wiatru: 0
--- Porywy: 0
--- Kierunek: 199
--- Temperatura: -3
--- Cisnienie: 1022
--- Wilgotność: 99
---------------------------------
-rrdtool update ./test_wdir/cisnienie.rrd 1544990122:1022
-rrdtool update ./test_wdir/predkosc.rrd 1544990122:0.000000
-rrdtool update ./test_wdir/szkwaly.rrd 1544990122:0.000000
-rrdtool update ./test_wdir/kierunek.rrd 1544990122:199
------ Liczba wykresów do wygenerowania: 4
-rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730922 --end 1544990122 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
-1149x459
-rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730922 --end 1544990122 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
-1149x459
-rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940922 --end 1544990122 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
-1149x623
-rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940922 --end 1544990122 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
-1149x459
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:55:30 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:55:50 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:56:10 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-SR9WXS>APRX29,TCPIP*,qAC,T2PARIS:!4946.09N/01902.33E_199/000g000t022r...p...P...b10220h99
------------------------------------------------
--- Przetworzone dane stacji: SR9WXS-0
--- Id urządzenia: APRX29
--- Długość Ścieżki: 1
------- Element Numer: 1 = TCPIP-0
--- Typ wysyłającego do APRS-IS: qAC
--- Wysyłający do APRS-IS: T2PARIS
--- Dane: !4946.09N/01902.33E_199/000g000t022r...p...P...b10220h99
-
------------------------------------------------ 
-rx done
-bad lexical cast: source type value could not be interpreted as target
-bad lexical cast: source type value could not be interpreted as target
-bad lexical cast: source type value could not be interpreted as target
---------- DANE POGODOWE -------
--- Siła wiatru: 0
--- Porywy: 0
--- Kierunek: 199
--- Temperatura: -3
--- Cisnienie: 1022
--- Wilgotność: 99
---------------------------------
-rrdtool update ./test_wdir/cisnienie.rrd 1544990170:1022
-rrdtool update ./test_wdir/predkosc.rrd 1544990171:0.000000
-rrdtool update ./test_wdir/szkwaly.rrd 1544990171:0.000000
-rrdtool update ./test_wdir/kierunek.rrd 1544990171:199
------ Liczba wykresów do wygenerowania: 4
-rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730971 --end 1544990171 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
-1149x459
-rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544730971 --end 1544990171 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
-1149x459
-rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940971 --end 1544990171 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
-1149x623
-rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544940971 --end 1544990171 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
-1149x459
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:56:30 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:56:50 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
-SR9WXS>APRX29,TCPIP*,qAC,T2PARIS:!4946.09N/01902.33E_199/000g000t022r...p...P...b10220h99
------------------------------------------------
--- Przetworzone dane stacji: SR9WXS-0
--- Id urządzenia: APRX29
--- Długość Ścieżki: 1
------- Element Numer: 1 = TCPIP-0
--- Typ wysyłającego do APRS-IS: qAC
--- Wysyłający do APRS-IS: T2PARIS
--- Dane: !4946.09N/01902.33E_199/000g000t022r...p...P...b10220h99
-
------------------------------------------------ 
-rx done
-bad lexical cast: source type value could not be interpreted as target
-bad lexical cast: source type value could not be interpreted as target
-bad lexical cast: source type value could not be interpreted as target
---------- DANE POGODOWE -------
--- Siła wiatru: 0
--- Porywy: 0
--- Kierunek: 199
--- Temperatura: -3
--- Cisnienie: 1022
--- Wilgotność: 99
---------------------------------
-rrdtool update ./test_wdir/cisnienie.rrd 1544990221:1022
-rrdtool update ./test_wdir/predkosc.rrd 1544990221:0.000000
-rrdtool update ./test_wdir/szkwaly.rrd 1544990221:0.000000
-rrdtool update ./test_wdir/kierunek.rrd 1544990221:199
------ Liczba wykresów do wygenerowania: 4
-rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544731021 --end 1544990221 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
-1149x459
-rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544731021 --end 1544990221 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
-1149x459
-rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544941021 --end 1544990221 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
-1149x623
-rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544941021 --end 1544990221 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
-1149x459
-SR9WXS>APRX29,TCPIP*,qAC,T2PARIS:>http://kozia.pogoda.cc
------------------------------------------------
--- Przetworzone dane stacji: SR9WXS-0
--- Id urządzenia: APRX29
--- Długość Ścieżki: 1
------- Element Numer: 1 = TCPIP-0
--- Typ wysyłającego do APRS-IS: qAC
--- Wysyłający do APRS-IS: T2PARIS
--- Dane: >http://kozia.pogoda.cc
-
------------------------------------------------ 
-rx done
---------- DANE POGODOWE -------
--- Siła wiatru: 0
--- Porywy: 0
--- Kierunek: 199
--- Temperatura: -3
--- Cisnienie: 1022
--- Wilgotność: 99
---------------------------------
-rrdtool update ./test_wdir/cisnienie.rrd 1544990224:1022
-rrdtool update ./test_wdir/predkosc.rrd 1544990224:0.000000
-rrdtool update ./test_wdir/szkwaly.rrd 1544990224:0.000000
-rrdtool update ./test_wdir/kierunek.rrd 1544990224:199
------ Liczba wykresów do wygenerowania: 4
-rrdtool graph ./test_wdir/temperatura.png -w 1000 -h 400 -t "Temperatura" -v "Stopnie C" -l -2.0000e+01 -u 3.5000e+01 -r     --right-axis 1:0 --right-axis-label "Stopnie C" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544731024 --end 1544990224 DEF:temperatura=./test_wdir/temperatura.rrd:temperatura:AVERAGE LINE2:temperatura#009900
-1149x459
-rrdtool graph ./test_wdir/cisnienie.png -w 1000 -h 400 -t "Cisnienie zredukowane do poziomu morza - QNH" -v "hPa" -l 9.6000e+02 -u 1.0600e+03 -r  --y-grid 5:1   -X 0 --right-axis 1:0 --right-axis-label "hPa" --x-grid MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00 --start 1544731024 --end 1544990224 DEF:cisnienie=./test_wdir/cisnienie.rrd:cisnienie:AVERAGE AREA:cisnienie#009900
-1149x459
-rrdtool graph ./test_wdir/predkosc.png -w 1000 -h 550 -t "Prędkość wiatru" -v "m/s" -l 1.0000e-01 -u 2.1000e+01 -r     --right-axis 1:0 --right-axis-label "m/s" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544941024 --end 1544990224 DEF:predkosc=./test_wdir/predkosc.rrd:predkosc:AVERAGE DEF:szkwaly=./test_wdir/szkwaly.rrd:szkwaly:AVERAGE AREA:predkosc#ff0000:Predkosc LINE2:szkwaly#0000ff:Porywy
-1149x623
-rrdtool graph ./test_wdir/kierunek.png -w 1000 -h 400 -t "Kierunek" -v "stopnie" -l 1.0000e+00 -u 3.6000e+02 -r     --right-axis 1:0 --right-axis-label "stopnie" --x-grid MINUTE:10:HOUR:1:HOUR:1:0:%H:00 --start 1544941024 --end 1544990224 DEF:kierunek=./test_wdir/kierunek.rrd:kierunek:AVERAGE LINE2:kierunek#0000ff
-1149x459
-# aprsc 2.1.4-g408ed49 16 Dec 2018 19:57:10 GMT T2POLC 91.134.209.193:14580
-rx done
---- To nie jest poprawna ramka APRS
+INSERT INTO `meteo`.`kozia` (`Id`, `TimestampEpoch`, `TimestampDate`, `Temp`, `WindSpeed`, `WindGusts`, `WindDir`, `QNH`, `Humidity`) VALUES (NULL, CURRENT_TIMESTAMP, '2019-01-27 19:57:16', 1, 1.76, 3.08, 311, 997, 9);
+MySQL server has gone away# aprsc 2.1.4-g408ed49 27 Jan 2019 18:57:24 GMT T2HUN 185.43.207.219:14580
+--- rx done
+--- This is not valid APRS packet

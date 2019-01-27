@@ -38,33 +38,42 @@ int correction = 0;
 
 #define DEFAULT_APRS_SERVER_TIMEOUT_SECONDS 73
 
+Config config;
+ProgramConfig programConfig("config.conf");
+
+AprsThreadConfig aprsConfig;
+AprsThread aprsThread;
+MySqlConnInterface mysqlDb;
+DataPresentation dataPresence;
+Telemetry telemetry;
+AprsAsioThread * asioThread;
+SlewRateLimiter limiter;
+
+RRDFileDefinition sVectorRRDTemp;
+PlotFileDefinition cVectorPNGTemp;
+
+AprsWXData wxTemp, wxTelemetry;
+AprsWXData wxTarget; // target wx data to be inserted into RRD DB & printed onto website
+AprsWXData wxLastTarget;
+AprsPacket* cPKTtemp;
+
 void main_segfault_sigaction(int signal, siginfo_t *si, void *arg)
 {
     //printf("Caught segfault at address %p\n", si->si_addr);
     std::cout << "!!!!Caught segfault at address" << std::hex << si->si_addr << std::endl;
-//    exit(0);
+
+    if (dataPresence.htmlFile != nullptr) {
+    	std::cout << "!!! _fileno " << dataPresence.htmlFile->_fileno << std::endl;
+    	std::cout << "!!! _flags " << dataPresence.htmlFile->_flags << std::endl;
+    	std::cout << "!!! _flags2 " << dataPresence.htmlFile->_flags2 << std::endl;
+    	std::cout << "!!! _mode " << dataPresence.htmlFile->_mode << std::endl;
+    	std::cout << "!!! _offset " << dataPresence.htmlFile->_offset << std::endl;
+    }
+
+    exit(1);
 }
 
 int main(int argc, char **argv){
-
-	Config config;
-	ProgramConfig programConfig("config.conf");
-
-	AprsThreadConfig aprsConfig;
-	AprsThread aprsThread;
-	MySqlConnInterface mysqlDb;
-	DataPresentation dataPresence;
-	Telemetry telemetry;
-	AprsAsioThread * asioThread;
-	SlewRateLimiter limiter;
-
-	RRDFileDefinition sVectorRRDTemp;
-	PlotFileDefinition cVectorPNGTemp;
-
-	AprsWXData wxTemp, wxTelemetry;
-	AprsWXData wxTarget; // target wx data to be inserted into RRD DB & printed onto website
-	AprsWXData wxLastTarget;
-	AprsPacket* cPKTtemp;
 
 	queue <AprsPacket> qPackets;
 	queue <AprsWXData> qMeteo;

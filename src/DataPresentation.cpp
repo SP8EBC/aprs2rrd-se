@@ -178,7 +178,7 @@ void DataPresentation::PlotGraphsFromRRD() {
 }
 
 void DataPresentation::GenerateWebiste(AprsWXData* WX) {
-	FILE* plik;
+	//FILE* htmlFile;
 	time_t currtime;
     struct tm* local;
 	currtime =time(NULL);
@@ -192,75 +192,75 @@ void DataPresentation::GenerateWebiste(AprsWXData* WX) {
     "Lipca", "Sierpnia", "Wrzesnia", "Pazdziernika", "Listopada", "Grudnia"
     };
 
-	plik=fopen(this->WebsitePath.c_str(),"wt");
+	htmlFile=fopen(this->WebsitePath.c_str(),"wt");
 
-	if (plik == nullptr || plik == NULL)
+	if (htmlFile == nullptr || htmlFile == NULL)
 		return;
 
-		fprintf(plik, "<!DOCTYPE html>");
-		fprintf(plik, "<HTML><head>\r\n<TITLE>%s</TITLE> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">", this->WebsiteTitle.c_str());
-		fprintf(plik, "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\"></head>");
-		fprintf(plik, "<P><H2>%s</H2></P>\r\n", this->WebsiteHeadingTitle.c_str());
-		fprintf(plik, "<table><tr><td class=table_caption><b>Aktualna Prędkość Wiatru (średnia za 3 minuty):</b></td><td class=table_value id=srednia> %.1f m/s </td></tr>\r\n", WX->wind_speed);
-		fprintf(plik, "<tr><td class=table_caption><b>Aktualne Porywy (maksymalna szybkość przez ostatnie 3 minuty):</b></td><td class=table_value id=porywy> %.1f m/s </td></tr>", WX->wind_gusts);
-		fprintf(plik, "<tr><td class=table_caption><b>Meteorologiczny Kierunek Wiatru:</b></td><td class=table_value id=kierunek> %d stopni ", WX->wind_direction);
+		fprintf(htmlFile, "<!DOCTYPE html>");
+		fprintf(htmlFile, "<HTML><head>\r\n<TITLE>%s</TITLE> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">", this->WebsiteTitle.c_str());
+		fprintf(htmlFile, "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\"></head>");
+		fprintf(htmlFile, "<P><H2>%s</H2></P>\r\n", this->WebsiteHeadingTitle.c_str());
+		fprintf(htmlFile, "<table><tr><td class=table_caption><b>Aktualna Prędkość Wiatru (średnia za 3 minuty):</b></td><td class=table_value id=srednia> %.1f m/s </td></tr>\r\n", WX->wind_speed);
+		fprintf(htmlFile, "<tr><td class=table_caption><b>Aktualne Porywy (maksymalna szybkość przez ostatnie 3 minuty):</b></td><td class=table_value id=porywy> %.1f m/s </td></tr>", WX->wind_gusts);
+		fprintf(htmlFile, "<tr><td class=table_caption><b>Meteorologiczny Kierunek Wiatru:</b></td><td class=table_value id=kierunek> %d stopni ", WX->wind_direction);
 		if (WX->wind_direction <= 11 && WX->wind_direction >= 349)
-			fprintf(plik, "- z północy");
+			fprintf(htmlFile, "- z północy");
 		else if (WX->wind_direction <= 34 && WX->wind_direction > 11)
-			fprintf(plik, "- z północy-północnego wschodu");
+			fprintf(htmlFile, "- z północy-północnego wschodu");
 		else if (WX->wind_direction <= 56 && WX->wind_direction > 34)
-			fprintf(plik, "- z północnego wschodu");
+			fprintf(htmlFile, "- z północnego wschodu");
 		else if (WX->wind_direction <= 79 && WX->wind_direction > 56)
-			fprintf(plik, "- ze wschodu-północnego wschodu");
+			fprintf(htmlFile, "- ze wschodu-północnego wschodu");
 		else if (WX->wind_direction <= 101 && WX->wind_direction > 79)
-			fprintf(plik, "- ze wschodu");
+			fprintf(htmlFile, "- ze wschodu");
 		else if (WX->wind_direction <= 124 && WX->wind_direction > 101)
-			fprintf(plik, "- ze wschodu-południowego wschodu");
+			fprintf(htmlFile, "- ze wschodu-południowego wschodu");
 		else if (WX->wind_direction <= 146 && WX->wind_direction > 124)
-			fprintf(plik, "- z południowego wschodu");
+			fprintf(htmlFile, "- z południowego wschodu");
 		else if (WX->wind_direction <= 169 && WX->wind_direction > 146)
-			fprintf(plik, "- z południa-południowego wschodu");
+			fprintf(htmlFile, "- z południa-południowego wschodu");
 		else if (WX->wind_direction <= 191 && WX->wind_direction > 169)
-			fprintf(plik, "- z południa");
+			fprintf(htmlFile, "- z południa");
 		else if (WX->wind_direction <= 214 && WX->wind_direction > 191)
-			fprintf(plik, "- z południa-południowego zachodu");
+			fprintf(htmlFile, "- z południa-południowego zachodu");
 		else if (WX->wind_direction <= 236 && WX->wind_direction > 214)
-			fprintf(plik, "- z południowego zachodu");
+			fprintf(htmlFile, "- z południowego zachodu");
 		else if (WX->wind_direction <= 259 && WX->wind_direction > 236)
-			fprintf(plik, "- z zachodu-południowego zachodu");
+			fprintf(htmlFile, "- z zachodu-południowego zachodu");
 		else if (WX->wind_direction <= 281 && WX->wind_direction > 259)
-			fprintf(plik, "- z zachodu");
+			fprintf(htmlFile, "- z zachodu");
 		else if (WX->wind_direction <= 304 && WX->wind_direction > 281)
-			fprintf(plik, "- z zachodu-północnego zachodu");
+			fprintf(htmlFile, "- z zachodu-północnego zachodu");
 		else if (WX->wind_direction <= 327 && WX->wind_direction > 304)
-			fprintf(plik, "- z północnego zachodu");
+			fprintf(htmlFile, "- z północnego zachodu");
 		else if (WX->wind_direction <= 349 && WX->wind_direction > 327)
-			fprintf(plik, "- z północy-północnego zachodu");
+			fprintf(htmlFile, "- z północy-północnego zachodu");
 		else;
-		fprintf(plik, "</td></tr>");
+		fprintf(htmlFile, "</td></tr>");
 		if (this->PrintTemperature)
-			fprintf(plik, "<tr><td class=table_caption><b>Temperatura:</b></td><td class=table_value id=temperatura> %.1f Stopni Celcjusza ", WX->temperature);
+			fprintf(htmlFile, "<tr><td class=table_caption><b>Temperatura:</b></td><td class=table_value id=temperatura> %.1f Stopni Celcjusza ", WX->temperature);
 		if (this->PrintPressure)
-			fprintf(plik, "<tr><td class=table_caption><b>Ciśnienie:</b></td><td class=table_value id=Ciśnienie> %d hPa ", WX->pressure);
+			fprintf(htmlFile, "<tr><td class=table_caption><b>Ciśnienie:</b></td><td class=table_value id=Ciśnienie> %d hPa ", WX->pressure);
 		if (this->PrintHumidity)
-			fprintf(plik, "<tr><td class=table_caption><b>Wilgotność:</b></td><td class=table_value id=wilgotnosc> %d %% ", WX->humidity);
-		fprintf(plik, "</table>");
+			fprintf(htmlFile, "<tr><td class=table_caption><b>Wilgotność:</b></td><td class=table_value id=wilgotnosc> %d %% ", WX->humidity);
+		fprintf(htmlFile, "</table>");
 		local = localtime(&currtime);
-		fprintf(plik, "<P class=last_update><b>Czas ostatniej aktualizacji: %3d %s %.2d:%.2d:%.2d</b> </P>", local->tm_mday, mon_name[local->tm_mon], local->tm_hour, local->tm_min, local->tm_sec);
-		fprintf(plik, "<table class=sub_heading><td class=sub_heading>%s</td></table>\r\n", this->WebsiteSubHeading.c_str());
+		fprintf(htmlFile, "<P class=last_update><b>Czas ostatniej aktualizacji: %3d %s %.2d:%.2d:%.2d</b> </P>", local->tm_mday, mon_name[local->tm_mon], local->tm_hour, local->tm_min, local->tm_sec);
+		fprintf(htmlFile, "<table class=sub_heading><td class=sub_heading>%s</td></table>\r\n", this->WebsiteSubHeading.c_str());
 		if(this->WebsiteLinkToMoreInfo == true)
-			fprintf(plik, "<table class=sub_heading><td class=sub_heading><a href=\"info.html\">Informacje o stacji i startowisku</a></td></table>\r\n");
+			fprintf(htmlFile, "<table class=sub_heading><td class=sub_heading><a href=\"info.html\">Informacje o stacji i startowisku</a></td></table>\r\n");
 		if(this->Plot0Path.size() >= 4)
-			fprintf(plik, "<br><img src=\"%s\">\r\n", this->Plot0Path.c_str());
+			fprintf(htmlFile, "<br><img src=\"%s\">\r\n", this->Plot0Path.c_str());
 		if(this->Plot1Path.size() >= 4)
-			fprintf(plik, "<br><img src=\"%s\">\r\n", this->Plot1Path.c_str());
+			fprintf(htmlFile, "<br><img src=\"%s\">\r\n", this->Plot1Path.c_str());
 		if(this->Plot2Path.size() >= 4)
-			fprintf(plik, "<br><img src=\"%s\">\r\n", this->Plot2Path.c_str());
+			fprintf(htmlFile, "<br><img src=\"%s\">\r\n", this->Plot2Path.c_str());
 		if (this->Plot3Path.size() >= 5)
-			fprintf(plik, "<br><img src=\"%s\">\r\n", this->Plot3Path.c_str());
-		fprintf(plik, "<p>Strona wygenerowna przy pomocy programu %s %s <a href=\"http://ebc41.elektroda.eu/aprs/aprs2rrd/changelog\">CHANGELOG</a></p>", SW_NAME, SW_VER);
-		fprintf(plik, "<p>%s</p>", this->WebisteFooter.c_str());
-		fclose(plik);
+			fprintf(htmlFile, "<br><img src=\"%s\">\r\n", this->Plot3Path.c_str());
+		fprintf(htmlFile, "<p>Strona wygenerowna przy pomocy programu %s %s <a href=\"http://ebc41.elektroda.eu/aprs/aprs2rrd/changelog\">CHANGELOG</a></p>", SW_NAME, SW_VER);
+		fprintf(htmlFile, "<p>%s</p>", this->WebisteFooter.c_str());
+		fclose(htmlFile);
 
 }
 

@@ -93,6 +93,8 @@ public:
 	const std::string RevSwitchPlotGraphType(PlotGraphType in);
 	const std::string RevSwitchRRAType(RRAType in);
 
+	FILE* htmlFile;
+
 	vector <RRDFileDefinition> vRRDFiles;
 	vector <PlotFileDefinition> vPNGFiles;
 
