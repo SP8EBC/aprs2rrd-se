@@ -8,6 +8,7 @@
 #include <sstream>
 #include <iostream>
 
+#include <fstream>
 //#include "main.h"
 
 PlotFileDefinition::PlotFileDefinition() {
@@ -184,11 +185,28 @@ void DataPresentation::GenerateWebiste(AprsWXData* WX) {
 	currtime =time(NULL);
 	local = localtime(&currtime);
 
+	//boost::filesystem::path html{this->WebsitePath.c_str()};
+	std::ofstream html;
+
+	html.open(this->WebsitePath.c_str(), ios::out | ios::trunc);
+
+	if (!html.is_open())
+		return;
+
+	if (!html.good())
+		return;
+
+
 	static const char mon_name[][13] = {
     "Stycznia", "Lutego", "Marca", "Kwietnia", "Maja", "Czerwca",
     "Lipca", "Sierpnia", "Wrzesnia", "Pazdziernika", "Listopada", "Grudnia"
     };
 
+	html << " <!DOCTYPE html><HTML><head>\r\n<TITLE>" << this->WebsiteTitle << "</TITLE> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">";
+
+	html.close();
+
+	/*
 	if ((plik=fopen(this->WebsitePath.c_str(),"wt")) != NULL) {
 		fprintf(plik, " <!DOCTYPE html><HTML><head>\r\n<TITLE>%s</TITLE> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">", this->WebsiteTitle.c_str());
 		fprintf(plik, "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\"></head>");
@@ -254,6 +272,7 @@ void DataPresentation::GenerateWebiste(AprsWXData* WX) {
 		fprintf(plik, "<p>%s</p>", this->WebisteFooter.c_str());
 		fclose(plik);
 	}
+	*/
 }
 
 PlotType DataPresentation::SwitchPlotType(string input) {

@@ -13,6 +13,7 @@ CPP_SRCS += \
 ../src/DataPresentation.cpp \
 ../src/MySqlConnInterface.cpp \
 ../src/ProgramConfig.cpp \
+../src/ProgramConfig_test.cpp \
 ../src/SlewRateLimiter.cpp \
 ../src/Telemetry.cpp \
 ../src/main.cpp 
@@ -27,6 +28,7 @@ OBJS += \
 ./src/DataPresentation.o \
 ./src/MySqlConnInterface.o \
 ./src/ProgramConfig.o \
+./src/ProgramConfig_test.o \
 ./src/SlewRateLimiter.o \
 ./src/Telemetry.o \
 ./src/main.o 
@@ -41,6 +43,7 @@ CPP_DEPS += \
 ./src/DataPresentation.d \
 ./src/MySqlConnInterface.d \
 ./src/ProgramConfig.d \
+./src/ProgramConfig_test.d \
 ./src/SlewRateLimiter.d \
 ./src/Telemetry.d \
 ./src/main.d 
