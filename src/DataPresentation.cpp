@@ -8,6 +8,8 @@
 #include <sstream>
 #include <iostream>
 
+#include <boost/date_time/local_time/local_time.hpp>
+
 #include <fstream>
 //#include "main.h"
 
@@ -185,6 +187,15 @@ void DataPresentation::GenerateWebiste(AprsWXData* WX) {
 	currtime =time(NULL);
 	local = localtime(&currtime);
 
+	uint8_t windspeedPrecision = 3;
+	uint8_t windgustsPrecision = 3;
+	uint8_t temperaturePrecision = 3;
+
+	boost::posix_time::ptime localtime(boost::date_time::second_clock<boost::posix_time::ptime>::local_time());
+
+	boost::posix_time::time_facet formatter;
+	formatter.format("%d %B %H:%M");
+
 	//boost::filesystem::path html{this->WebsitePath.c_str()};
 	std::ofstream html;
 
@@ -197,12 +208,81 @@ void DataPresentation::GenerateWebiste(AprsWXData* WX) {
 		return;
 
 
-	static const char mon_name[][13] = {
-    "Stycznia", "Lutego", "Marca", "Kwietnia", "Maja", "Czerwca",
-    "Lipca", "Sierpnia", "Wrzesnia", "Pazdziernika", "Listopada", "Grudnia"
-    };
+	//static const char mon_name[][13] = {
+    //"Stycznia", "Lutego", "Marca", "Kwietnia", "Maja", "Czerwca",
+    //"Lipca", "Sierpnia", "Wrzesnia", "Pazdziernika", "Listopada", "Grudnia"
+    //};
+
+	//html.precision(3);
 
 	html << " <!DOCTYPE html><HTML><head>\r\n<TITLE>" << this->WebsiteTitle << "</TITLE> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">";
+	html << "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\"></head>";
+	html << "<P><H2>" << this->WebsiteHeadingTitle << "</H2></P>\r\n";
+	html << "<table><tr><td class=table_caption><b>Aktualna Prędkość Wiatru (średnia za 3 minuty):</b></td><td class=table_value id=srednia> "<< std::setprecision(windspeedPrecision) << WX->wind_speed << " m/s </td></tr>\r\n";
+	html << "<tr><td class=table_caption><b>Aktualne Porywy (maksymalna szybkość przez ostatnie 3 minuty):</b></td><td class=table_value id=porywy>"<< std::setprecision(windgustsPrecision) <<   WX->wind_gusts << "m/s </td></tr>";
+	html << "<tr><td class=table_caption><b>Meteorologiczny Kierunek Wiatru:</b></td><td class=table_value id=kierunek>" << WX->wind_direction << "stopni ";
+
+	if (WX->wind_direction <= 11 && WX->wind_direction >= 349)
+		html << "- z północy";
+	else if (WX->wind_direction <= 34 && WX->wind_direction > 11)
+		html << "- z północy-północnego wschodu";
+	else if (WX->wind_direction <= 56 && WX->wind_direction > 34)
+		html << "- z północnego wschodu";
+	else if (WX->wind_direction <= 79 && WX->wind_direction > 56)
+		html << "- ze wschodu-północnego wschodu";
+	else if (WX->wind_direction <= 101 && WX->wind_direction > 79)
+		html << "- ze wschodu";
+	else if (WX->wind_direction <= 124 && WX->wind_direction > 101)
+		html << "- ze wschodu-południowego wschodu";
+	else if (WX->wind_direction <= 146 && WX->wind_direction > 124)
+		html << "- z południowego wschodu";
+	else if (WX->wind_direction <= 169 && WX->wind_direction > 146)
+		html << "- z południa-południowego wschodu";
+	else if (WX->wind_direction <= 191 && WX->wind_direction > 169)
+		html << "- z południa";
+	else if (WX->wind_direction <= 214 && WX->wind_direction > 191)
+		html << "- z południa-południowego zachodu";
+	else if (WX->wind_direction <= 236 && WX->wind_direction > 214)
+		html << "- z południowego zachodu";
+	else if (WX->wind_direction <= 259 && WX->wind_direction > 236)
+		html <<"- z zachodu-południowego zachodu";
+	else if (WX->wind_direction <= 281 && WX->wind_direction > 259)
+		html << "- z zachodu";
+	else if (WX->wind_direction <= 304 && WX->wind_direction > 281)
+		html << "- z zachodu-północnego zachodu";
+	else if (WX->wind_direction <= 327 && WX->wind_direction > 304)
+		html << "- z północnego zachodu";
+	else if (WX->wind_direction <= 349 && WX->wind_direction > 327)
+		html << "- z północy-północnego zachodu";
+	else;
+
+	html << "</td></tr>";
+
+	if (this->PrintTemperature)
+		html << "<tr><td class=table_caption><b>Temperatura:</b></td><td class=table_value id=temperatura> " << std::setprecision(temperaturePrecision) << WX->temperature << " Stopni Celcjusza ";
+	if (this->PrintPressure)
+		html << "<tr><td class=table_caption><b>Ciśnienie:</b></td><td class=table_value id=Ciśnienie> " << WX->pressure << " hPa ";
+	if (this->PrintHumidity)
+		html << "<tr><td class=table_caption><b>Wilgotność:</b></td><td class=table_value id=wilgotnosc> " << WX->humidity << " %% ";
+
+	html << "</table>";
+
+	html.imbue(std::locale(std::locale::classic(), &formatter));
+	html << "<P class=last_update><b>Czas ostatniej aktualizacji: " << localtime << "</b> </P>";
+	html << "<table class=sub_heading><td class=sub_heading>" << this->WebsiteSubHeading << "</td></table>\r\n";
+
+	if(this->WebsiteLinkToMoreInfo == true)
+		html << "<table class=sub_heading><td class=sub_heading><a href=\"info.html\">Informacje o stacji i startowisku</a></td></table>\r\n";
+	if(this->Plot0Path.size() >= 4)
+		html << "<br><img src=\"" << this->Plot0Path << "\">\r\n";
+	if(this->Plot1Path.size() >= 4)
+		html << "<br><img src=\"" << this->Plot1Path << "\">\r\n";
+	if(this->Plot2Path.size() >= 4)
+		html << "<br><img src=\"" << this->Plot2Path << "\">\r\n";
+	if (this->Plot3Path.size() >= 5)
+		html << "<br><img src=\"" << this->Plot3Path << "\">\r\n";
+	html << "<p>" << this->WebisteFooter << "</p>";
+
 
 	html.close();
 
