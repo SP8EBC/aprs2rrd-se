@@ -70,7 +70,7 @@ void AprsAsioThread::connect() {
 	this->tsocket.async_connect(endpoint, boost::bind(&AprsAsioThread::connectedCallback, this, _1));
 
 	// checking if there is any thread already
-	if (this->workersGroup.size() == 0)
+//	if (this->workersGroup.size() == 0)
 		// creating a thread which will handle i/o
 		this->workersGroup.create_thread(boost::bind(&AprsAsioThread::workerThread, this));
 
