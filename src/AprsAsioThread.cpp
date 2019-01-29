@@ -189,6 +189,7 @@ bool AprsAsioThread::isPacketValid() {
 }
 
 AprsAsioThread::~AprsAsioThread() {
+	this->tsocket.shutdown(boost::asio::ip::tcp::socket::shutdown_both);
 	this->tsocket.close();
 	this->ioservice.stop();
 }
