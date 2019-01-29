@@ -28,6 +28,12 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
     char *src;
     int numi, c1i, c2i, c3i, c4i, c5i;
 
+    output->ch1 = 0;
+    output->ch2 = 0;
+    output->ch3 = 0;
+    output->ch4 = 0;
+    output->ch5 = 0;
+
     if (*(input.Data) != 'T') {
         output->valid = false;
         return -1;
