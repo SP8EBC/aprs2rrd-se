@@ -181,8 +181,6 @@ void DataPresentation::PlotGraphsFromRRD() {
 }
 
 void DataPresentation::GenerateWebiste(AprsWXData* WX) {
-	time_t currtime;
-	currtime =time(NULL);
 
 	uint8_t windspeedPrecision = 3;
 	uint8_t windgustsPrecision = 3;
@@ -190,8 +188,8 @@ void DataPresentation::GenerateWebiste(AprsWXData* WX) {
 
 	boost::posix_time::ptime localtime(boost::date_time::second_clock<boost::posix_time::ptime>::local_time());
 
-	boost::posix_time::time_facet formatter;
-	formatter.format("%d %B %H:%M");
+	boost::posix_time::time_facet * formatter = new boost::posix_time::time_facet();
+	formatter->format("%d %B %H:%M");
 
 	//boost::filesystem::path html{this->WebsitePath.c_str()};
 	std::ofstream html;
@@ -269,7 +267,7 @@ void DataPresentation::GenerateWebiste(AprsWXData* WX) {
 
 		html << "</table>";
 
-		html.imbue(std::locale(std::locale::classic(), &formatter));
+		html.imbue(std::locale(std::locale::classic(), formatter));
 		html << "<P class=last_update><b>Czas ostatniej aktualizacji: " << localtime << "</b> </P>";
 		html << "<table class=sub_heading><td class=sub_heading>" << this->WebsiteSubHeading << "</td></table>\r\n";
 
