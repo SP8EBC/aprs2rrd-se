@@ -1,1 +1,13 @@
 Versions older than 1.0 was not included in this changelog, due to lack of source code versioning back then. The newest entry is on top of file
+
+1.0.3 - Release date February 1st 2019
+> Fixed problem which was leading to crash (segmentation fault) during generation html file after reconnecting
+
+1.0.2 - Release dane January 13th 2019
+> Fixed bug inside the WX parsing routine which led to wrong results if pressure was below 1000hPa
+
+1.0.1 - Release date December 31th 2018
+> Fixed bug which crashed application (uncaught exception) when SSID field in source callsign consisted non digit character
+
+1.0 - Release date December 23th 2018
+> First release with network code refactored from old socket-like and blocking I/O to Boost ASIO
