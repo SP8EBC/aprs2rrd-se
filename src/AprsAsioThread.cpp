@@ -164,9 +164,10 @@ void AprsAsioThread::newLineCallback(const boost::system::error_code& ec) {
 			this->outputPacketValid = false;
 		}
 
-		this->mutexRxSync.unlock();
 		if (this->DebugOutput)
 			std::cout << "--- rx done" << std::endl;
+
+		this->mutexRxSync.unlock();
 		return;
 	}
 }

@@ -159,68 +159,73 @@ int main(int argc, char **argv){
 			try {
 				// waiting for new frame to be reveived
 				asioThread->receive();
+
+				// checkig if correct data has been received
+				if (asioThread->isPacketValid()) {
+					// Parsing wheater data. If this is not correct APRS wx packet the method will set
+					// the internal validity flag to false
+					AprsWXData::ParseData(asioThread->getPacket(), &wxTemp);
+
+					// Parsing telemetry data
+					Telemetry::ParseData(asioThread->getPacket(), &telemetry);
+
+					// if this is data from WX Packet
+					if (wxTemp.valid) {
+						wxTarget.copy(wxTemp, useFifthTelemAsTemperature, false);
+
+					}
+
+					if (telemetry.valid) {
+						wxTarget.copy(telemetry.getCh5(), useFifthTelemAsTemperature);
+					}
+
+					// each method below checks if passed WX packet is valid and if no they will
+					// exit immediately witoud performing any changes
+
+					wxTarget.PrintData();
+
+					// applying wind direction correction if it was enabled by user
+					AprsWXData::DirectionCorrection(wxTarget, (int16_t)dataPresence.directionCorrection);
+
+					// limiting slew rates for measurements
+					limiter.limitFromSingleFrame(wxLastTarget, wxTarget);
+
+					// inserting the data inside a RRD file
+					dataPresence.FetchDataInRRD(&wxTarget);
+
+					// replotting the graphs set
+					dataPresence.PlotGraphsFromRRD();
+
+					// generating the website
+					dataPresence.GenerateWebiste(&wxTarget);
+
+					// storing values for slew rate corrections
+					wxLastTarget = wxTarget;
+
+					if (mysqlDb.enable == true) {
+						mysqlDb.InsertIntoDb(&wxTarget);
+					}
+
+
+
+
+				}
+				else {
+					if (Debug == true)
+						cout << "--- This is not valid APRS packet" << endl;
+				}
 			}
 			catch (ConnectionTimeoutEx &e) {
 				// if connection is timed out break internal loop to allow reconnecting
 				isConnectionAlive = false;
 				break;
 			}
-
-			// checkig if correct data has been received
-			if (asioThread->isPacketValid()) {
-				// Parsing wheater data. If this is not correct APRS wx packet the method will set
-				// the internal validity flag to false
-				AprsWXData::ParseData(asioThread->getPacket(), &wxTemp);
-
-				// Parsing telemetry data
-				Telemetry::ParseData(asioThread->getPacket(), &telemetry);
-
-				// if this is data from WX Packet
-				if (wxTemp.valid) {
-					wxTarget.copy(wxTemp, useFifthTelemAsTemperature, false);
-
-				}
-
-				if (telemetry.valid) {
-					wxTarget.copy(telemetry.getCh5(), useFifthTelemAsTemperature);
-				}
-
-				// each method below checks if passed WX packet is valid and if no they will
-				// exit immediately witoud performing any changes
-
-				wxTarget.PrintData();
-
-				// applying wind direction correction if it was enabled by user
-				AprsWXData::DirectionCorrection(wxTarget, (int16_t)dataPresence.directionCorrection);
-
-				// limiting slew rates for measurements
-				limiter.limitFromSingleFrame(wxLastTarget, wxTarget);
-
-				// inserting the data inside a RRD file
-				dataPresence.FetchDataInRRD(&wxTarget);
-
-				// replotting the graphs set
-				dataPresence.PlotGraphsFromRRD();
-
-				// generating the website
-				dataPresence.GenerateWebiste(&wxTarget);
-
-				// storing values for slew rate corrections
-				wxLastTarget = wxTarget;
-
-				if (mysqlDb.enable == true) {
-					mysqlDb.InsertIntoDb(&wxTarget);
-				}
-
-
-
-
+			catch (std::exception &e) {
+				cout << "std::exception " << e.what() << std::endl;
 			}
-			else {
-				if (Debug == true)
-					cout << "--- This is not valid APRS packet" << endl;
+			catch (...) {
+				cout << "Unknown exception thrown during processing!" << std::endl;
 			}
-
 
 		}
 

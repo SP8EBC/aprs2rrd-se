@@ -140,12 +140,12 @@ void AprsWXData::PrintData(void) {
     if (this->valid == true && AprsWXData::DebugOutput == true) {
     	std::cout << std::dec;
         std::cout << "--------- WX DATA -------" << std::endl;
-        std::cout << "-- Wind speed: " << this->wind_speed << std::endl;
+        std::cout << "-- Wind speed: " << this->wind_speed << " - use " << this->useWind << std::endl;
         std::cout << "-- Wind gusts: " <<  this->wind_gusts << std::endl;
         std::cout << "-- Direction: " <<  this->wind_direction << std::endl;
-        std::cout << "-- Temperature: " << this->temperature << std::endl;
-        std::cout << "-- Pressure: " << this->pressure << std::endl;
-        std::cout << "-- Humidity: " << this->humidity << std::endl;
+        std::cout << "-- Temperature: " << this->temperature << " - use " << this->useTemperature << std::endl;
+        std::cout << "-- Pressure: " << this->pressure << " - use " << this->usePressure << std::endl;
+        std::cout << "-- Humidity: " << this->humidity << " - use " << this->useHumidity << std::endl;
         std::cout << "--------------------------------" << std::endl;
     }
 }

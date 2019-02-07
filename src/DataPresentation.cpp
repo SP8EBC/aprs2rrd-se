@@ -36,6 +36,9 @@ void DataPresentation::FetchDataInRRD(AprsWXData* cInput) {
 	int currtimeint;
 	time_t currtime;
 
+	if (cInput == nullptr)
+		return;
+
 	if (!cInput->valid)
 		return;
 
