@@ -217,6 +217,8 @@ void DataPresentation::GenerateWebiste(AprsWXData* WX) {
 
 	//html.precision(3);
 
+	std::cout << "--- Html file opened" << std::endl;
+
 	try {
 		html << " <!DOCTYPE html><HTML><head>\r\n<TITLE>" << this->WebsiteTitle << "</TITLE> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">";
 		html << "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\"></head>";
@@ -290,7 +292,7 @@ void DataPresentation::GenerateWebiste(AprsWXData* WX) {
 		std::cout << "--- Unknown exception thrown during generating html page!" << std::endl;
 	}
 
-	std::cout << "--- Closing html file";
+	std::cout << "--- Closing html file" << std::endl;
 	html.close();
 
 }

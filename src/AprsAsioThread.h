@@ -18,7 +18,7 @@
 #include <boost/asio/streambuf.hpp>
 #include <boost/thread.hpp>
 
-
+#include <condition_variable>
 
 #include "AprsThreadConfig.h"
 #include "AprsPacket.h"
@@ -40,7 +40,18 @@ class AprsAsioThread {
 	// timer używany do obsługi timeotów przy nawiązywaniu połączenia i komunikacji z serwerem APRS-IS
 	boost::asio::deadline_timer timer {ioservice};
 
-	boost::timed_mutex mutexRxSync;
+	// we cannot use Mutex to synchronize two threads. As stack overflow claims mutexes shall be designalized
+	// and signzlized in the same thread
+	//
+	// https://stackoverflow.com/questions/1105745/pthread-mutex-assertion-error
+	// https://stackoverflow.com/questions/44635333/pthread-mutex-lock-assertion-fails
+	// https://stackoverflow.com/questions/16907072/how-do-i-use-a-boost-condition-variable-to-wait-for-a-thread-to-complete-process
+	//
+	//boost::timed_mutex mutexRxSync;
+
+	std::condition_variable syncCondition;
+
+	std::mutex syncLock;
 
 	boost::thread_group workersGroup;
 

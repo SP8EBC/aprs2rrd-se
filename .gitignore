@@ -1,6 +1,10 @@
 #Debug/
 APRS2RRD
 
+*.png
+*.dmp
+*.rrd
+
 # Prerequisites
 *.d
 

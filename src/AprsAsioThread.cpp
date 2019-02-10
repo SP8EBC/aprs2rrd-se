@@ -99,25 +99,30 @@ void AprsAsioThread::writeCallback(const boost::system::error_code& ec,
 
 void AprsAsioThread::receive() {
 
-	bool result = false;
+	std::unique_lock<std::mutex> lock(this->syncLock);
 
 	// locking a mutex which will be used to synchronize
-	this->mutexRxSync.lock();
+	//this->mutexRxSync.lock();
 
 	// starting asynchronous read which will last until end of line will be received
 	boost::asio::async_read_until(this->tsocket, this->in_buf, "\r\n", boost::bind(&AprsAsioThread::newLineCallback, this, _1));
 
 	// waiting for receive
-	result = this->mutexRxSync.timed_lock(boost::posix_time::seconds(this->timeout));
+	auto result = this->syncCondition.wait_for(lock, std::chrono::seconds(this->timeout));
 
-	if (result) {
-		this->mutexRxSync.unlock();
-		return;
-	}
-	else {
-		this->mutexRxSync.unlock();
+	// there is no need to encapsulate 'wait_for()' method inside while(work_is_done) loop which protect against
+	// locking a thread before processing in another one even starts. Here receiving is triggered just before waiting
+	// and app architecture doesn't provide next receiving before previous frame is fully processed
+
+	if (result == cv_status::timeout) {
+		lock.unlock();
 		throw ConnectionTimeoutEx();
 	}
+	else {
+		lock.unlock();
+		return;
+	}
+
 
 }
 
@@ -167,7 +172,9 @@ void AprsAsioThread::newLineCallback(const boost::system::error_code& ec) {
 		if (this->DebugOutput)
 			std::cout << "--- rx done" << std::endl;
 
-		this->mutexRxSync.unlock();
+		this->syncCondition.notify_all();
+
+//		this->mutexRxSync.unlock();
 		return;
 	}
 }
