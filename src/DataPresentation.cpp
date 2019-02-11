@@ -225,7 +225,7 @@ void DataPresentation::GenerateWebiste(AprsWXData* WX) {
 		html << "<P><H2>" << this->WebsiteHeadingTitle << "</H2></P>\r\n";
 		html << "<table><tr><td class=table_caption><b>Aktualna Prędkość Wiatru (średnia za 3 minuty):</b></td><td class=table_value id=srednia> "<< std::setprecision(windspeedPrecision) << WX->wind_speed << " m/s </td></tr>\r\n";
 		html << "<tr><td class=table_caption><b>Aktualne Porywy (maksymalna szybkość przez ostatnie 3 minuty):</b></td><td class=table_value id=porywy> " << std::setprecision(windgustsPrecision) <<   WX->wind_gusts << " m/s </td></tr>";
-		html << "<tr><td class=table_caption><b>Meteorologiczny Kierunek Wiatru:</b></td><td class=table_value id=kierunek> " << WX->wind_direction << " stopni";
+		html << "<tr><td class=table_caption><b>Meteorologiczny Kierunek Wiatru:</b></td><td class=table_value id=kierunek> " << WX->wind_direction << " stopni ";
 
 		if (WX->wind_direction <= 11 && WX->wind_direction >= 349)
 			html << "- z północy";
@@ -286,6 +286,7 @@ void DataPresentation::GenerateWebiste(AprsWXData* WX) {
 			html << "<br><img src=\"" << this->Plot2Path << "\">\r\n";
 		if (this->Plot3Path.size() >= 5)
 			html << "<br><img src=\"" << this->Plot3Path << "\">\r\n";
+		html << "<p>Strona wygenerowana przy pomocy programu APRS2RRD w wersji " << SW_VER << " <a href=\"https://github.com/SP8EBC/aprs2rrd-se\">STRONA PROJEKTU</a> </p>";
 		html << "<p>" << this->WebisteFooter << "</p>";
 	}
 	catch (...) {
