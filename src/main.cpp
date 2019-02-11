@@ -138,14 +138,14 @@ int main(int argc, char **argv){
 		}
 	}
 
+	// creating a new copy of ASIO thread
+	asioThread = new AprsAsioThread(aprsConfig, DEFAULT_APRS_SERVER_TIMEOUT_SECONDS);
+
+	// setting a logging level
+	asioThread->DebugOutput = Debug;
+
 	// main loop
 	do {
-		// creating a new copy of ASIO thread
-		asioThread = new AprsAsioThread(aprsConfig, DEFAULT_APRS_SERVER_TIMEOUT_SECONDS);
-
-		// setting a logging level
-		asioThread->DebugOutput = Debug;
-
 		// initializing connection
 		asioThread->connect();
 
@@ -206,9 +206,6 @@ int main(int argc, char **argv){
 						mysqlDb.InsertIntoDb(&wxTarget);
 					}
 
-
-
-
 				}
 				else {
 					if (Debug == true)
@@ -231,7 +228,6 @@ int main(int argc, char **argv){
 
 		std::cout << "--- Connection to APRS server died. Reconnecting.." << std::endl;
 
-		delete asioThread;
 	} while (mainLoopExit);		// end of main loop
 
 	std::cout << "--- Exiting application";

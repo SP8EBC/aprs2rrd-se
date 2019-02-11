@@ -48,6 +48,10 @@ void AprsAsioThread::workerThread() {
 }
 
 void AprsAsioThread::connect() {
+
+	// creating a copy of the tcp socket
+	this->tsocket.reset(new boost::asio::ip::tcp::socket(this->ioservice));
+
 	// creating a copy of query class which is then used by the resolver to 'convert' a domain addres to ip
 	boost::asio::ip::tcp::resolver::query q(this->conf.ServerURL, boost::lexical_cast<std::string>(this->conf.ServerPort));
 
@@ -67,7 +71,7 @@ void AprsAsioThread::connect() {
 	boost::asio::ip::tcp::endpoint endpoint = *this->resolverIterator;
 
 	// connecting
-	this->tsocket.async_connect(endpoint, boost::bind(&AprsAsioThread::connectedCallback, this, _1));
+	this->tsocket->async_connect(endpoint, boost::bind(&AprsAsioThread::connectedCallback, this, _1));
 
 	// checking if there is any thread already
 	if (this->workersGroup.size() == 0)
@@ -83,7 +87,7 @@ void AprsAsioThread::connectedCallback(const boost::system::error_code& ec) {
 		return;
 	}
 	else {
-		this->tsocket.async_send(boost::asio::buffer(this->loginString), &AprsAsioThread::writeCallback);
+		this->tsocket->async_send(boost::asio::buffer(this->loginString), &AprsAsioThread::writeCallback);
 		this->connected = true;
 	}
 
@@ -105,7 +109,7 @@ void AprsAsioThread::receive() {
 	//this->mutexRxSync.lock();
 
 	// starting asynchronous read which will last until end of line will be received
-	boost::asio::async_read_until(this->tsocket, this->in_buf, "\r\n", boost::bind(&AprsAsioThread::newLineCallback, this, _1));
+	boost::asio::async_read_until(*this->tsocket, this->in_buf, "\r\n", boost::bind(&AprsAsioThread::newLineCallback, this, _1));
 
 	// waiting for receive
 	auto result = this->syncCondition.wait_for(lock, std::chrono::seconds(this->timeout));
@@ -150,6 +154,9 @@ void AprsAsioThread::newLineCallback(const boost::system::error_code& ec) {
 			begin++;	// incrementing an iterator to the next element
 		} while (begin != end);	// until we reach the end of the streambuf
 
+		if (this->DebugOutput)
+			std::cout << "--- rx done" << std::endl;
+
 		// clearing target object
 		this->outputPacket.clear();
 
@@ -169,9 +176,6 @@ void AprsAsioThread::newLineCallback(const boost::system::error_code& ec) {
 			this->outputPacketValid = false;
 		}
 
-		if (this->DebugOutput)
-			std::cout << "--- rx done" << std::endl;
-
 		this->syncCondition.notify_all();
 
 //		this->mutexRxSync.unlock();
@@ -180,8 +184,9 @@ void AprsAsioThread::newLineCallback(const boost::system::error_code& ec) {
 }
 
 void AprsAsioThread::disconnect() {
-	this->tsocket.close();
-	this->ioservice.stop();
+	//this->tsocket.close();
+
+	//this->ioservice.stop();
 }
 
 bool AprsAsioThread::isConnected() {
@@ -200,7 +205,7 @@ AprsAsioThread::~AprsAsioThread() {
 	std::cout << "--- AprsAsioThread destructor";
 
 //	this->tsocket.shutdown(boost::asio::ip::tcp::socket::shutdown_both);
-	this->tsocket.close();
-	this->ioservice.stop();
+	//this->tsocket.close();
+	//this->ioservice.stop();
 }
 

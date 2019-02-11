@@ -34,7 +34,7 @@ class AprsAsioThread {
 	// czy program chciałby wysłać/odebrać jakieś dane czy nie. Zapętlone, ciagłe wywołanie tej metody
 	// zjadło by całe zasoby procesora
 	boost::asio::io_service::work wrk {ioservice};
-	boost::asio::ip::tcp::socket tsocket {ioservice};
+	boost::shared_ptr<boost::asio::ip::tcp::socket> tsocket /*{ioservice}*/;
 	boost::asio::ip::tcp::resolver::iterator resolverIterator;
 
 	// timer używany do obsługi timeotów przy nawiązywaniu połączenia i komunikacji z serwerem APRS-IS
