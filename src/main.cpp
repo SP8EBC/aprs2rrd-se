@@ -171,6 +171,10 @@ int main(int argc, char **argv){
 
 					// if this is data from WX Packet
 					if (wxTemp.valid) {
+
+						// applying wind direction correction if it was enabled by user
+						AprsWXData::DirectionCorrection(wxTarget, (int16_t)dataPresence.directionCorrection);
+
 						wxTarget.copy(wxTemp, useFifthTelemAsTemperature, false);
 
 					}
@@ -183,9 +187,6 @@ int main(int argc, char **argv){
 					// exit immediately witoud performing any changes
 
 					wxTarget.PrintData();
-
-					// applying wind direction correction if it was enabled by user
-					AprsWXData::DirectionCorrection(wxTarget, (int16_t)dataPresence.directionCorrection);
 
 					// limiting slew rates for measurements
 					limiter.limitFromSingleFrame(wxLastTarget, wxTarget);
