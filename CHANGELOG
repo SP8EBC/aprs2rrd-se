@@ -1,5 +1,10 @@
 Versions older than 1.0 was not included in this changelog, due to lack of source code versioning back then. The newest entry is on top of file
 
+1.1 - Release candiate as for February 13th 2019
+> Changed method of threads signalization from mutex to condition variable (was leading to random crashes due to misuse)
+> More elegant method of reconnecting after loosing connection from APRS-IS server
+> Fixed direction correction
+
 1.0.3 - Release date February 1st 2019
 > Fixed problem which was leading to crash (segmentation fault) during generation html file after reconnecting
 

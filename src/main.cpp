@@ -173,7 +173,7 @@ int main(int argc, char **argv){
 					if (wxTemp.valid) {
 
 						// applying wind direction correction if it was enabled by user
-						AprsWXData::DirectionCorrection(wxTarget, (int16_t)dataPresence.directionCorrection);
+						AprsWXData::DirectionCorrection(wxTemp, (int16_t)dataPresence.directionCorrection);
 
 						wxTarget.copy(wxTemp, useFifthTelemAsTemperature, false);
 
