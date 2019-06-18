@@ -198,12 +198,12 @@ int AprsWXData::CopyConvert(char sign, std::string& input, int& output, int& cou
     catch (const boost::bad_lexical_cast& ex) {
     	std::cout << ex.what() << std::endl;
     	output = 0;
-    	return -1;
+    	//return -1;
     }
     catch (const std::bad_cast& ex) {
     	std::cout << ex.what() << std::endl;
     	output = 0;
-    	return -1;
+    	//return -1;
     }
 
     // storing a position where 'sign' was found
