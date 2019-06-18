@@ -249,6 +249,9 @@ int AprsPacket::ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cT
 		catch (const boost::bad_lexical_cast& ex) {
 			return NOT_VALID_APRS_PACKET;
 		}
+		catch (const std::bad_cast& ex) {
+			return NOT_VALID_APRS_PACKET;
+		}
 
 	}
 
@@ -267,152 +270,6 @@ int AprsPacket::ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cT
 	std::copy(payload.begin(), payload.end(), cTarget->Data);
 
 	return OK;
-/*
-   int i,ii;  // liczniki do petli
-    int pos = 0;    // pozycja w przetwarzanej ramce
-    int ctemp;
-    char tmp[2];
-    char *src_t, *dst_t; // pomocnicze wskazniki do kopiowania danych pomiedzy tabelami
-    if (*tInputBuffer == '#' || *tInputBuffer == 0x00 || buff_len > 1000 || buff_len < 5)
-		return NOT_VALID_APRS_PACKET;
-    src_t = tInputBuffer;
-    ///////// Adres nadawcy
-    dst_t = cTarget->SrcAddr;
-    for(i = 0; i<=9 ;i++) {
-        // przepisywanie adresu zrodla/nadawcy
-        if( *(src_t + i) == '>') {
-            i++;
-            break;  // jezeli petla spotkala znak '>' to oznacza to koniec znaku nadawcy
-        }
-        else if(*(src_t + i) == '-') {
-            // opcjonalne SSID nadawcy
-            tmp[0] = *(src_t + i + 1);
-            tmp[1] = *(src_t + i + 2);
-            i++;
-            ctemp = atoi(tmp);
-            cTarget->SrcSSID = ctemp;
-            do {
-				if (*(src_t + i + pos) == 0x00 || (i + pos > buff_len))
-					return CORRUPTED_APRS_PACKET;
-                 // zwiekszanie licznika i do momentu dojscia do >
-                 i++;
-            } while (*(src_t + i + pos) != '>');
-            i++;   // kolejne zwiekszanie o jeden zeby przeskoczyc na pierwszy znak kolejnego elementu
-            break;
-        }
-        else {
-            *(dst_t + i) = *(src_t + i);
-        }
-    }
-    pos = i;
-    /////// Adres przeznaczenia tu nie ma SSID
-    dst_t = cTarget->DestAddr;
-    for (i = 0; i <= 6; i++) {
-        if (*(src_t + i + pos) == ',') {  // przecinek rozdziela poszczegolne
-            i++;
-            break;
-        }
-        else
-           *(dst_t + i) = *(src_t + i + pos);
-    }
-    pos += i;
-    ////// sciezka pakietowa
-    ii = 0;
-                tmp[0] = *(src_t + pos);            // wpisywanie do bufora dwoch kolejnych znakow
-                tmp[1] = *(src_t + pos + 1);
-    while(ii <= 5 && (tmp[0] != 'q') && (tmp[1] != 'A')) {
-//	dst_t = cTarget->Path[ii].Call;
-        // przetwarzanie maksymalnie 5 stopni do wyrazenia qA*
-        for(i = 0; i<=9 ;i++) {
-            if( *(src_t + i + pos) == ',') {
-                i++;    // jezeli napotkano przecinek rozdzielajacy elementy to przesun na nastepny znak
-                tmp[0] = *(src_t + i + pos);            // wpisywanie do bufora dwoch kolejnych znakow
-                tmp[1] = *(src_t + i + pos + 1);
-                break;  // i przerwij wykonywanie tej petli for
-            }
-            else if ( *(src_t + i + pos) == '-') {
-                // SSID jezeli wystepuje
-                tmp[0] = *(src_t + i + pos + 1);
-                tmp[1] = *(src_t + i + pos + 2);
-                ctemp = atoi(tmp);
-                cTarget->Path[ii].SSID = ctemp;
-                do {
-					if (*(src_t + i + pos) == 0x00 || (i + pos > buff_len))
-						return -1;
-                    // zwiekszanie licznika i do momentu dojscia do przecinka
-                    i++;
-                } while (*(src_t + i + pos) != ',');
-                i++;   // kolejne zwiekszanie o jeden zeby przeskoczyc na pierwszy znak kolejnego elementu
-                tmp[0] = *(src_t + i + pos);            // wpisywanie do bufora dwoch kolejnych znakow
-                tmp[1] = *(src_t + i + pos + 1);
-                break;
-            }
-            else {
-                // przepisywanie
-                *(dst_t + i) = *(src_t + i + pos);
-                tmp[0] = *(src_t + i + pos + 1);            // wpisywanie do bufora dwoch kolejnych znakow
-                tmp[1] = *(src_t + i + pos + 2);
-            }
-        }
-        pos += i;
-        ii++;
-    }
-    //cTarget->PathLng = ii - 1;      // dlugosc sciezki pakietowej
- //   pos += 2;
-    i = 0;
-    // przepisywanie qA*
-    dst_t = cTarget->qOrigin;
-    do {
-		if (*(src_t + i + pos) == 0x00 || (i + pos > buff_len))
-			return -1;
-        if (i == 3) {
-            *(dst_t + i + 1) = '\0';
-            break;
-        }
-        *(dst_t + i) = *(src_t + i + pos);
-        i++;
-    } while (*(src_t + i + pos) != ',');
-    pos += (i + 1);
-    *(dst_t + i) = '\0';
-    // przepisywanie adres oryginatora do IS
- //   dst_t = cTarget->ToISOriginator.Call;
-    for (i = 0; i<=10 ;i++) {
-        if( *(src_t + i + pos) == ':' || *(src_t + i + pos) == ',') {
-            i++;    //przecinek oznacza poczatek tresci ramki
-            break;
-        }
-        else if ( *(src_t + i + pos) == '-') {
-            // SSID jezeli wystepuje
-            tmp[0] = *(src_t + i + pos + 1);
-            tmp[1] = *(src_t + i + pos + 2);
-            ctemp = atoi(tmp);
-            cTarget->Path[ii].SSID = ctemp;
-            do {
-				if (*(src_t + i + pos) == 0x00 || (i + pos > buff_len))
-					return -1;				
-                i++;
-            } while (*(src_t + i + pos) != ':');
-            i++;   // kolejne zwiekszanie o jeden zeby przeskoczyc na treść ramki
-            break;
-        }
-        else
-            *(dst_t + i) = *(src_t + i + pos);
-    }
-    pos += i;
-    i = 0;
-   if (*(src_t + pos - 1) != ':') {
-	while (*(src_t + i + pos) != ':') {
-		pos++;
-	}
-	pos++;
-   }
-//    pos++;
-    dst_t = cTarget->Data;
-    for (i = 0; (i <= buff_len && *(src_t + i + pos) != '\n') ; i++)
-        *(dst_t + i) = *(src_t + i + pos);
-	return OK;
-
-	*/
 }
 
 void AprsPacket::clear() {

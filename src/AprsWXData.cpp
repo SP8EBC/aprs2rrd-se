@@ -66,18 +66,6 @@ int AprsWXData::ParseData(AprsPacket input, AprsWXData* output) {
     // the second one which holds measurement data
     std::string wxData = extractedWx.at(1);
 
-
-
-/*
-    do {
-        i++;
-		if (*(src + i) == 0x00)
-			return -1;
-		if (i > 30)
-			return -1;
-    } while (*(src + i) != '_'); // pominiecie pozycji i przejsce od razu do danych meteo
-*/
-
     output->wind_speed = 0.0;
     output->wind_gusts = 0.0;
     output->wind_direction = 0;
@@ -210,6 +198,12 @@ int AprsWXData::CopyConvert(char sign, std::string& input, int& output, int& cou
     catch (const boost::bad_lexical_cast& ex) {
     	std::cout << ex.what() << std::endl;
     	output = 0;
+    	return -1;
+    }
+    catch (const std::bad_cast& ex) {
+    	std::cout << ex.what() << std::endl;
+    	output = 0;
+    	return -1;
     }
 
     // storing a position where 'sign' was found
@@ -249,6 +243,10 @@ int AprsWXData::CopyConvert(unsigned num, std::string& input, int& output, int& 
     	output = boost::lexical_cast<int>(valueToConv);
     }
     catch (const boost::bad_lexical_cast& ex) {
+    	std::cout << ex.what() << std::endl;
+    	output = 0;
+    }
+    catch (const std::bad_cast& ex) {
     	std::cout << ex.what() << std::endl;
     	output = 0;
     }
