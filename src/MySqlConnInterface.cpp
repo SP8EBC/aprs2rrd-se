@@ -26,8 +26,7 @@ void MySqlConnInterface::OpenDBConnection() {
 	if (!this->dbConnection.connect(this->dbName.c_str(), this->IP.c_str(), this->Username.c_str(), this->Password.c_str(), this->port)) {
 		throw ConnError();
 	}
-	else
-		throw OK();
+	else;
 }
 
 void MySqlConnInterface::CloseDBConnection() {

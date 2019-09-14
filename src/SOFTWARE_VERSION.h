@@ -1,2 +1,2 @@
 #define SW_NAME "APRS2RRD"
-#define SW_VER "1.2-10082019"
+#define SW_VER "1.2.1-14092019"

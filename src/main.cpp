@@ -117,27 +117,6 @@ int main(int argc, char **argv){
 
 	ProgramConfig::printConfigInPl(mysqlDb, aprsConfig, dataPresence, RRDCount, PlotsCount, telemetry, useFifthTelemAsTemperature);
 
-	if (mysqlDb.enable == true) {
-		try {
-			mysqlDb.OpenDBConnection();
-		}
-		catch(UnsufficientConfig &e) {
-
-		}
-		catch(BadSrvAddr &e) {
-
-		}
-		catch(ConnError &e) {
-			cout << e.what();
-		}
-		catch(OK &e) {
-			cout << e.what();
-		}
-		catch (...) {
-
-		}
-	}
-
 	// creating a new copy of ASIO thread
 	asioThread = new AprsAsioThread(aprsConfig, DEFAULT_APRS_SERVER_TIMEOUT_SECONDS);
 
@@ -204,7 +183,25 @@ int main(int argc, char **argv){
 					wxLastTarget = wxTarget;
 
 					if (mysqlDb.enable == true) {
-						mysqlDb.InsertIntoDb(&wxTarget);
+						try {
+							mysqlDb.OpenDBConnection();
+
+							mysqlDb.InsertIntoDb(&wxTarget);
+
+							mysqlDb.CloseDBConnection();
+						}
+						catch(UnsufficientConfig &e) {
+
+						}
+						catch(BadSrvAddr &e) {
+
+						}
+						catch(ConnError &e) {
+							cout << e.what();
+						}
+						catch (...) {
+
+						}
 					}
 
 				}
