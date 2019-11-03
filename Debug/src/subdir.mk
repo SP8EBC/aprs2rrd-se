@@ -14,6 +14,9 @@ CPP_SRCS += \
 ../src/MySqlConnInterface.cpp \
 ../src/ProgramConfig.cpp \
 ../src/ProgramConfig_test.cpp \
+../src/SerialAsioThread.cpp \
+../src/SerialAsioThread_test.cpp \
+../src/SerialConfig.cpp \
 ../src/SlewRateLimiter.cpp \
 ../src/Telemetry.cpp \
 ../src/main.cpp 
@@ -29,6 +32,9 @@ OBJS += \
 ./src/MySqlConnInterface.o \
 ./src/ProgramConfig.o \
 ./src/ProgramConfig_test.o \
+./src/SerialAsioThread.o \
+./src/SerialAsioThread_test.o \
+./src/SerialConfig.o \
 ./src/SlewRateLimiter.o \
 ./src/Telemetry.o \
 ./src/main.o 
@@ -44,6 +50,9 @@ CPP_DEPS += \
 ./src/MySqlConnInterface.d \
 ./src/ProgramConfig.d \
 ./src/ProgramConfig_test.d \
+./src/SerialAsioThread.d \
+./src/SerialAsioThread_test.d \
+./src/SerialConfig.d \
 ./src/SlewRateLimiter.d \
 ./src/Telemetry.d \
 ./src/main.d 

@@ -14,6 +14,7 @@
 #include "MySqlConnInterface.h"
 #include "AprsThreadConfig.h"
 #include "DataPresentation.h"
+#include "SerialConfig.h"
 #include "Telemetry.h"
 
 class ProgramConfig {
@@ -34,6 +35,7 @@ public:
 	void parseFile();
 	void getDbConfig(MySqlConnInterface& db);
 	void getAprsThreadConfig(AprsThreadConfig& aprs);
+	void getSerialConfig(SerialConfig& serial);
 	void getDataPresentationConfig(DataPresentation& data, int& rrdCount, int& plotCount);
 	void getTelemetryConfig(Telemetry& data, bool& useAsTemperature);
 

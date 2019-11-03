@@ -20,6 +20,8 @@
 #include "AprsAsioThread.h"
 #include "SlewRateLimiter.h"
 #include "ProgramConfig.h"
+#include "SerialAsioThread.h"
+#include "SerialConfig.h"
 
 #include "ConnectionTimeoutEx.h"
 #include "DataPresentation.h"
@@ -49,6 +51,7 @@ int main(int argc, char **argv){
 	Telemetry telemetry;
 	AprsAsioThread * asioThread;
 	SlewRateLimiter limiter;
+	SerialConfig serialConfig;
 
 	RRDFileDefinition sVectorRRDTemp;
 	PlotFileDefinition cVectorPNGTemp;
@@ -98,6 +101,7 @@ int main(int argc, char **argv){
 		programConfig.getDbConfig(mysqlDb);
 		programConfig.getAprsThreadConfig(aprsConfig);
 		programConfig.getDataPresentationConfig(dataPresence, RRDCount, PlotsCount);
+		programConfig.getSerialConfig(serialConfig);
 
 		dataPresence.DebugOutput = Debug;
 		mysqlDb.Debug = Debug;

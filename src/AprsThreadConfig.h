@@ -10,6 +10,8 @@ public:
 	AprsThreadConfig();
 	~AprsThreadConfig();
 
+	bool enable;
+
 	string ServerURL;
 	unsigned ServerPort;
 	string Call;

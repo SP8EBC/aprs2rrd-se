@@ -48,12 +48,29 @@ void ProgramConfig::getAprsThreadConfig(AprsThreadConfig& aprs) {
 
 	libconfig::Setting &rAprsIS = rRoot["AprsIS"];
 
+	rAprsIS.lookupValue("Enable", aprs.enable);
 	rAprsIS.lookupValue("StationCall", aprs.StationCall);
 	rAprsIS.lookupValue("StationSSID", aprs.StationSSID);
 	rAprsIS.lookupValue("ServerAddr", aprs.ServerURL);
 	rAprsIS.lookupValue("ServerPort", aprs.ServerPort);
 	rAprsIS.lookupValue("MyCALL", aprs.Call);
 	rAprsIS.lookupValue("MyPasswd", aprs.Passwd);
+}
+
+void ProgramConfig::getSerialConfig(SerialConfig& serial) {
+	libconfig::Setting &rRoot = config.getRoot();
+
+	libconfig::Setting &rAprsIS = rRoot["Serial"];
+
+	rAprsIS.lookupValue("Enable", serial.enable);
+	rAprsIS.lookupValue("StationCall", serial.call);
+	rAprsIS.lookupValue("StationSSID", serial.ssid);
+	rAprsIS.lookupValue("Baudrate", serial.baudrate);
+	rAprsIS.lookupValue("Port", serial.serialPort);
+	rAprsIS.lookupValue("CaptureAll", serial.captureAll);
+
+
+
 }
 
 void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCount, int& plotCount) {
