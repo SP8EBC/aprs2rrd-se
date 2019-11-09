@@ -18,8 +18,7 @@ CPP_SRCS += \
 ../src/SerialAsioThread_test.cpp \
 ../src/SerialConfig.cpp \
 ../src/SlewRateLimiter.cpp \
-../src/Telemetry.cpp \
-../src/main.cpp 
+../src/Telemetry.cpp 
 
 OBJS += \
 ./src/AprsAsioThread.o \
@@ -36,8 +35,7 @@ OBJS += \
 ./src/SerialAsioThread_test.o \
 ./src/SerialConfig.o \
 ./src/SlewRateLimiter.o \
-./src/Telemetry.o \
-./src/main.o 
+./src/Telemetry.o 
 
 CPP_DEPS += \
 ./src/AprsAsioThread.d \
@@ -54,8 +52,7 @@ CPP_DEPS += \
 ./src/SerialAsioThread_test.d \
 ./src/SerialConfig.d \
 ./src/SlewRateLimiter.d \
-./src/Telemetry.d \
-./src/main.d 
+./src/Telemetry.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
