@@ -7,6 +7,7 @@
 
 #include "Ax25Decoder.h"
 #include <vector>
+#include <cstring>
 
 #define FEND	(uint8_t)0xC0
 #define FESC	(uint8_t)0xDB
@@ -14,12 +15,10 @@
 #define TFESC	(uint8_t)0xDD
 
 Ax25Decoder::Ax25Decoder() {
-	// TODO Auto-generated constructor stub
 
 }
 
 Ax25Decoder::~Ax25Decoder() {
-	// TODO Auto-generated destructor stub
 }
 
 void Ax25Decoder::ParseFromKissBuffer(uint8_t* data, uint16_t data_ln,
@@ -34,6 +33,14 @@ void Ax25Decoder::ParseFromKissBuffer(uint8_t* data, uint16_t data_ln,
 
 	uint8_t c = 0;
 	uint8_t call_buffer[8] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
+
+	// local variables for parsing digi path elements
+	std::string s;
+	uint8_t ssid = 0;
+	PathElement path;
+
+	// an interator used durig copying frame data (payload)
+	uint16_t ii = 0;
 
 	bool last = true;
 
@@ -87,9 +94,54 @@ void Ax25Decoder::ParseFromKissBuffer(uint8_t* data, uint16_t data_ln,
 		// or long path with many WIDE or digipeaters callsigns.
 
 		// checking if source is the last element or not
-		if ((c & 0x01) == 0x01)
-			continue;
+		if ((c & 0x01) == 0x01) {
+			last = true;
+			continue;	// last is set to true by default
+		}
+		else
+			last = false;
+
+		for (int i = 0; i < 6; i++) {
+			c = ((buffer[idx++]) >> 1);
+
+			// convert spaces to nulls if digipeater callsign has less than 6 charcters
+			if (c == ' ')
+				c = 0x0;
+
+			call_buffer[i] = c;
+		}
+
+		// converting temporary buffer into to string
+		s = std::string((const char*)call_buffer, 6);
+
+		// getting SSID of this path element
+		c = buffer[idx++];
+		ssid = (c >> 8) & 0xF;
+
+		// storing digi path data into a structure
+		path.Call = s;
+		path.SSID = ssid;
+
+		// inserting (copying) digi path element into vector
+		out.Path.push_back(path);
+
 
 	} while (last != true);
+
+	uint8_t ui = buffer[idx++];
+	uint8_t protocol = buffer[idx++];
+
+	// erasing previous content of the output
+	::memset(out.Data, 0x00, sizeof(out.Data));
+
+	// Parsing frame payload
+	for (int i = idx; i < data_ln; i++) {
+		// the payload is stored bethween an protocol field and an end of frame
+		c = buffer[idx++];
+
+		out.Data[ii++] = (const char)c;
+	}
+
+	return;
 
 }

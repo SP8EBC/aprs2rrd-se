@@ -19,6 +19,8 @@
 #include <boost/thread.hpp>
 #include <boost/asio/buffer.hpp>
 
+#include "AprsPacket.h"
+
 #define FEND	(uint8_t)0xC0
 #define FESC	(uint8_t)0xDB
 #define TFEND	(uint8_t)0xDC
@@ -47,6 +49,9 @@ class SerialAsioThread {
     std::string port;
     uint32_t speed;
 
+    // Content of AX25 frame received from the TNC after decoding
+    AprsPacket packet;
+
     // A group of threads used to service I/O in background
 	boost::thread_group workersGroup;
 
@@ -59,6 +64,7 @@ class SerialAsioThread {
 	// buffer for data incoming from RS232 port
 	uint8_t buffer[512];
 
+	// index used to move across the buffer during transmission
 	uint16_t bufferIndex = 0;
 
 	uint16_t startIndex = 0;

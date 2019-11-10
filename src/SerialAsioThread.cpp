@@ -6,6 +6,7 @@
  */
 
 #include "SerialAsioThread.h"
+#include "Ax25Decoder.h"
 
 #include <stdio.h>      // standard input / output functions
 #include <stdlib.h>
@@ -78,6 +79,8 @@ std::size_t SerialAsioThread::asyncReadHandler(const boost::system::error_code& 
 			this->state = SERIAL_FRAME_RXED;
 
 			this->endIndex = this->bufferIndex;
+
+			return 0;
 		}
 
 		break;
@@ -115,6 +118,8 @@ std::size_t SerialAsioThread::asyncReadHandler(const boost::system::error_code& 
 void SerialAsioThread::asyncReadCompletionHandler(
 		const boost::system::error_code& error,
 		std::size_t bytes_transferred) {
+
+	Ax25Decoder::ParseFromKissBuffer(this->buffer, this->bufferIndex, this->packet);
 
 	return;
 }
