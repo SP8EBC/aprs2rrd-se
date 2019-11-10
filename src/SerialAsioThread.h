@@ -19,12 +19,23 @@
 #include <boost/thread.hpp>
 #include <boost/asio/buffer.hpp>
 
+#define FEND	(uint8_t)0xC0
+#define FESC	(uint8_t)0xDB
+#define TFEND	(uint8_t)0xDC
+#define TFESC	(uint8_t)0xDD
+
+enum SerialAsioThreadState {
+	SERIAL_WAITING,
+	SERIAL_RXING_FRAME,
+	SERIAL_FRAME_RXED
+};
+
 class SerialAsioThread {
 
 	std::unique_ptr<boost::asio::serial_port> sp;
 	std::unique_ptr<boost::asio::io_service> io_service;
 
-	//boost::asio::serial_port sp;
+	std::unique_ptr<boost::asio::io_service::work> work;
 
     boost::asio::serial_port_base::parity parity;
     boost::asio::serial_port_base::character_size csize;
@@ -36,6 +47,7 @@ class SerialAsioThread {
     std::string port;
     uint32_t speed;
 
+    // A group of threads used to service I/O in background
 	boost::thread_group workersGroup;
 
     boost::asio::streambuf in_buf;
@@ -44,20 +56,26 @@ class SerialAsioThread {
 
 	std::mutex syncLock;
 
-	void workerThread();
-
+	// buffer for data incoming from RS232 port
 	uint8_t buffer[512];
 
-	//boost::asio::mutable_buffer boostBuffer = boost::asio::buffer(buffer);
+	uint16_t bufferIndex = 0;
+
+	uint16_t startIndex = 0;
+
+	uint16_t endIndex = 0;
+
+	SerialAsioThreadState state;
+
+	std::size_t lastBytesTransfered = 0;
+
+	void workerThread();
 
 	std::size_t asyncReadHandler(
 	  const boost::system::error_code& error, // Result of operation.
 
-	  std::size_t bytes_transferred           // Number of bytes copied into the
-	                                          // buffers. If an error occurred,
-	                                          // this will be the  number of
-	                                          // bytes successfully transferred
-	                                          // prior to the error.
+	  std::size_t bytes_transferred           // Number of bytes transfered (received)
+	  	  	  	  	  	  	  	  	  	  	  // so far, starting from the call to read function
 	);
 
 	void asyncReadCompletionHandler(

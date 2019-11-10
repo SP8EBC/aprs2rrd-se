@@ -37,7 +37,11 @@ SerialAsioThread::SerialAsioThread(const std::string& devname, unsigned int baud
 
 	this->io_service.reset(new boost::asio::io_service());
 	this->sp.reset(new boost::asio::serial_port(*this->io_service));
+	this->work.reset(new boost::asio::io_service::work (*this->io_service));
+
 	::memset(this->buffer, 0x00, 512);
+
+	this->state = SERIAL_WAITING;
 }
 
 SerialAsioThread::~SerialAsioThread() {
@@ -51,12 +55,65 @@ void SerialAsioThread::workerThread() {
 std::size_t SerialAsioThread::asyncReadHandler(const boost::system::error_code& error, // Result of operation.
 		std::size_t bytes_transferred) {
 
+	uint8_t rx_byte = this->buffer[this->bufferIndex];
+
+	switch (this->state) {
+	case SERIAL_FRAME_RXED: {
+
+		// clearing buffer after processing
+		::memset(this->buffer, 0x00, 512);
+
+		this->bufferIndex = 0;
+
+		this->state = SERIAL_WAITING;
+
+		break;
+	}
+	case SERIAL_RXING_FRAME: {
+
+
+		// Check if FEND has been reveived which in this state means that this is the end of the frame
+		if (rx_byte == FEND) {
+
+			this->state = SERIAL_FRAME_RXED;
+
+			this->endIndex = this->bufferIndex;
+		}
+
+		break;
+	}
+	case SERIAL_WAITING: {
+
+		// Check if FEND has been reveived which in this state means that this is a begin of
+		// new frame
+		if (rx_byte == FEND) {
+			this->state = SERIAL_RXING_FRAME;
+
+			this->startIndex = this->bufferIndex;
+		}
+
+		break;
+
+	}
+	default:
+		break;
+	}
+
+	// calculating how many bytes has been transfered before this function call
+	// 'bytes_transfered' parameter count bytes from the begin of whole transaction
+	uint16_t index_increment = bytes_transferred - this->lastBytesTransfered;
+
+	this->lastBytesTransfered = bytes_transferred;
+
+	// increasing buffer Index
+	this->bufferIndex += index_increment;
+
 	return 1;
 
 }
 
 void SerialAsioThread::asyncReadCompletionHandler(
-		const boost::system::error_code& error, // Result of operation.
+		const boost::system::error_code& error,
 		std::size_t bytes_transferred) {
 
 	return;
