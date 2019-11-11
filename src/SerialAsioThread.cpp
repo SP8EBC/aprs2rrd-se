@@ -17,6 +17,7 @@
 #include <termios.h>    // POSIX terminal control definitions
 #include <boost/bind.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#include <condition_variable>
 
 
 SerialAsioThread::SerialAsioThread(const std::string& devname, unsigned int baud_rate,
@@ -46,7 +47,10 @@ SerialAsioThread::SerialAsioThread(const std::string& devname, unsigned int baud
 }
 
 SerialAsioThread::~SerialAsioThread() {
-	// TODO Auto-generated destructor stub
+
+	this->sp->cancel();
+	this->sp->close();
+	this->io_service->stop();
 }
 
 void SerialAsioThread::workerThread() {
@@ -59,24 +63,22 @@ std::size_t SerialAsioThread::asyncReadHandler(const boost::system::error_code& 
 	uint8_t rx_byte = this->buffer[this->bufferIndex];
 
 	switch (this->state) {
-	case SERIAL_FRAME_RXED: {
-
-		// clearing buffer after processing
-		::memset(this->buffer, 0x00, 512);
-
-		this->bufferIndex = 0;
-
-		this->state = SERIAL_WAITING;
-
-		break;
-	}
+//	case SERIAL_FRAME_RXED: {
+//
+//		// clearing buffer after processing
+//		::memset(this->buffer, 0x00, 512);
+//
+//		this->bufferIndex = 0;
+//
+//		this->state = SERIAL_WAITING;
+//
+//		break;
+//	}
 	case SERIAL_RXING_FRAME: {
 
 
 		// Check if FEND has been reveived which in this state means that this is the end of the frame
 		if (rx_byte == FEND) {
-
-			this->state = SERIAL_FRAME_RXED;
 
 			this->endIndex = this->bufferIndex;
 
@@ -99,6 +101,7 @@ std::size_t SerialAsioThread::asyncReadHandler(const boost::system::error_code& 
 
 	}
 	default:
+		return 0;
 		break;
 	}
 
@@ -121,6 +124,8 @@ void SerialAsioThread::asyncReadCompletionHandler(
 
 	Ax25Decoder::ParseFromKissBuffer(this->buffer, this->bufferIndex, this->packet);
 
+	this->state = SERIAL_FRAME_RXED;
+
 	return;
 }
 
@@ -133,19 +138,33 @@ bool SerialAsioThread::openPort() {
 		// creating a thread which will handle i/o
 		this->workersGroup.create_thread(boost::bind(&SerialAsioThread::workerThread, this));
 
-	auto readHandlerPtr = boost::bind(&SerialAsioThread::asyncReadHandler, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred);
-	auto completionHandlerPtr = boost::bind(&SerialAsioThread::asyncReadCompletionHandler, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred);
-
-	boost::asio::async_read(*this->sp, boost::asio::buffer(buffer, 512), readHandlerPtr, completionHandlerPtr);
-
-	return false;
+	return true;
 
 }
 
-void SerialAsioThread::waitForRx() {
+void SerialAsioThread::triggerRx() {
+
+	auto readHandlerPtr = boost::bind(&SerialAsioThread::asyncReadHandler, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred);
+	auto completionHandlerPtr = boost::bind(&SerialAsioThread::asyncReadCompletionHandler, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred);
+
+
+	boost::asio::async_read(*this->sp, boost::asio::buffer(buffer, 512), readHandlerPtr, completionHandlerPtr);
+
+}
+
+bool SerialAsioThread::waitForRx() {
 	std::unique_lock<std::mutex> lock(this->syncLock);
 
-	auto result = this->syncCondition.wait_for(lock, std::chrono::seconds(666));
+	auto result = this->syncCondition.wait_for(lock, std::chrono::seconds(6));
+
+	if (result == std::cv_status::timeout) {
+		lock.unlock();
+		return false;
+	}
+	else {
+		lock.unlock();
+		return true;
+	}
 
 }
 // http://docs.ros.org/indigo/api/ublox_gps/html/gps_8cpp_source.html

@@ -105,7 +105,9 @@ public:
 
 	bool openPort();
 
-	void waitForRx();
+	void triggerRx();
+
+	bool waitForRx();
 };
 
 #endif /* SERIALASIOTHREAD_H_ */
