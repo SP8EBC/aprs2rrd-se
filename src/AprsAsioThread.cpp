@@ -20,10 +20,13 @@
 #include <vector>
 #include <string>
 
-AprsAsioThread::AprsAsioThread(AprsThreadConfig & config, uint8_t timeoutInSeconds) :
+AprsAsioThread::AprsAsioThread(AprsThreadConfig & config, uint8_t timeoutInSeconds, std::shared_ptr<std::condition_variable> syncCondition,
+		std::shared_ptr<std::mutex> syncLock) :
 																						conf(config),
 																						outputPacketValid(false),
-																						timeout(timeoutInSeconds)
+																						timeout(timeoutInSeconds),
+																						syncLock(syncLock),
+																						syncCondition(syncCondition)
 {
 	char buffer[256];
 
@@ -101,30 +104,29 @@ void AprsAsioThread::writeCallback(const boost::system::error_code& ec,
 	return;
 }
 
-void AprsAsioThread::receive() {
-
-	std::unique_lock<std::mutex> lock(this->syncLock);
-
-	// locking a mutex which will be used to synchronize
-	//this->mutexRxSync.lock();
+void AprsAsioThread::receive(bool wait) {
 
 	// starting asynchronous read which will last until end of line will be received
 	boost::asio::async_read_until(*this->tsocket, this->in_buf, "\r\n", boost::bind(&AprsAsioThread::newLineCallback, this, _1));
 
-	// waiting for receive
-	auto result = this->syncCondition.wait_for(lock, std::chrono::seconds(this->timeout));
+	if (wait) {
+		std::unique_lock<std::mutex> lock(*this->syncLock);
 
-	// there is no need to encapsulate 'wait_for()' method inside while(work_is_done) loop which protect against
-	// locking a thread before processing in another one even starts. Here receiving is triggered just before waiting
-	// and app architecture doesn't provide next receiving before previous frame is fully processed
+		// waiting for receive
+		auto result = this->syncCondition->wait_for(lock, std::chrono::seconds(this->timeout));
 
-	if (result == cv_status::timeout) {
-		lock.unlock();
-		throw ConnectionTimeoutEx();
-	}
-	else {
-		lock.unlock();
-		return;
+		// there is no need to encapsulate 'wait_for()' method inside while(work_is_done) loop which protect against
+		// locking a thread before processing in another one even starts. Here receiving is triggered just before waiting
+		// and app architecture doesn't provide next receiving before previous frame is fully processed
+
+		if (result == cv_status::timeout) {
+			lock.unlock();
+			throw ConnectionTimeoutEx();
+		}
+		else {
+			lock.unlock();
+			return;
+		}
 	}
 
 
@@ -176,7 +178,7 @@ void AprsAsioThread::newLineCallback(const boost::system::error_code& ec) {
 			this->outputPacketValid = false;
 		}
 
-		this->syncCondition.notify_all();
+		this->syncCondition->notify_all();
 
 //		this->mutexRxSync.unlock();
 		return;

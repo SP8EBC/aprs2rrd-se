@@ -29,13 +29,10 @@ SerialAsioThread::SerialAsioThread(const std::string& devname, unsigned int baud
 	this->csize = opt_csize;
 	this->flow = opt_flow;
 	this->parity = opt_parity;
-//	this->port = opt_parity;
 	this->stop = opt_stop;
 
 	this->port = devname;
 	this->speed = baud_rate;
-
-	this->handle = 0;
 
 	this->io_service.reset(new boost::asio::io_service());
 	this->sp.reset(new boost::asio::serial_port(*this->io_service));
@@ -43,7 +40,7 @@ SerialAsioThread::SerialAsioThread(const std::string& devname, unsigned int baud
 
 	::memset(this->buffer, 0x00, 512);
 
-	this->state = SERIAL_WAITING;
+	this->state = SERIAL_CLOSED;
 }
 
 SerialAsioThread::~SerialAsioThread() {
@@ -51,6 +48,37 @@ SerialAsioThread::~SerialAsioThread() {
 	this->sp->cancel();
 	this->sp->close();
 	this->io_service->stop();
+}
+
+
+SerialAsioThread::SerialAsioThread() {
+
+	this->io_service.reset(new boost::asio::io_service());
+	this->sp.reset(new boost::asio::serial_port(*this->io_service));
+	this->work.reset(new boost::asio::io_service::work (*this->io_service));
+
+	::memset(this->buffer, 0x00, 512);
+
+	this->state = SERIAL_NOT_CONFIGURED;
+
+}
+
+void SerialAsioThread::configure(const std::string& devname,
+		unsigned int baud_rate,
+		boost::asio::serial_port_base::parity opt_parity,
+		boost::asio::serial_port_base::character_size opt_csize,
+		boost::asio::serial_port_base::flow_control opt_flow,
+		boost::asio::serial_port_base::stop_bits opt_stop) {
+
+	this->csize = opt_csize;
+	this->flow = opt_flow;
+	this->parity = opt_parity;
+	this->stop = opt_stop;
+
+	this->port = devname;
+	this->speed = baud_rate;
+
+	this->state = SERIAL_CLOSED;
 }
 
 void SerialAsioThread::workerThread() {
@@ -122,9 +150,18 @@ void SerialAsioThread::asyncReadCompletionHandler(
 		const boost::system::error_code& error,
 		std::size_t bytes_transferred) {
 
-	Ax25Decoder::ParseFromKissBuffer(this->buffer, this->bufferIndex, this->packet);
+	if (error) {
+		this->state = SERIAL_ERROR;
+	}
+	else {
 
-	this->state = SERIAL_FRAME_RXED;
+		Ax25Decoder::ParseFromKissBuffer(this->buffer, this->bufferIndex, this->packet);
+
+		this->state = SERIAL_FRAME_RXED;
+	}
+
+	// notifing all that receiving is done
+	this->syncCondition->notify_all();
 
 	return;
 }
@@ -138,11 +175,13 @@ bool SerialAsioThread::openPort() {
 		// creating a thread which will handle i/o
 		this->workersGroup.create_thread(boost::bind(&SerialAsioThread::workerThread, this));
 
+	this->state = SERIAL_IDLE;
+
 	return true;
 
 }
 
-void SerialAsioThread::triggerRx() {
+void SerialAsioThread::receive(bool wait) {
 
 	auto readHandlerPtr = boost::bind(&SerialAsioThread::asyncReadHandler, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred);
 	auto completionHandlerPtr = boost::bind(&SerialAsioThread::asyncReadCompletionHandler, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred);
@@ -150,12 +189,17 @@ void SerialAsioThread::triggerRx() {
 
 	boost::asio::async_read(*this->sp, boost::asio::buffer(buffer, 512), readHandlerPtr, completionHandlerPtr);
 
+	this->state = SERIAL_WAITING;
+
+	if (wait)
+		this->waitForRx();
+
 }
 
 bool SerialAsioThread::waitForRx() {
-	std::unique_lock<std::mutex> lock(this->syncLock);
+	std::unique_lock<std::mutex> lock(*this->syncLock);
 
-	auto result = this->syncCondition.wait_for(lock, std::chrono::seconds(6));
+	auto result = this->syncCondition->wait_for(lock, std::chrono::seconds(6));
 
 	if (result == std::cv_status::timeout) {
 		lock.unlock();

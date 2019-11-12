@@ -27,9 +27,13 @@
 #define TFESC	(uint8_t)0xDD
 
 enum SerialAsioThreadState {
+	SERIAL_NOT_CONFIGURED,
+	SERIAL_CLOSED,
+	SERIAL_IDLE,
 	SERIAL_WAITING,
 	SERIAL_RXING_FRAME,
-	SERIAL_FRAME_RXED
+	SERIAL_FRAME_RXED,
+	SERIAL_ERROR
 };
 
 class SerialAsioThread {
@@ -44,9 +48,10 @@ class SerialAsioThread {
     boost::asio::serial_port_base::flow_control flow;
     boost::asio::serial_port_base::stop_bits stop;
 
-    uint32_t handle;
-
+    // A string path to serial port (like /dev/ttyUSB0)
     std::string port;
+
+    // Serial port speed in bauds
     uint32_t speed;
 
     // Content of AX25 frame received from the TNC after decoding
@@ -55,11 +60,8 @@ class SerialAsioThread {
     // A group of threads used to service I/O in background
 	boost::thread_group workersGroup;
 
-    boost::asio::streambuf in_buf;
-
-	std::condition_variable syncCondition;
-
-	std::mutex syncLock;
+	std::shared_ptr<std::condition_variable> syncCondition;
+	std::shared_ptr<std::mutex> syncLock;
 
 	// buffer for data incoming from RS232 port
 	uint8_t buffer[512];
@@ -96,6 +98,9 @@ class SerialAsioThread {
 
 
 public:
+
+	SerialAsioThread();
+
 	SerialAsioThread(const std::string& devname, unsigned int baud_rate,
 	        boost::asio::serial_port_base::parity opt_parity,
 	        boost::asio::serial_port_base::character_size opt_csize,
@@ -103,9 +108,15 @@ public:
 	        boost::asio::serial_port_base::stop_bits opt_stop);
 	virtual ~SerialAsioThread();
 
+	void configure(const std::string& devname, unsigned int baud_rate,
+	        boost::asio::serial_port_base::parity opt_parity,
+	        boost::asio::serial_port_base::character_size opt_csize,
+	        boost::asio::serial_port_base::flow_control opt_flow,
+	        boost::asio::serial_port_base::stop_bits opt_stop);
+
 	bool openPort();
 
-	void triggerRx();
+	void receive(bool wait);
 
 	bool waitForRx();
 };

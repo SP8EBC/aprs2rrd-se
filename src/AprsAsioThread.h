@@ -49,9 +49,9 @@ class AprsAsioThread {
 	//
 	//boost::timed_mutex mutexRxSync;
 
-	std::condition_variable syncCondition;
+	std::shared_ptr<std::condition_variable> syncCondition;
 
-	std::mutex syncLock;
+	std::shared_ptr<std::mutex> syncLock;
 
 	boost::thread_group workersGroup;
 
@@ -84,7 +84,7 @@ class AprsAsioThread {
 
 public:
 	void connect();
-	void receive();
+	void receive(bool wait);
 	void disconnect();
 
 	bool isConnected();
@@ -92,7 +92,8 @@ public:
 	AprsPacket getPacket();
 	bool isPacketValid();
 
-	AprsAsioThread(AprsThreadConfig & config, uint8_t timeoutInSeconds);
+	AprsAsioThread(AprsThreadConfig & config, uint8_t timeoutInSeconds, std::shared_ptr<std::condition_variable> syncCondition,
+																		std::shared_ptr<std::mutex> syncLock);
 	virtual ~AprsAsioThread();
 
 	bool DebugOutput;

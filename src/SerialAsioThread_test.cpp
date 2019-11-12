@@ -24,7 +24,7 @@ BOOST_AUTO_TEST_CASE(basic) {
 													boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one));
 
 	serial.openPort();
-	serial.triggerRx();
+	serial.receive(false);
 	serial.waitForRx();
 
 	BOOST_CHECK(a == b);
