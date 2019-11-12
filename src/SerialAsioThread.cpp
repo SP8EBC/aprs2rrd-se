@@ -20,16 +20,12 @@
 #include <condition_variable>
 
 
-SerialAsioThread::SerialAsioThread(const std::string& devname, unsigned int baud_rate,
-        boost::asio::serial_port_base::parity opt_parity,
-        boost::asio::serial_port_base::character_size opt_csize,
-        boost::asio::serial_port_base::flow_control opt_flow,
-        boost::asio::serial_port_base::stop_bits opt_stop) {
+SerialAsioThread::SerialAsioThread(const std::string& devname, unsigned int baud_rate) {
 
-	this->csize = opt_csize;
-	this->flow = opt_flow;
-	this->parity = opt_parity;
-	this->stop = opt_stop;
+	this->csize = boost::asio::serial_port_base::character_size();
+	this->flow = boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none);
+	this->parity = boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none);
+	this->stop = boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one);
 
 	this->port = devname;
 	this->speed = baud_rate;
@@ -37,6 +33,9 @@ SerialAsioThread::SerialAsioThread(const std::string& devname, unsigned int baud
 	this->io_service.reset(new boost::asio::io_service());
 	this->sp.reset(new boost::asio::serial_port(*this->io_service));
 	this->work.reset(new boost::asio::io_service::work (*this->io_service));
+
+	syncCondition.reset(new std::condition_variable());
+	syncLock.reset(new std::mutex());
 
 	::memset(this->buffer, 0x00, 512);
 
@@ -51,7 +50,16 @@ SerialAsioThread::~SerialAsioThread() {
 }
 
 
-SerialAsioThread::SerialAsioThread() {
+SerialAsioThread::SerialAsioThread(
+		std::shared_ptr<std::condition_variable> syncCondition,
+		std::shared_ptr<std::mutex> syncLock,
+		std::string devname, unsigned int baud_rate)
+					: syncCondition(syncCondition), syncLock(syncLock) {
+
+	this->csize = boost::asio::serial_port_base::character_size();
+	this->flow = boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none);
+	this->parity = boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none);
+	this->stop = boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one);
 
 	this->io_service.reset(new boost::asio::io_service());
 	this->sp.reset(new boost::asio::serial_port(*this->io_service));
@@ -59,7 +67,10 @@ SerialAsioThread::SerialAsioThread() {
 
 	::memset(this->buffer, 0x00, 512);
 
-	this->state = SERIAL_NOT_CONFIGURED;
+	this->port = devname;
+	this->speed = baud_rate;
+
+	this->state = SERIAL_CLOSED;
 
 }
 

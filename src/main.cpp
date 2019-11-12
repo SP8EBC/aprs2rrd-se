@@ -67,7 +67,7 @@ int main(int argc, char **argv){
 	Config config;
 	ProgramConfig programConfig("config.conf");
 
-	SerialAsioThread serialThread;
+	SerialAsioThread * serialThread;
 	AprsThreadConfig aprsConfig;
 	AprsThread aprsThread;
 	MySqlConnInterface mysqlDb;
@@ -148,15 +148,17 @@ int main(int argc, char **argv){
 
 	ProgramConfig::printConfigInPl(mysqlDb, aprsConfig, dataPresence, RRDCount, PlotsCount, telemetry, useFifthTelemAsTemperature);
 
+	serialThread = new SerialAsioThread(syncCondition, syncLock, serialConfig.serialPort, serialConfig.baudrate);
+
 	// configuring serial thread
-	serialThread.configure(serialConfig.serialPort, serialConfig.baudrate, boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none),
-			boost::asio::serial_port_base::character_size(),
-			boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none),
-			boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one));
+//	serialThread.configure(serialConfig.serialPort, serialConfig.baudrate, boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none),
+//			boost::asio::serial_port_base::character_size(),
+//			boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none),
+//			boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one));
 
 	// if an user want to use serial port it needs to be opened and configured
 	if (serialConfig.enable) {
-		serialThread.openPort();
+		serialThread->openPort();
 	}
 
 	// creating a new copy of ASIO thread
@@ -182,7 +184,7 @@ int main(int argc, char **argv){
 				asioThread->receive(false);
 
 				// starting serial receive
-				serialThread.receive(false);
+				serialThread->receive(false);
 
 				wait_for_data();
 
