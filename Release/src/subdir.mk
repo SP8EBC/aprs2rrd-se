@@ -9,11 +9,14 @@ CPP_SRCS += \
 ../src/AprsThread.cpp \
 ../src/AprsThreadConfig.cpp \
 ../src/AprsWXData.cpp \
+../src/Ax25Decoder.cpp \
+../src/Ax25Decoder_test.cpp \
 ../src/ConnectionTimeoutEx.cpp \
 ../src/DataPresentation.cpp \
 ../src/MySqlConnInterface.cpp \
 ../src/ProgramConfig.cpp \
-../src/ProgramConfig_test.cpp \
+../src/SerialAsioThread.cpp \
+../src/SerialConfig.cpp \
 ../src/SlewRateLimiter.cpp \
 ../src/Telemetry.cpp \
 ../src/main.cpp 
@@ -24,11 +27,14 @@ OBJS += \
 ./src/AprsThread.o \
 ./src/AprsThreadConfig.o \
 ./src/AprsWXData.o \
+./src/Ax25Decoder.o \
+./src/Ax25Decoder_test.o \
 ./src/ConnectionTimeoutEx.o \
 ./src/DataPresentation.o \
 ./src/MySqlConnInterface.o \
 ./src/ProgramConfig.o \
-./src/ProgramConfig_test.o \
+./src/SerialAsioThread.o \
+./src/SerialConfig.o \
 ./src/SlewRateLimiter.o \
 ./src/Telemetry.o \
 ./src/main.o 
@@ -39,11 +45,14 @@ CPP_DEPS += \
 ./src/AprsThread.d \
 ./src/AprsThreadConfig.d \
 ./src/AprsWXData.d \
+./src/Ax25Decoder.d \
+./src/Ax25Decoder_test.d \
 ./src/ConnectionTimeoutEx.d \
 ./src/DataPresentation.d \
 ./src/MySqlConnInterface.d \
 ./src/ProgramConfig.d \
-./src/ProgramConfig_test.d \
+./src/SerialAsioThread.d \
+./src/SerialConfig.d \
 ./src/SlewRateLimiter.d \
 ./src/Telemetry.d \
 ./src/main.d 
