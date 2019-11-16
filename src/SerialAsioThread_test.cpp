@@ -18,14 +18,15 @@ BOOST_AUTO_TEST_CASE(basic) {
 
 	int counter = 0;
 
-	SerialAsioThread serial("/dev/ttyUSB0", 9600, boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none),
-													boost::asio::serial_port_base::character_size(),
-													boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none),
-													boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one));
+	AprsPacket packet;
+
+	SerialAsioThread serial("/dev/ttyUSB0", 9600);
 
 	serial.openPort();
 	serial.receive(false);
 	serial.waitForRx();
+
+	packet = serial.getPacket();
 
 	BOOST_CHECK(a == b);
 }

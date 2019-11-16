@@ -102,17 +102,19 @@ std::size_t SerialAsioThread::asyncReadHandler(const boost::system::error_code& 
 	uint8_t rx_byte = this->buffer[this->bufferIndex];
 
 	switch (this->state) {
-//	case SERIAL_FRAME_RXED: {
-//
-//		// clearing buffer after processing
-//		::memset(this->buffer, 0x00, 512);
-//
-//		this->bufferIndex = 0;
-//
-//		this->state = SERIAL_WAITING;
-//
-//		break;
-//	}
+	case SERIAL_FRAME_RXED: {
+
+		// clearing buffer after processing
+		::memset(this->buffer, 0x00, 512);
+
+		this->bufferIndex = 0;
+
+		this->state = SERIAL_WAITING;
+
+		return 0;
+
+		//break;
+	}
 	case SERIAL_RXING_FRAME: {
 
 
@@ -140,7 +142,7 @@ std::size_t SerialAsioThread::asyncReadHandler(const boost::system::error_code& 
 
 	}
 	default:
-		return 0;
+		//return 0;
 		break;
 	}
 
@@ -216,7 +218,7 @@ void SerialAsioThread::receive(bool wait) {
 bool SerialAsioThread::waitForRx() {
 	std::unique_lock<std::mutex> lock(*this->syncLock);
 
-	auto result = this->syncCondition->wait_for(lock, std::chrono::seconds(6));
+	auto result = this->syncCondition->wait_for(lock, std::chrono::seconds(99));
 
 	if (result == std::cv_status::timeout) {
 		lock.unlock();

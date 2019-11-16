@@ -148,8 +148,6 @@ bool Ax25Decoder::ParseFromKissBuffer(uint8_t* data, uint16_t data_ln,
 
 		out.Data[ii++] = (const char)c;
 
-		if (idx >= data_ln)
-			return output;
 	}
 
 	output = true;
