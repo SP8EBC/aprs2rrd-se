@@ -17,7 +17,7 @@ public:
 	Ax25Decoder();
 	virtual ~Ax25Decoder();
 
-	static void ParseFromKissBuffer(uint8_t* data, uint16_t data_ln, AprsPacket& out);
+	static bool ParseFromKissBuffer(uint8_t* data, uint16_t data_ln, AprsPacket& out);
 };
 
 #endif /* AX25DECODER_H_ */

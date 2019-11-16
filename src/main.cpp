@@ -83,7 +83,7 @@ int main(int argc, char **argv){
 	AprsWXData wxTemp, wxTelemetry;
 	AprsWXData wxTarget; // target wx data to be inserted into RRD DB & printed onto website
 	AprsWXData wxLastTarget;
-	AprsPacket* cPKTtemp;
+	AprsPacket rxPacket;
 
 	queue <AprsPacket> qPackets;
 	queue <AprsWXData> qMeteo;
@@ -189,13 +189,26 @@ int main(int argc, char **argv){
 				wait_for_data();
 
 				// checkig if correct data has been received
-				if (asioThread->isPacketValid()) {
+				if (asioThread->isPacketValid() || serialThread->isPacketValid()) {
+
+					// checking from what input data has been received
+					if (asioThread->isPacketValid())
+						rxPacket = asioThread->getPacket();
+					else if (serialThread->isPacketValid()) {
+						rxPacket = serialThread->getPacket();
+
+						// check the KISS frame against the user configuration configuration
+						if (!serialConfig.validateAprsPacket(rxPacket))
+							continue;
+					}
+					else;
+
 					// Parsing wheater data. If this is not correct APRS wx packet the method will set
 					// the internal validity flag to false
-					AprsWXData::ParseData(asioThread->getPacket(), &wxTemp);
+					AprsWXData::ParseData(rxPacket, &wxTemp);
 
 					// Parsing telemetry data
-					Telemetry::ParseData(asioThread->getPacket(), &telemetry);
+					Telemetry::ParseData(rxPacket, &telemetry);
 
 					// if this is data from WX Packet
 					if (wxTemp.valid) {

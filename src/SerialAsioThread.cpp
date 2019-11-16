@@ -161,15 +161,19 @@ void SerialAsioThread::asyncReadCompletionHandler(
 		const boost::system::error_code& error,
 		std::size_t bytes_transferred) {
 
+	bool decoding_status = false;
+
 	if (error) {
 		this->state = SERIAL_ERROR;
 	}
 	else {
 
-		Ax25Decoder::ParseFromKissBuffer(this->buffer, this->bufferIndex, this->packet);
+		decoding_status = Ax25Decoder::ParseFromKissBuffer(this->buffer, this->bufferIndex, this->packet);
 
 		this->state = SERIAL_FRAME_RXED;
 	}
+
+	this->packetValid = decoding_status;
 
 	// notifing all that receiving is done
 	this->syncCondition->notify_all();
@@ -202,6 +206,8 @@ void SerialAsioThread::receive(bool wait) {
 
 	this->state = SERIAL_WAITING;
 
+	this->packetValid = false;
+
 	if (wait)
 		this->waitForRx();
 
@@ -221,6 +227,14 @@ bool SerialAsioThread::waitForRx() {
 		return true;
 	}
 
+}
+
+bool SerialAsioThread::isPacketValid() {
+	return this->packetValid;
+}
+
+AprsPacket SerialAsioThread::getPacket() {
+	return this->packet;
 }
 // http://docs.ros.org/indigo/api/ublox_gps/html/gps_8cpp_source.html
 // http://docs.ros.org/indigo/api/ublox_gps/html/async__worker_8h_source.html

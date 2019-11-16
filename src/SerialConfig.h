@@ -11,6 +11,8 @@
 #include <cstdint>
 #include <string>
 
+#include "./AprsPacket.h"
+
 class SerialConfig {
 
 public:
@@ -24,6 +26,8 @@ public:
 
 	std::string call;
 	uint32_t ssid;
+
+	bool validateAprsPacket(AprsPacket& packet);
 
 	SerialConfig();
 	virtual ~SerialConfig();

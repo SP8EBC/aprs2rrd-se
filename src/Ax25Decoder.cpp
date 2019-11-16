@@ -21,11 +21,13 @@ Ax25Decoder::Ax25Decoder() {
 Ax25Decoder::~Ax25Decoder() {
 }
 
-void Ax25Decoder::ParseFromKissBuffer(uint8_t* data, uint16_t data_ln,
+bool Ax25Decoder::ParseFromKissBuffer(uint8_t* data, uint16_t data_ln,
 		AprsPacket& out) {
 
+	bool output = false;
+
 	if (data_ln < 12)
-		return;
+		return output;
 
 	std::vector<uint8_t> buffer(data, data + data_ln);
 
@@ -47,6 +49,9 @@ void Ax25Decoder::ParseFromKissBuffer(uint8_t* data, uint16_t data_ln,
 	// skip FEND and Kiss Command
 	if (data[0] == FEND && data[1] == 0x00) {
 		idx = 2;
+	}
+	else {
+		return output;
 	}
 
 	// parsing DST address
@@ -125,6 +130,8 @@ void Ax25Decoder::ParseFromKissBuffer(uint8_t* data, uint16_t data_ln,
 		// inserting (copying) digi path element into vector
 		out.Path.push_back(path);
 
+		if (idx >= data_ln)
+			return output;
 
 	} while (last != true);
 
@@ -140,8 +147,13 @@ void Ax25Decoder::ParseFromKissBuffer(uint8_t* data, uint16_t data_ln,
 		c = buffer[idx++];
 
 		out.Data[ii++] = (const char)c;
+
+		if (idx >= data_ln)
+			return output;
 	}
 
-	return;
+	output = true;
+
+	return output;
 
 }

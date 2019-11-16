@@ -60,7 +60,11 @@ class SerialAsioThread {
     // A group of threads used to service I/O in background
 	boost::thread_group workersGroup;
 
+	// Shared pointers used for synchronizing RS232 transmission with the rest of app
 	std::shared_ptr<std::condition_variable> syncCondition;
+
+	// a mutex is used by an unique lock which then is used as a object the condition variable
+	// locks the thead on (wait_for method)
 	std::shared_ptr<std::mutex> syncLock;
 
 	// buffer for data incoming from RS232 port
@@ -71,11 +75,14 @@ class SerialAsioThread {
 
 	uint16_t startIndex = 0;
 
+	// an index in buffer when received KISS frame ends
 	uint16_t endIndex = 0;
 
 	SerialAsioThreadState state;
 
 	std::size_t lastBytesTransfered = 0;
+
+	bool packetValid = false;
 
 	void workerThread();
 
@@ -99,13 +106,24 @@ class SerialAsioThread {
 
 public:
 
+	// This constructor is used if external synchronization needs to be used
+	// which means that there are more than one communication threads are
+	// running within an app (like few KISS TNCs or KISS TNC + APRS-IS).
+	// In such case whole processing loop needs to be rather synchronized
+	// on single, global entities to provide universal way of informing
+	// that new data from some soruce is avaliable
 	SerialAsioThread(std::shared_ptr<std::condition_variable> syncCondition,
 	std::shared_ptr<std::mutex> syncLock,
 	std::string devname, unsigned int baud_rate);
 
+	// This is constructor which can be used in 'standalone' mode when
+	// KISS TNC will be used on it's own. The constructor will create
+	// local (per class instance) condition_variable and mutex
+	// to wait for reception locally
 	SerialAsioThread(const std::string& devname, unsigned int baud_rate);
 	virtual ~SerialAsioThread();
 
+	// This method shall be used if an user want non-standard parameters
 	void configure(const std::string& devname, unsigned int baud_rate,
 	        boost::asio::serial_port_base::parity opt_parity,
 	        boost::asio::serial_port_base::character_size opt_csize,
@@ -117,6 +135,10 @@ public:
 	void receive(bool wait);
 
 	bool waitForRx();
+
+	bool isPacketValid();
+
+	AprsPacket getPacket();
 };
 
 #endif /* SERIALASIOTHREAD_H_ */
