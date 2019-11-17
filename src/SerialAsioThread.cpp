@@ -100,9 +100,13 @@ void SerialAsioThread::workerThread() {
 std::size_t SerialAsioThread::asyncReadHandler(const boost::system::error_code& error, // Result of operation.
 		std::size_t bytes_transferred) {
 
+	boost::asio::deadline_timer t(*this->io_service, boost::posix_time::milliseconds(1));
+
 	uint8_t rx_byte = this->buffer[this->bufferIndex];
 
 	std::cout << "-- asyncReadHandler: bytes_transferred: " << (int32_t) bytes_transferred << std::endl;
+
+	t.wait();
 
 	switch (this->state) {
 	case SERIAL_FRAME_RXED: {
