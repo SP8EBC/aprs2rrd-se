@@ -28,6 +28,8 @@ AprsAsioThread::AprsAsioThread(AprsThreadConfig & config, uint8_t timeoutInSecon
 																						syncLock(syncLock),
 																						syncCondition(syncCondition)
 {
+	this->worker = nullptr;
+
 	char buffer[256];
 
 	if (config.StationSSID == 0)
@@ -41,12 +43,51 @@ AprsAsioThread::AprsAsioThread(AprsThreadConfig & config, uint8_t timeoutInSecon
 
 	this->DebugOutput = false;
 
+	this->ioservice.reset(new boost::asio::io_service());
+	this->wrk.reset(new boost::asio::io_service::work (*this->ioservice));
+	this->timer.reset(new boost::asio::deadline_timer (*this->ioservice));
+
+
+
+}
+
+AprsAsioThread::AprsAsioThread(
+		AprsThreadConfig & config,
+		uint8_t timeoutInSeconds,
+		std::shared_ptr<std::condition_variable> syncCondition,
+		std::shared_ptr<std::mutex> syncLock,
+		AsioWorker* worker) :
+																						conf(config),
+																						outputPacketValid(false),
+																						timeout(timeoutInSeconds),
+																						syncLock(syncLock),
+																						syncCondition(syncCondition)
+{
+	this->worker = worker;
+
+	char buffer[256];
+
+	if (config.StationSSID == 0)
+		sprintf(buffer, "user %s pass %d vers %s %s filter p/%s \r\n", config.Call.c_str(), config.Passwd, SW_NAME, SW_VER, config.StationCall.c_str());
+    else
+		sprintf(buffer, "user %s pass %d vers %s %s filter p/%s-%d \r\n", config.Call.c_str(), config.Passwd, SW_NAME, SW_VER, config.StationCall.c_str(), config.StationSSID);
+
+	this->loginString = std::string(buffer);
+
+	this->connected = false;
+
+	this->DebugOutput = false;
+
+	this->ioservice.reset(worker->getIoServicePtr());
+	this->wrk.reset(worker->getWorkPtr());
+	this->timer.reset(new boost::asio::deadline_timer (*this->ioservice));
+
 }
 
 void AprsAsioThread::workerThread() {
 
 //	while (true) {
-		this->ioservice.run();
+		this->ioservice->run();
 //	}
 }
 
@@ -56,13 +97,13 @@ void AprsAsioThread::connect() {
 		return;
 
 	// creating a copy of the tcp socket
-	this->tsocket.reset(new boost::asio::ip::tcp::socket(this->ioservice));
+	this->tsocket.reset(new boost::asio::ip::tcp::socket(*this->ioservice));
 
 	// creating a copy of query class which is then used by the resolver to 'convert' a domain addres to ip
 	boost::asio::ip::tcp::resolver::query q(this->conf.ServerURL, boost::lexical_cast<std::string>(this->conf.ServerPort));
 
 	// resolver which will convert a domain name to ip
-	boost::asio::ip::tcp::resolver resolver(this->ioservice);
+	boost::asio::ip::tcp::resolver resolver(*this->ioservice);
 
 	try {
 		// resolving IP address
@@ -80,7 +121,7 @@ void AprsAsioThread::connect() {
 	this->tsocket->async_connect(endpoint, boost::bind(&AprsAsioThread::connectedCallback, this, _1));
 
 	// checking if there is any thread already
-	if (this->workersGroup.size() == 0)
+	if (this->workersGroup.size() == 0  && this->worker == nullptr)
 		// creating a thread which will handle i/o
 		this->workersGroup.create_thread(boost::bind(&AprsAsioThread::workerThread, this));
 

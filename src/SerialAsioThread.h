@@ -20,6 +20,7 @@
 #include <boost/asio/buffer.hpp>
 
 #include "AprsPacket.h"
+#include "AsioWorker.h"
 
 #define FEND	(uint8_t)0xC0
 #define FESC	(uint8_t)0xDB
@@ -38,10 +39,12 @@ enum SerialAsioThreadState {
 
 class SerialAsioThread {
 
-	std::unique_ptr<boost::asio::serial_port> sp;
-	std::unique_ptr<boost::asio::io_service> io_service;
+	AsioWorker* worker;
 
-	std::unique_ptr<boost::asio::io_service::work> work;
+	std::unique_ptr<boost::asio::serial_port> sp;
+	std::shared_ptr<boost::asio::io_service> io_service;
+
+	std::shared_ptr<boost::asio::io_service::work> work;
 
     boost::asio::serial_port_base::parity parity;
     boost::asio::serial_port_base::character_size csize;
@@ -115,6 +118,10 @@ public:
 	SerialAsioThread(std::shared_ptr<std::condition_variable> syncCondition,
 	std::shared_ptr<std::mutex> syncLock,
 	std::string devname, unsigned int baud_rate);
+
+	SerialAsioThread(std::shared_ptr<std::condition_variable> syncCondition,
+	std::shared_ptr<std::mutex> syncLock,
+	std::string devname, unsigned int baud_rate, AsioWorker* worker);
 
 	// This is constructor which can be used in 'standalone' mode when
 	// KISS TNC will be used on it's own. The constructor will create

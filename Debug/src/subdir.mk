@@ -9,6 +9,7 @@ CPP_SRCS += \
 ../src/AprsThread.cpp \
 ../src/AprsThreadConfig.cpp \
 ../src/AprsWXData.cpp \
+../src/AsioWorker.cpp \
 ../src/Ax25Decoder.cpp \
 ../src/ConnectionTimeoutEx.cpp \
 ../src/DataPresentation.cpp \
@@ -26,6 +27,7 @@ OBJS += \
 ./src/AprsThread.o \
 ./src/AprsThreadConfig.o \
 ./src/AprsWXData.o \
+./src/AsioWorker.o \
 ./src/Ax25Decoder.o \
 ./src/ConnectionTimeoutEx.o \
 ./src/DataPresentation.o \
@@ -43,6 +45,7 @@ CPP_DEPS += \
 ./src/AprsThread.d \
 ./src/AprsThreadConfig.d \
 ./src/AprsWXData.d \
+./src/AsioWorker.d \
 ./src/Ax25Decoder.d \
 ./src/ConnectionTimeoutEx.d \
 ./src/DataPresentation.d \

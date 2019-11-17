@@ -23,6 +23,8 @@
 
 SerialAsioThread::SerialAsioThread(const std::string& devname, unsigned int baud_rate) {
 
+	this->worker = nullptr;
+
 	this->csize = boost::asio::serial_port_base::character_size();
 	this->flow = boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none);
 	this->parity = boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none);
@@ -57,6 +59,8 @@ SerialAsioThread::SerialAsioThread(
 		std::string devname, unsigned int baud_rate)
 					: syncCondition(syncCondition), syncLock(syncLock) {
 
+	this->worker = nullptr;
+
 	this->csize = boost::asio::serial_port_base::character_size();
 	this->flow = boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none);
 	this->parity = boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none);
@@ -73,6 +77,31 @@ SerialAsioThread::SerialAsioThread(
 
 	this->state = SERIAL_CLOSED;
 
+}
+
+SerialAsioThread::SerialAsioThread(
+		std::shared_ptr<std::condition_variable> syncCondition,
+		std::shared_ptr<std::mutex> syncLock, std::string devname,
+		unsigned int baud_rate,
+		AsioWorker* worker) : syncCondition(syncCondition), syncLock(syncLock) {
+
+	this->worker = worker;
+
+	this->csize = boost::asio::serial_port_base::character_size();
+	this->flow = boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none);
+	this->parity = boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none);
+	this->stop = boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one);
+
+	this->io_service.reset(worker->getIoServicePtr());
+	this->work.reset(worker->getWorkPtr());
+	this->sp.reset(new boost::asio::serial_port(*this->io_service));
+
+	::memset(this->buffer, 0x00, 512);
+
+	this->port = devname;
+	this->speed = baud_rate;
+
+	this->state = SERIAL_CLOSED;
 }
 
 void SerialAsioThread::configure(const std::string& devname,
@@ -99,6 +128,9 @@ void SerialAsioThread::workerThread() {
 
 std::size_t SerialAsioThread::asyncReadHandler(const boost::system::error_code& error, // Result of operation.
 		std::size_t bytes_transferred) {
+
+	if (error)
+		return 0;
 
 	uint8_t rx_byte = this->buffer[this->bufferIndex];
 
@@ -145,7 +177,6 @@ std::size_t SerialAsioThread::asyncReadHandler(const boost::system::error_code& 
 
 	}
 	default:
-		//return 0;
 		break;
 	}
 
@@ -191,7 +222,7 @@ bool SerialAsioThread::openPort() {
 	this->sp->open(this->port);
 
 	// checking if there is any thread already
-	if (this->workersGroup.size() == 0)
+	if (this->workersGroup.size() == 0 && this->worker == nullptr)
 		// creating a thread which will handle i/o
 		this->workersGroup.create_thread(boost::bind(&SerialAsioThread::workerThread, this));
 
@@ -237,6 +268,8 @@ bool SerialAsioThread::waitForRx() {
 bool SerialAsioThread::isPacketValid() {
 	return this->packetValid;
 }
+
+
 
 AprsPacket SerialAsioThread::getPacket() {
 	return this->packet;

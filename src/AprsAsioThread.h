@@ -22,23 +22,27 @@
 
 #include "AprsThreadConfig.h"
 #include "AprsPacket.h"
+#include "AsioWorker.h"
 
 class AprsAsioThread {
+
+	AsioWorker* worker;
+
 	AprsThreadConfig & conf;
 
 	// obiek io_service zajmujący się obsługą wejścia/wyjścia
-	boost::asio::io_service ioservice;
+	boost::shared_ptr<boost::asio::io_service> ioservice;
 
 	// obiekt klasy work jest niezbędny do sterowania kolejką zadań wykonywanych przez io_service
 	// bez niego wywołanie metody ioservice.run(); zakończyło by się natychmiastowo bez względu na to
 	// czy program chciałby wysłać/odebrać jakieś dane czy nie. Zapętlone, ciagłe wywołanie tej metody
 	// zjadło by całe zasoby procesora
-	boost::asio::io_service::work wrk {ioservice};
+	boost::shared_ptr<boost::asio::io_service::work> wrk;
 	boost::shared_ptr<boost::asio::ip::tcp::socket> tsocket /*{ioservice}*/;
 	boost::asio::ip::tcp::resolver::iterator resolverIterator;
 
 	// timer używany do obsługi timeotów przy nawiązywaniu połączenia i komunikacji z serwerem APRS-IS
-	boost::asio::deadline_timer timer {ioservice};
+	boost::shared_ptr<boost::asio::deadline_timer> timer;
 
 	// we cannot use Mutex to synchronize two threads. As stack overflow claims mutexes shall be designalized
 	// and signzlized in the same thread
@@ -94,6 +98,9 @@ public:
 
 	AprsAsioThread(AprsThreadConfig & config, uint8_t timeoutInSeconds, std::shared_ptr<std::condition_variable> syncCondition,
 																		std::shared_ptr<std::mutex> syncLock);
+
+	AprsAsioThread(AprsThreadConfig & config, uint8_t timeoutInSeconds, std::shared_ptr<std::condition_variable> syncCondition,
+																		std::shared_ptr<std::mutex> syncLock, AsioWorker* worker);
 	virtual ~AprsAsioThread();
 
 	bool DebugOutput;

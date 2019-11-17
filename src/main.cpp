@@ -22,6 +22,7 @@
 #include "ProgramConfig.h"
 #include "SerialAsioThread.h"
 #include "SerialConfig.h"
+#include "AsioWorker.h"
 
 #include "ConnectionTimeoutEx.h"
 #include "DataPresentation.h"
@@ -39,6 +40,8 @@ int correction = 0;
 
 std::shared_ptr<std::condition_variable> syncCondition;
 std::shared_ptr<std::mutex> syncLock;
+
+AsioWorker worker;
 
 #define DEFAULT_APRS_SERVER_TIMEOUT_SECONDS 73
 
@@ -148,13 +151,9 @@ int main(int argc, char **argv){
 
 	ProgramConfig::printConfigInPl(mysqlDb, aprsConfig, dataPresence, RRDCount, PlotsCount, telemetry, useFifthTelemAsTemperature);
 
-	serialThread = new SerialAsioThread(syncCondition, syncLock, serialConfig.serialPort, serialConfig.baudrate);
+	worker.startWorker();
 
-	// configuring serial thread
-//	serialThread.configure(serialConfig.serialPort, serialConfig.baudrate, boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none),
-//			boost::asio::serial_port_base::character_size(),
-//			boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none),
-//			boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one));
+	serialThread = new SerialAsioThread(syncCondition, syncLock, serialConfig.serialPort, serialConfig.baudrate, &worker);
 
 	// if an user want to use serial port it needs to be opened and configured
 	if (serialConfig.enable) {
@@ -162,7 +161,7 @@ int main(int argc, char **argv){
 	}
 
 	// creating a new copy of ASIO thread
-	asioThread = new AprsAsioThread(aprsConfig, DEFAULT_APRS_SERVER_TIMEOUT_SECONDS, syncCondition, syncLock);
+	asioThread = new AprsAsioThread(aprsConfig, DEFAULT_APRS_SERVER_TIMEOUT_SECONDS, syncCondition, syncLock, &worker);
 
 	// setting a logging level
 	asioThread->DebugOutput = Debug;
