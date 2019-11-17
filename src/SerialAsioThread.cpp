@@ -18,6 +18,7 @@
 #include <boost/bind.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <condition_variable>
+#include <iostream>
 
 
 SerialAsioThread::SerialAsioThread(const std::string& devname, unsigned int baud_rate) {
@@ -100,6 +101,8 @@ std::size_t SerialAsioThread::asyncReadHandler(const boost::system::error_code& 
 		std::size_t bytes_transferred) {
 
 	uint8_t rx_byte = this->buffer[this->bufferIndex];
+
+	std::cout << "-- asyncReadHandler: bytes_transferred: " << (int32_t) bytes_transferred << std::endl;
 
 	switch (this->state) {
 	case SERIAL_FRAME_RXED: {

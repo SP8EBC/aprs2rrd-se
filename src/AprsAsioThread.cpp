@@ -52,6 +52,9 @@ void AprsAsioThread::workerThread() {
 
 void AprsAsioThread::connect() {
 
+	if (!this->conf.enable)
+		return;
+
 	// creating a copy of the tcp socket
 	this->tsocket.reset(new boost::asio::ip::tcp::socket(this->ioservice));
 
@@ -105,6 +108,10 @@ void AprsAsioThread::writeCallback(const boost::system::error_code& ec,
 }
 
 void AprsAsioThread::receive(bool wait) {
+
+	// return immediately if APRS-IS connection is not enabled
+	if (!this->conf.enable)
+		return;
 
 	// starting asynchronous read which will last until end of line will be received
 	boost::asio::async_read_until(*this->tsocket, this->in_buf, "\r\n", boost::bind(&AprsAsioThread::newLineCallback, this, _1));
@@ -192,6 +199,10 @@ void AprsAsioThread::disconnect() {
 }
 
 bool AprsAsioThread::isConnected() {
+
+	if (!this->conf.enable)
+		return true;
+
 	return connected;
 }
 
