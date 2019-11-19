@@ -100,6 +100,11 @@ void SerialAsioThread::workerThread() {
 std::size_t SerialAsioThread::asyncReadHandler(const boost::system::error_code& error, // Result of operation.
 		std::size_t bytes_transferred) {
 
+	if (error) {
+		std::cout << "--- asyncReadHandler: error " << error.message() << std::endl;
+		this->state = SERIAL_ERROR;
+	}
+
 	boost::asio::deadline_timer t(*this->io_service, boost::posix_time::milliseconds(1));
 
 	uint8_t rx_byte = this->buffer[this->bufferIndex];
@@ -109,10 +114,11 @@ std::size_t SerialAsioThread::asyncReadHandler(const boost::system::error_code& 
 	t.wait();
 
 	switch (this->state) {
-	case SERIAL_FRAME_RXED: {
+	case SERIAL_ERROR:
+	case SERIAL_FRAME_DECODED: {
 
 		// clearing buffer after processing
-		::memset(this->buffer, 0x00, 512);
+		::memset(this->buffer, 0x00, SERIAL_BUFER_LN);
 
 		this->bufferIndex = 0;
 
@@ -120,7 +126,6 @@ std::size_t SerialAsioThread::asyncReadHandler(const boost::system::error_code& 
 
 		return 0;
 
-		//break;
 	}
 	case SERIAL_RXING_FRAME: {
 
@@ -129,6 +134,8 @@ std::size_t SerialAsioThread::asyncReadHandler(const boost::system::error_code& 
 		if (rx_byte == FEND) {
 
 			this->endIndex = this->bufferIndex;
+
+			this->state = SERIAL_FRAME_RXED;
 
 			return 0;
 		}
@@ -140,6 +147,9 @@ std::size_t SerialAsioThread::asyncReadHandler(const boost::system::error_code& 
 		// Check if FEND has been reveived which in this state means that this is a begin of
 		// new frame
 		if (rx_byte == FEND) {
+			if (this->debug)
+				std::cout << "--- asyncReadHandler: Begin of a frame has been sent by KISS modem" << std::endl;
+
 			this->state = SERIAL_RXING_FRAME;
 
 			this->startIndex = this->bufferIndex;
@@ -149,7 +159,6 @@ std::size_t SerialAsioThread::asyncReadHandler(const boost::system::error_code& 
 
 	}
 	default:
-		//return 0;
 		break;
 	}
 
@@ -173,19 +182,37 @@ void SerialAsioThread::asyncReadCompletionHandler(
 	bool decoding_status = false;
 
 	if (error) {
+		std::cout << "--- asyncReadCompletionHandler: error " << error.message() << std::endl;
 		this->state = SERIAL_ERROR;
 	}
-	else {
+	else if (this->state == SERIAL_FRAME_RXED) {
 
 		decoding_status = Ax25Decoder::ParseFromKissBuffer(this->buffer, this->bufferIndex, this->packet);
 
-		this->state = SERIAL_FRAME_RXED;
+		if (this->debug && decoding_status) {
+			std::cout << "--- asyncReadCompletionHandler: A packet has been received from KISS modem" << std::endl;
+			this->packet.PrintPacketData();
+		}
+
+		this->packetValid = decoding_status;
+
+		// notifing all that receiving is done
+		this->syncCondition->notify_all();
+
+		this->state = SERIAL_FRAME_DECODED;
 	}
+	else if (this->state == SERIAL_ERROR){
+		if (this->debug)
+			std::cout << "--- asyncReadCompletionHandler: An error happened during transmission through serial port." << std::endl;
 
-	this->packetValid = decoding_status;
+		this->packetValid = false;
 
-	// notifing all that receiving is done
-	this->syncCondition->notify_all();
+		// notifing all that receiving is done
+		this->syncCondition->notify_all();
+	}
+	else {
+		;
+	}
 
 	return;
 }
@@ -207,6 +234,18 @@ bool SerialAsioThread::openPort() {
 
 void SerialAsioThread::receive(bool wait) {
 
+	if (this->state == SERIAL_CLOSED || this->state == SERIAL_NOT_CONFIGURED)
+		return;
+
+	if (this->state != SERIAL_IDLE) {
+		this->sp->cancel();
+
+		// clearing buffer after processing
+		::memset(this->buffer, 0x00, SERIAL_BUFER_LN);
+
+		this->bufferIndex = 0;
+	}
+
 	auto readHandlerPtr = boost::bind(&SerialAsioThread::asyncReadHandler, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred);
 	auto completionHandlerPtr = boost::bind(&SerialAsioThread::asyncReadCompletionHandler, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred);
 
@@ -216,6 +255,9 @@ void SerialAsioThread::receive(bool wait) {
 	this->state = SERIAL_WAITING;
 
 	this->packetValid = false;
+
+	if (this->debug)
+		std::cout << "--- Receiving data from a serial KISS modem initiated. " << std::endl;
 
 	if (wait)
 		this->waitForRx();

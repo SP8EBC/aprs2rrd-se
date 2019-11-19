@@ -26,6 +26,8 @@
 #define TFEND	(uint8_t)0xDC
 #define TFESC	(uint8_t)0xDD
 
+#define SERIAL_BUFER_LN 512
+
 enum SerialAsioThreadState {
 	SERIAL_NOT_CONFIGURED,
 	SERIAL_CLOSED,
@@ -33,6 +35,7 @@ enum SerialAsioThreadState {
 	SERIAL_WAITING,
 	SERIAL_RXING_FRAME,
 	SERIAL_FRAME_RXED,
+	SERIAL_FRAME_DECODED,
 	SERIAL_ERROR
 };
 
@@ -68,7 +71,7 @@ class SerialAsioThread {
 	std::shared_ptr<std::mutex> syncLock;
 
 	// buffer for data incoming from RS232 port
-	uint8_t buffer[512];
+	uint8_t buffer[SERIAL_BUFER_LN];
 
 	// index used to move across the buffer during transmission
 	uint16_t bufferIndex = 0;
@@ -139,6 +142,8 @@ public:
 	bool isPacketValid();
 
 	AprsPacket getPacket();
+
+	bool debug = false;
 };
 
 #endif /* SERIALASIOTHREAD_H_ */

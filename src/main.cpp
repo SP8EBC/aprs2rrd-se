@@ -166,6 +166,7 @@ int main(int argc, char **argv){
 
 	// setting a logging level
 	asioThread->DebugOutput = Debug;
+	serialThread->debug = Debug;
 
 	// main loop
 	do {
@@ -198,8 +199,10 @@ int main(int argc, char **argv){
 						rxPacket = serialThread->getPacket();
 
 						// check the KISS frame against the user configuration configuration
-						if (!serialConfig.validateAprsPacket(rxPacket))
+						if (!serialConfig.validateAprsPacket(rxPacket)) {
+
 							continue;
+						}
 					}
 					else;
 
