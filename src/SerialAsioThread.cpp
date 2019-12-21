@@ -23,6 +23,8 @@
 
 SerialAsioThread::SerialAsioThread(const std::string& devname, unsigned int baud_rate) {
 
+	this->workerThreadObjPtr = nullptr;
+
 	this->csize = boost::asio::serial_port_base::character_size();
 	this->flow = boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none);
 	this->parity = boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none);
@@ -30,10 +32,10 @@ SerialAsioThread::SerialAsioThread(const std::string& devname, unsigned int baud
 
 	this->port = devname;
 	this->speed = baud_rate;
-
-	this->io_service.reset(new boost::asio::io_service());
-	this->sp.reset(new boost::asio::serial_port(*this->io_service));
-	this->work.reset(new boost::asio::io_service::work (*this->io_service));
+//
+//	this->io_service.reset(new boost::asio::io_service());
+//	this->sp.reset(new boost::asio::serial_port(*this->io_service));
+//	this->work.reset(new boost::asio::io_service::work (*this->io_service));
 
 	syncCondition.reset(new std::condition_variable());
 	syncLock.reset(new std::mutex());
@@ -48,6 +50,7 @@ SerialAsioThread::~SerialAsioThread() {
 	this->sp->cancel();
 	this->sp->close();
 	this->io_service->stop();
+	//this->workersGroup.join_all();
 }
 
 
@@ -57,14 +60,12 @@ SerialAsioThread::SerialAsioThread(
 		std::string devname, unsigned int baud_rate)
 					: syncCondition(syncCondition), syncLock(syncLock) {
 
+	this->workerThreadObjPtr = nullptr;
+
 	this->csize = boost::asio::serial_port_base::character_size();
 	this->flow = boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none);
 	this->parity = boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none);
 	this->stop = boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one);
-
-	this->io_service.reset(new boost::asio::io_service());
-	this->sp.reset(new boost::asio::serial_port(*this->io_service));
-	this->work.reset(new boost::asio::io_service::work (*this->io_service));
 
 	::memset(this->buffer, 0x00, 512);
 
@@ -73,6 +74,17 @@ SerialAsioThread::SerialAsioThread(
 
 	this->state = SERIAL_CLOSED;
 
+}
+
+void SerialAsioThread::closePort() {
+	this->sp->cancel();
+	this->sp->close();
+	this->io_service->stop();
+	this->io_service->reset();
+	this->work.reset();
+	delete this->workerThreadObjPtr;
+	this->io_service.reset();
+	this->sp.reset();
 }
 
 void SerialAsioThread::configure(const std::string& devname,
@@ -219,12 +231,13 @@ void SerialAsioThread::asyncReadCompletionHandler(
 
 bool SerialAsioThread::openPort() {
 
+	this->io_service.reset(new boost::asio::io_service());
+	this->sp.reset(new boost::asio::serial_port(*this->io_service));
+	this->work.reset(new boost::asio::io_service::work (*this->io_service));
+
 	this->sp->open(this->port);
 
-	// checking if there is any thread already
-	if (this->workersGroup.size() == 0)
-		// creating a thread which will handle i/o
-		this->workersGroup.create_thread(boost::bind(&SerialAsioThread::workerThread, this));
+	this->workerThreadObjPtr = new boost::thread(boost::bind(&SerialAsioThread::workerThread, this));
 
 	this->state = SERIAL_IDLE;
 
@@ -238,12 +251,21 @@ void SerialAsioThread::receive(bool wait) {
 		return;
 
 	if (this->state != SERIAL_IDLE) {
-		this->sp->cancel();
+		if (this->debug)
+			std::cout << "--- Canceling pending r/w operations. " << std::endl;
+
+		//this->sp->cancel();
+		closePort();
+		openPort();
 
 		// clearing buffer after processing
 		::memset(this->buffer, 0x00, SERIAL_BUFER_LN);
 
 		this->bufferIndex = 0;
+
+		boost::asio::deadline_timer t(*this->io_service, boost::posix_time::milliseconds(1));
+
+		t.wait();
 	}
 
 	auto readHandlerPtr = boost::bind(&SerialAsioThread::asyncReadHandler, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred);

@@ -63,6 +63,8 @@ class SerialAsioThread {
     // A group of threads used to service I/O in background
 	boost::thread_group workersGroup;
 
+	boost::thread* workerThreadObjPtr;
+
 	// Shared pointers used for synchronizing RS232 transmission with the rest of app
 	std::shared_ptr<std::condition_variable> syncCondition;
 
@@ -86,6 +88,8 @@ class SerialAsioThread {
 	std::size_t lastBytesTransfered = 0;
 
 	bool packetValid = false;
+
+	void closePort();
 
 	void workerThread();
 
