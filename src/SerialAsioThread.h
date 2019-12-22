@@ -60,9 +60,7 @@ class SerialAsioThread {
     // Content of AX25 frame received from the TNC after decoding
     AprsPacket packet;
 
-    // A group of threads used to service I/O in background
-	boost::thread_group workersGroup;
-
+	// a thread to service i/o in background
 	boost::thread* workerThreadObjPtr;
 
 	// Shared pointers used for synchronizing RS232 transmission with the rest of app
@@ -74,6 +72,9 @@ class SerialAsioThread {
 
 	// buffer for data incoming from RS232 port
 	uint8_t buffer[SERIAL_BUFER_LN];
+
+	// byte received previously
+	uint8_t previousByte = 0;
 
 	// index used to move across the buffer during transmission
 	uint16_t bufferIndex = 0;

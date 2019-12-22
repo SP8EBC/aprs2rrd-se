@@ -32,10 +32,6 @@ SerialAsioThread::SerialAsioThread(const std::string& devname, unsigned int baud
 
 	this->port = devname;
 	this->speed = baud_rate;
-//
-//	this->io_service.reset(new boost::asio::io_service());
-//	this->sp.reset(new boost::asio::serial_port(*this->io_service));
-//	this->work.reset(new boost::asio::io_service::work (*this->io_service));
 
 	syncCondition.reset(new std::condition_variable());
 	syncLock.reset(new std::mutex());
@@ -50,7 +46,6 @@ SerialAsioThread::~SerialAsioThread() {
 	this->sp->cancel();
 	this->sp->close();
 	this->io_service->stop();
-	//this->workersGroup.join_all();
 }
 
 
@@ -61,6 +56,7 @@ SerialAsioThread::SerialAsioThread(
 					: syncCondition(syncCondition), syncLock(syncLock) {
 
 	this->workerThreadObjPtr = nullptr;
+	this->io_service.reset(new boost::asio::io_service());
 
 	this->csize = boost::asio::serial_port_base::character_size();
 	this->flow = boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none);
@@ -76,23 +72,14 @@ SerialAsioThread::SerialAsioThread(
 
 }
 
-void SerialAsioThread::closePort() {
-	this->sp->cancel();
-	this->sp->close();
-	this->io_service->stop();
-	this->io_service->reset();
-	this->work.reset();
-	delete this->workerThreadObjPtr;
-	this->io_service.reset();
-	this->sp.reset();
-}
-
 void SerialAsioThread::configure(const std::string& devname,
 		unsigned int baud_rate,
 		boost::asio::serial_port_base::parity opt_parity,
 		boost::asio::serial_port_base::character_size opt_csize,
 		boost::asio::serial_port_base::flow_control opt_flow,
 		boost::asio::serial_port_base::stop_bits opt_stop) {
+
+	this->io_service.reset(new boost::asio::io_service());
 
 	this->csize = opt_csize;
 	this->flow = opt_flow;
@@ -119,11 +106,27 @@ std::size_t SerialAsioThread::asyncReadHandler(const boost::system::error_code& 
 
 	boost::asio::deadline_timer t(*this->io_service, boost::posix_time::milliseconds(1));
 
+	// last byte received from serial port
 	uint8_t rx_byte = this->buffer[this->bufferIndex];
 
 	std::cout << "-- asyncReadHandler: bytes_transferred: " << (int32_t) bytes_transferred << std::endl;
 
+	// wait 1 milisecond to slow down execution. Without this artificial sleep at 9600bps speed some bytes
+	// were received more than once - the 'asyncReadHandler' was called more than once for the same
+	// transferred byte. This doesn't slow much as the baudrate is all in all about 1200 bytes per second
 	t.wait();
+
+	// Check if FEND,0x00 sequence has been received what means that this is a begin of
+	// new frame. This check has been moved here to switch to SERIAL_RXING_FRAME regardless of
+	// any current state
+	if (this->previousByte == FEND && rx_byte == 0) {
+		if (this->debug)
+			std::cout << "--- asyncReadHandler: The begin of a frame has been detected" << std::endl;
+
+		this->state = SERIAL_RXING_FRAME;
+
+		this->startIndex = this->bufferIndex;
+	}
 
 	switch (this->state) {
 	case SERIAL_ERROR:
@@ -156,23 +159,15 @@ std::size_t SerialAsioThread::asyncReadHandler(const boost::system::error_code& 
 	}
 	case SERIAL_WAITING: {
 
-		// Check if FEND has been reveived which in this state means that this is a begin of
-		// new frame
-		if (rx_byte == FEND) {
-			if (this->debug)
-				std::cout << "--- asyncReadHandler: Begin of a frame has been sent by KISS modem" << std::endl;
-
-			this->state = SERIAL_RXING_FRAME;
-
-			this->startIndex = this->bufferIndex;
-		}
-
 		break;
 
 	}
 	default:
 		break;
 	}
+
+	// storing byte received in this call
+	this->previousByte = rx_byte;
 
 	// calculating how many bytes has been transfered before this function call
 	// 'bytes_transfered' parameter count bytes from the begin of whole transaction
@@ -197,8 +192,10 @@ void SerialAsioThread::asyncReadCompletionHandler(
 		std::cout << "--- asyncReadCompletionHandler: error " << error.message() << std::endl;
 		this->state = SERIAL_ERROR;
 	}
-	else if (this->state == SERIAL_FRAME_RXED) {
 
+	if (this->state == SERIAL_FRAME_RXED) {
+
+		// decoding KISS frame from a content of the serial buffer
 		decoding_status = Ax25Decoder::ParseFromKissBuffer(this->buffer, this->bufferIndex, this->packet);
 
 		if (this->debug && decoding_status) {
@@ -208,7 +205,7 @@ void SerialAsioThread::asyncReadCompletionHandler(
 
 		this->packetValid = decoding_status;
 
-		// notifing all that receiving is done
+		// notifing all waiting threads that receiving is done
 		this->syncCondition->notify_all();
 
 		this->state = SERIAL_FRAME_DECODED;
@@ -229,11 +226,24 @@ void SerialAsioThread::asyncReadCompletionHandler(
 	return;
 }
 
+void SerialAsioThread::closePort() {
+	this->sp->cancel();
+	this->sp->close();
+	this->io_service->stop();
+//	this->io_service->reset();
+	this->workerThreadObjPtr->join();
+	this->work.reset();
+//	this->io_service.reset();
+	this->sp.reset();
+	delete this->workerThreadObjPtr;
+}
+
+
 bool SerialAsioThread::openPort() {
 
 	this->io_service.reset(new boost::asio::io_service());
-	this->sp.reset(new boost::asio::serial_port(*this->io_service));
 	this->work.reset(new boost::asio::io_service::work (*this->io_service));
+	this->sp.reset(new boost::asio::serial_port(*this->io_service));
 
 	this->sp->open(this->port);
 
@@ -247,25 +257,27 @@ bool SerialAsioThread::openPort() {
 
 void SerialAsioThread::receive(bool wait) {
 
+	boost::asio::deadline_timer t(*this->io_service, boost::posix_time::milliseconds(1));
+
+	// if the serial port is not open or not configured just do nothing
 	if (this->state == SERIAL_CLOSED || this->state == SERIAL_NOT_CONFIGURED)
 		return;
 
+	// if this is second or any consecutive call to 'receive' method
 	if (this->state != SERIAL_IDLE) {
 		if (this->debug)
 			std::cout << "--- Canceling pending r/w operations. " << std::endl;
 
-		//this->sp->cancel();
 		closePort();
+		t.wait();
 		openPort();
 
 		// clearing buffer after processing
 		::memset(this->buffer, 0x00, SERIAL_BUFER_LN);
 
 		this->bufferIndex = 0;
+		this->lastBytesTransfered = 0;
 
-		boost::asio::deadline_timer t(*this->io_service, boost::posix_time::milliseconds(1));
-
-		t.wait();
 	}
 
 	auto readHandlerPtr = boost::bind(&SerialAsioThread::asyncReadHandler, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred);
