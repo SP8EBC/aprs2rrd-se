@@ -150,12 +150,6 @@ int main(int argc, char **argv){
 
 	serialThread = new SerialAsioThread(syncCondition, syncLock, serialConfig.serialPort, serialConfig.baudrate);
 
-	// configuring serial thread
-//	serialThread.configure(serialConfig.serialPort, serialConfig.baudrate, boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none),
-//			boost::asio::serial_port_base::character_size(),
-//			boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none),
-//			boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one));
-
 	// if an user want to use serial port it needs to be opened and configured
 	if (serialConfig.enable) {
 		serialThread->openPort();
@@ -224,7 +218,10 @@ int main(int argc, char **argv){
 					}
 
 					if (telemetry.valid) {
-						wxTarget.copy(telemetry.getCh5(), useFifthTelemAsTemperature);
+						if (useFifthTelemAsTemperature)
+							wxTarget.copy(telemetry.getCh5(), useFifthTelemAsTemperature);
+						else
+							continue;
 					}
 
 					// each method below checks if passed WX packet is valid and if no they will
