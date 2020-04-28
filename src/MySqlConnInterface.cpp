@@ -48,7 +48,7 @@ void MySqlConnInterface::Keepalive(void) {
 		cout << e.what() << endl;
 	}
 	catch (...) {
-		cout << "--- Nieznany wyjątek rzucony z MySqlConnInterface::Keepalive(void)" << endl;
+		cout << "--- MysqlConnInterface::Keepalive:51 - Unknown exception has been thrown" << endl;
 	}
 
 }
@@ -62,7 +62,7 @@ void MySqlConnInterface::InsertIntoDb(AprsWXData* cInput) {
 	local = localtime(&currtime);
 
 	if (this->execBeforeInsert == true) {
-		cout << "--- Executing: " << this->execBeforeInsertPath.c_str();
+		cout << "--- MysqlConnInterface::InsertIntoDb:65 - Executing: " << this->execBeforeInsertPath.c_str();
 		system(this->execBeforeInsertPath.c_str());
 		cout << endl;
 	}
@@ -98,7 +98,7 @@ void MySqlConnInterface::InsertIntoDb(AprsWXData* cInput) {
 		//delete this->dbQuery;
 	}
 	catch (...) {
-		cout << "--- libmysql++ - unknown exception" << endl;
+		cout << "--- MysqlConnInterface::InsertIntoDb:101 - unknown exception" << endl;
 	}
 
 	cout << this->dbSimpleResult.info();

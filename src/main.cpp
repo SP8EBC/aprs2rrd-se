@@ -106,16 +106,16 @@ int main(int argc, char **argv){
 
 	try {
 		programConfig.parseFile();
-		cout << "--- libconfig++: Otwieram plik konfiguracyjny..." << endl;
+		cout << "--- main:109 - Opening configuration file" << endl;
 	}
 
 	catch(const FileIOException &ex)
 	{
-		printf("--- libconfig++: Nie mozna otworzyc pliku!!!\r\n");
+		printf("--- main:114 - The configuration file cannot be opened.\r\n");
 		return -1;
 	}
 	catch(const ParseException &ex) {
-		printf("--- libconfig++: Blad parsowania pliku wejsciowego!!!");
+		printf("--- main:118 - Error during parsing a content of configuration file.");
 		return -2;
 	}
 
@@ -142,7 +142,7 @@ int main(int argc, char **argv){
 
 	aprsConfig.RetryServerLookup = true;
 
-	cout << "--- libconfig++: Configuration parsed successfully" << endl;
+	cout << "--- main:145 - Configuration parsed successfully" << endl;
 
 	programConfig.configureLogOutput();
 
@@ -269,7 +269,7 @@ int main(int argc, char **argv){
 				}
 				else {
 					if (Debug == true)
-						cout << "--- This is not valid APRS packet" << endl;
+						cout << "--- main.cpp:272 - This is not valid APRS packet" << endl;
 				}
 			}
 			catch (ConnectionTimeoutEx &e) {
@@ -278,15 +278,15 @@ int main(int argc, char **argv){
 				break;
 			}
 			catch (std::exception &e) {
-				cout << "std::exception " << e.what() << std::endl;
+				cout << "--- main:281 - std::exception " << e.what() << std::endl;
 			}
 			catch (...) {
-				cout << "Unknown exception thrown during processing!" << std::endl;
+				cout << "--- main:284 - Unknown exception thrown during processing!" << std::endl;
 			}
 
 		}
 
-		std::cout << "--- Connection to APRS server died. Reconnecting.." << std::endl;
+		std::cout << "--- main:289 - Connection to APRS server died. Reconnecting.." << std::endl;
 
 	} while (mainLoopExit);		// end of main loop
 

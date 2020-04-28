@@ -69,7 +69,7 @@ void AprsAsioThread::connect() {
 		this->resolverIterator = resolver.resolve(q);
 	}
 	catch (std::runtime_error &e) {
-		std::cout << e.what() << std::endl;
+		std::cout << "--- AprsAsioThread::connect:72 - " << e.what() << std::endl;
 		return;
 	}
 
@@ -164,7 +164,7 @@ void AprsAsioThread::newLineCallback(const boost::system::error_code& ec) {
 		} while (begin != end);	// until we reach the end of the streambuf
 
 		if (this->DebugOutput)
-			std::cout << "--- rx done" << std::endl;
+			std::cout << "--- AprsAsioThread::newLineCallback:167 - rx done" << std::endl;
 
 		// clearing target object
 		this->outputPacket.clear();
@@ -215,7 +215,7 @@ bool AprsAsioThread::isPacketValid() {
 }
 
 AprsAsioThread::~AprsAsioThread() {
-	std::cout << "--- AprsAsioThread destructor";
+	std::cout << "--- AprsAsioThread:218 -  destructor";
 
 //	this->tsocket.shutdown(boost::asio::ip::tcp::socket::shutdown_both);
 	//this->tsocket.close();

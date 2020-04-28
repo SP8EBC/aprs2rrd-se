@@ -157,7 +157,7 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
 
 	if (Debug) {
 		std::cout << "-----------------------------------------" << std::endl;
-		std::cout << "--- Przetworzono dane telemetryczne -----" << std::endl;
+		std::cout << "--- Telemetry data have been parsed -----" << std::endl;
 		std::cout << "--- Kanal 1 =  " << output->getCh1() << std::endl;
 		std::cout << "--- Kanal 2 =  " << output->getCh2() << std::endl;
 		std::cout << "--- Kanal 3 =  " << output->getCh3() << std::endl;

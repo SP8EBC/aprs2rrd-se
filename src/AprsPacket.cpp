@@ -100,7 +100,7 @@ AprsPacket::~AprsPacket()
 
 void AprsPacket::PrintPacketData() {
 	int i = 0;
-    cout << "-----------------------------------------------" << endl;
+    cout << "---------------- PACKET DATA ----------------" << endl;
     cout << "-- Callsign: " << this->SrcAddr << "-" << (int)this->SrcSSID << endl;
     cout << "-- Device identifier: " << this->DestAddr << endl;
     cout << "-- Packet path length: " << this->Path.size() << endl;
@@ -110,7 +110,7 @@ void AprsPacket::PrintPacketData() {
     cout << "-- APRS originator type: " << this->qOrigin << endl;
     cout << "-- APRS originator callsign: " << this->ToISOriginator.Call << endl;
     cout << "-- Frame payload: " << this->Data << endl;
-    cout << "----------------------------------------------- \r\n";
+    cout << "---------------------------------------------- \r\n";
 }
 
 

@@ -112,7 +112,7 @@ void DataPresentation::PlotGraphsFromRRD() {
 	std::string graph2Type;
 
 	if (this->DebugOutput == true) {
-		cout << "----- Count of plots to be generated: " <<  this->vPNGFiles.size() << endl;
+		cout << "--- DataPresentation::PlotGraphsFromRRD:115 -  Count of plots to be generated: " <<  this->vPNGFiles.size() << endl;
 	}
 
 	for (i = 0; i < this->vPNGFiles.size(); i++) {
@@ -200,12 +200,12 @@ void DataPresentation::GenerateWebiste(AprsWXData* WX) {
 	html.open(this->WebsitePath.c_str(), ios::out | ios::trunc);
 
 	if (!html.is_open()) {
-		std::cout << "--- ERROR OPENING HTML FILE!" << std::endl;
+		std::cout << "--- DataPresentation::GenerateWebiste:203 - Html file cannot by opend because of unknown reason" << std::endl;
 		return;
 	}
 
 	if (!html.good()) {
-		std::cout << "--- Something is wrong with the html file!" << std::endl;
+		std::cout << "--- DataPresentation::GenerateWebiste:208 - Something is wrong with the html file!" << std::endl;
 		return;
 	}
 
@@ -217,7 +217,7 @@ void DataPresentation::GenerateWebiste(AprsWXData* WX) {
 
 	//html.precision(3);
 
-	std::cout << "--- Html file opened" << std::endl;
+	std::cout << "--- DataPresentation::GenerateWebiste:220 - Html file opened" << std::endl;
 
 	try {
 		html << " <!DOCTYPE html><HTML><head>\r\n<TITLE>" << this->WebsiteTitle << "</TITLE> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">";

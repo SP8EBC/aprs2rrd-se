@@ -100,7 +100,7 @@ std::size_t SerialAsioThread::asyncReadHandler(const boost::system::error_code& 
 		std::size_t bytes_transferred) {
 
 	if (error) {
-		std::cout << "--- asyncReadHandler: error " << error.message() << std::endl;
+		std::cout << "--- SerialAsioThread::asyncReadHandler:103 error " << error.message() << std::endl;
 		this->state = SERIAL_ERROR;
 	}
 
@@ -109,7 +109,7 @@ std::size_t SerialAsioThread::asyncReadHandler(const boost::system::error_code& 
 	// last byte received from serial port
 	uint8_t rx_byte = this->buffer[this->bufferIndex];
 
-	std::cout << "-- asyncReadHandler: bytes_transferred: " << (int32_t) bytes_transferred << std::endl;
+	std::cout << "-- SerialAsioThread::asyncReadHandler:112 - bytes_transferred: " << (int32_t) bytes_transferred << std::endl;
 
 	// wait 1 milisecond to slow down execution. Without this artificial sleep at 9600bps speed some bytes
 	// were received more than once - the 'asyncReadHandler' was called more than once for the same
@@ -121,7 +121,7 @@ std::size_t SerialAsioThread::asyncReadHandler(const boost::system::error_code& 
 	// any current state
 	if (this->previousByte == FEND && rx_byte == 0) {
 		if (this->debug)
-			std::cout << "--- asyncReadHandler: The begin of a frame has been detected" << std::endl;
+			std::cout << "--- SerialAsioThread::asyncReadHandler:124 - The begin of a frame has been detected" << std::endl;
 
 		this->state = SERIAL_RXING_FRAME;
 
@@ -189,7 +189,7 @@ void SerialAsioThread::asyncReadCompletionHandler(
 	bool decoding_status = false;
 
 	if (error) {
-		std::cout << "--- asyncReadCompletionHandler: error " << error.message() << std::endl;
+		std::cout << "--- SerialAsioThread::asyncReadCompletionHandler:192 - error " << error.message() << std::endl;
 		this->state = SERIAL_ERROR;
 	}
 
@@ -199,7 +199,7 @@ void SerialAsioThread::asyncReadCompletionHandler(
 		decoding_status = Ax25Decoder::ParseFromKissBuffer(this->buffer, this->bufferIndex, this->packet);
 
 		if (this->debug && decoding_status) {
-			std::cout << "--- asyncReadCompletionHandler: A packet has been received from KISS modem" << std::endl;
+			std::cout << "---  SerialAsioThread::asyncReadCompletionHandler:202 - A packet has been received from KISS modem" << std::endl;
 			this->packet.PrintPacketData();
 		}
 
@@ -212,7 +212,7 @@ void SerialAsioThread::asyncReadCompletionHandler(
 	}
 	else if (this->state == SERIAL_ERROR){
 		if (this->debug)
-			std::cout << "--- asyncReadCompletionHandler: An error happened during transmission through serial port." << std::endl;
+			std::cout << "--- SerialAsioThread::asyncReadCompletionHandler:215 - An error happened during transmission through serial port." << std::endl;
 
 		this->packetValid = false;
 
@@ -230,10 +230,8 @@ void SerialAsioThread::closePort() {
 	this->sp->cancel();
 	this->sp->close();
 	this->io_service->stop();
-//	this->io_service->reset();
 	this->workerThreadObjPtr->join();
 	this->work.reset();
-//	this->io_service.reset();
 	this->sp.reset();
 	delete this->workerThreadObjPtr;
 }
@@ -266,7 +264,7 @@ void SerialAsioThread::receive(bool wait) {
 	// if this is second or any consecutive call to 'receive' method
 	if (this->state != SERIAL_IDLE) {
 		if (this->debug)
-			std::cout << "--- Canceling pending r/w operations. " << std::endl;
+			std::cout << "--- SerialAsioThread::receive:267 - Canceling pending r/w operations. " << std::endl;
 
 		closePort();
 		t.wait();
@@ -291,7 +289,7 @@ void SerialAsioThread::receive(bool wait) {
 	this->packetValid = false;
 
 	if (this->debug)
-		std::cout << "--- Receiving data from a serial KISS modem initiated. " << std::endl;
+		std::cout << "--- SerialAsioThread::receive:292 - Receiving data from a serial KISS modem initiated. " << std::endl;
 
 	if (wait)
 		this->waitForRx();

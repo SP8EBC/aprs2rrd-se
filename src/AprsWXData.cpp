@@ -145,22 +145,22 @@ void AprsWXData::ZeroCorrection(queue <AprsWXData> & qMeteo) {
 		if (this->temperature == 0 || this->humidity == 0 || this->pressure == 0) {
 			temp = qMeteo.back();
 			if (this->DebugOutput == true)
-				cout << "----- Korekcja ";
+				cout << "--- AprsWXData::ZeroCorrection:148 - doing zero correction ";
 		}
 		else;
 		if (this->temperature == 0) {
 			if (this->DebugOutput == true)
-				cout << "t: " << this->temperature << " -> " << temp.temperature << "; ";
+				cout << "--- AprsWXData::ZeroCorrection:153 - t: " << this->temperature << " -> " << temp.temperature << "; ";
 			this->temperature = temp.temperature;
 		}
 		if (this->humidity == 0) {
 			if (this->DebugOutput == true)
-				cout << "h: " << this->humidity << " -> " << temp.humidity << "; ";
+				cout << "--- AprsWXData::ZeroCorrection:158 - h: " << this->humidity << " -> " << temp.humidity << "; ";
 			this->humidity = temp.humidity;
 		}
 		if (this->pressure == 0) {
 			if (this->DebugOutput == true)
-				cout << "p: " << this->humidity << " -> " << temp.humidity << "; ";
+				cout << "--- AprsWXData::ZeroCorrection:164 - p: " << this->humidity << " -> " << temp.humidity << "; ";
 			this->pressure = temp.pressure;
 		}
 	}
