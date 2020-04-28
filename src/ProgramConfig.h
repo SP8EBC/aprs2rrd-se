@@ -16,6 +16,8 @@
 #include "DataPresentation.h"
 #include "SerialConfig.h"
 #include "Telemetry.h"
+#include "DataSourceConfig.h"
+
 
 class ProgramConfig {
 	std::string configFilename;
@@ -28,6 +30,23 @@ class ProgramConfig {
 	bool DebugToFile = false;
 	std::string DebugLogFn = "";
 
+	WxDataSource getTemperatureSource();
+	WxDataSource getPressureSource();
+	WxDataSource getWindSource();
+	WxDataSource getRainSource();
+	WxDataSource getHumiditySource();
+	WxDataSource getGlobalBackup();
+
+	constexpr static int swstring(const char* _in) {
+		int out = 0;
+
+		for (int i = 0; *(_in + i) != '\0'; i++) {
+			out += (int)*(_in + i);
+		}
+
+		return out;
+	}
+
 public:
 	ProgramConfig(std::string fn);
 	virtual ~ProgramConfig();
@@ -38,6 +57,7 @@ public:
 	void getSerialConfig(SerialConfig& serial);
 	void getDataPresentationConfig(DataPresentation& data, int& rrdCount, int& plotCount);
 	void getTelemetryConfig(Telemetry& data, bool& useAsTemperature);
+	void getDataSourceConfig(DataSourceConfig & config);
 
 	void configureLogOutput();
 

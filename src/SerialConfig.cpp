@@ -8,7 +8,7 @@
 #include "SerialConfig.h"
 
 SerialConfig::SerialConfig() {
-	// TODO Auto-generated constructor stub
+
 
 }
 

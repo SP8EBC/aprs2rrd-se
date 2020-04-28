@@ -14,6 +14,11 @@
 bool AprsWXData::DebugOutput = false;
 
 AprsWXData::AprsWXData() {
+	ssid = 0;
+	call = "";
+
+	dataSource = WXDataSource::UNKNOWN;
+
     wind_speed = 0.0;
     wind_gusts = 0.0;
     wind_direction = 0;
@@ -121,6 +126,10 @@ int AprsWXData::ParseData(AprsPacket input, AprsWXData* output) {
     	output->humidity = conv_temp;
 	else;
     output->valid = true;
+
+    output->ssid = input.SrcSSID;
+    output->call = input.SrcAddr;
+
     return 0;
 }
 
@@ -224,7 +233,7 @@ int AprsWXData::CopyConvert(unsigned num, std::string& input, int& output, int& 
     std::size_t input_size = input.length();
 
     // if the input string counter exceed its size
-    if (counter > input_size)
+    if ((unsigned)counter > input_size)
     	return -1;
 
     // if caler want to read more characters than input string stores
@@ -277,6 +286,10 @@ AprsWXData::AprsWXData(const AprsWXData& in) {
 	this->useTemperature = in.useTemperature;
 
 	this->DebugOutput = in.DebugOutput;
+
+	this->dataSource = WXDataSource::UNKNOWN;
+	this->ssid = 0;
+	this->call = "";
 }
 
 AprsWXData& AprsWXData::operator =(AprsWXData& _in) {
@@ -386,6 +399,107 @@ short AprsWXData::DirectionCorrection(AprsWXData& packet, short direction, short
         out = direction + correction;
 
     return out;
+}
+
+void AprsWXData::copy(const AprsWXData & source, const DataSourceConfig & config) {
+
+	// this will be set to true if this packet comes from IS and it was send by primary call
+	bool true_if_primary = false;
+
+	// if this packet comes from TCP/IP connection to IS check the source call
+	if (source.dataSource == WXDataSource::APRSIS) {
+		if (source.call == config.primaryCall &&
+			source.ssid == config.primarySsid) {
+
+			true_if_primary = true;
+		}
+		else if (source.call == config.secondaryCall &&
+				source.ssid == config.secondarySsid) {
+
+			true_if_primary = false;
+		}
+		else return;
+
+		// setting this flags to false will control which data will be inserted into RRD databse
+		// This affects only RRD as webpage and MySQL ignore this
+		this->useHumidity = false;
+		this->usePressure = false;
+		this->useTemperature = false;
+		this->useWind = false;
+
+		// check if APRSIS should be uased as a source for temperature
+		if ((config.temperature == WxDataSource::IS_PRIMARY && true_if_primary) ||
+			(config.temperature == WxDataSource::IS_SECONDARY && !true_if_primary) ) {
+			this->temperature = source.temperature;
+			this->useTemperature = true;
+		}
+
+		if ((config.pressure == WxDataSource::IS_PRIMARY && true_if_primary) ||
+			(config.pressure == WxDataSource::IS_SECONDARY && !true_if_primary)) {
+			this->pressure = source.pressure;
+			this->usePressure = true;
+		}
+
+		if ((config.humidity == WxDataSource::IS_PRIMARY && true_if_primary) ||
+			(config.humidity == WxDataSource::IS_SECONDARY && !true_if_primary)) {
+			this->humidity = source.humidity;
+			this->useHumidity = true;
+		}
+
+		if ((config.wind == WxDataSource::IS_PRIMARY && true_if_primary) ||
+			(config.wind == WxDataSource::IS_SECONDARY && !true_if_primary)) {
+			this->wind_direction = source.wind_direction;
+			this->wind_gusts = source.wind_gusts;
+			this->wind_speed = source.wind_speed;
+			this->useWind = true;
+		}
+
+		if ((config.rain == WxDataSource::IS_PRIMARY && true_if_primary) ||
+			(config.rain == WxDataSource::IS_SECONDARY && !true_if_primary)) {
+			this->rain24 = source.rain24;
+			this->rain60 = source.rain60;
+			this->rain_day = source.rain_day;
+		}
+	}
+
+	else if (source.dataSource == WXDataSource::SERIAL) {
+		this->useHumidity = false;
+		this->usePressure = false;
+		this->useTemperature = false;
+		this->useWind = false;
+
+		// check if APRSIS should be uased as a source for temperature
+		if (config.temperature == WxDataSource::SERIAL) {
+			this->temperature = source.temperature;
+			this->useTemperature = true;
+		}
+
+		if (config.pressure == WxDataSource::SERIAL) {
+			this->pressure = source.pressure;
+			this->usePressure = true;
+		}
+
+		if (config.humidity ==  WxDataSource::SERIAL) {
+			this->humidity = source.humidity;
+			this->useHumidity = true;
+		}
+
+		if (config.wind ==  WxDataSource::SERIAL) {
+			this->wind_direction = source.wind_direction;
+			this->wind_gusts = source.wind_gusts;
+			this->wind_speed = source.wind_speed;
+			this->useWind = true;
+		}
+
+		if (config.rain ==  WxDataSource::SERIAL) {
+			this->rain24 = source.rain24;
+			this->rain60 = source.rain60;
+			this->rain_day = source.rain_day;
+		}
+	}
+}
+
+void AprsWXData::copy(const Telemetry& source, const DataSourceConfig & config) {
 }
 
 void AprsWXData::DirectionCorrection(AprsWXData& packet, short correction) {

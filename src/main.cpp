@@ -76,14 +76,16 @@ int main(int argc, char **argv){
 	AprsAsioThread * asioThread;
 	SlewRateLimiter limiter;
 	SerialConfig serialConfig;
+	DataSourceConfig sourceConfig;
 
 	RRDFileDefinition sVectorRRDTemp;
 	PlotFileDefinition cVectorPNGTemp;
 
-	AprsWXData wxTemp, wxTelemetry;
+	AprsWXData wxIsTemp, wxSerialTemp, wxTelemetry;
 	AprsWXData wxTarget; // target wx data to be inserted into RRD DB & printed onto website
 	AprsWXData wxLastTarget;
-	AprsPacket rxPacket;
+	AprsPacket isRxPacket;
+	AprsPacket serialRxPacket;
 
 	queue <AprsPacket> qPackets;
 	queue <AprsWXData> qMeteo;
@@ -129,6 +131,7 @@ int main(int argc, char **argv){
 		programConfig.getAprsThreadConfig(aprsConfig);
 		programConfig.getDataPresentationConfig(dataPresence, RRDCount, PlotsCount);
 		programConfig.getSerialConfig(serialConfig);
+		programConfig.getDataSourceConfig(sourceConfig);
 
 		dataPresence.DebugOutput = Debug;
 		mysqlDb.Debug = Debug;
@@ -187,45 +190,60 @@ int main(int argc, char **argv){
 				if (asioThread->isPacketValid() || serialThread->isPacketValid()) {
 
 					// checking from what input data has been received
-					if (asioThread->isPacketValid())
-						rxPacket = asioThread->getPacket();
+					if (asioThread->isPacketValid()) {
+						isRxPacket = asioThread->getPacket();
+
+						// Parsing weather data. If this is not correct APRS wx packet the method will set
+						// the internal validity flag to false
+						AprsWXData::ParseData(isRxPacket, &wxIsTemp);
+
+						// setting the source of this wx packet
+						wxIsTemp.dataSource = WXDataSource::APRSIS;
+					}
 					else if (serialThread->isPacketValid()) {
-						rxPacket = serialThread->getPacket();
+						serialRxPacket = serialThread->getPacket();
 
 						// check the KISS frame against the user configuration configuration
-						if (!serialConfig.validateAprsPacket(rxPacket)) {
+						if (!serialConfig.validateAprsPacket(serialRxPacket)) {
 
 							continue;
 						}
+
+						// Parsing data from serial KISS modem
+						AprsWXData::ParseData(serialRxPacket, &wxSerialTemp);
+
+						// setting the source of this wx packet
+						wxSerialTemp.dataSource = WXDataSource::SERIAL;
 					}
 					else;
 
-					// Parsing wheater data. If this is not correct APRS wx packet the method will set
-					// the internal validity flag to false
-					AprsWXData::ParseData(rxPacket, &wxTemp);
-
 					// Parsing telemetry data
-					Telemetry::ParseData(rxPacket, &telemetry);
+					Telemetry::ParseData(isRxPacket, &telemetry);
 
 					// if this is data from WX Packet
-					if (wxTemp.valid) {
+					if (wxIsTemp.valid) {
+
+						// applying wind direction correction if it was enabled by an user
+						AprsWXData::DirectionCorrection(wxIsTemp, (int16_t)dataPresence.directionCorrection);
+
+						wxTarget.copy(wxIsTemp, sourceConfig);
+
+					}
+
+					if (wxSerialTemp.valid) {
 
 						// applying wind direction correction if it was enabled by user
-						AprsWXData::DirectionCorrection(wxTemp, (int16_t)dataPresence.directionCorrection);
+						AprsWXData::DirectionCorrection(wxSerialTemp, (int16_t)dataPresence.directionCorrection);
 
-						wxTarget.copy(wxTemp, useFifthTelemAsTemperature, false);
-
+						wxTarget.copy(wxSerialTemp, sourceConfig);
 					}
 
 					if (telemetry.valid) {
-						if (useFifthTelemAsTemperature)
-							wxTarget.copy(telemetry.getCh5(), useFifthTelemAsTemperature);
-						else
-							continue;
+						wxTarget.copy(telemetry, sourceConfig);
 					}
 
 					// each method below checks if passed WX packet is valid and if no they will
-					// exit immediately witoud performing any changes
+					// exit immediately witout performing any changes
 
 					wxTarget.PrintData();
 

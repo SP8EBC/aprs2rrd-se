@@ -7,6 +7,8 @@
 
 #include "ProgramConfig.h"
 
+#include <boost/algorithm/string.hpp>
+
 
 ProgramConfig::ProgramConfig(std::string fn) : configFilename(fn) {
 	// TODO Auto-generated constructor stub
@@ -22,6 +24,14 @@ void ProgramConfig::parseFile() {
 
 //	root = config.getRoot();
 }
+
+//constexpr int ProgramConfig::swstring(std::string _in) {
+//	int out = 0;
+//
+//	out = _in.length() + [](std::string &_in) {int out = 1; for (char c : _in) {out += (int)c;} return out;};
+//
+//	return out;
+//}
 
 void ProgramConfig::getDbConfig(MySqlConnInterface& db) {
 
@@ -212,6 +222,169 @@ void ProgramConfig::configureLogOutput() {
 	}
 }
 
+void ProgramConfig::getDataSourceConfig(DataSourceConfig& config_out) {
+	libconfig::Setting &root = config.getRoot();
+
+	libconfig::Setting &aprsIS = root["AprsIS"];
+
+	aprsIS.lookupValue("StationCall", config_out.primaryCall);
+	aprsIS.lookupValue("StationSSID", config_out.primarySsid);
+
+	aprsIS.lookupValue("SecondaryCall", config_out.secondaryCall);
+	aprsIS.lookupValue("SecondarySSID", config_out.secondarySsid);
+
+	config_out.globalBackup = this->getGlobalBackup();
+	config_out.humidity = this->getHumiditySource();
+	config_out.pressure = this->getPressureSource();
+	config_out.rain = this->getRainSource();
+	config_out.temperature = this->getTemperatureSource();
+	config_out.wind = this->getWindSource();
+}
+
+WxDataSource ProgramConfig::getTemperatureSource() {
+	WxDataSource out = WxDataSource::UNKNOWN;
+
+	libconfig::Setting &root = config.getRoot();
+	libconfig::Setting &sources = root["Sources"];
+
+	std::string value = "";
+
+	sources.lookupValue("Temperature", value);
+
+	boost::to_upper(value);
+
+	switch (swstring(value.c_str())) {
+	case swstring("APRSIS"): out = WxDataSource::IS_PRIMARY; break;
+	case swstring("SECONDARYAPRSIS"): out = WxDataSource::IS_SECONDARY;  break;
+	case swstring("TELEMETRY"): out = WxDataSource::TELEMETRY;  break;
+	case swstring("SERIAL"): out = WxDataSource::SERIAL;  break;
+	case swstring("HOLFUY"): out = WxDataSource::HOLFUY;  break;
+	default: break;
+	}
+
+	return out;
+}
+
+WxDataSource ProgramConfig::getPressureSource() {
+	WxDataSource out = WxDataSource::UNKNOWN;
+
+	libconfig::Setting &root = config.getRoot();
+	libconfig::Setting &sources = root["Sources"];
+
+	std::string value = "";
+
+	sources.lookupValue("Pressure", value);
+
+	boost::to_upper(value);
+
+	switch (swstring(value.c_str())) {
+	case swstring("APRSIS"): out = WxDataSource::IS_PRIMARY; break;
+	case swstring("SECONDARYAPRSIS"): out = WxDataSource::IS_SECONDARY;  break;
+	case swstring("TELEMETRY"): out = WxDataSource::TELEMETRY;  break;
+	case swstring("SERIAL"): out = WxDataSource::SERIAL;  break;
+	case swstring("HOLFUY"): out = WxDataSource::HOLFUY;  break;
+	default: break;
+	}
+
+	return out;
+}
+
+WxDataSource ProgramConfig::getWindSource() {
+	WxDataSource out = WxDataSource::UNKNOWN;
+
+	libconfig::Setting &root = config.getRoot();
+	libconfig::Setting &sources = root["Sources"];
+
+	std::string value = "";
+
+	sources.lookupValue("Wind", value);
+
+	boost::to_upper(value);
+
+	switch (swstring(value.c_str())) {
+	case swstring("APRSIS"): out = WxDataSource::IS_PRIMARY; break;
+	case swstring("SECONDARYAPRSIS"): out = WxDataSource::IS_SECONDARY;  break;
+	case swstring("TELEMETRY"): out = WxDataSource::TELEMETRY;  break;
+	case swstring("SERIAL"): out = WxDataSource::SERIAL;  break;
+	case swstring("HOLFUY"): out = WxDataSource::HOLFUY;  break;
+	default: break;
+	}
+
+	return out;
+}
+
+WxDataSource ProgramConfig::getRainSource() {
+	WxDataSource out = WxDataSource::UNKNOWN;
+
+	libconfig::Setting &root = config.getRoot();
+	libconfig::Setting &sources = root["Sources"];
+
+	std::string value = "";
+
+	sources.lookupValue("Rain", value);
+
+	boost::to_upper(value);
+
+	switch (swstring(value.c_str())) {
+	case swstring("APRSIS"): out = WxDataSource::IS_PRIMARY; break;
+	case swstring("SECONDARYAPRSIS"): out = WxDataSource::IS_SECONDARY;  break;
+	case swstring("TELEMETRY"): out = WxDataSource::TELEMETRY;  break;
+	case swstring("SERIAL"): out = WxDataSource::SERIAL;  break;
+	case swstring("HOLFUY"): out = WxDataSource::HOLFUY;  break;
+	default: break;
+	}
+
+	return out;
+}
+
+WxDataSource ProgramConfig::getHumiditySource() {
+	WxDataSource out = WxDataSource::UNKNOWN;
+
+	libconfig::Setting &root = config.getRoot();
+	libconfig::Setting &sources = root["Sources"];
+
+	std::string value = "";
+
+	sources.lookupValue("Humidity", value);
+
+	boost::to_upper(value);
+
+	switch (swstring(value.c_str())) {
+	case swstring("APRSIS"): out = WxDataSource::IS_PRIMARY; break;
+	case swstring("SECONDARYAPRSIS"): out = WxDataSource::IS_SECONDARY;  break;
+	case swstring("TELEMETRY"): out = WxDataSource::TELEMETRY;  break;
+	case swstring("SERIAL"): out = WxDataSource::SERIAL;  break;
+	case swstring("HOLFUY"): out = WxDataSource::HOLFUY;  break;
+	default: break;
+	}
+
+	return out;
+}
+
+WxDataSource ProgramConfig::getGlobalBackup() {
+	WxDataSource out = WxDataSource::UNKNOWN;
+
+	libconfig::Setting &root = config.getRoot();
+	libconfig::Setting &sources = root["Sources"];
+
+	std::string value = "";
+
+	sources.lookupValue("BackupForEverything", value);
+
+	boost::to_upper(value);
+
+	switch (swstring(value.c_str())) {
+	case swstring("APRSIS"): out = WxDataSource::IS_PRIMARY; break;
+	case swstring("SECONDARYAPRSIS"): out = WxDataSource::IS_SECONDARY;  break;
+	case swstring("TELEMETRY"): out = WxDataSource::TELEMETRY;  break;
+	case swstring("SERIAL"): out = WxDataSource::SERIAL;  break;
+	case swstring("HOLFUY"): out = WxDataSource::HOLFUY;  break;
+	default: break;
+	}
+
+	return out;
+}
+
 void ProgramConfig::printConfigInPl(
 											MySqlConnInterface& mysqlDb,
 											AprsThreadConfig& aprsConfig,
@@ -311,3 +484,5 @@ void ProgramConfig::printConfigInPl(
 //	}
 
 }
+
+

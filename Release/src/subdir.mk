@@ -12,6 +12,7 @@ CPP_SRCS += \
 ../src/Ax25Decoder.cpp \
 ../src/ConnectionTimeoutEx.cpp \
 ../src/DataPresentation.cpp \
+../src/DataSourceConfig.cpp \
 ../src/MySqlConnInterface.cpp \
 ../src/ProgramConfig.cpp \
 ../src/SerialAsioThread.cpp \
@@ -29,6 +30,7 @@ OBJS += \
 ./src/Ax25Decoder.o \
 ./src/ConnectionTimeoutEx.o \
 ./src/DataPresentation.o \
+./src/DataSourceConfig.o \
 ./src/MySqlConnInterface.o \
 ./src/ProgramConfig.o \
 ./src/SerialAsioThread.o \
@@ -46,6 +48,7 @@ CPP_DEPS += \
 ./src/Ax25Decoder.d \
 ./src/ConnectionTimeoutEx.d \
 ./src/DataPresentation.d \
+./src/DataSourceConfig.d \
 ./src/MySqlConnInterface.d \
 ./src/ProgramConfig.d \
 ./src/SerialAsioThread.d \
@@ -59,7 +62,7 @@ CPP_DEPS += \
 src/%.o: ../src/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C++ Compiler'
-	g++ -std=c++0x -I/usr/include/mysql++ -I/usr/include/mysql -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
+	g++ -std=c++1y -I/usr/include/mysql++ -I/usr/include/mysql -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
