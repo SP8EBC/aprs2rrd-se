@@ -13,6 +13,8 @@ CPP_SRCS += \
 ../src/ConnectionTimeoutEx.cpp \
 ../src/DataPresentation.cpp \
 ../src/DataSourceConfig.cpp \
+../src/HolfuyClient.cpp \
+../src/HolfuyClient_test.cpp \
 ../src/MySqlConnInterface.cpp \
 ../src/ProgramConfig.cpp \
 ../src/SerialAsioThread.cpp \
@@ -31,6 +33,8 @@ OBJS += \
 ./src/ConnectionTimeoutEx.o \
 ./src/DataPresentation.o \
 ./src/DataSourceConfig.o \
+./src/HolfuyClient.o \
+./src/HolfuyClient_test.o \
 ./src/MySqlConnInterface.o \
 ./src/ProgramConfig.o \
 ./src/SerialAsioThread.o \
@@ -49,6 +53,8 @@ CPP_DEPS += \
 ./src/ConnectionTimeoutEx.d \
 ./src/DataPresentation.d \
 ./src/DataSourceConfig.d \
+./src/HolfuyClient.d \
+./src/HolfuyClient_test.d \
 ./src/MySqlConnInterface.d \
 ./src/ProgramConfig.d \
 ./src/SerialAsioThread.d \
@@ -62,7 +68,7 @@ CPP_DEPS += \
 src/%.o: ../src/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C++ Compiler'
-	g++ -std=c++1y -I/usr/include/mysql++ -I/usr/include/mysql -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
+	g++ -std=c++1y -I/usr/include/mysql++ -I/usr/include/mysql -I/usr/include/curl -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

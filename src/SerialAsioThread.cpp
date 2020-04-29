@@ -113,7 +113,7 @@ std::size_t SerialAsioThread::asyncReadHandler(const boost::system::error_code& 
 
 	// wait 1 milisecond to slow down execution. Without this artificial sleep at 9600bps speed some bytes
 	// were received more than once - the 'asyncReadHandler' was called more than once for the same
-	// transferred byte. This doesn't slow much as the baudrate is all in all about 1200 bytes per second
+	// transfered byte. This doesn't slow much as the baudrate is all in all about 1200 bytes per second
 	t.wait();
 
 	// Check if FEND,0x00 sequence has been received what means that this is a begin of

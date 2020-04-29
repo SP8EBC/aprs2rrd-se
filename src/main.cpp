@@ -149,7 +149,7 @@ int main(int argc, char **argv){
 
 	aprsConfig.RetryServerLookup = true;
 
-	cout << "--- main:145 - Configuration parsed successfully" << endl;
+	cout << "--- main:152 - Configuration parsed successfully" << endl;
 
 	programConfig.configureLogOutput();
 
@@ -297,7 +297,7 @@ int main(int argc, char **argv){
 				}
 				else {
 					if (Debug == true)
-						cout << "--- main.cpp:272 - This is not valid APRS packet" << endl;
+						cout << "--- main.cpp:300 - This is not valid APRS packet" << endl;
 				}
 			}
 			catch (ConnectionTimeoutEx &e) {
@@ -306,10 +306,10 @@ int main(int argc, char **argv){
 				break;
 			}
 			catch (std::exception &e) {
-				cout << "--- main:281 - std::exception " << e.what() << std::endl;
+				cout << "--- main:309 - std::exception " << e.what() << std::endl;
 			}
 			catch (...) {
-				cout << "--- main:284 - Unknown exception thrown during processing!" << std::endl;
+				cout << "--- main:312 - Unknown exception thrown during processing!" << std::endl;
 			}
 
 		}
