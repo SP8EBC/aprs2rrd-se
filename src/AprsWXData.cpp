@@ -434,18 +434,21 @@ void AprsWXData::copy(const AprsWXData & source, const DataSourceConfig & config
 			this->useTemperature = true;
 		}
 
+		// check if APRSIS should be used as a source of pressure
 		if ((config.pressure == WxDataSource::IS_PRIMARY && true_if_primary) ||
 			(config.pressure == WxDataSource::IS_SECONDARY && !true_if_primary)) {
 			this->pressure = source.pressure;
 			this->usePressure = true;
 		}
 
+		// check if APRSIS should be used a source of humidity
 		if ((config.humidity == WxDataSource::IS_PRIMARY && true_if_primary) ||
 			(config.humidity == WxDataSource::IS_SECONDARY && !true_if_primary)) {
 			this->humidity = source.humidity;
 			this->useHumidity = true;
 		}
 
+		// check if APRSIS should be used as a source for wind
 		if ((config.wind == WxDataSource::IS_PRIMARY && true_if_primary) ||
 			(config.wind == WxDataSource::IS_SECONDARY && !true_if_primary)) {
 			this->wind_direction = source.wind_direction;
@@ -460,6 +463,8 @@ void AprsWXData::copy(const AprsWXData & source, const DataSourceConfig & config
 			this->rain60 = source.rain60;
 			this->rain_day = source.rain_day;
 		}
+
+		this->valid = true;
 	}
 
 	else if (source.dataSource == WXDataSource::SERIAL) {
@@ -496,10 +501,61 @@ void AprsWXData::copy(const AprsWXData & source, const DataSourceConfig & config
 			this->rain60 = source.rain60;
 			this->rain_day = source.rain_day;
 		}
+
+		this->valid = true;
+	}
+
+	else if (source.dataSource == WXDataSource::HOLFUY) {
+		this->useHumidity = false;
+		this->usePressure = false;
+		this->useTemperature = false;
+		this->useWind = false;
+
+		// check if APRSIS should be uased as a source for temperature
+		if (config.temperature == WxDataSource::HOLFUY) {
+			this->temperature = source.temperature;
+			this->useTemperature = true;
+		}
+
+		if (config.pressure == WxDataSource::HOLFUY) {
+			this->pressure = source.pressure;
+			this->usePressure = true;
+		}
+
+		if (config.humidity ==  WxDataSource::HOLFUY) {
+			this->humidity = source.humidity;
+			this->useHumidity = true;
+		}
+
+		if (config.wind ==  WxDataSource::HOLFUY) {
+			this->wind_direction = source.wind_direction;
+			this->wind_gusts = source.wind_gusts;
+			this->wind_speed = source.wind_speed;
+			this->useWind = true;
+		}
+
+		if (config.rain ==  WxDataSource::HOLFUY) {
+			this->rain24 = source.rain24;
+			this->rain60 = source.rain60;
+			this->rain_day = source.rain_day;
+		}
+
+		this->valid = true;
 	}
 }
 
-void AprsWXData::copy(const Telemetry& source, const DataSourceConfig & config) {
+void AprsWXData::copy(const Telemetry & source, const DataSourceConfig & config) {
+
+	if (config.temperature == WxDataSource::TELEMETRY) {
+		this->temperature = source.getCh5();
+		this->useHumidity = false;
+		this->usePressure = false;
+		this->useTemperature = true;
+		this->useWind = false;
+
+		this->valid = true;
+	}
+
 }
 
 void AprsWXData::DirectionCorrection(AprsWXData& packet, short correction) {

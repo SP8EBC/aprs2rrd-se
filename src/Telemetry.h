@@ -20,11 +20,11 @@ public:
 
 	static bool Debug;
 
-	float getCh1();
-	float getCh2();
-	float getCh3();
-	float getCh4();
-	float getCh5();
+	float getCh1() const;
+	float getCh2() const;
+	float getCh3() const;
+	float getCh4() const;
+	float getCh5() const;
 
 	bool valid;
 

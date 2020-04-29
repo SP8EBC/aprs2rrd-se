@@ -225,20 +225,30 @@ void ProgramConfig::configureLogOutput() {
 void ProgramConfig::getDataSourceConfig(DataSourceConfig& config_out) {
 	libconfig::Setting &root = config.getRoot();
 
-	libconfig::Setting &aprsIS = root["AprsIS"];
+	try {
+		libconfig::Setting &aprsIS = root["AprsIS"];
 
-	aprsIS.lookupValue("StationCall", config_out.primaryCall);
-	aprsIS.lookupValue("StationSSID", config_out.primarySsid);
+		aprsIS.lookupValue("StationCall", config_out.primaryCall);
+		aprsIS.lookupValue("StationSSID", config_out.primarySsid);
 
-	aprsIS.lookupValue("SecondaryCall", config_out.secondaryCall);
-	aprsIS.lookupValue("SecondarySSID", config_out.secondarySsid);
+		aprsIS.lookupValue("SecondaryCall", config_out.secondaryCall);
+		aprsIS.lookupValue("SecondarySSID", config_out.secondarySsid);
 
-	config_out.globalBackup = this->getGlobalBackup();
-	config_out.humidity = this->getHumiditySource();
-	config_out.pressure = this->getPressureSource();
-	config_out.rain = this->getRainSource();
-	config_out.temperature = this->getTemperatureSource();
-	config_out.wind = this->getWindSource();
+		config_out.globalBackup = this->getGlobalBackup();
+		config_out.humidity = this->getHumiditySource();
+		config_out.pressure = this->getPressureSource();
+		config_out.rain = this->getRainSource();
+		config_out.temperature = this->getTemperatureSource();
+		config_out.wind = this->getWindSource();
+	}
+	catch (libconfig::SettingNotFoundException &ex) {
+		config_out.globalBackup = WxDataSource::IS_PRIMARY;
+		config_out.humidity = WxDataSource::IS_PRIMARY;
+		config_out.pressure = WxDataSource::IS_PRIMARY;
+		config_out.rain = WxDataSource::IS_PRIMARY;
+		config_out.temperature = WxDataSource::IS_PRIMARY;
+		config_out.wind = WxDataSource::IS_PRIMARY;
+	}
 }
 
 WxDataSource ProgramConfig::getTemperatureSource() {

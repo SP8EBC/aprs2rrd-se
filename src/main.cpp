@@ -138,6 +138,10 @@ int main(int argc, char **argv){
 		AprsWXData::DebugOutput = Debug;
 		Telemetry::Debug = Debug;
 
+		if (useFifthTelemAsTemperature) {
+			sourceConfig.temperature = WxDataSource::TELEMETRY;
+		}
+
 	}
 	catch (const SettingNotFoundException &ex) {
 	//	return -3;
@@ -228,6 +232,10 @@ int main(int argc, char **argv){
 
 						wxTarget.copy(wxIsTemp, sourceConfig);
 
+						// invalidate packet from IS to prevent reusing in next loop iteration even
+						// if data was sent by another source
+						wxIsTemp.valid = false;
+
 					}
 
 					if (wxSerialTemp.valid) {
@@ -236,6 +244,8 @@ int main(int argc, char **argv){
 						AprsWXData::DirectionCorrection(wxSerialTemp, (int16_t)dataPresence.directionCorrection);
 
 						wxTarget.copy(wxSerialTemp, sourceConfig);
+
+						wxSerialTemp.valid = false;
 					}
 
 					if (telemetry.valid) {

@@ -174,26 +174,26 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
 
 }
 
-float Telemetry::getCh1() {
+float Telemetry::getCh1() const {
 	return (ch1a * ch1 * ch1) + (ch1b * ch1) + ch1c;
 }
 
-float Telemetry::getCh2() {
+float Telemetry::getCh2() const {
 	return (ch2a * ch2 * ch2) + (ch2b * ch2) + ch2c;
 
 }
 
-float Telemetry::getCh3() {
+float Telemetry::getCh3() const {
 	return (ch3a * ch3 * ch3) + (ch3b * ch3) + ch3c;
 
 }
 
-float Telemetry::getCh4() {
+float Telemetry::getCh4() const {
 	return (ch4a * ch4 * ch4) + (ch4b * ch4) + ch4c;
 
 }
 
-float Telemetry::getCh5() {
+float Telemetry::getCh5() const {
 	return (ch5a * ch5 * ch5) + (ch5b * ch5) + ch5c;
 
 }

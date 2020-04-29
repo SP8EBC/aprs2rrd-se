@@ -30,13 +30,6 @@ class ProgramConfig {
 	bool DebugToFile = false;
 	std::string DebugLogFn = "";
 
-	WxDataSource getTemperatureSource();
-	WxDataSource getPressureSource();
-	WxDataSource getWindSource();
-	WxDataSource getRainSource();
-	WxDataSource getHumiditySource();
-	WxDataSource getGlobalBackup();
-
 	constexpr static int swstring(const char* _in) {
 		int out = 0;
 
@@ -46,6 +39,15 @@ class ProgramConfig {
 
 		return out;
 	}
+
+	WxDataSource getTemperatureSource();
+	WxDataSource getPressureSource();
+	WxDataSource getWindSource();
+	WxDataSource getRainSource();
+	WxDataSource getHumiditySource();
+	WxDataSource getGlobalBackup();
+
+
 
 public:
 	ProgramConfig(std::string fn);
