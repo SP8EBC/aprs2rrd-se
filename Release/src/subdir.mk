@@ -21,7 +21,7 @@ CPP_SRCS += \
 ../src/SerialConfig.cpp \
 ../src/SlewRateLimiter.cpp \
 ../src/Telemetry.cpp \
-../src/main.cpp 
+../src/XMLMemoryHandler.cpp 
 
 OBJS += \
 ./src/AprsAsioThread.o \
@@ -41,7 +41,7 @@ OBJS += \
 ./src/SerialConfig.o \
 ./src/SlewRateLimiter.o \
 ./src/Telemetry.o \
-./src/main.o 
+./src/XMLMemoryHandler.o 
 
 CPP_DEPS += \
 ./src/AprsAsioThread.d \
@@ -61,14 +61,14 @@ CPP_DEPS += \
 ./src/SerialConfig.d \
 ./src/SlewRateLimiter.d \
 ./src/Telemetry.d \
-./src/main.d 
+./src/XMLMemoryHandler.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
 src/%.o: ../src/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C++ Compiler'
-	g++ -std=c++1y -I/usr/include/mysql++ -I/usr/include/mysql -I/usr/include/curl -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
+	g++ -std=c++1y -I/usr/include/mysql++ -I/usr/include/xercesc -I/usr/include/mysql -I/usr/include/curl -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

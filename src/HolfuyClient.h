@@ -13,6 +13,8 @@
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
+#include <xercesc/dom/DOM.hpp>
+
 #include "AprsWXData.h"
 
 class HolfuyClient {
@@ -37,21 +39,36 @@ private:
 
 	std::string apiPassword;
 
-	size_t write_callback(char *get_data, size_t always_one, size_t get_data_size, void *userdata);
+	static size_t static_write_callback(char *get_data, size_t always_one, size_t get_data_size, void *userdata);
+
+	void write_callback(char* data, size_t data_size);
+
+	bool downloadResult = false;
+
+	std::string response;
+
+	std::string apiUrl;
 
 	std::string getUrl() {
 
-		std::string out = "http://api.holfuy.com/live/?s=" + std::to_string((int)stationId) + "&pass=" + apiPassword +  "&m=XML&tu=C&su=m/s";
+		this->apiUrl = "http://api.holfuy.com/live/?s=" + std::to_string((int)stationId) + "&pw=" + apiPassword +  "&m=XML&tu=C&su=m/s";
 
-		return out;
+		return this->apiUrl;
 	}
+
+	void parseElement(xercesc_3_1::DOMElement* element);
+
+	void checkAndRetrievieParameter(char* node_name, xercesc_3_1::DOMElement* element);
 
 public:
 	HolfuyClient(uint32_t id, std::string apiPassword);
 	~HolfuyClient();
 
-	// this method will download the data from Holfuy API and then store in itnernal fields
+	// this method will download the data from Holfuy API
 	void download();
+
+	// this will parse the XML from Holfiu API and then
+	void parse();
 
 	// move that data to AprsWXData object
 	void getWxData(AprsWXData & out);

@@ -25,7 +25,9 @@
 								<option id="gnu.cpp.compiler.exe.debug.option.debugging.level.300963562" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.1764273" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="/usr/include/mysql++"/>
+									<listOptionValue builtIn="false" value="/usr/include/xercesc"/>
 									<listOptionValue builtIn="false" value="/usr/include/mysql"/>
+									<listOptionValue builtIn="false" value="/usr/include/curl"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.dialect.std.534908013" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.c++1y" valueType="enumerated"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.758414841" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -42,15 +44,17 @@
 									<listOptionValue builtIn="false" value="/usr/lib"/>
 								</option>
 								<option id="gnu.cpp.link.option.libs.341301176" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" useByScannerDiscovery="false" valueType="libs">
+									<listOptionValue builtIn="false" value="mysqlpp"/>
+									<listOptionValue builtIn="false" value="xerces-c-3.1"/>
+									<listOptionValue builtIn="false" value="mysqlclient"/>
 									<listOptionValue builtIn="false" value="config"/>
+									<listOptionValue builtIn="false" value="config++"/>
+									<listOptionValue builtIn="false" value="curl"/>
+									<listOptionValue builtIn="false" value="pthread"/>
 									<listOptionValue builtIn="false" value="boost_regex"/>
 									<listOptionValue builtIn="false" value="boost_thread"/>
-									<listOptionValue builtIn="false" value="pthread"/>
 									<listOptionValue builtIn="false" value="boost_system"/>
 									<listOptionValue builtIn="false" value="boost_unit_test_framework"/>
-									<listOptionValue builtIn="false" value="config++"/>
-									<listOptionValue builtIn="false" value="mysqlpp"/>
-									<listOptionValue builtIn="false" value="mysqlclient"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.2058787109" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -63,7 +67,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+						<entry excluding="main.cpp|SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -94,6 +98,7 @@
 								<option id="gnu.cpp.compiler.option.dialect.std.738974605" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.c++1y" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.option.include.paths.331124499" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="/usr/include/mysql++"/>
+									<listOptionValue builtIn="false" value="/usr/include/xercesc"/>
 									<listOptionValue builtIn="false" value="/usr/include/mysql"/>
 									<listOptionValue builtIn="false" value="/usr/include/curl"/>
 								</option>
@@ -108,14 +113,16 @@
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.release.2079541384" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.release"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.exe.release.1682121304" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.release">
 								<option id="gnu.cpp.link.option.libs.1414773914" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" useByScannerDiscovery="false" valueType="libs">
+									<listOptionValue builtIn="false" value="pthread"/>
+									<listOptionValue builtIn="false" value="xerces-c-3.1"/>
+									<listOptionValue builtIn="false" value="mysqlpp"/>
+									<listOptionValue builtIn="false" value="curl"/>
+									<listOptionValue builtIn="false" value="config++"/>
 									<listOptionValue builtIn="false" value="config"/>
 									<listOptionValue builtIn="false" value="boost_regex"/>
 									<listOptionValue builtIn="false" value="boost_thread"/>
-									<listOptionValue builtIn="false" value="pthread"/>
 									<listOptionValue builtIn="false" value="boost_system"/>
 									<listOptionValue builtIn="false" value="boost_unit_test_framework"/>
-									<listOptionValue builtIn="false" value="config++"/>
-									<listOptionValue builtIn="false" value="mysqlpp"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.2009480372" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -128,7 +135,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+						<entry excluding="main.cpp|SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
