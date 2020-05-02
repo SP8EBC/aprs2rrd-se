@@ -55,6 +55,7 @@
 									<listOptionValue builtIn="false" value="boost_thread"/>
 									<listOptionValue builtIn="false" value="boost_system"/>
 									<listOptionValue builtIn="false" value="boost_unit_test_framework"/>
+									<listOptionValue builtIn="false" value="boost_date_time"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.2058787109" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -67,7 +68,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="main.cpp|SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+						<entry excluding="HolfuyClient_test.cpp|SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -123,6 +124,7 @@
 									<listOptionValue builtIn="false" value="boost_thread"/>
 									<listOptionValue builtIn="false" value="boost_system"/>
 									<listOptionValue builtIn="false" value="boost_unit_test_framework"/>
+									<listOptionValue builtIn="false" value="boost_date_time"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.2009480372" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -135,7 +137,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="main.cpp|SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+						<entry excluding="HolfuyClient_test.cpp|SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

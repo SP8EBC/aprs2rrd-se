@@ -44,11 +44,30 @@ HolfuyClient::HolfuyClient(uint32_t id, std::string apiPassword) : stationId(id)
 
 	rain = 0;
 
-	//result = CURLcode::CURLE_OBSOLETE50;
+	temperature = 0.0f;
+
+	// Initializing the XML stuff in Xerces-C++ library
+	xercesc_3_1::XMLPlatformUtils::Initialize();
+
+	dateCh = xercesc_3_1::XMLString::transcode("date");
+
+	timeCh = xercesc_3_1::XMLString::transcode("time");
+
+	windspeedCh = xercesc_3_1::XMLString::transcode("speed");
+
+	windgustsCh = xercesc_3_1::XMLString::transcode("gust");
+
+	winddirCh = xercesc_3_1::XMLString::transcode("dir");
+
+	pressureCh = xercesc_3_1::XMLString::transcode("pressure");
+
+	temperatureCh = xercesc_3_1::XMLString::transcode("temp");
 
 }
 
 HolfuyClient::~HolfuyClient() {
+	xercesc_3_1::XMLPlatformUtils::Terminate();
+
 }
 
 void HolfuyClient::download() {
@@ -108,8 +127,9 @@ void HolfuyClient::write_callback(char* data, size_t data_size) {
 
 void HolfuyClient::parse() {
 
-	// Initializing the XML stuff in Xerces-C++ library
-	xercesc_3_1::XMLPlatformUtils::Initialize();
+	// if download wasn't successfull abort here
+	if (!this->downloadResult)
+		return;
 
 	// casting the pointer to type using internally by Xerces
 	const XMLByte* source = reinterpret_cast<const XMLByte*>(this->response.c_str());
@@ -139,7 +159,10 @@ void HolfuyClient::parse() {
 	// start parsing on the tree
 	this->parseElement(root);
 
-	xercesc_3_1::XMLPlatformUtils::Terminate();
+	// clear the buffer
+	this->response = "";
+	this->downloadResult = false;
+
 
 }
 
@@ -179,25 +202,57 @@ void HolfuyClient::parseElement(xercesc_3_1::DOMElement* element) {
 
 void HolfuyClient::checkAndRetrievieParameter(char* node_name,
 		xercesc_3_1::DOMElement* element) {
-	if (strcmp(node_name, "wind") == 0) {
-		XMLCh* windspeed_str = const_cast<XMLCh*>(element->getAttribute(xercesc_3_1::XMLString::transcode("speed")));
-		XMLCh* windgust_str = const_cast<XMLCh*>(element->getAttribute(xercesc_3_1::XMLString::transcode("gust")));
-		XMLCh* direction_str = const_cast<XMLCh*>(element->getAttribute(xercesc_3_1::XMLString::transcode("dir")));
+	if (strcmp(node_name, "timestamp") == 0) {
+		XMLCh* date = const_cast<XMLCh*>(element->getAttribute(dateCh));
+		XMLCh* time = const_cast<XMLCh*>(element->getAttribute(timeCh));
+
+		char* decoded_date = xercesc_3_1::XMLString::transcode(date);
+		char* decoded_time = xercesc_3_1::XMLString::transcode(time);
+
+		std::string date_time_string = std::string(decoded_date) + " " + std::string(decoded_time);
+
+		boost::posix_time::ptime timestamp = boost::posix_time::time_from_string(date_time_string);
+
+		this->timestamp = timestamp;
+
+		xercesc_3_1::XMLString::release(&decoded_date);
+		xercesc_3_1::XMLString::release(&decoded_time);
+
+
+	}
+	else if (strcmp(node_name, "wind") == 0) {
+		XMLCh* windspeed_str = const_cast<XMLCh*>(element->getAttribute(windspeedCh));
+		XMLCh* windgust_str = const_cast<XMLCh*>(element->getAttribute(windgustsCh));
+		XMLCh* direction_str = const_cast<XMLCh*>(element->getAttribute(winddirCh));
 
 		float windspeed_ = boost::lexical_cast<float>(xercesc_3_1::XMLString::transcode(windspeed_str));
 		float windgusts_ = boost::lexical_cast<float>(xercesc_3_1::XMLString::transcode(windgust_str));
 		float winddir_ = boost::lexical_cast<float>(xercesc_3_1::XMLString::transcode(direction_str));
 
+		this->windspeed = windspeed_;
+		this->windgusts = windgusts_;
+		this->winddirection = winddir_;
+
+
 		std::cout << "windspeed_ " << windspeed_ << ", windgusts_ " << windgusts_ << ", winddir_ " << winddir_ <<  std::endl;
 	}
 	else if (strcmp(node_name, "temp") == 0) {
-		XMLCh* temperature_str = const_cast<XMLCh*>(element->getAttribute(xercesc_3_1::XMLString::transcode("temp")));
+		XMLCh* temperature_str = const_cast<XMLCh*>(element->getAttribute(temperatureCh));
 
 		float temperature_ = boost::lexical_cast<float>(xercesc_3_1::XMLString::transcode(temperature_str));
+
+		this->temperature = temperature_;
 
 		std::cout << "temperature_ " << temperature_ << std::endl;
 	}
 	else if (strcmp(node_name, "pressure") == 0) {
+		XMLCh* pressure_str = const_cast<XMLCh*>(element->getAttribute(pressureCh));
+
+		float pressure_ = boost::lexical_cast<float>(xercesc_3_1::XMLString::transcode(pressure_str));
+
+		this->pressure = pressure_;
+
+		std::cout << "pressure_ " << pressure_ << std::endl;
 
 	}
 	else {
@@ -207,5 +262,27 @@ void HolfuyClient::checkAndRetrievieParameter(char* node_name,
 	return;
 }
 
-void HolfuyClient::getWxData(AprsWXData& out) {
+bool HolfuyClient::getWxData(AprsWXData& out) {
+	if (!this->downloadResult) {
+		out.useHumidity = false;
+		out.usePressure = false;
+		out.useTemperature = false;
+		out.useWind = false;
+
+		return false;
+	}
+
+	out.wind_speed = this->windspeed;
+	out.wind_gusts = this->windgusts;
+	out.wind_direction = this->winddirection;
+	out.pressure = this->pressure;
+	out.temperature = this->temperature;
+	out.pressure = this->pressure;
+
+	out.useHumidity = false;
+	out.usePressure = true;
+	out.useTemperature = true;
+	out.useWind = true;
+
+	return true;
 }

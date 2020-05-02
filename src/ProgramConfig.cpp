@@ -65,6 +65,15 @@ void ProgramConfig::getAprsThreadConfig(AprsThreadConfig& aprs) {
 	rAprsIS.lookupValue("ServerPort", aprs.ServerPort);
 	rAprsIS.lookupValue("MyCALL", aprs.Call);
 	rAprsIS.lookupValue("MyPasswd", aprs.Passwd);
+
+	try {
+		rAprsIS.lookupValue("SecondaryCall", aprs.SecondaryCall);
+		rAprsIS.lookupValue("SecondarySSID", aprs.SecondarySSID);
+	}
+	catch (libconfig::SettingNotFoundException &ex) {
+		aprs.SecondaryCall = "";
+		aprs.SecondarySSID = 0xFF;
+	}
 }
 
 void ProgramConfig::getSerialConfig(SerialConfig& serial) {
@@ -249,6 +258,10 @@ void ProgramConfig::getDataSourceConfig(DataSourceConfig& config_out) {
 		config_out.temperature = WxDataSource::IS_PRIMARY;
 		config_out.wind = WxDataSource::IS_PRIMARY;
 	}
+}
+
+void ProgramConfig::getHolfuyConfig(HolfuyClientConfig& config_out) {
+	libconfig::Setting &root = config.getRoot();
 }
 
 WxDataSource ProgramConfig::getTemperatureSource() {

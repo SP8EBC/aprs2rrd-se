@@ -37,6 +37,8 @@ private:
 
 	uint8_t rain;
 
+	float_t temperature;
+
 	std::string apiPassword;
 
 	static size_t static_write_callback(char *get_data, size_t always_one, size_t get_data_size, void *userdata);
@@ -60,6 +62,20 @@ private:
 
 	void checkAndRetrievieParameter(char* node_name, xercesc_3_1::DOMElement* element);
 
+	XMLCh* dateCh;
+
+	XMLCh* timeCh;
+
+	XMLCh* windspeedCh;
+
+	XMLCh* windgustsCh;
+
+	XMLCh* winddirCh;
+
+	XMLCh* pressureCh;
+
+	XMLCh* temperatureCh;
+
 public:
 	HolfuyClient(uint32_t id, std::string apiPassword);
 	~HolfuyClient();
@@ -71,7 +87,7 @@ public:
 	void parse();
 
 	// move that data to AprsWXData object
-	void getWxData(AprsWXData & out);
+	bool getWxData(AprsWXData & out);
 };
 
 #endif /* HOLFUYCLIENT_H_ */

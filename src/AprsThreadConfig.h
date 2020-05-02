@@ -20,6 +20,9 @@ public:
 	string StationCall;
 	unsigned StationSSID;
 	
+	string SecondaryCall;
+	unsigned SecondarySSID;
+
 	bool RetryServerLookup;
 
 };

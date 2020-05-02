@@ -22,6 +22,8 @@
 #include "ProgramConfig.h"
 #include "SerialAsioThread.h"
 #include "SerialConfig.h"
+#include "HolfuyClientConfig.h"
+#include "HolfuyClient.h"
 
 #include "ConnectionTimeoutEx.h"
 #include "DataPresentation.h"
@@ -77,6 +79,9 @@ int main(int argc, char **argv){
 	SlewRateLimiter limiter;
 	SerialConfig serialConfig;
 	DataSourceConfig sourceConfig;
+	HolfuyClientConfig holfuyConfig;
+	std::unique_ptr<HolfuyClient> holfuyClient;
+
 
 	RRDFileDefinition sVectorRRDTemp;
 	PlotFileDefinition cVectorPNGTemp;

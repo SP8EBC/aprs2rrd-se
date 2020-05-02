@@ -17,6 +17,7 @@
 #include "SerialConfig.h"
 #include "Telemetry.h"
 #include "DataSourceConfig.h"
+#include "HolfuyClientConfig.h"
 
 
 class ProgramConfig {
@@ -60,6 +61,7 @@ public:
 	void getDataPresentationConfig(DataPresentation& data, int& rrdCount, int& plotCount);
 	void getTelemetryConfig(Telemetry& data, bool& useAsTemperature);
 	void getDataSourceConfig(DataSourceConfig & config);
+	void getHolfuyConfig(HolfuyClientConfig & config);
 
 	void configureLogOutput();
 
