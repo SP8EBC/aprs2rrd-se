@@ -9,7 +9,6 @@
 #include "XMLMemoryHandler.h"
 
 #include <functional>
-#include <array>
 #include <iostream>
 
 #include <curl/curl.h>
@@ -46,6 +45,8 @@ HolfuyClient::HolfuyClient(uint32_t id, std::string apiPassword) : stationId(id)
 
 	temperature = 0.0f;
 
+	response.reserve(255);
+
 	// Initializing the XML stuff in Xerces-C++ library
 	xercesc_3_1::XMLPlatformUtils::Initialize();
 
@@ -63,6 +64,12 @@ HolfuyClient::HolfuyClient(uint32_t id, std::string apiPassword) : stationId(id)
 
 	temperatureCh = xercesc_3_1::XMLString::transcode("temp");
 
+    header_string.fill(0);
+
+    header_string_data = header_string.data();
+
+    ptr = this;
+
 }
 
 HolfuyClient::~HolfuyClient() {
@@ -77,6 +84,9 @@ void HolfuyClient::download() {
 
     auto curl = curl_easy_init();
     if (curl) {
+
+    	std::cout << "--- HolfuyClient::download:81 - Downloading data from the API" << std::endl;
+
         curl_easy_setopt(curl, CURLOPT_URL, this->getUrl().c_str());
         curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
         //curl_easy_setopt(curl, CURLOPT_USERPWD, "user:pass");
@@ -85,11 +95,10 @@ void HolfuyClient::download() {
         curl_easy_setopt(curl, CURLOPT_TCP_KEEPALIVE, 1L);
         curl_easy_setopt(curl, CURLOPT_TIMEOUT, 2L);
 
-        std::array<char, 128> header_string;
         header_string.fill(0);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &HolfuyClient::static_write_callback);	// needs to be bind
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
-        curl_easy_setopt(curl, CURLOPT_HEADERDATA, header_string.data());
+        curl_easy_setopt(curl, CURLOPT_HEADERDATA, header_string_data);
 
         char* url;
         long response_code;
@@ -122,7 +131,9 @@ size_t HolfuyClient::static_write_callback(char* get_data, size_t always_one,
 }
 
 void HolfuyClient::write_callback(char* data, size_t data_size) {
-	this->response.append(data, data_size);
+	if (this->ptr == this) {
+		this->response.append(data, data_size);
+	}
 }
 
 void HolfuyClient::parse() {
@@ -161,7 +172,7 @@ void HolfuyClient::parse() {
 
 	// clear the buffer
 	this->response = "";
-	this->downloadResult = false;
+	this->downloadResult = true;
 
 
 }
@@ -170,8 +181,6 @@ void HolfuyClient::parseElement(xercesc_3_1::DOMElement* element) {
 
 	// decoding the node name
 	char* node_name = xercesc_3_1::XMLString::transcode(element->getNodeName());
-
-	std::cout << node_name << " - " << element->getNodeType() << " - " /*<< xercesc_3_1::XMLString::transcode(element->getNodeValue())*/ << std::endl;
 
 	// checking if this is somehow interesting parameter
 	this->checkAndRetrievieParameter(node_name, element);
@@ -234,7 +243,7 @@ void HolfuyClient::checkAndRetrievieParameter(char* node_name,
 		this->winddirection = winddir_;
 
 
-		std::cout << "windspeed_ " << windspeed_ << ", windgusts_ " << windgusts_ << ", winddir_ " << winddir_ <<  std::endl;
+		//std::cout << "windspeed_ " << windspeed_ << ", windgusts_ " << windgusts_ << ", winddir_ " << winddir_ <<  std::endl;
 	}
 	else if (strcmp(node_name, "temp") == 0) {
 		XMLCh* temperature_str = const_cast<XMLCh*>(element->getAttribute(temperatureCh));
@@ -243,7 +252,7 @@ void HolfuyClient::checkAndRetrievieParameter(char* node_name,
 
 		this->temperature = temperature_;
 
-		std::cout << "temperature_ " << temperature_ << std::endl;
+		//std::cout << "temperature_ " << temperature_ << std::endl;
 	}
 	else if (strcmp(node_name, "pressure") == 0) {
 		XMLCh* pressure_str = const_cast<XMLCh*>(element->getAttribute(pressureCh));
@@ -252,7 +261,7 @@ void HolfuyClient::checkAndRetrievieParameter(char* node_name,
 
 		this->pressure = pressure_;
 
-		std::cout << "pressure_ " << pressure_ << std::endl;
+		//std::cout << "pressure_ " << pressure_ << std::endl;
 
 	}
 	else {
@@ -269,6 +278,8 @@ bool HolfuyClient::getWxData(AprsWXData& out) {
 		out.useTemperature = false;
 		out.useWind = false;
 
+		out.valid = false;
+
 		return false;
 	}
 
@@ -283,6 +294,11 @@ bool HolfuyClient::getWxData(AprsWXData& out) {
 	out.usePressure = true;
 	out.useTemperature = true;
 	out.useWind = true;
+
+	out.valid = true;
+	out.dataSource = WXDataSource::HOLFUY;
+
+	this->downloadResult = false;
 
 	return true;
 }

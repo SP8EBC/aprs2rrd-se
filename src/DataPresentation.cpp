@@ -43,7 +43,7 @@ void DataPresentation::FetchDataInRRD(AprsWXData* cInput) {
 		return;
 
 	for (unsigned i = 0; i < this->vRRDFiles.size(); i++) {
-		if (this->vRRDFiles[i].eType == TEMPERATURE && cInput->useTemperature == true) {
+		if (this->vRRDFiles[i].eType == PlotType::TEMPERATURE && cInput->useTemperature == true) {
 			currtime =time(NULL);
 			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
@@ -51,7 +51,7 @@ void DataPresentation::FetchDataInRRD(AprsWXData* cInput) {
 			if (this->DebugOutput == true)
 				cout << command << endl;
 		}
-		else if (this->vRRDFiles[i].eType == QNH && cInput->usePressure == true) {
+		else if (this->vRRDFiles[i].eType == PlotType::QNH && cInput->usePressure == true) {
 			currtime =time(NULL);
 			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
@@ -59,7 +59,7 @@ void DataPresentation::FetchDataInRRD(AprsWXData* cInput) {
 			if (this->DebugOutput == true)
 				cout << command << endl;
 		}
-		else if (this->vRRDFiles[i].eType == WIND_DIR && cInput->useWind == true) {
+		else if (this->vRRDFiles[i].eType == PlotType::WIND_DIR && cInput->useWind == true) {
 			currtime =time(NULL);
 			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
@@ -67,7 +67,7 @@ void DataPresentation::FetchDataInRRD(AprsWXData* cInput) {
 			if (this->DebugOutput == true)
 				cout << command << endl;
 		}
-		else if (this->vRRDFiles[i].eType == WIND_SPD && cInput->useWind == true) {
+		else if (this->vRRDFiles[i].eType == PlotType::WIND_SPD && cInput->useWind == true) {
 			currtime =time(NULL);
 			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
@@ -75,7 +75,7 @@ void DataPresentation::FetchDataInRRD(AprsWXData* cInput) {
 			if (this->DebugOutput == true)
 				cout << command << endl;
 		}
-		else if (this->vRRDFiles[i].eType == WIND_GST && cInput->useWind == true) {
+		else if (this->vRRDFiles[i].eType == PlotType::WIND_GST && cInput->useWind == true) {
 			currtime =time(NULL);
 			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
@@ -302,28 +302,28 @@ PlotType DataPresentation::SwitchPlotType(string input) {
 	PlotType out;
 
 	if (input == "WIND_SPD_GST")
-		out = WIND_SPD_GST;
+		out = PlotType::WIND_SPD_GST;
 	if (input == "WIND_DIR")
-		out = WIND_DIR;
+		out = PlotType::WIND_DIR;
 	if (input == "WIND_SPD")
-		out = WIND_SPD;
+		out = PlotType::WIND_SPD;
 	if (input == "WIND_GST")
-		out = WIND_GST;
+		out = PlotType::WIND_GST;
 	if (input == "TEMPERATURE")
-		out = TEMPERATURE;
+		out = PlotType::TEMPERATURE;
 	if (input == "QNH")
-		out = QNH;
+		out = PlotType::QNH;
 	return out;
 
 }
 
 const std::string DataPresentation::RevSwitchPlotType(PlotType in) {
 
-	if (in == WIND_SPD_GST)
+	if (in == PlotType::WIND_SPD_GST)
 		return "WIND_SPD_GST";
-	else if (in == WIND_DIR)
+	else if (in == PlotType::WIND_DIR)
 		return "WIND_DIR";
-	else if (in == N)
+	else if (in == PlotType::N)
 		return "N";
 	return "unknown";
 }
@@ -332,9 +332,9 @@ PlotGraphType DataPresentation::SwitchPlotGraphType(string input) {
 	PlotGraphType out;
 
 	if (input == "AREA")
-		out = AREA;
+		out = PlotGraphType::AREA;
 	if (input == "LINE2")
-		out = LINE2;
+		out = PlotGraphType::LINE2;
 	return out;
 }
 
@@ -342,45 +342,45 @@ RRAType DataPresentation::SwitchRRAType(string input) {
 	RRAType out;
 
 	if (input == "AVERAGE")
-		out = AVERAGE;
+		out = RRAType::AVERAGE;
 	if (input == "LAST")
-		out = LAST;
+		out = RRAType::LAST;
 	return out;
 }
 
 const std::string DataPresentation::RevSwitchRRAType(RRAType in) {
 
-	if (in == AVERAGE)
+	if (in == RRAType::AVERAGE)
 		return "AVERAGE";
-	else if (in == LAST)
+	else if (in == RRAType::LAST)
 		return "LAST";
 	return "unknown";
 }
 
 const std::string DataPresentation::RevSwitchPlotGraphType(PlotGraphType in) {
 
-	if (in == AREA)
+	if (in == PlotGraphType::AREA)
 		return "AREA";
-	else if (in == LINE2)
+	else if (in == PlotGraphType::LINE2)
 		return "LINE2";
 	return "unknown";
 }
 
 void RRDFileDefinition::Zero(void) {
-	this->eType = N;
+	this->eType = PlotType::N;
 	this->sPath.clear();
 }
 
 void PlotFileDefinition::Zero(void) {
-	this->eType = N;
+	this->eType = PlotType::N;
 	this->sPath.clear();
 	this->DS0PlotColor = 0;
 	this->DS1PlotColor = 0;
 	this->Height = 0;
 	this->Width = 0;
 	this->Title.clear();
-	this->eDS0PlotType = NN;
-	this->eDS1PlotType = NN;
+	this->eDS0PlotType = PlotGraphType::NN;
+	this->eDS1PlotType = PlotGraphType::NN;
 	this->sDS0Name.clear();
 	this->sDS1Name.clear();
 	this->sDS0Path.clear();

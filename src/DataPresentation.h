@@ -9,7 +9,7 @@
 
 using namespace std;
 
-enum PlotType {
+enum class PlotType {
 	TEMPERATURE,
 	QNH,
 	WIND_DIR,
@@ -17,16 +17,18 @@ enum PlotType {
 	WIND_GST,
 	WIND_SPD_GST,
 	HUMIDITY,
+	DIFF_TEMPERATURE,
+	DIFF_WIND,
 	N
 };
 
-enum PlotGraphType {
+enum class PlotGraphType {
 	AREA,
 	LINE2,
 	NN
 };
 
-enum RRAType {
+enum class RRAType {
 	AVERAGE,
 	LAST,
 	NNN

@@ -8,12 +8,17 @@
 #ifndef HOLFUYCLIENTCONFIG_H_
 #define HOLFUYCLIENTCONFIG_H_
 
+#include <string>
+
 class HolfuyClientConfig {
 public:
+	bool enable;
+
+	int stationId;
 
 	std::string apiPassword;
 
-	int stationId;
+	bool dumpIntoMysql;
 
 	HolfuyClientConfig();
 	virtual ~HolfuyClientConfig();

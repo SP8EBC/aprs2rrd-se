@@ -62,6 +62,15 @@ class AprsWXData
 		void copy(const AprsWXData & source, const DataSourceConfig & config);
 		void copy(const Telemetry & source, const DataSourceConfig & config);
 
+		// zeroing these flags to false will control which data will be inserted into RRD databse
+		// This affects only RRD as webpage and MySQL ignore this
+		inline static void zeroUse(AprsWXData & source) {
+			source.useHumidity = false;
+			source.usePressure = false;
+			source.useTemperature = false;
+			source.useWind = false;
+		}
+
 		static int ParseData(AprsPacket input, AprsWXData* output);
         static int CopyConvert(char sign, std::string& input, int& output, int& counter);
 		static int CopyConvert(unsigned num, std::string& input, int& output, int& counter);

@@ -10,6 +10,7 @@
 
 #include <cstdint>
 #include <string>
+#include <array>
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
@@ -19,6 +20,8 @@
 
 class HolfuyClient {
 private:
+	HolfuyClient* ptr;
+
 	uint32_t stationId;
 
 	std::string stationLocation;
@@ -48,6 +51,9 @@ private:
 	bool downloadResult = false;
 
 	std::string response;
+
+    std::array<char, 128> header_string;
+    char* header_string_data;
 
 	std::string apiUrl;
 

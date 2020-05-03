@@ -75,7 +75,8 @@ public:
 									int& rrdCount,
 									int& plotCount,
 									Telemetry& telemetry,
-									bool& useAsTemperature);
+									bool& useAsTemperature,
+									HolfuyClientConfig& holfuy);
 
 
 

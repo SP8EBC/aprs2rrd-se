@@ -422,10 +422,10 @@ void AprsWXData::copy(const AprsWXData & source, const DataSourceConfig & config
 
 		// setting this flags to false will control which data will be inserted into RRD databse
 		// This affects only RRD as webpage and MySQL ignore this
-		this->useHumidity = false;
-		this->usePressure = false;
-		this->useTemperature = false;
-		this->useWind = false;
+//		this->useHumidity = false;
+//		this->usePressure = false;
+//		this->useTemperature = false;
+//		this->useWind = false;
 
 		// check if APRSIS should be uased as a source for temperature
 		if ((config.temperature == WxDataSource::IS_PRIMARY && true_if_primary) ||
@@ -468,10 +468,10 @@ void AprsWXData::copy(const AprsWXData & source, const DataSourceConfig & config
 	}
 
 	else if (source.dataSource == WXDataSource::SERIAL) {
-		this->useHumidity = false;
-		this->usePressure = false;
-		this->useTemperature = false;
-		this->useWind = false;
+//		this->useHumidity = false;
+//		this->usePressure = false;
+//		this->useTemperature = false;
+//		this->useWind = false;
 
 		// check if APRSIS should be uased as a source for temperature
 		if (config.temperature == WxDataSource::SERIAL) {
@@ -506,10 +506,10 @@ void AprsWXData::copy(const AprsWXData & source, const DataSourceConfig & config
 	}
 
 	else if (source.dataSource == WXDataSource::HOLFUY) {
-		this->useHumidity = false;
-		this->usePressure = false;
-		this->useTemperature = false;
-		this->useWind = false;
+//		this->useHumidity = false;
+//		this->usePressure = false;
+//		this->useTemperature = false;
+//		this->useWind = false;
 
 		// check if APRSIS should be uased as a source for temperature
 		if (config.temperature == WxDataSource::HOLFUY) {
@@ -548,10 +548,10 @@ void AprsWXData::copy(const Telemetry & source, const DataSourceConfig & config)
 
 	if (config.temperature == WxDataSource::TELEMETRY) {
 		this->temperature = source.getCh5();
-		this->useHumidity = false;
-		this->usePressure = false;
+		//this->useHumidity = false;
+		//this->usePressure = false;
 		this->useTemperature = true;
-		this->useWind = false;
+		//this->useWind = false;
 
 		this->valid = true;
 	}

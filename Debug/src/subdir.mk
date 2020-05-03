@@ -14,14 +14,15 @@ CPP_SRCS += \
 ../src/DataPresentation.cpp \
 ../src/DataSourceConfig.cpp \
 ../src/HolfuyClient.cpp \
-../src/HolfuyClient_test.cpp \
+../src/HolfuyClientConfig.cpp \
 ../src/MySqlConnInterface.cpp \
 ../src/ProgramConfig.cpp \
 ../src/SerialAsioThread.cpp \
 ../src/SerialConfig.cpp \
 ../src/SlewRateLimiter.cpp \
 ../src/Telemetry.cpp \
-../src/XMLMemoryHandler.cpp 
+../src/XMLMemoryHandler.cpp \
+../src/main.cpp 
 
 OBJS += \
 ./src/AprsAsioThread.o \
@@ -34,14 +35,15 @@ OBJS += \
 ./src/DataPresentation.o \
 ./src/DataSourceConfig.o \
 ./src/HolfuyClient.o \
-./src/HolfuyClient_test.o \
+./src/HolfuyClientConfig.o \
 ./src/MySqlConnInterface.o \
 ./src/ProgramConfig.o \
 ./src/SerialAsioThread.o \
 ./src/SerialConfig.o \
 ./src/SlewRateLimiter.o \
 ./src/Telemetry.o \
-./src/XMLMemoryHandler.o 
+./src/XMLMemoryHandler.o \
+./src/main.o 
 
 CPP_DEPS += \
 ./src/AprsAsioThread.d \
@@ -54,14 +56,15 @@ CPP_DEPS += \
 ./src/DataPresentation.d \
 ./src/DataSourceConfig.d \
 ./src/HolfuyClient.d \
-./src/HolfuyClient_test.d \
+./src/HolfuyClientConfig.d \
 ./src/MySqlConnInterface.d \
 ./src/ProgramConfig.d \
 ./src/SerialAsioThread.d \
 ./src/SerialConfig.d \
 ./src/SlewRateLimiter.d \
 ./src/Telemetry.d \
-./src/XMLMemoryHandler.d 
+./src/XMLMemoryHandler.d \
+./src/main.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

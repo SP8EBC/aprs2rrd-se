@@ -86,7 +86,7 @@ int main(int argc, char **argv){
 	RRDFileDefinition sVectorRRDTemp;
 	PlotFileDefinition cVectorPNGTemp;
 
-	AprsWXData wxIsTemp, wxSerialTemp, wxTelemetry;
+	AprsWXData wxIsTemp, wxSerialTemp, wxTelemetry, wxHolfuy;
 	AprsWXData wxTarget; // target wx data to be inserted into RRD DB & printed onto website
 	AprsWXData wxLastTarget;
 	AprsPacket isRxPacket;
@@ -137,6 +137,7 @@ int main(int argc, char **argv){
 		programConfig.getDataPresentationConfig(dataPresence, RRDCount, PlotsCount);
 		programConfig.getSerialConfig(serialConfig);
 		programConfig.getDataSourceConfig(sourceConfig);
+		programConfig.getHolfuyConfig(holfuyConfig);
 
 		dataPresence.DebugOutput = Debug;
 		mysqlDb.Debug = Debug;
@@ -154,17 +155,21 @@ int main(int argc, char **argv){
 
 	aprsConfig.RetryServerLookup = true;
 
-	cout << "--- main:152 - Configuration parsed successfully" << endl;
+	cout << "--- main:158 - Configuration parsed successfully" << endl;
 
 	programConfig.configureLogOutput();
 
-	ProgramConfig::printConfigInPl(mysqlDb, aprsConfig, dataPresence, RRDCount, PlotsCount, telemetry, useFifthTelemAsTemperature);
+	ProgramConfig::printConfigInPl(mysqlDb, aprsConfig, dataPresence, RRDCount, PlotsCount, telemetry, useFifthTelemAsTemperature, holfuyConfig);
 
 	serialThread = new SerialAsioThread(syncCondition, syncLock, serialConfig.serialPort, serialConfig.baudrate);
 
 	// if an user want to use serial port it needs to be opened and configured
 	if (serialConfig.enable) {
 		serialThread->openPort();
+	}
+
+	if (holfuyConfig.enable) {
+		holfuyClient.reset(new HolfuyClient(holfuyConfig.stationId, holfuyConfig.apiPassword));
 	}
 
 	// creating a new copy of ASIO thread
@@ -193,6 +198,7 @@ int main(int argc, char **argv){
 				// starting serial receive
 				serialThread->receive(false);
 
+				// waiting for new data
 				wait_for_data();
 
 				// checkig if correct data has been received
@@ -205,6 +211,12 @@ int main(int argc, char **argv){
 						// Parsing weather data. If this is not correct APRS wx packet the method will set
 						// the internal validity flag to false
 						AprsWXData::ParseData(isRxPacket, &wxIsTemp);
+
+						// wait for another packet if not WX data has been received. Protect against
+						// flooding with a lot of data from Holfuy after each heartbeat message from APRS-IS
+						if (!wxIsTemp.valid) {
+							continue;
+						}
 
 						// setting the source of this wx packet
 						wxIsTemp.dataSource = WXDataSource::APRSIS;
@@ -226,8 +238,24 @@ int main(int argc, char **argv){
 					}
 					else;
 
+					// downloading Holfuy data if it is enabled
+					if (holfuyConfig.enable) {
+						holfuyClient->download();
+
+						holfuyClient->parse();
+
+						holfuyClient->getWxData(wxHolfuy);
+
+						std::cout << "--- main.cpp:212 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
+
+						wxHolfuy.PrintData();
+					}
+
 					// Parsing telemetry data
 					Telemetry::ParseData(isRxPacket, &telemetry);
+
+					// zeroing the usage flags in target object
+					AprsWXData::zeroUse(wxTarget);
 
 					// if this is data from WX Packet
 					if (wxIsTemp.valid) {
@@ -257,9 +285,15 @@ int main(int argc, char **argv){
 						wxTarget.copy(telemetry, sourceConfig);
 					}
 
+					if (wxHolfuy.valid) {
+						wxTarget.copy(wxHolfuy, sourceConfig);
+					}
+
 					// each method below checks if passed WX packet is valid and if no they will
 					// exit immediately witout performing any changes
 
+					// printing target data
+					std::cout << "--- main.c:296 - Printing target WX data which will be used for further processing." << std::endl;
 					wxTarget.PrintData();
 
 					// limiting slew rates for measurements
@@ -302,7 +336,7 @@ int main(int argc, char **argv){
 				}
 				else {
 					if (Debug == true)
-						cout << "--- main.cpp:300 - This is not valid APRS packet" << endl;
+						cout << "--- main.cpp:339 - This is not valid APRS packet" << endl;
 				}
 			}
 			catch (ConnectionTimeoutEx &e) {
@@ -311,15 +345,15 @@ int main(int argc, char **argv){
 				break;
 			}
 			catch (std::exception &e) {
-				cout << "--- main:309 - std::exception " << e.what() << std::endl;
+				cout << "--- main:348 - std::exception " << e.what() << std::endl;
 			}
 			catch (...) {
-				cout << "--- main:312 - Unknown exception thrown during processing!" << std::endl;
+				cout << "--- main:351 - Unknown exception thrown during processing!" << std::endl;
 			}
 
 		}
 
-		std::cout << "--- main:289 - Connection to APRS server died. Reconnecting.." << std::endl;
+		std::cout << "--- main:356 - Connection to APRS server died. Reconnecting.." << std::endl;
 
 	} while (mainLoopExit);		// end of main loop
 

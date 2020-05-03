@@ -262,6 +262,18 @@ void ProgramConfig::getDataSourceConfig(DataSourceConfig& config_out) {
 
 void ProgramConfig::getHolfuyConfig(HolfuyClientConfig& config_out) {
 	libconfig::Setting &root = config.getRoot();
+
+	try {
+		libconfig::Setting &h = root["Holfuy"];
+
+		h.lookupValue("StationId", config_out.stationId);
+		h.lookupValue("ApiPassword", config_out.apiPassword);
+		h.lookupValue("Enable", config_out.enable);
+		h.lookupValue("DumpIntoMysql", config_out.dumpIntoMysql);
+	}
+	catch (libconfig::SettingNotFoundException &ex) {
+
+	}
 }
 
 WxDataSource ProgramConfig::getTemperatureSource() {
@@ -415,7 +427,8 @@ void ProgramConfig::printConfigInPl(
 											int& rrdCount,
 											int& plotCount,
 											Telemetry& data,
-											bool& useAsTemperature
+											bool& useAsTemperature,
+											HolfuyClientConfig& holfuy
 
 									) {
 
@@ -457,10 +470,16 @@ void ProgramConfig::printConfigInPl(
 		cout << "--- Własny znak: " << aprsConfig.Call << endl;
 		cout << "--- Aprs Secret: " << aprsConfig.Passwd << endl;
 		cout << endl;
+		if (holfuy.enable) {
+			cout << "--------KONFIGURACJA ŁĄCZNOŚCI Z API HOLFUY -----" << endl;
+			cout << "--- Nr stacji pogodowej: " << holfuy.stationId << endl;
+			cout << "--- Hasło dostępowe do API: " << holfuy.apiPassword << endl;
+			cout << endl;
+		}
 		cout << "--------KONFIGURACJA PLIKÓW RRD-----" << endl;
 		for (unsigned i = 0; i < dataPresence.vRRDFiles.size(); i++) {
 			cout << "--- Ścieżka: " << dataPresence.vRRDFiles[i].sPath << endl;
-			cout << "--- Typ: " << dataPresence.vRRDFiles[i].eType << endl;
+			cout << "--- Typ: " << dataPresence.RevSwitchPlotType(dataPresence.vRRDFiles[i].eType) << endl;
 		}
 		cout << endl;
 		cout << "--------KONFIGURACJA GENEROWANEJ STRONY-----" << endl;
@@ -487,18 +506,18 @@ void ProgramConfig::printConfigInPl(
 			cout << "--- Opis osi Y: " << dataPresence.vPNGFiles[ii].Axis << endl;
 			cout << "--- Krok Osi i etykiet osi Y: " << dataPresence.vPNGFiles[ii].ScaleStep << ":" << dataPresence.vPNGFiles[ii].LabelStep << endl;
 			cout << "--- Ścieżka do zapisu pliku PNG: " << dataPresence.vPNGFiles[ii].sPath << endl;
-			cout << "--- Typ wykresu: " << dataPresence.vPNGFiles[ii].eType << " / " << dataPresence.RevSwitchPlotType(dataPresence.vPNGFiles[ii].eType) <<  endl;
+			cout << "--- Typ wykresu: " << dataPresence.RevSwitchPlotType(dataPresence.vPNGFiles[ii].eType) << " / " << dataPresence.RevSwitchPlotType(dataPresence.vPNGFiles[ii].eType) <<  endl;
 			cout << "--- Ścieżka do PIERWSZEGO DS: " << dataPresence.vPNGFiles[ii].sDS0Path << endl;
 			cout << "--- Opis pierwszego DS: " << dataPresence.vPNGFiles[ii].sDS0Name << endl;
 			cout << "--- Typ RRA w pierwszym DS: " << dataPresence.RevSwitchRRAType(dataPresence.vPNGFiles[ii].eDS0RRAType) << endl; ;
-			cout << "--- Rodzaj kreślenia pierwszego DS: " << dataPresence.vPNGFiles[ii].eDS0PlotType << " / " << dataPresence.RevSwitchPlotGraphType(dataPresence.vPNGFiles[ii].eDS0PlotType) << endl;
+			cout << "--- Rodzaj kreślenia pierwszego DS: " << dataPresence.RevSwitchPlotGraphType(dataPresence.vPNGFiles[ii].eDS0PlotType) << " / " << dataPresence.RevSwitchPlotGraphType(dataPresence.vPNGFiles[ii].eDS0PlotType) << endl;
 			cout << "--- Kolor kreślenia pierwszego DS: " <<  hex << dataPresence.vPNGFiles[ii].DS0PlotColor << endl;
 			if (dataPresence.vPNGFiles[ii].DoubleDS == false)
 				continue;
 			cout << "--- Ścieżka do DRUGIEGO DS: " << dataPresence.vPNGFiles[ii].sDS1Path << endl;
 			cout << "--- Opis drugiego DS: " << dataPresence.vPNGFiles[ii].sDS1Name << endl;
 			cout << "--- Typ RRA w drugim DS: " << dataPresence.RevSwitchRRAType(dataPresence.vPNGFiles[ii].eDS1RRAType) << endl; ;
-			cout << "--- Rodzaj kreślenia drugiego DS: " << dataPresence.vPNGFiles[ii].eDS1PlotType << " / " << dataPresence.RevSwitchPlotGraphType(dataPresence.vPNGFiles[ii].eDS1PlotType) << endl;
+			cout << "--- Rodzaj kreślenia drugiego DS: " << dataPresence.RevSwitchPlotGraphType(dataPresence.vPNGFiles[ii].eDS1PlotType) << " / " << dataPresence.RevSwitchPlotGraphType(dataPresence.vPNGFiles[ii].eDS1PlotType) << endl;
 			cout << "--- Kolor kreślenia drugiego DS: " <<  hex << dataPresence.vPNGFiles[ii].DS1PlotColor << endl;
 			cout << "--- Wysokość wykresu: " << dec << dataPresence.vPNGFiles[ii].Height << endl;
 			cout << "--- Szerokość wykresu: " << dec << dataPresence.vPNGFiles[ii].Width << endl;

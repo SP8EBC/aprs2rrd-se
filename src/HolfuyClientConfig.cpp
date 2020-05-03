@@ -8,7 +8,10 @@
 #include "HolfuyClientConfig.h"
 
 HolfuyClientConfig::HolfuyClientConfig() {
-	// TODO Auto-generated constructor stub
+	enable = false;
+	stationId = 0;
+	apiPassword = "";
+	dumpIntoMysql = false;
 
 }
 
