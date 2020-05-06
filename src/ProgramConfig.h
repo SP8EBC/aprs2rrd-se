@@ -18,6 +18,7 @@
 #include "Telemetry.h"
 #include "DataSourceConfig.h"
 #include "HolfuyClientConfig.h"
+#include "DiffCalculator.h"
 
 
 class ProgramConfig {
@@ -62,6 +63,7 @@ public:
 	void getTelemetryConfig(Telemetry& data, bool& useAsTemperature);
 	void getDataSourceConfig(DataSourceConfig & config);
 	void getHolfuyConfig(HolfuyClientConfig & config);
+	void getDiffConfiguration(DiffCalculator & calculator);
 
 	void configureLogOutput();
 

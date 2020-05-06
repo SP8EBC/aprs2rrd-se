@@ -13,6 +13,8 @@ CPP_SRCS += \
 ../src/ConnectionTimeoutEx.cpp \
 ../src/DataPresentation.cpp \
 ../src/DataSourceConfig.cpp \
+../src/DiffCalculator.cpp \
+../src/DiffCalculator_test.cpp \
 ../src/HolfuyClient.cpp \
 ../src/HolfuyClientConfig.cpp \
 ../src/MySqlConnInterface.cpp \
@@ -21,8 +23,7 @@ CPP_SRCS += \
 ../src/SerialConfig.cpp \
 ../src/SlewRateLimiter.cpp \
 ../src/Telemetry.cpp \
-../src/XMLMemoryHandler.cpp \
-../src/main.cpp 
+../src/XMLMemoryHandler.cpp 
 
 OBJS += \
 ./src/AprsAsioThread.o \
@@ -34,6 +35,8 @@ OBJS += \
 ./src/ConnectionTimeoutEx.o \
 ./src/DataPresentation.o \
 ./src/DataSourceConfig.o \
+./src/DiffCalculator.o \
+./src/DiffCalculator_test.o \
 ./src/HolfuyClient.o \
 ./src/HolfuyClientConfig.o \
 ./src/MySqlConnInterface.o \
@@ -42,8 +45,7 @@ OBJS += \
 ./src/SerialConfig.o \
 ./src/SlewRateLimiter.o \
 ./src/Telemetry.o \
-./src/XMLMemoryHandler.o \
-./src/main.o 
+./src/XMLMemoryHandler.o 
 
 CPP_DEPS += \
 ./src/AprsAsioThread.d \
@@ -55,6 +57,8 @@ CPP_DEPS += \
 ./src/ConnectionTimeoutEx.d \
 ./src/DataPresentation.d \
 ./src/DataSourceConfig.d \
+./src/DiffCalculator.d \
+./src/DiffCalculator_test.d \
 ./src/HolfuyClient.d \
 ./src/HolfuyClientConfig.d \
 ./src/MySqlConnInterface.d \
@@ -63,8 +67,7 @@ CPP_DEPS += \
 ./src/SerialConfig.d \
 ./src/SlewRateLimiter.d \
 ./src/Telemetry.d \
-./src/XMLMemoryHandler.d \
-./src/main.d 
+./src/XMLMemoryHandler.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

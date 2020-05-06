@@ -24,6 +24,7 @@
 #include "SerialConfig.h"
 #include "HolfuyClientConfig.h"
 #include "HolfuyClient.h"
+#include "DiffCalculator.h"
 
 #include "ConnectionTimeoutEx.h"
 #include "DataPresentation.h"
@@ -81,6 +82,7 @@ int main(int argc, char **argv){
 	DataSourceConfig sourceConfig;
 	HolfuyClientConfig holfuyConfig;
 	std::unique_ptr<HolfuyClient> holfuyClient;
+	DiffCalculator diffCalculator;
 
 
 	RRDFileDefinition sVectorRRDTemp;
@@ -89,6 +91,7 @@ int main(int argc, char **argv){
 	AprsWXData wxIsTemp, wxSerialTemp, wxTelemetry, wxHolfuy;
 	AprsWXData wxTarget; // target wx data to be inserted into RRD DB & printed onto website
 	AprsWXData wxLastTarget;
+	AprsWXData wxDifference;
 	AprsPacket isRxPacket;
 	AprsPacket serialRxPacket;
 
@@ -212,6 +215,9 @@ int main(int argc, char **argv){
 						// the internal validity flag to false
 						AprsWXData::ParseData(isRxPacket, &wxIsTemp);
 
+						// marking if this packet was received from primary or secondary callsign (or none of them)
+						AprsWXData::checkIsPrimaryCall(wxIsTemp, sourceConfig);
+
 						// wait for another packet if not WX data has been received. Protect against
 						// flooding with a lot of data from Holfuy after each heartbeat message from APRS-IS
 						if (!wxIsTemp.valid) {
@@ -246,7 +252,7 @@ int main(int argc, char **argv){
 
 						holfuyClient->getWxData(wxHolfuy);
 
-						std::cout << "--- main.cpp:212 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
+						std::cout << "--- main.cpp:252 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
 
 						wxHolfuy.PrintData();
 					}
@@ -288,6 +294,10 @@ int main(int argc, char **argv){
 					if (wxHolfuy.valid) {
 						wxTarget.copy(wxHolfuy, sourceConfig);
 					}
+
+					// calculating the difference between sources according to user configuration
+					// if this feature is disabled completely the function will do nothing and return immediately
+
 
 					// each method below checks if passed WX packet is valid and if no they will
 					// exit immediately witout performing any changes
@@ -336,7 +346,7 @@ int main(int argc, char **argv){
 				}
 				else {
 					if (Debug == true)
-						cout << "--- main.cpp:339 - This is not valid APRS packet" << endl;
+						cout << "--- main.cpp:342 - This is not valid APRS packet" << endl;
 				}
 			}
 			catch (ConnectionTimeoutEx &e) {
@@ -345,10 +355,10 @@ int main(int argc, char **argv){
 				break;
 			}
 			catch (std::exception &e) {
-				cout << "--- main:348 - std::exception " << e.what() << std::endl;
+				cout << "--- main:351 - std::exception " << e.what() << std::endl;
 			}
 			catch (...) {
-				cout << "--- main:351 - Unknown exception thrown during processing!" << std::endl;
+				cout << "--- main:354 - Unknown exception thrown during processing!" << std::endl;
 			}
 
 		}

@@ -26,6 +26,11 @@ class AprsWXData
 		std::string call;
 		unsigned ssid;
 
+		// these flags were added because they helps in DiffCalculator distinguish between pri and sec
+		// 'copy' methods doen't rely on them as they were developed before
+		bool is_primary;
+		bool is_secondary;
+
         float wind_speed;
         float wind_gusts;
         int wind_direction;
@@ -52,6 +57,9 @@ class AprsWXData
         // assigment operator
         AprsWXData& operator= (AprsWXData&);
 
+        // subtraction operator
+        AprsWXData& operator-(AprsWXData&);
+
         ~AprsWXData();
 		void PrintData(void);
 		void ZeroCorrection(queue <AprsWXData> & qMeteo);
@@ -76,6 +84,8 @@ class AprsWXData
 		static int CopyConvert(unsigned num, std::string& input, int& output, int& counter);
 		static short DirectionCorrection(AprsWXData& packet, short direction, short correction);
 		static void DirectionCorrection(AprsWXData& packet, short correction);
+
+		static void checkIsPrimaryCall(AprsWXData& packet, const DataSourceConfig& sourceConfig);
 
 		static bool DebugOutput;
 

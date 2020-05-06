@@ -290,6 +290,9 @@ AprsWXData::AprsWXData(const AprsWXData& in) {
 	this->dataSource = WXDataSource::UNKNOWN;
 	this->ssid = 0;
 	this->call = "";
+
+	this->is_primary = false;
+	this->is_secondary = false;
 }
 
 AprsWXData& AprsWXData::operator =(AprsWXData& _in) {
@@ -312,6 +315,53 @@ AprsWXData& AprsWXData::operator =(AprsWXData& _in) {
 	this->useTemperature = _in.useTemperature;
 
 	this->DebugOutput = _in.DebugOutput;
+
+	return * this;
+}
+
+AprsWXData& AprsWXData::operator -(AprsWXData& _in) {
+	int diff1 = 0, diff2;
+	float sin1 = 0.0f, sin2 = 0.0f;
+
+	// scalar values are subtracted directly
+	this->humidity = ::abs(this->humidity - _in.humidity);
+	this->temperature -= _in.temperature;
+	this->pressure = ::abs(this->pressure - _in.pressure);
+
+	// wind direction is a vector value so there are always two
+	// differences between them - calculated clockwise and counterclockwise
+	diff1 = this->wind_direction - _in.wind_direction;
+	diff2 = -this->wind_direction + _in.wind_direction;
+
+	// to retain proper sign of the subtraction result the cosinus needs to be calculated
+	sin1 = ::cos(this->wind_direction);
+	sin2 = ::cos(_in.wind_direction);
+
+	// adjust distance between direction to 0-359 degs scale, not -180 to 180
+	if (diff1 < 0) {
+		diff1 += 360;
+	}
+	if (diff2 < 0) {
+		diff2 += 360;
+	}
+
+	// always use the smaller result as a distance between two wind direction
+	if (diff1 < diff2)
+		this->wind_direction = diff1;
+	else {
+		this->wind_direction = diff2;
+	}
+
+	// because wind is alywas calculated clockwise (90 - E; 180 - S; 270 - W) adjust
+	// the sign of the difference (distance) between direction. In such case direction
+	// of 5 degrees is 15 degrees bigger (more towards east) that 350. Similarly 340 is
+	// 30 degrees BEFORE ( -30 ) 10 degrees
+	if (sin1 > sin2)
+		this->wind_direction *= -1;
+
+	// wind speed is scalar value
+	this->wind_speed -= _in.wind_speed;
+	this->wind_gusts -= _in.wind_gusts;
 
 	return * this;
 }
@@ -580,4 +630,18 @@ void AprsWXData::DirectionCorrection(AprsWXData& packet, short correction) {
         out = direction + correction;
 
     packet.wind_direction = out;
+}
+
+void AprsWXData::checkIsPrimaryCall(AprsWXData& packet,
+		const DataSourceConfig& sourceConfig)
+{
+	packet.is_primary = false;
+	packet.is_secondary = false;
+
+	if (packet.call == sourceConfig.primaryCall && packet.ssid == sourceConfig.primarySsid) {
+		packet.is_primary = true;
+	}
+	if (packet.call == sourceConfig.secondaryCall && packet.ssid == sourceConfig.secondarySsid) {
+		packet.is_secondary = true;
+	}
 }
