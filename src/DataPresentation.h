@@ -45,6 +45,10 @@ public:
 	bool WebsiteLinkToMoreInfo;
 	string WebisteFooter;
 
+	bool PrintTwoSourcesInTable;
+	string SecondaryLabel;
+	string PrimaryLabel;
+
 	bool DebugOutput;
 
 };
