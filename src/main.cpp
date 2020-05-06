@@ -116,16 +116,16 @@ int main(int argc, char **argv){
 
 	try {
 		programConfig.parseFile();
-		cout << "--- main:109 - Opening configuration file" << endl;
+		cout << "--- main:119 - Opening configuration file" << endl;
 	}
 
 	catch(const FileIOException &ex)
 	{
-		printf("--- main:114 - The configuration file cannot be opened.\r\n");
+		printf("--- main:124 - The configuration file cannot be opened.\r\n");
 		return -1;
 	}
 	catch(const ParseException &ex) {
-		printf("--- main:118 - Error during parsing a content of configuration file.");
+		printf("--- main:128 - Error during parsing a content of configuration file near line %d" + ex.getLine());
 		return -2;
 	}
 
@@ -141,6 +141,7 @@ int main(int argc, char **argv){
 		programConfig.getSerialConfig(serialConfig);
 		programConfig.getDataSourceConfig(sourceConfig);
 		programConfig.getHolfuyConfig(holfuyConfig);
+		programConfig.getDiffConfiguration(diffCalculator);
 
 		dataPresence.DebugOutput = Debug;
 		mysqlDb.Debug = Debug;
@@ -162,7 +163,7 @@ int main(int argc, char **argv){
 
 	programConfig.configureLogOutput();
 
-	ProgramConfig::printConfigInPl(mysqlDb, aprsConfig, dataPresence, RRDCount, PlotsCount, telemetry, useFifthTelemAsTemperature, holfuyConfig);
+	ProgramConfig::printConfigInPl(mysqlDb, aprsConfig, dataPresence, RRDCount, PlotsCount, telemetry, useFifthTelemAsTemperature, holfuyConfig, diffCalculator);
 
 	serialThread = new SerialAsioThread(syncCondition, syncLock, serialConfig.serialPort, serialConfig.baudrate);
 
@@ -252,7 +253,7 @@ int main(int argc, char **argv){
 
 						holfuyClient->getWxData(wxHolfuy);
 
-						std::cout << "--- main.cpp:252 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
+						std::cout << "--- main.cpp:256 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
 
 						wxHolfuy.PrintData();
 					}
@@ -297,13 +298,13 @@ int main(int argc, char **argv){
 
 					// calculating the difference between sources according to user configuration
 					// if this feature is disabled completely the function will do nothing and return immediately
-
+					diffCalculator.calculate(wxIsTemp, wxSerialTemp, wxHolfuy, telemetry, wxDifference);
 
 					// each method below checks if passed WX packet is valid and if no they will
 					// exit immediately witout performing any changes
 
 					// printing target data
-					std::cout << "--- main.c:296 - Printing target WX data which will be used for further processing." << std::endl;
+					std::cout << "--- main.c:307 - Printing target WX data which will be used for further processing." << std::endl;
 					wxTarget.PrintData();
 
 					// limiting slew rates for measurements
@@ -311,6 +312,9 @@ int main(int argc, char **argv){
 
 					// inserting the data inside a RRD file
 					dataPresence.FetchDataInRRD(&wxTarget);
+
+					// insertind diff-data inside RRD files
+					dataPresence.FetchDiffInRRD(wxDifference);
 
 					// replotting the graphs set
 					dataPresence.PlotGraphsFromRRD();

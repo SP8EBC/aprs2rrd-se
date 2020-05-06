@@ -35,6 +35,9 @@ AprsWXData::AprsWXData() {
     useTemperature = false;
     useWind = false;
 
+    is_secondary = false;
+    is_primary = false;
+
     //DebugOutput = false;
 }
 

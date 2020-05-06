@@ -272,7 +272,7 @@ void ProgramConfig::getHolfuyConfig(HolfuyClientConfig& config_out) {
 		h.lookupValue("DumpIntoMysql", config_out.dumpIntoMysql);
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
-
+		config_out.enable = false;
 	}
 }
 
@@ -420,6 +420,32 @@ WxDataSource ProgramConfig::getGlobalBackup() {
 	return out;
 }
 
+void ProgramConfig::getDiffConfiguration(DiffCalculator& calculator) {
+	libconfig::Setting &root = config.getRoot();
+	std::string temperature_from, temperature_subtract;
+	std::string wind_from, wind_subtract;
+
+
+	try {
+		libconfig::Setting &d = root["Diffs"];
+		d.lookupValue("TemperatureFrom", temperature_from);
+		d.lookupValue("TemperatureSubtract", temperature_subtract);
+		d.lookupValue("WindFrom", wind_from);
+		d.lookupValue("WindSubtract", wind_subtract);
+
+		calculator.temperatureFrom = 		ProgramConfig::wxDataSourceFromStr(temperature_from);
+		calculator.temperatureSubstract = 	ProgramConfig::wxDataSourceFromStr(temperature_subtract);
+		calculator.windFrom =				ProgramConfig::wxDataSourceFromStr(wind_from);
+		calculator.windSubstract = 			ProgramConfig::wxDataSourceFromStr(wind_subtract);
+
+		d.lookupValue("Enable", calculator.enable);
+
+	}
+	catch (libconfig::SettingNotFoundException &ex) {
+		calculator.enable = false;
+	}
+}
+
 void ProgramConfig::printConfigInPl(
 											MySqlConnInterface& mysqlDb,
 											AprsThreadConfig& aprsConfig,
@@ -428,22 +454,10 @@ void ProgramConfig::printConfigInPl(
 											int& plotCount,
 											Telemetry& data,
 											bool& useAsTemperature,
-											HolfuyClientConfig& holfuy
+											HolfuyClientConfig& holfuy,
+											DiffCalculator & calculator
 
 									) {
-
-//	cout << "--- libconfig++: Konfiguracja odczytana" << endl;
-
-//	if (this->Debug == true) {
-//		cout << "--- Tryb debugowania włączony" << endl;
-//		cout << "--- Wyjście z konsoli przekierownane do pliku: " << LogFile;
-//		cout << endl;
-
-/*		if (DebugToFile == true) {
-			//fDebug.open(LogFile.c_str());
-			//cout.rdbuf(fDebug.rdbuf());
-			freopen(LogFile.c_str(), "w", stdout);
-		}*/
 
 		cout << "--------KONFIGURACJA TELEMETRII------" << endl;
 		cout << "--- FifthTelemAsTemperature: " << useAsTemperature << endl;
@@ -474,6 +488,12 @@ void ProgramConfig::printConfigInPl(
 			cout << "--------KONFIGURACJA ŁĄCZNOŚCI Z API HOLFUY -----" << endl;
 			cout << "--- Nr stacji pogodowej: " << holfuy.stationId << endl;
 			cout << "--- Hasło dostępowe do API: " << holfuy.apiPassword << endl;
+			cout << endl;
+		}
+		if (calculator.enable) {
+			cout << "-------- KONFIGURACJA POMIARÓW RÓŻNICOWYCH --------" << endl;
+			cout << "--- Temperatura: od " << ::wxDataSourceToStr(calculator.temperatureFrom) << " odejmij " << ::wxDataSourceToStr(calculator.temperatureSubstract) << endl;
+			cout << "--- Wiatr: od " << ::wxDataSourceToStr(calculator.windFrom) << " odejmij " << ::wxDataSourceToStr(calculator.windSubstract) << endl;
 			cout << endl;
 		}
 		cout << "--------KONFIGURACJA PLIKÓW RRD-----" << endl;

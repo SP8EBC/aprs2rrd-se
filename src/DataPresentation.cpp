@@ -7,17 +7,12 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <algorithm>
 
 #include <boost/date_time/local_time/local_time.hpp>
 
 #include <fstream>
 //#include "main.h"
-
-PlotFileDefinition::PlotFileDefinition() {
-	this->ScaleStep = 0;
-	this->LabelStep = 0;
-	this->Exponent = -1;
-}
 
 DataPresentation::DataPresentation()
 {
@@ -31,7 +26,59 @@ DataPresentation::~DataPresentation()
 {
 }
 
-void DataPresentation::FetchDataInRRD(AprsWXData* cInput) {
+void DataPresentation::FetchDiffInRRD(AprsWXData& data) {
+	int result = 0;
+
+	std::stringstream command;
+	RRDFileDefinition diff_temperature, diff_windspd, diff_winddir;
+	boost::posix_time::ptime current = boost::posix_time::second_clock::local_time();
+	boost::posix_time::ptime epoch (boost::gregorian::date(1970, 1, 1));
+
+	time_t seconds = (current - epoch).total_seconds();
+
+	if (!data.useTemperature && !data.useWind)
+		return;
+
+	std::cout << "--- DataPresentation::FetchDiffInRRD:42 - Inserting diffs into RRD files" << std::endl;
+
+	auto diff_temperature_it = std::find(this->vRRDFiles.begin(), this->vRRDFiles.end(), RRDFileDefinition(PlotType::DIFF_TEMPERATURE));
+	auto diff_winddir_it = std::find(this->vRRDFiles.begin(), this->vRRDFiles.end(), RRDFileDefinition(PlotType::DIFF_WIND_DIR));
+	auto diff_windspd_it = std::find(this->vRRDFiles.begin(), this->vRRDFiles.end(), RRDFileDefinition(PlotType::DIFF_WIND_SPD));
+	auto diff_windgst_it = std::find(this->vRRDFiles.begin(), this->vRRDFiles.end(), RRDFileDefinition(PlotType::DIFF_WIND_GST));
+
+	if (diff_temperature_it != this->vRRDFiles.end()) {
+		command << "rrdtool update " << diff_temperature_it->sPath << " " << seconds << ":" << data.temperature;
+		result = ::system(command.str().c_str());
+		if (this->DebugOutput == true)
+			cout << command.str() << endl;
+	}
+
+	if (diff_winddir_it != this->vRRDFiles.end()) {
+		command.str("");
+		command << "rrdtool update " << diff_winddir_it->sPath << " " << seconds << ":" << data.wind_direction;
+		result = ::system(command.str().c_str());
+		if (this->DebugOutput == true)
+			cout << command.str() << endl;
+	}
+
+	if (diff_windspd_it != this->vRRDFiles.end()) {
+		command.str("");
+		command << "rrdtool update " << diff_windspd_it->sPath << " " << seconds << ":" << data.wind_speed;
+		result = ::system(command.str().c_str());
+		if (this->DebugOutput == true)
+			cout << command.str() << endl;
+	}
+
+	if (diff_windgst_it != this->vRRDFiles.end()) {
+		command.str("");
+		command << "rrdtool update " << diff_windgst_it->sPath << " " << seconds << ":" << data.wind_gusts;
+		result = ::system(command.str().c_str());
+		if (this->DebugOutput == true)
+			cout << command.str() << endl;
+	}
+}
+
+void DataPresentation::FetchDataInRRD(const AprsWXData* const cInput) {
 	char command[512];
 	int currtimeint;
 	time_t currtime;
@@ -179,7 +226,7 @@ void DataPresentation::PlotGraphsFromRRD() {
 
 		if (this->DebugOutput == true)
 			cout << command << endl;
-		system(command);
+		(void)system(command);
 	}
 }
 
@@ -303,16 +350,24 @@ PlotType DataPresentation::SwitchPlotType(string input) {
 
 	if (input == "WIND_SPD_GST")
 		out = PlotType::WIND_SPD_GST;
-	if (input == "WIND_DIR")
+	else if (input == "WIND_DIR")
 		out = PlotType::WIND_DIR;
-	if (input == "WIND_SPD")
+	else if (input == "WIND_SPD")
 		out = PlotType::WIND_SPD;
-	if (input == "WIND_GST")
+	else if (input == "WIND_GST")
 		out = PlotType::WIND_GST;
-	if (input == "TEMPERATURE")
+	else if (input == "TEMPERATURE")
 		out = PlotType::TEMPERATURE;
-	if (input == "QNH")
+	else if (input == "QNH")
 		out = PlotType::QNH;
+	else if (input == "DIFF_TEMPERATURE")
+		out = PlotType::DIFF_TEMPERATURE;
+	else if (input == "DIFF_WIND_SPD")
+		out = PlotType::DIFF_WIND_SPD;
+	else if (input == "DIFF_WIND_GST")
+		out = PlotType::DIFF_WIND_GST;
+	else if (input == "DIFF_WIND_DIR")
+		out = PlotType::DIFF_WIND_DIR;
 	return out;
 
 }
@@ -323,6 +378,24 @@ const std::string DataPresentation::RevSwitchPlotType(PlotType in) {
 		return "WIND_SPD_GST";
 	else if (in == PlotType::WIND_DIR)
 		return "WIND_DIR";
+	else if (in == PlotType::DIFF_TEMPERATURE)
+		return "DIFF_TEMPERATURE";
+	else if (in == PlotType::DIFF_WIND_DIR)
+		return "DIFF_WIND_DIR";
+	else if (in == PlotType::DIFF_WIND_SPD)
+		return "DIFF_WIND_SPD";
+	else if (in == PlotType::HUMIDITY)
+		return "HUMIDITY";
+	else if (in == PlotType::QNH)
+		return "QNH";
+	else if (in == PlotType::TEMPERATURE)
+		return "TEMPERATURE";
+	else if (in == PlotType::WIND_DIR)
+		return "WIND_DIR";
+	else if (in == PlotType::WIND_GST)
+		return "WIND_GST";
+	else if (in == PlotType::WIND_SPD)
+		return "WIND_SPD";
 	else if (in == PlotType::N)
 		return "N";
 	return "unknown";
@@ -364,28 +437,4 @@ const std::string DataPresentation::RevSwitchPlotGraphType(PlotGraphType in) {
 	else if (in == PlotGraphType::LINE2)
 		return "LINE2";
 	return "unknown";
-}
-
-void RRDFileDefinition::Zero(void) {
-	this->eType = PlotType::N;
-	this->sPath.clear();
-}
-
-void PlotFileDefinition::Zero(void) {
-	this->eType = PlotType::N;
-	this->sPath.clear();
-	this->DS0PlotColor = 0;
-	this->DS1PlotColor = 0;
-	this->Height = 0;
-	this->Width = 0;
-	this->Title.clear();
-	this->eDS0PlotType = PlotGraphType::NN;
-	this->eDS1PlotType = PlotGraphType::NN;
-	this->sDS0Name.clear();
-	this->sDS1Name.clear();
-	this->sDS0Path.clear();
-	this->sDS1Path.clear();
-	this->ScaleStep = 0;
-	this->LabelStep = 0;
-	this->Exponent = -1;
 }

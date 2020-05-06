@@ -6,76 +6,9 @@
 #include <exception>
 
 #include "AprsWXData.h"
+#include "PlotFileDefinition.h"
 
 using namespace std;
-
-enum class PlotType {
-	TEMPERATURE,
-	QNH,
-	WIND_DIR,
-	WIND_SPD,
-	WIND_GST,
-	WIND_SPD_GST,
-	HUMIDITY,
-	DIFF_TEMPERATURE,
-	DIFF_WIND,
-	N
-};
-
-enum class PlotGraphType {
-	AREA,
-	LINE2,
-	NN
-};
-
-enum class RRAType {
-	AVERAGE,
-	LAST,
-	NNN
-};
-
-class RRDFileDefinition {
-public:
-	virtual void Zero(void);
-
-	enum PlotType eType;
-	string sPath;
-};
-
-class PlotFileDefinition : public RRDFileDefinition {
-public:
-	virtual void Zero(void);
-
-	PlotFileDefinition();
-
-	string sDS0Path;
-	string sDS0Name;
-	enum RRAType eDS0RRAType;
-	enum PlotGraphType eDS0PlotType;
-	int DS0PlotColor;
-	string sDS0Label;
-
-	string sDS1Path;
-	string sDS1Name;
-	enum RRAType eDS1RRAType;
-	enum PlotGraphType eDS1PlotType;
-	int DS1PlotColor;
-	string sDS1Label;
-
-	bool DoubleDS;
-
-	string Title;
-	int Width, Height;
-	string Axis, AxisR;
-	float MinScale, MaxScale;
-	float MinScaleR, MaxScaleR;
-
-	int ScaleStep, LabelStep;
-
-	int Exponent;
-
-	int timeScaleLn;
-};
 
 
 class DataPresentation
@@ -84,7 +17,8 @@ public:
 	DataPresentation();
 	~DataPresentation();
 
-	void FetchDataInRRD(AprsWXData* cInput);
+	void FetchDataInRRD(const AprsWXData* const cInput);
+	void FetchDiffInRRD(AprsWXData & data);
 	void PlotGraphsFromRRD(void);
 	void GenerateWebiste(AprsWXData* WX);
 	PlotType SwitchPlotType(string input);

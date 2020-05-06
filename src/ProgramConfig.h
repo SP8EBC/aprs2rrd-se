@@ -11,6 +11,8 @@
 #include <string>
 #include <libconfig.h++>
 
+#include <boost/algorithm/string.hpp>
+
 #include "MySqlConnInterface.h"
 #include "AprsThreadConfig.h"
 #include "DataPresentation.h"
@@ -71,6 +73,19 @@ public:
 	bool getDebugToFile();
 	std::string getDebugLogFn();
 
+	static WxDataSource wxDataSourceFromStr(std::string in) {
+		boost::algorithm::to_upper(in);
+		switch(swstring(in.c_str())) {
+		case swstring("APRSIS"): return WxDataSource::IS_PRIMARY;
+		case swstring("SECONDARYAPRSIS"): return WxDataSource::IS_SECONDARY;
+		case swstring("TELEMETRY"): return WxDataSource::TELEMETRY;
+		case swstring("SERIAL"): return WxDataSource::SERIAL;
+		case swstring("HOLFUY"): return WxDataSource::HOLFUY;
+		}
+
+		return WxDataSource::UNKNOWN;
+	}
+
 	static void printConfigInPl(	MySqlConnInterface& mysqlDb,
 									AprsThreadConfig& aprsConfig,
 									DataPresentation& dataPresence,
@@ -78,7 +93,8 @@ public:
 									int& plotCount,
 									Telemetry& telemetry,
 									bool& useAsTemperature,
-									HolfuyClientConfig& holfuy);
+									HolfuyClientConfig& holfuy,
+									DiffCalculator & calculator);
 
 
 

@@ -7,8 +7,20 @@
 
 #include "DataSourceConfig.h"
 
+
+
 DataSourceConfig::DataSourceConfig() {
-	// TODO Auto-generated constructor stub
+	this->wind = WxDataSource::UNKNOWN;
+	this->humidity = WxDataSource::UNKNOWN;
+	this->pressure = WxDataSource::UNKNOWN;
+	this->rain = WxDataSource::UNKNOWN;
+	this->globalBackup = WxDataSource::UNKNOWN;
+	this->temperature = WxDataSource::UNKNOWN;
+
+	this->primaryCall = "";
+	this->primarySsid = 0;
+	this->secondaryCall = "";
+	this->secondarySsid = 0;
 
 }
 
