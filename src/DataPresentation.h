@@ -4,9 +4,11 @@
 #include <string>
 #include <vector>
 #include <exception>
+#include <memory>
 
 #include "AprsWXData.h"
 #include "PlotFileDefinition.h"
+#include "DataSourceConfig.h"
 
 using namespace std;
 
@@ -20,7 +22,11 @@ public:
 	void FetchDataInRRD(const AprsWXData* const cInput);
 	void FetchDiffInRRD(AprsWXData & data);
 	void PlotGraphsFromRRD(void);
-	void GenerateWebiste(AprsWXData* WX);
+	void GenerateWebiste(const AprsWXData & WX, const AprsWXData & secondaryWX);
+	void GetSecondarySource(const AprsWXData& aprsIS,
+			const AprsWXData& serial,
+			const AprsWXData& holfuy,
+			AprsWXData& out);
 	PlotType SwitchPlotType(string input);
 	PlotGraphType SwitchPlotGraphType(string input);
 	RRAType SwitchRRAType(string input);
@@ -31,8 +37,6 @@ public:
 
 	vector <RRDFileDefinition> vRRDFiles;
 	vector <PlotFileDefinition> vPNGFiles;
-
-	int8_t directionCorrection;
 
 	string WebsitePath;
 	string Plot0Path, Plot1Path, Plot2Path, Plot3Path;
@@ -48,6 +52,9 @@ public:
 	bool PrintTwoSourcesInTable;
 	string SecondaryLabel;
 	string PrimaryLabel;
+	WxDataSource SecondarySource;
+
+	int8_t directionCorrection;
 
 	bool DebugOutput;
 

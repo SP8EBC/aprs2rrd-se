@@ -317,6 +317,12 @@ AprsWXData& AprsWXData::operator =(AprsWXData& _in) {
 	this->useWind = _in.useWind;
 	this->useTemperature = _in.useTemperature;
 
+	this->is_primary = _in.is_primary;
+	this->is_secondary = _in.is_secondary;
+
+	this->call = _in.call;
+	this->ssid = _in.ssid;
+
 	this->DebugOutput = _in.DebugOutput;
 
 	return * this;

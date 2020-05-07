@@ -92,6 +92,7 @@ int main(int argc, char **argv){
 	AprsWXData wxTarget; // target wx data to be inserted into RRD DB & printed onto website
 	AprsWXData wxLastTarget;
 	AprsWXData wxDifference;
+	AprsWXData wxSecondarySrcForPage;
 	AprsPacket isRxPacket;
 	AprsPacket serialRxPacket;
 
@@ -310,6 +311,9 @@ int main(int argc, char **argv){
 					// limiting slew rates for measurements
 					limiter.limitFromSingleFrame(wxLastTarget, wxTarget);
 
+					// geting the data for second source
+					dataPresence.GetSecondarySource(wxIsTemp, wxSerialTemp, wxHolfuy, wxSecondarySrcForPage);
+
 					// inserting the data inside a RRD file
 					dataPresence.FetchDataInRRD(&wxTarget);
 
@@ -320,7 +324,7 @@ int main(int argc, char **argv){
 					dataPresence.PlotGraphsFromRRD();
 
 					// generating the website
-					dataPresence.GenerateWebiste(&wxTarget);
+					dataPresence.GenerateWebiste(wxTarget, wxSecondarySrcForPage);
 
 					// storing values for slew rate corrections
 					wxLastTarget = wxTarget;

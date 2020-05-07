@@ -25,14 +25,6 @@ void ProgramConfig::parseFile() {
 //	root = config.getRoot();
 }
 
-//constexpr int ProgramConfig::swstring(std::string _in) {
-//	int out = 0;
-//
-//	out = _in.length() + [](std::string &_in) {int out = 1; for (char c : _in) {out += (int)c;} return out;};
-//
-//	return out;
-//}
-
 void ProgramConfig::getDbConfig(MySqlConnInterface& db) {
 
 	libconfig::Setting &rRoot = config.getRoot();
@@ -95,7 +87,7 @@ void ProgramConfig::getSerialConfig(SerialConfig& serial) {
 void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCount, int& plotCount) {
 	RRDFileDefinition sVectorRRDTemp;
 	libconfig::Setting &rRoot = config.getRoot();
-
+	std::string temp;
 	//cVectorPNGTemp
 
 	libconfig::Setting &rRRD = rRoot["RRD"];
@@ -128,6 +120,17 @@ void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCo
 	rWWW.lookupValue("PrintPressure", data.PrintPressure);
 	rWWW.lookupValue("PrintHumidity", data.PrintHumidity);
 	rWWW.lookupValue("DirectionCorrection", (int32_t&)data.directionCorrection);
+
+	try {
+		rWWW.lookupValue("PrintTwoSourcesInTable", data.PrintTwoSourcesInTable);
+		rWWW.lookupValue("SecondaryLabel", data.SecondaryLabel);
+		rWWW.lookupValue("PrimaryLabel", data.PrimaryLabel);
+		rWWW.lookupValue("SecondarySource", temp);
+		data.SecondarySource = ProgramConfig::wxDataSourceFromStr(temp);
+	}
+	catch (libconfig::SettingNotFoundException &ex) {
+		data.PrintTwoSourcesInTable = false;
+	}
 
 	libconfig::Setting &rPlots = rRoot["Plots"];
 	plotCount = rPlots.getLength();
@@ -498,8 +501,7 @@ void ProgramConfig::printConfigInPl(
 		}
 		cout << "--------KONFIGURACJA PLIKÓW RRD-----" << endl;
 		for (unsigned i = 0; i < dataPresence.vRRDFiles.size(); i++) {
-			cout << "--- Ścieżka: " << dataPresence.vRRDFiles[i].sPath << endl;
-			cout << "--- Typ: " << dataPresence.RevSwitchPlotType(dataPresence.vRRDFiles[i].eType) << endl;
+			cout << "--- Typ: " << dataPresence.RevSwitchPlotType(dataPresence.vRRDFiles[i].eType) << " - Ścieżka: " << dataPresence.vRRDFiles[i].sPath <<endl;
 		}
 		cout << endl;
 		cout << "--------KONFIGURACJA GENEROWANEJ STRONY-----" << endl;
@@ -516,6 +518,12 @@ void ProgramConfig::printConfigInPl(
 			cout << "--- Wyświetlanie temperatury włączone" << endl;
         if (dataPresence.directionCorrection != 0)
 			cout << "--- Korekcja kierunku wiatru" << endl;
+        if (dataPresence.PrintTwoSourcesInTable) {
+        	cout << "--- Tabela będzie zawierała dane z dwóch różnych źródeł" << endl;
+        	cout << "-- Etykieta Pierwszego: " << dataPresence.PrimaryLabel << endl;
+        	cout << "-- Etykieta Drugiego: " << dataPresence.SecondaryLabel << endl;
+        	cout << "-- Drugie źrodło danych: " << wxDataSourceToStr(dataPresence.SecondarySource) << endl;
+        }
 		cout << endl;
 		cout << "--------KONFIGURACJA WYKRESÓW-----" << endl;
 		cout << "--- Ilość wykresów do wygenerowania: " << dataPresence.vPNGFiles.size() << endl;
