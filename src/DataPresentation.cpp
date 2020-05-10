@@ -44,7 +44,7 @@ void DataPresentation::FetchDiffInRRD(AprsWXData& data) {
 
 	std::stringstream command;
 	RRDFileDefinition diff_temperature, diff_windspd, diff_winddir;
-	boost::posix_time::ptime current = boost::posix_time::second_clock::local_time();
+	boost::posix_time::ptime current = boost::posix_time::second_clock::universal_time();
 	boost::posix_time::ptime epoch (boost::gregorian::date(1970, 1, 1));
 
 	time_t seconds = (current - epoch).total_seconds();
