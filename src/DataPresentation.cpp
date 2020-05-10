@@ -472,6 +472,8 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 			html << "<br><img src=\"" << this->Plot2Path << "\">\r\n";
 		if (this->Plot3Path.size() >= 5)
 			html << "<br><img src=\"" << this->Plot3Path << "\">\r\n";
+		if (this->Plot4Path.size() >= 5)
+			html << "<br><img src=\"" << this->Plot4Path << "\">\r\n";
 		html << "<p>Strona wygenerowana przy pomocy programu APRS2RRD w wersji " << SW_VER << " <a href=\"https://github.com/SP8EBC/aprs2rrd-se\">STRONA PROJEKTU</a> </p>";
 		html << "<p>" << this->WebisteFooter << "</p>";
 	}
@@ -485,7 +487,7 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 }
 
 PlotType DataPresentation::SwitchPlotType(string input) {
-	PlotType out;
+	PlotType out = PlotType::N;
 
 	if (input == "WIND_SPD_GST")
 		out = PlotType::WIND_SPD_GST;

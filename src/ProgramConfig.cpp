@@ -115,7 +115,14 @@ void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCo
 	rWWW.lookupValue("Plot0", data.Plot0Path);
 	rWWW.lookupValue("Plot1", data.Plot1Path);
 	rWWW.lookupValue("Plot2", data.Plot2Path);
-	rWWW.lookupValue("Plot3", data.Plot3Path);
+	try {
+		rWWW.lookupValue("Plot3", data.Plot3Path);
+		rWWW.lookupValue("Plot4", data.Plot4Path);
+	}
+	catch (libconfig::SettingNotFoundException &ex) {
+		data.Plot3Path = "";
+		data.Plot4Path = "";
+	}
 	rWWW.lookupValue("PrintTemperature", data.PrintTemperature);
 	rWWW.lookupValue("PrintPressure", data.PrintPressure);
 	rWWW.lookupValue("PrintHumidity", data.PrintHumidity);

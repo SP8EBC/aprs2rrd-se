@@ -39,7 +39,7 @@ public:
 	vector <PlotFileDefinition> vPNGFiles;
 
 	string WebsitePath;
-	string Plot0Path, Plot1Path, Plot2Path, Plot3Path;
+	string Plot0Path, Plot1Path, Plot2Path, Plot3Path, Plot4Path;
 
 	bool PrintTemperature, PrintPressure, PrintHumidity;
 
