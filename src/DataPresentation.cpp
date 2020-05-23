@@ -33,6 +33,8 @@ DataPresentation::DataPresentation() : 	WebsitePath(""),
 	this->Plot1Path.clear();
 	this->Plot2Path.clear();
 	this->Plot3Path.clear();
+
+	this->SecondarySource = WxDataSource::UNKNOWN;
 }
 
 DataPresentation::~DataPresentation()
@@ -52,7 +54,7 @@ void DataPresentation::FetchDiffInRRD(AprsWXData& data) {
 	if (!data.useTemperature && !data.useWind)
 		return;
 
-	std::cout << "--- DataPresentation::FetchDiffInRRD:42 - Inserting diffs into RRD files" << std::endl;
+	std::cout << "--- DataPresentation::FetchDiffInRRD:57 - Inserting diffs into RRD files" << std::endl;
 
 	auto diff_temperature_it = std::find(this->vRRDFiles.begin(), this->vRRDFiles.end(), RRDFileDefinition(PlotType::DIFF_TEMPERATURE));
 	auto diff_winddir_it = std::find(this->vRRDFiles.begin(), this->vRRDFiles.end(), RRDFileDefinition(PlotType::DIFF_WIND_DIR));
@@ -95,6 +97,8 @@ void DataPresentation::FetchDataInRRD(const AprsWXData* const cInput) {
 	char command[512];
 	int currtimeint;
 	time_t currtime;
+
+	int sys_retval = 0;
 
 	if (cInput == nullptr)
 		return;
@@ -145,10 +149,19 @@ void DataPresentation::FetchDataInRRD(const AprsWXData* const cInput) {
 		}
 		else continue;
 
-		system(command);
+		sys_retval = system(command);
+
+		if (sys_retval != 0) {
+			;
+		}
+
 		memset(command, 0x00, sizeof(command));
 		sprintf(command, "rrdtool dump %s > %s.dmp", this->vRRDFiles[i].sPath.c_str(), this->vRRDFiles[i].sPath.c_str());
-		system(command);
+		sys_retval = system(command);
+
+		if (sys_retval != 0) {
+			;
+		}
 	}
 }
 
@@ -157,6 +170,8 @@ void DataPresentation::PlotGraphsFromRRD() {
 	int currtimeint;
 	unsigned i;
 	time_t currtime;
+
+	int sys_retval = 0;
 
 	currtime =time(NULL);
 	currtimeint = (int)currtime;
@@ -172,7 +187,7 @@ void DataPresentation::PlotGraphsFromRRD() {
 	std::string graph2Type;
 
 	if (this->DebugOutput == true) {
-		cout << "--- DataPresentation::PlotGraphsFromRRD:115 -  Count of plots to be generated: " <<  this->vPNGFiles.size() << endl;
+		cout << "--- DataPresentation::PlotGraphsFromRRD:190 -  Count of plots to be generated: " <<  this->vPNGFiles.size() << endl;
 	}
 
 	for (i = 0; i < this->vPNGFiles.size(); i++) {
@@ -239,7 +254,11 @@ void DataPresentation::PlotGraphsFromRRD() {
 
 		if (this->DebugOutput == true)
 			cout << command << endl;
-		(void)system(command);
+		sys_retval = system(command);
+
+		if (sys_retval != 0) {
+			;
+		}
 	}
 }
 
@@ -260,12 +279,12 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 	html.open(this->WebsitePath.c_str(), ios::out | ios::trunc);
 
 	if (!html.is_open()) {
-		std::cout << "--- DataPresentation::GenerateWebiste:203 - Html file cannot by opend because of unknown reason" << std::endl;
+		std::cout << "--- DataPresentation::GenerateWebiste:282 - Html file cannot by opend because of unknown reason" << std::endl;
 		return;
 	}
 
 	if (!html.good()) {
-		std::cout << "--- DataPresentation::GenerateWebiste:208 - Something is wrong with the html file!" << std::endl;
+		std::cout << "--- DataPresentation::GenerateWebiste:287 - Something is wrong with the html file!" << std::endl;
 		return;
 	}
 
@@ -277,7 +296,7 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 
 	//html.precision(3);
 
-	std::cout << "--- DataPresentation::GenerateWebiste:220 - Html file opened" << std::endl;
+	std::cout << "--- DataPresentation::GenerateWebiste:299 - Html file opened" << std::endl;
 
 	try {
 		html << " <!DOCTYPE html>" << std::endl;
@@ -382,24 +401,27 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 			html << "</td>" << std::endl;
 			html << "</tr>";
 
-			if (this->PrintTemperature)
+			if (this->PrintTemperature) {
 				html << "<tr>" << endl;
 				html << "<td class=table_caption><b>Temperatura:</b></td>" << endl;
 				html << "<td class=table_value> " << std::setprecision(temperaturePrecision) << WX.temperature << " ⁰C " << endl;
 				html << "<td class=table_value> " << std::setprecision(temperaturePrecision) << secondaryWX.temperature << " ⁰C " << endl;
 				html << "</tr>" << endl;
-			if (this->PrintPressure)
+			}
+			if (this->PrintPressure) {
 				html << "<tr>" << endl;
 				html << "<td class=table_caption><b>Ciśnienie:</b></td>" << endl;
 				html << "<td class=table_value> " << WX.pressure << " hPa " << endl;
 				html << "<td class=table_value> " << secondaryWX.pressure << " hPa " << endl;
 				html << "</tr>" << endl;
-			if (this->PrintHumidity)
+			}
+			if (this->PrintHumidity) {
 				html << "<tr>" << endl;
 				html << "<td class=table_caption><b>Wilgotność:</b></td>" << endl;
 				html << "<td class=table_value id=wilgotnosc> " << WX.humidity << " %% ";
 				html << "<td class=table_value id=wilgotnosc> " << secondaryWX.humidity << " %% ";
 				html << "</tr>" << endl;
+			}
 		}
 		else {
 			html << "<tr>" << std::endl;

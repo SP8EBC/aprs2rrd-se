@@ -138,6 +138,9 @@ bool Ax25Decoder::ParseFromKissBuffer(uint8_t* data, uint16_t data_ln,
 	uint8_t ui = buffer[idx++];
 	uint8_t protocol = buffer[idx++];
 
+	out.ui = ui;
+	out.protocol = protocol;
+
 	// erasing previous content of the output
 	::memset(out.Data, 0x00, sizeof(out.Data));
 

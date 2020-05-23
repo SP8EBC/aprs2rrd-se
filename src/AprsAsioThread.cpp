@@ -23,10 +23,10 @@
 AprsAsioThread::AprsAsioThread(AprsThreadConfig & config, uint8_t timeoutInSeconds, std::shared_ptr<std::condition_variable> syncCondition,
 		std::shared_ptr<std::mutex> syncLock) :
 																						conf(config),
-																						outputPacketValid(false),
-																						timeout(timeoutInSeconds),
+																						syncCondition(syncCondition),
 																						syncLock(syncLock),
-																						syncCondition(syncCondition)
+																						outputPacketValid(false),
+																						timeout(timeoutInSeconds)
 {
 	char buffer[256];
 
