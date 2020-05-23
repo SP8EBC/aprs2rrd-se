@@ -134,13 +134,14 @@ int main(int argc, char **argv){
 	DebugToFile = programConfig.getDebugToFile();
 	LogFile = programConfig.getDebugLogFn();
 
+
 	try {
+		programConfig.getDataSourceConfig(sourceConfig);
 		programConfig.getTelemetryConfig(telemetry, useFifthTelemAsTemperature);
 		programConfig.getDbConfig(mysqlDb);
 		programConfig.getAprsThreadConfig(aprsConfig);
 		programConfig.getDataPresentationConfig(dataPresence, RRDCount, PlotsCount);
 		programConfig.getSerialConfig(serialConfig);
-		programConfig.getDataSourceConfig(sourceConfig);
 		programConfig.getHolfuyConfig(holfuyConfig);
 		programConfig.getDiffConfiguration(diffCalculator);
 		programConfig.getStationName();
@@ -156,12 +157,13 @@ int main(int argc, char **argv){
 
 	}
 	catch (const SettingNotFoundException &ex) {
-	//	return -3;
+		cout << "--- main:160 - Unrecoverable error during configuration file loading!" << endl;
+		return -3;
 	}
 
 	aprsConfig.RetryServerLookup = true;
 
-	cout << "--- main:158 - Configuration parsed successfully" << endl;
+	cout << "--- main:166 - Configuration parsed successfully" << endl;
 
 	programConfig.configureLogOutput();
 
@@ -255,7 +257,7 @@ int main(int argc, char **argv){
 
 						holfuyClient->getWxData(wxHolfuy);
 
-						std::cout << "--- main.cpp:256 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
+						std::cout << "--- main.cpp:260 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
 
 						wxHolfuy.PrintData();
 					}
@@ -306,7 +308,7 @@ int main(int argc, char **argv){
 					// exit immediately witout performing any changes
 
 					// printing target data
-					std::cout << "--- main.c:307 - Printing target WX data which will be used for further processing." << std::endl;
+					std::cout << "--- main.c:311 - Printing target WX data which will be used for further processing." << std::endl;
 					wxTarget.PrintData();
 
 					// limiting slew rates for measurements
@@ -357,7 +359,7 @@ int main(int argc, char **argv){
 				}
 				else {
 					if (Debug == true)
-						cout << "--- main.cpp:342 - This is not valid APRS packet" << endl;
+						cout << "--- main.cpp:362 - This is not valid APRS packet" << endl;
 				}
 			}
 			catch (ConnectionTimeoutEx &e) {
@@ -366,15 +368,15 @@ int main(int argc, char **argv){
 				break;
 			}
 			catch (std::exception &e) {
-				cout << "--- main:351 - std::exception " << e.what() << std::endl;
+				cout << "--- main:371 - std::exception " << e.what() << std::endl;
 			}
 			catch (...) {
-				cout << "--- main:354 - Unknown exception thrown during processing!" << std::endl;
+				cout << "--- main:374 - Unknown exception thrown during processing!" << std::endl;
 			}
 
 		}
 
-		std::cout << "--- main:356 - Connection to APRS server died. Reconnecting.." << std::endl;
+		std::cout << "--- main:379 - Connection to APRS server died. Reconnecting.." << std::endl;
 
 	} while (mainLoopExit);		// end of main loop
 
