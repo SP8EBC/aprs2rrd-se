@@ -518,7 +518,8 @@ void ProgramConfig::printConfigInPl(
 											Telemetry& data,
 											bool& useAsTemperature,
 											HolfuyClientConfig& holfuy,
-											DiffCalculator & calculator
+											DiffCalculator & calculator,
+											DataSourceConfig & source
 
 									) {
 
@@ -559,6 +560,11 @@ void ProgramConfig::printConfigInPl(
 			cout << "--- Wiatr: od " << ::wxDataSourceToStr(calculator.windFrom) << " odejmij " << ::wxDataSourceToStr(calculator.windSubstract) << endl;
 			cout << endl;
 		}
+		cout << "--------KONFIGURACJA ŹRÓDEŁ DANYCH-----" << endl;
+		cout << "--- Temperatura: " << wxDataSourceToStr(source.temperature) << endl;
+		cout << "--- Cisnienie: " << wxDataSourceToStr(source.pressure) << endl;
+		cout << "--- Wiatr: " << wxDataSourceToStr(source.wind) << endl;
+		cout << "--- Wilgotnosc: " << wxDataSourceToStr(source.humidity) << endl;
 		cout << "--------KONFIGURACJA PLIKÓW RRD-----" << endl;
 		for (unsigned i = 0; i < dataPresence.vRRDFiles.size(); i++) {
 			cout << "--- Typ: " << dataPresence.RevSwitchPlotType(dataPresence.vRRDFiles[i].eType) << " - Ścieżka: " << dataPresence.vRRDFiles[i].sPath <<endl;

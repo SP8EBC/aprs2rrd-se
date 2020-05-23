@@ -165,7 +165,7 @@ int main(int argc, char **argv){
 
 	programConfig.configureLogOutput();
 
-	ProgramConfig::printConfigInPl(mysqlDb, aprsConfig, dataPresence, RRDCount, PlotsCount, telemetry, useFifthTelemAsTemperature, holfuyConfig, diffCalculator);
+	ProgramConfig::printConfigInPl(mysqlDb, aprsConfig, dataPresence, RRDCount, PlotsCount, telemetry, useFifthTelemAsTemperature, holfuyConfig, diffCalculator, sourceConfig);
 
 	serialThread = new SerialAsioThread(syncCondition, syncLock, serialConfig.serialPort, serialConfig.baudrate);
 

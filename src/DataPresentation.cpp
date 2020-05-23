@@ -103,8 +103,10 @@ void DataPresentation::FetchDataInRRD(const AprsWXData* const cInput) {
 	if (cInput == nullptr)
 		return;
 
-	if (!cInput->valid)
+	if (!cInput->valid) {
+		cout << "--- DataPresentation::FetchDataInRRD:107 - Input data is invalid and cannot be used";
 		return;
+	}
 
 	for (unsigned i = 0; i < this->vRRDFiles.size(); i++) {
 		if (this->vRRDFiles[i].eType == PlotType::TEMPERATURE && cInput->useTemperature == true) {
@@ -187,7 +189,7 @@ void DataPresentation::PlotGraphsFromRRD() {
 	std::string graph2Type;
 
 	if (this->DebugOutput == true) {
-		cout << "--- DataPresentation::PlotGraphsFromRRD:190 -  Count of plots to be generated: " <<  this->vPNGFiles.size() << endl;
+		cout << "--- DataPresentation::PlotGraphsFromRRD:192 -  Count of plots to be generated: " <<  this->vPNGFiles.size() << endl;
 	}
 
 	for (i = 0; i < this->vPNGFiles.size(); i++) {
@@ -279,12 +281,12 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 	html.open(this->WebsitePath.c_str(), ios::out | ios::trunc);
 
 	if (!html.is_open()) {
-		std::cout << "--- DataPresentation::GenerateWebiste:282 - Html file cannot by opend because of unknown reason" << std::endl;
+		std::cout << "--- DataPresentation::GenerateWebiste:284 - Html file cannot by opend because of unknown reason" << std::endl;
 		return;
 	}
 
 	if (!html.good()) {
-		std::cout << "--- DataPresentation::GenerateWebiste:287 - Something is wrong with the html file!" << std::endl;
+		std::cout << "--- DataPresentation::GenerateWebiste:289 - Something is wrong with the html file!" << std::endl;
 		return;
 	}
 

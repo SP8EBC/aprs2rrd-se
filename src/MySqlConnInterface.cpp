@@ -59,7 +59,7 @@ void MySqlConnInterface::InsertIntoDbSchema2(const AprsWXData& cInput, const Dat
 
 	temp << "INSERT INTO `" << this->dbName << "`.`data_station`";
 	temp << "(`epoch`, `station`, `temperature`, `humidity`, `pressure`, `winddir`, `windspeed`, `windgusts`, " <<
-								"`tsource`, `wsource`, `psource`, `hsource`, `rsource`) VALUES";
+								"`tsource`, `wsource`, `psource`, `hsource`, `rsource`) VALUES (";
 	temp << epoch_seconds << ", ";
 	temp << "'" << station_name << "', ";
 	temp << cInput.temperature << ", ";

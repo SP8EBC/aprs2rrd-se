@@ -98,7 +98,8 @@ public:
 									Telemetry& telemetry,
 									bool& useAsTemperature,
 									HolfuyClientConfig& holfuy,
-									DiffCalculator & calculator);
+									DiffCalculator & calculator,
+									DataSourceConfig & source);
 
 
 
