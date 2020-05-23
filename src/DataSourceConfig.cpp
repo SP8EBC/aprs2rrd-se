@@ -71,13 +71,23 @@ std::string DataSourceConfig::get(const WxDataSource& source) const {
 	switch (source) {
 	case WxDataSource::HOLFUY: out = boost::lexical_cast<std::string>("H" + this->holfuyNumber); break;
 	case WxDataSource::IS_PRIMARY: {
-		ssid = boost::lexical_cast<std::string>(this->primarySsid);
-		out = boost::lexical_cast<std::string>(this->primaryCall + "-" + ssid); break;
+		if (this->primarySsid > 0) {
+			ssid = boost::lexical_cast<std::string>(this->primarySsid);
+			out = boost::lexical_cast<std::string>(this->primaryCall + "-" + ssid);
+		}
+		else {
+			out = this->primaryCall;
+		}
+		break;
 	}
 	case WxDataSource::IS_SECONDARY: {
-		ssid = boost::lexical_cast<std::string>(this->secondarySsid);
-		out = boost::lexical_cast<std::string>(this->secondaryCall + "-" + ssid); break;
-
+		if (this->secondarySsid > 0) {
+			ssid = boost::lexical_cast<std::string>(this->secondarySsid);
+			out = boost::lexical_cast<std::string>(this->secondaryCall + "-" + ssid);
+		}
+		else {
+			out = this->secondaryCall;
+		}
 		break;
 	}
 	case WxDataSource::SERIAL: {
@@ -85,14 +95,20 @@ std::string DataSourceConfig::get(const WxDataSource& source) const {
 			out = "SERIAL";
 		}
 		else {
-			ssid = boost::lexical_cast<std::string>(this->secondarySsid);
-			out = boost::lexical_cast<std::string>(this->secondaryCall + "-" + ssid); break;
+			if (this->serialSsid > 0) {
+				ssid = boost::lexical_cast<std::string>(this->serialSsid);
+				out = boost::lexical_cast<std::string>(this->serialCall + "-" + ssid);
+			}
+			else {
+				out = this->serialCall;
+			}
 		}
 		break;
 	}
 	case WxDataSource::TELEMETRY: {
 		ssid = boost::lexical_cast<std::string>(this->primarySsid);
-		out = boost::lexical_cast<std::string>("T_" + this->primaryCall + "-" + ssid); break;
+		out = boost::lexical_cast<std::string>("T_" + this->primaryCall + "-" + ssid);
+		break;
 	}
 	case WxDataSource::UNKNOWN: break;
 	}

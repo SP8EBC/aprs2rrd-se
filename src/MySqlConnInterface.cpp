@@ -68,11 +68,11 @@ void MySqlConnInterface::InsertIntoDbSchema2(const AprsWXData& cInput, const Dat
 	temp << cInput.wind_direction << ", ";
 	temp << cInput.wind_speed << ", ";
 	temp << cInput.wind_gusts << ", ";
-	temp << config.getTemperatureSource() << ", ";
-	temp << config.getWindSource() << ", ";
-	temp << config.getPressureSource() << ", ";
-	temp << config.getHumiditySource() << ", ";
-	temp << config.getRainSource() << ");";
+	temp << "'" << config.getTemperatureSource() << "', ";
+	temp << "'" << config.getWindSource() << "', ";
+	temp << "'" << config.getPressureSource() << "', ";
+	temp << "'" << config.getHumiditySource() << "', ";
+	temp << "'" << config.getRainSource() << "');";
 
 	if (this->Debug == true)
 		cout << temp.str() << endl;
