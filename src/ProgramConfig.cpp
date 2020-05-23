@@ -291,6 +291,8 @@ void ProgramConfig::getDataSourceConfig(DataSourceConfig& config_out) {
 		config_out.wind = this->getWindSource();
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
+		std::cout << "--- ProgramConfig::getDataSourceConfig:294 - Error in data sources configuration. Using defaul values!" << std::endl;
+
 		config_out.globalBackup = WxDataSource::IS_PRIMARY;
 		config_out.humidity = WxDataSource::IS_PRIMARY;
 		config_out.pressure = WxDataSource::IS_PRIMARY;
@@ -308,6 +310,7 @@ void ProgramConfig::getDataSourceConfig(DataSourceConfig& config_out) {
 
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
+		std::cout << "--- ProgramConfig::getDataSourceConfig:313 - No Serial KISS communcation is configured." << std::endl;
 
 	}
 
@@ -317,6 +320,7 @@ void ProgramConfig::getDataSourceConfig(DataSourceConfig& config_out) {
 		h.lookupValue("StationId", config_out.holfuyNumber);
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
+		std::cout << "--- ProgramConfig::getDataSourceConfig:323 - No Holfuy communcation is configured." << std::endl;
 
 	}
 }
@@ -565,6 +569,7 @@ void ProgramConfig::printConfigInPl(
 		cout << "--- Cisnienie: " << wxDataSourceToStr(source.pressure) << endl;
 		cout << "--- Wiatr: " << wxDataSourceToStr(source.wind) << endl;
 		cout << "--- Wilgotnosc: " << wxDataSourceToStr(source.humidity) << endl;
+		cout << endl;
 		cout << "--------KONFIGURACJA PLIKÓW RRD-----" << endl;
 		for (unsigned i = 0; i < dataPresence.vRRDFiles.size(); i++) {
 			cout << "--- Typ: " << dataPresence.RevSwitchPlotType(dataPresence.vRRDFiles[i].eType) << " - Ścieżka: " << dataPresence.vRRDFiles[i].sPath <<endl;

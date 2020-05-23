@@ -75,7 +75,7 @@ void MySqlConnInterface::InsertIntoDbSchema2(const AprsWXData& cInput, const Dat
 	temp << config.getRainSource() << ");";
 
 	if (this->Debug == true)
-		cout << temp.str();
+		cout << temp.str() << endl;
 
 	try {
 		this->dbQuery = this->dbConnection.query(temp.str());
@@ -148,7 +148,7 @@ void MySqlConnInterface::InsertIntoDb(const AprsWXData* cInput) {
 		cInput->humidity << ");" << endl;
 
 	if (this->Debug == true)
-		cout << temp.str();
+		cout << temp.str() << endl;
 
 	try {
 		//this->dbQuery = new Query(&this->dbConnection, true);
