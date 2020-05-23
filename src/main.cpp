@@ -143,6 +143,7 @@ int main(int argc, char **argv){
 		programConfig.getDataSourceConfig(sourceConfig);
 		programConfig.getHolfuyConfig(holfuyConfig);
 		programConfig.getDiffConfiguration(diffCalculator);
+		programConfig.getStationName();
 
 		dataPresence.DebugOutput = Debug;
 		mysqlDb.Debug = Debug;
@@ -334,6 +335,8 @@ int main(int argc, char **argv){
 							mysqlDb.OpenDBConnection();
 
 							mysqlDb.InsertIntoDb(&wxTarget);
+
+							mysqlDb.InsertIntoDbSchema2(wxTarget, sourceConfig, programConfig.getStationName());
 
 							mysqlDb.CloseDBConnection();
 						}

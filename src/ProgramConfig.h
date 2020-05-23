@@ -34,6 +34,8 @@ class ProgramConfig {
 	bool DebugToFile = false;
 	std::string DebugLogFn = "";
 
+	std::string stationName;
+
 	constexpr static int swstring(const char* _in) {
 		int out = 0;
 
@@ -72,6 +74,8 @@ public:
 	bool getDebug();
 	bool getDebugToFile();
 	std::string getDebugLogFn();
+
+	std::string getStationName();
 
 	static WxDataSource wxDataSourceFromStr(std::string in) {
 		boost::algorithm::to_upper(in);

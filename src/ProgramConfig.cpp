@@ -41,6 +41,16 @@ void ProgramConfig::getDbConfig(MySqlConnInterface& db) {
 		rBaza.lookupValue("DbTable", db.tableName);
 		rBaza.lookupValue("ExecBeforeInsert", db.execBeforeInsert);
 		rBaza.lookupValue("ExecBeforeInsertPath", db.execBeforeInsertPath);
+
+		try {
+			rBaza.lookupValue("SchemaV1", db.schema_v1);
+			rBaza.lookupValue("SchemaV2", db.schema_v2);
+
+		}
+		catch (libconfig::SettingNotFoundException &ex) {
+			db.schema_v1 = true;
+			db.schema_v2 = false;
+		}
 	}
 
 }
@@ -200,6 +210,26 @@ void ProgramConfig::getTelemetryConfig(Telemetry& data, bool& useAsTemperature) 
 	config.lookupValue("TelemCScaling", data.ch5c);
 }
 
+std::string ProgramConfig::getStationName() {
+
+	std::string out;
+
+	if (this->stationName.length() < 3) {
+		try {
+			config.lookupValue("StationName", this->stationName);
+		}
+		catch (libconfig::SettingNotFoundException &ex) {
+			out = "";
+		}
+	}
+	else {
+		;
+	}
+
+	out = this->stationName;
+	return out;
+}
+
 bool ProgramConfig::getDebug() {
 	bool out = false;
 	config.lookupValue("Debug", out);
@@ -267,6 +297,27 @@ void ProgramConfig::getDataSourceConfig(DataSourceConfig& config_out) {
 		config_out.rain = WxDataSource::IS_PRIMARY;
 		config_out.temperature = WxDataSource::IS_PRIMARY;
 		config_out.wind = WxDataSource::IS_PRIMARY;
+	}
+
+	try {
+		libconfig::Setting &serial = root["Serial"];
+
+		serial.lookupValue("StationCall", config_out.serialCall);
+		serial.lookupValue("StationSsid", config_out.secondarySsid);
+		serial.lookupValue("CaptureAll", config_out.serialCaptureAll);
+
+	}
+	catch (libconfig::SettingNotFoundException &ex) {
+
+	}
+
+	try {
+		libconfig::Setting &h = root["Holfuy"];
+
+		h.lookupValue("StationId", config_out.holfuyNumber);
+	}
+	catch (libconfig::SettingNotFoundException &ex) {
+
 	}
 }
 
@@ -456,6 +507,8 @@ void ProgramConfig::getDiffConfiguration(DiffCalculator& calculator) {
 	}
 }
 
+
+
 void ProgramConfig::printConfigInPl(
 											MySqlConnInterface& mysqlDb,
 											AprsThreadConfig& aprsConfig,
@@ -561,5 +614,3 @@ void ProgramConfig::printConfigInPl(
 //	}
 
 }
-
-

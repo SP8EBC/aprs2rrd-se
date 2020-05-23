@@ -2,6 +2,7 @@
 #define MYSQLCONNINTERFACE_H
 
 #include "AprsWXData.h"
+#include "DataSourceConfig.h"
 #include <string>
 #include <exception>
 #include <arpa/inet.h>
@@ -22,14 +23,14 @@ class BadSrvAddr : public exception {
 class ConnError: public exception {
 	public:
 	virtual const char* what() const throw() {
-		return "\n--- libmysql++: Blad polaczenia z baza danych!!\n";
+		return "\n--- libmysql++: Error connecting to MySQL server!!\n";
     }
 };
 
 class OK: public exception {
 	public:
 	virtual const char* what() const throw() {
-		return "\n--- libmysql++: Polaczono z baza danych\n";
+		return "\n--- libmysql++: Connection has been established\n";
     }	
 };
 
@@ -54,12 +55,16 @@ public:
 	string dbName;
 	string tableName;
 	
+	bool schema_v2;
+	bool schema_v1;
+
 	MySqlConnInterface();
 	~MySqlConnInterface();
 	
 	void OpenDBConnection();
 	void CloseDBConnection();
-	void InsertIntoDb(AprsWXData* cInput);
+	void InsertIntoDb(const AprsWXData* const cInput);
+	void InsertIntoDbSchema2(const AprsWXData& cInput, const DataSourceConfig& config, std::string station_name);
 	void Keepalive(void);
 	
 	bool execBeforeInsert;

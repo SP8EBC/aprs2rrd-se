@@ -15,15 +15,42 @@
 bool Telemetry::Debug = false;
 
 Telemetry::Telemetry() {
-	// TODO Auto-generated constructor stub
 	this->valid = false;
+
+	this->ch1 = 0;
+	this->ch1a = 0.0f;
+	this->ch1b = 0.0f;
+	this->ch1c = 0.0f;
+
+	this->ch2 = 0;
+	this->ch2a = 0.0f;
+	this->ch2b = 0.0f;
+	this->ch2c = 0.0f;
+
+	this->ch3 = 0;
+	this->ch3a = 0.0f;
+	this->ch3b = 0.0f;
+	this->ch3c = 0.0f;
+
+	this->ch4  = 0;
+	this->ch4a = 0.0f;
+	this->ch4b = 0.0f;
+	this->ch4c = 0.0f;
+
+	this->ch5  = 0;
+	this->ch5a = 0.0f;
+	this->ch5b = 0.0f;
+	this->ch5c = 0.0f;
+
+	this->num = 0;
 
 }
 
 Telemetry::~Telemetry() {
-	// TODO Auto-generated destructor stub
 }
 
+// TODO Do something with the fact that there is no way to choose if the telemetry shall be parsed
+// 		from Secondary or Primary call
 int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
     char *src;
     int numi, c1i, c2i, c3i, c4i, c5i;

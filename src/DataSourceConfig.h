@@ -35,6 +35,10 @@ constexpr const char* wxDataSourceToStr(WxDataSource in) {
 }
 
 class DataSourceConfig {
+
+private:
+	std::string get(const WxDataSource& source) const;
+
 public:
 	WxDataSource temperature;
 	WxDataSource pressure;
@@ -48,6 +52,18 @@ public:
 
 	std::string secondaryCall;
 	unsigned secondarySsid;
+
+	std::string serialCall;
+	unsigned serialSsid;
+	bool serialCaptureAll;
+
+	unsigned holfuyNumber;
+
+	std::string getTemperatureSource() const;
+	std::string getPressureSource() const;
+	std::string getWindSource() const;
+	std::string getRainSource() const;
+	std::string getHumiditySource() const;
 
 	DataSourceConfig();
 	virtual ~DataSourceConfig();
