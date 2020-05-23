@@ -83,13 +83,18 @@ void ProgramConfig::getSerialConfig(SerialConfig& serial) {
 
 	libconfig::Setting &rAprsIS = rRoot["Serial"];
 
-	rAprsIS.lookupValue("Enable", serial.enable);
-	rAprsIS.lookupValue("StationCall", serial.call);
-	rAprsIS.lookupValue("StationSSID", serial.ssid);
-	rAprsIS.lookupValue("Baudrate", serial.baudrate);
-	rAprsIS.lookupValue("Port", serial.serialPort);
-	rAprsIS.lookupValue("CaptureAll", serial.captureAll);
-
+	try {
+		rAprsIS.lookupValue("Enable", serial.enable);
+		rAprsIS.lookupValue("StationCall", serial.call);
+		rAprsIS.lookupValue("StationSSID", serial.ssid);
+		rAprsIS.lookupValue("Baudrate", serial.baudrate);
+		rAprsIS.lookupValue("Port", serial.serialPort);
+		rAprsIS.lookupValue("CaptureAll", serial.captureAll);
+	}
+	catch (libconfig::SettingNotFoundException &ex) {
+		serial.enable = false;
+		serial.captureAll = false;
+	}
 
 
 }

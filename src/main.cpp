@@ -134,13 +134,14 @@ int main(int argc, char **argv){
 	DebugToFile = programConfig.getDebugToFile();
 	LogFile = programConfig.getDebugLogFn();
 
+
 	try {
+		programConfig.getDataSourceConfig(sourceConfig);
 		programConfig.getTelemetryConfig(telemetry, useFifthTelemAsTemperature);
 		programConfig.getDbConfig(mysqlDb);
 		programConfig.getAprsThreadConfig(aprsConfig);
 		programConfig.getDataPresentationConfig(dataPresence, RRDCount, PlotsCount);
 		programConfig.getSerialConfig(serialConfig);
-		programConfig.getDataSourceConfig(sourceConfig);
 		programConfig.getHolfuyConfig(holfuyConfig);
 		programConfig.getDiffConfiguration(diffCalculator);
 		programConfig.getStationName();
