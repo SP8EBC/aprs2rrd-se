@@ -38,18 +38,45 @@ void ProgramConfig::getDbConfig(MySqlConnInterface& db) {
 		rBaza.lookupValue("DbName", db.dbName);
 		rBaza.lookupValue("DbUser", db.Username);
 		rBaza.lookupValue("DbPassword", db.Password);
-		rBaza.lookupValue("DbTable", db.tableName);
 		rBaza.lookupValue("ExecBeforeInsert", db.execBeforeInsert);
 		rBaza.lookupValue("ExecBeforeInsertPath", db.execBeforeInsertPath);
 
+		// old, version 1 database schema is the default one
 		try {
 			rBaza.lookupValue("SchemaV1", db.schema_v1);
-			rBaza.lookupValue("SchemaV2", db.schema_v2);
-
 		}
 		catch (libconfig::SettingNotFoundException &ex) {
 			db.schema_v1 = true;
+		}
+
+		try {
+			rBaza.lookupValue("SchemaV2", db.schema_v2);
+		}
+		catch (libconfig::SettingNotFoundException &ex) {
 			db.schema_v2 = false;
+		}
+
+		// if the version one schema is enabled the user must provide
+		// a table to store the measurements
+		try {
+			rBaza.lookupValue("DbTable", db.tableName);
+		}
+		catch (libconfig::SettingNotFoundException &ex) {
+			if (db.schema_v1) {
+				throw UnsufficientConfig();
+			}
+		}
+
+
+		try {
+			rBaza.lookupValue("DumpHolfuy", db.dumpHolfuy);
+			rBaza.lookupValue("DumpDiff", db.dumpDiff);
+			rBaza.lookupValue("DumpTelemetry", db.dumpTelemetry);
+		}
+		catch (libconfig::SettingNotFoundException &ex) {
+			db.dumpHolfuy = false;
+			db.dumpDiff = false;
+			db.dumpTelemetry = false;
 		}
 	}
 
@@ -339,7 +366,6 @@ void ProgramConfig::getHolfuyConfig(HolfuyClientConfig& config_out) {
 		h.lookupValue("StationId", config_out.stationId);
 		h.lookupValue("ApiPassword", config_out.apiPassword);
 		h.lookupValue("Enable", config_out.enable);
-		h.lookupValue("DumpIntoMysql", config_out.dumpIntoMysql);
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
 		config_out.enable = false;

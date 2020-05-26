@@ -17,6 +17,10 @@ MySqlConnInterface::MySqlConnInterface() : dbConnection(true), dbQuery(&this->db
 	this->schema_v1 = true;
 	this->schema_v2 = false;
 
+	this->dumpDiff = false;
+	this->dumpHolfuy = false;
+	this->dumpTelemetry = false;
+
 }
 
 MySqlConnInterface::~MySqlConnInterface()
@@ -55,12 +59,13 @@ void MySqlConnInterface::InsertIntoDbSchema2(const AprsWXData& cInput, const Dat
 
 	boost::posix_time::time_duration epoch_seconds_duration =
 												(current_epoch - boost::posix_time::ptime(boost::gregorian::date(1970, 1, 1)));
-	int64_t epoch_seconds = epoch_seconds_duration.ticks();
+	int64_t epoch_seconds = epoch_seconds_duration.total_seconds();
 
 	temp << "INSERT INTO `" << this->dbName << "`.`data_station`";
-	temp << "(`epoch`, `station`, `temperature`, `humidity`, `pressure`, `winddir`, `windspeed`, `windgusts`, " <<
+	temp << "(`epoch`, `datetime`, `station`, `temperature`, `humidity`, `pressure`, `winddir`, `windspeed`, `windgusts`, " <<
 								"`tsource`, `wsource`, `psource`, `hsource`, `rsource`) VALUES (";
 	temp << epoch_seconds << ", ";
+	temp << "CURRENT_TIMESTAMP, ";
 	temp << "'" << station_name << "', ";
 	temp << cInput.temperature << ", ";
 	temp << cInput.humidity << ", ";
@@ -92,6 +97,68 @@ void MySqlConnInterface::InsertIntoDbSchema2(const AprsWXData& cInput, const Dat
 	}
 
 	cout << this->dbSimpleResult.info();
+
+}
+
+void MySqlConnInterface::InsertDiff(const AprsWXData& input, const DiffCalculator& diffCalculator, std::string station_name) {
+	if (!this->dumpDiff)
+		return;
+
+	std::stringstream temp;
+
+	boost::posix_time::ptime current_epoch = boost::posix_time::second_clock::local_time();
+	//boost::date_time::second_clock<boost::posix_time::ptime>::local_time();	// static access should be here??
+
+	boost::posix_time::time_duration epoch_seconds_duration =
+												(current_epoch - boost::posix_time::ptime(boost::gregorian::date(1970, 1, 1)));
+	int64_t epoch_seconds = epoch_seconds_duration.total_seconds();
+
+	temp << "INSERT INTO `" << this->dbName << "`.`data_diff`";
+	temp << "(`epoch`, `datetime`, `station`, `temperaturefrom`, `temperaturesubtract`, `windfrom`, `windsubtract`, `winddir`, `windspeed`, " <<
+								"`windgusts`) VALUES (";
+
+	temp << epoch_seconds << ", ";
+	temp << "CURRENT_TIMESTAMP, ";
+	temp << "'" << station_name << "', ";
+	temp << "'" << ::wxDataSourceToStr(diffCalculator.temperatureFrom) << "', ";
+	temp << "'" << ::wxDataSourceToStr(diffCalculator.temperatureSubstract) << "', ";
+	temp << "'" << ::wxDataSourceToStr(diffCalculator.windFrom) << "', ";
+	temp << "'" << ::wxDataSourceToStr(diffCalculator.windSubstract) << "', ";
+	temp << input.wind_direction << ", ";
+	temp << input.wind_speed << ", ";
+	temp << input.wind_gusts << ");";
+
+}
+
+void MySqlConnInterface::InsertTelmetry(const Telemetry& input,
+		std::string station_name) {
+
+	if (!this->dumpTelemetry)
+		return;
+
+	std::stringstream temp;
+
+	boost::posix_time::ptime current_epoch = boost::posix_time::second_clock::local_time();
+	//boost::date_time::second_clock<boost::posix_time::ptime>::local_time();	// static access should be here??
+
+	boost::posix_time::time_duration epoch_seconds_duration =
+												(current_epoch - boost::posix_time::ptime(boost::gregorian::date(1970, 1, 1)));
+	int64_t epoch_seconds = epoch_seconds_duration.total_seconds();
+
+	temp << "INSERT INTO `" << this->dbName << "`.`data_telemetry`";
+	temp << "(`epoch`, `datetime`, `station`, `number`, `first`, `second`, `third`, `fourth`, `fifth`, " <<
+								"`digital`, `type`) VALUES (";
+
+	temp << epoch_seconds << ", ";
+	temp << "CURRENT_TIMESTAMP, ";
+	temp << "'" << station_name << "', ";
+	temp << (int)input.num << ", ";
+	temp << (int)input.ch1 << ", ";
+	temp << (int)input.ch2 << ", ";
+	temp << (int)input.ch3 << ", ";
+	temp << (int)input.ch4 << ", ";
+	temp << (int)input.ch5 << ", ";
+
 
 }
 

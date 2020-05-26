@@ -111,9 +111,9 @@ int main(int argc, char **argv){
 	int RRDCount = 0;
 
 	bool useFifthTelemAsTemperature = false;
-	float telemA = 0.0f;
-	float telemB = 0.0f;
-	float telemC = 0.0f;
+	//float telemA = 0.0f;
+	//float telemB = 0.0f;
+	//float telemC = 0.0f;
 
 	try {
 		programConfig.parseFile();

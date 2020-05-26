@@ -18,8 +18,6 @@ public:
 
 	std::string apiPassword;
 
-	bool dumpIntoMysql;
-
 	HolfuyClientConfig();
 	virtual ~HolfuyClientConfig();
 };

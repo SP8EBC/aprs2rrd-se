@@ -11,7 +11,6 @@ HolfuyClientConfig::HolfuyClientConfig() {
 	enable = false;
 	stationId = 0;
 	apiPassword = "";
-	dumpIntoMysql = false;
 
 }
 

@@ -3,6 +3,8 @@
 
 #include "AprsWXData.h"
 #include "DataSourceConfig.h"
+#include "DiffCalculator.h"
+#include "Telemetry.h"
 #include <string>
 #include <exception>
 #include <arpa/inet.h>
@@ -58,6 +60,10 @@ public:
 	bool schema_v2;
 	bool schema_v1;
 
+	bool dumpHolfuy;
+	bool dumpDiff;
+	bool dumpTelemetry;
+
 	MySqlConnInterface();
 	~MySqlConnInterface();
 	
@@ -65,6 +71,8 @@ public:
 	void CloseDBConnection();
 	void InsertIntoDb(const AprsWXData* const cInput);
 	void InsertIntoDbSchema2(const AprsWXData& cInput, const DataSourceConfig& config, std::string station_name);
+	void InsertDiff(const AprsWXData& input, const DiffCalculator& diffCalculator, std::string station_name);
+	void InsertTelmetry(const Telemetry& input, std::string station_name);
 	void Keepalive(void);
 	
 	bool execBeforeInsert;

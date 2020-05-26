@@ -42,6 +42,8 @@ Telemetry::Telemetry() {
 	this->ch5b = 0.0f;
 	this->ch5c = 0.0f;
 
+	this->telemetry = 0;
+
 	this->num = 0;
 
 }
@@ -53,7 +55,7 @@ Telemetry::~Telemetry() {
 // 		from Secondary or Primary call
 int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
     char *src;
-    int numi, c1i, c2i, c3i, c4i, c5i;
+    int numi, c1i, c2i, c3i, c4i, c5i, digi = 0;
 
     output->ch1 = 0;
     output->ch2 = 0;
@@ -86,6 +88,7 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
     	delete str;
     	return -1;
     }
+    output->num = numi;
 
     // kanał pierwszy
     std::size_t firstComma = str->find_first_of(",", hashPosition);
@@ -181,6 +184,20 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
 		return -1;
 	}
     output->ch5 = c5i;
+
+    // digital channels
+    std::size_t sixthComma = str->find_first_of(",", fifthComma + 1);
+    if (sixthComma == std::string::npos) {
+        output->valid = false;
+    	delete str;
+        return -1;
+
+    }
+    std::string dig = str->substr(sixthComma + 1, 8);
+    for (char c : dig) {
+    	digi |= (c == '0' ? 0 : 1);
+    	digi <<= 1;
+    }
 
 	if (Debug) {
 		std::cout << "-----------------------------------------" << std::endl;
