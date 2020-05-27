@@ -294,6 +294,8 @@ int main(int argc, char **argv){
 
 					if (telemetry.valid) {
 						wxTarget.copy(telemetry, sourceConfig);
+
+						mysqlDb.InsertTelmetry(telemetry, programConfig.getStationName());
 					}
 
 					if (wxHolfuy.valid) {

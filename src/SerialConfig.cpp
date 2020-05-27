@@ -8,7 +8,12 @@
 #include "SerialConfig.h"
 
 SerialConfig::SerialConfig() {
-
+	this->baudrate = 0;
+	this->call = "";
+	this->captureAll = false;
+	this->enable = false;
+	this->serialPort = "";
+	this->ssid = 0;
 
 }
 

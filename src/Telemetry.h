@@ -35,7 +35,7 @@ public:
 	uint8_t ch3;
 	uint8_t ch4;
 	uint8_t ch5;
-	uint8_t telemetry;
+	uint8_t digital;
 
 	float ch1a;
 	float ch1b;

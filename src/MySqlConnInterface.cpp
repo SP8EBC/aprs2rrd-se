@@ -147,17 +147,24 @@ void MySqlConnInterface::InsertTelmetry(const Telemetry& input,
 
 	temp << "INSERT INTO `" << this->dbName << "`.`data_telemetry`";
 	temp << "(`epoch`, `datetime`, `station`, `number`, `first`, `second`, `third`, `fourth`, `fifth`, " <<
-								"`digital`, `type`) VALUES (";
+								"`digital`, `type`, `rawfirst`, `rawsecond`, `rawthird`, `rawfourth`, `rawfifth`) VALUES (";
 
 	temp << epoch_seconds << ", ";
 	temp << "CURRENT_TIMESTAMP, ";
 	temp << "'" << station_name << "', ";
 	temp << (int)input.num << ", ";
+	temp << input.getCh1() << ", ";
+	temp << input.getCh2() << ", ";
+	temp << input.getCh3() << ", ";
+	temp << input.getCh4() << ", ";
+	temp << input.getCh5() << ", ";
+	temp << (int)input.digital  << ", ";
+	temp << "10, ";
 	temp << (int)input.ch1 << ", ";
 	temp << (int)input.ch2 << ", ";
 	temp << (int)input.ch3 << ", ";
 	temp << (int)input.ch4 << ", ";
-	temp << (int)input.ch5 << ", ";
+	temp << (int)input.ch5 << ");";
 
 
 }

@@ -42,7 +42,7 @@ Telemetry::Telemetry() {
 	this->ch5b = 0.0f;
 	this->ch5c = 0.0f;
 
-	this->telemetry = 0;
+	this->digital = 0;
 
 	this->num = 0;
 
@@ -198,6 +198,7 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
     	digi |= (c == '0' ? 0 : 1);
     	digi <<= 1;
     }
+    output->digital = digi;
 
 	if (Debug) {
 		std::cout << "-----------------------------------------" << std::endl;
@@ -207,6 +208,7 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
 		std::cout << "--- Kanal 3 =  " << output->getCh3() << std::endl;
 		std::cout << "--- Kanal 4 =  " << output->getCh4() << std::endl;
 		std::cout << "--- Kanal 5 =  " << output->getCh5() << std::endl;
+		std::cout << "--- Digital =  " << output->digital << std::endl;
 		std::cout << "-----------------------------------------" << std::endl;
 
 	}
