@@ -573,6 +573,13 @@ void ProgramConfig::printConfigInPl(
 			cout << "--- Hasło nie jest wyświetlane" << endl;
 			if (mysqlDb.execBeforeInsert == true)
 				cout << "--- rc.preinsert zostanie wykonany" << endl;
+			if (mysqlDb.dumpDiff)
+				cout << "--- Zapis pomiarów różnocowych włączony." << endl;
+			if (mysqlDb.dumpHolfuy)
+				cout << "--- Zapis pomiarów Holfuy włączony." << endl;
+			if (mysqlDb.dumpTelemetry)
+				cout << "--- Zapis telemetrii włączony." << endl;
+
 			cout << endl;
 		}
 		cout << "--------KONFIGURACJA ŁĄCZNOŚCI Z SERWEREM APRS-----" << endl;

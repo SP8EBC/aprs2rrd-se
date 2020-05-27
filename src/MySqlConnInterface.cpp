@@ -54,7 +54,7 @@ void MySqlConnInterface::InsertIntoDbSchema2(const AprsWXData& cInput, const Dat
 
 	std::stringstream temp;
 
-	boost::posix_time::ptime current_epoch = boost::posix_time::second_clock::local_time();
+	boost::posix_time::ptime current_epoch = boost::posix_time::second_clock::universal_time();
 	//boost::date_time::second_clock<boost::posix_time::ptime>::local_time();	// static access should be here??
 
 	boost::posix_time::time_duration epoch_seconds_duration =
@@ -106,7 +106,7 @@ void MySqlConnInterface::InsertDiff(const AprsWXData& input, const DiffCalculato
 
 	std::stringstream temp;
 
-	boost::posix_time::ptime current_epoch = boost::posix_time::second_clock::local_time();
+	boost::posix_time::ptime current_epoch = boost::posix_time::second_clock::universal_time();
 	//boost::date_time::second_clock<boost::posix_time::ptime>::local_time();	// static access should be here??
 
 	boost::posix_time::time_duration epoch_seconds_duration =
@@ -128,6 +128,25 @@ void MySqlConnInterface::InsertDiff(const AprsWXData& input, const DiffCalculato
 	temp << input.wind_speed << ", ";
 	temp << input.wind_gusts << ");";
 
+	if (this->Debug == true)
+		cout << temp.str() << endl;
+
+	try {
+		this->dbQuery = this->dbConnection.query(temp.str());
+		this->dbSimpleResult = this->dbQuery.execute();
+	}
+	catch (const BadQuery& er) {
+		cout << er.what();
+	}
+	catch (const Exception& er) {
+		cout << er.what();
+	}
+	catch (...) {
+		cout << "--- MysqlConnInterface::InsertIntoDbSchema2:91 - unknown exception" << endl;
+	}
+
+	cout << this->dbSimpleResult.info();
+
 }
 
 void MySqlConnInterface::InsertTelmetry(const Telemetry& input,
@@ -138,7 +157,7 @@ void MySqlConnInterface::InsertTelmetry(const Telemetry& input,
 
 	std::stringstream temp;
 
-	boost::posix_time::ptime current_epoch = boost::posix_time::second_clock::local_time();
+	boost::posix_time::ptime current_epoch = boost::posix_time::second_clock::universal_time();
 	//boost::date_time::second_clock<boost::posix_time::ptime>::local_time();	// static access should be here??
 
 	boost::posix_time::time_duration epoch_seconds_duration =
@@ -166,6 +185,24 @@ void MySqlConnInterface::InsertTelmetry(const Telemetry& input,
 	temp << (int)input.ch4 << ", ";
 	temp << (int)input.ch5 << ");";
 
+	if (this->Debug == true)
+		cout << temp.str() << endl;
+
+	try {
+		this->dbQuery = this->dbConnection.query(temp.str());
+		this->dbSimpleResult = this->dbQuery.execute();
+	}
+	catch (const BadQuery& er) {
+		cout << er.what();
+	}
+	catch (const Exception& er) {
+		cout << er.what();
+	}
+	catch (...) {
+		cout << "--- MysqlConnInterface::InsertIntoDbSchema2:91 - unknown exception" << endl;
+	}
+
+	cout << this->dbSimpleResult.info();
 
 }
 
