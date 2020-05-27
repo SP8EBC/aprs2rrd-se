@@ -7,27 +7,31 @@
 
 #include "Telemetry.h"
 #include "AprsPacket.h"
-#include <string>
-#include <stdio.h>
-#include <string.h>
+#include "ReturnValues.h"
 
-bool Debug = false;
-bool DebugToFile = false;
-//std::ofstream fDebug;
 
-int main() {
+#define BOOST_TEST_MODULE Telemetry_test
+#include <boost/test/included/unit_test.hpp>
 
-	std::string str = "T#103,056,003,004,000,147,10000000";
+BOOST_AUTO_TEST_CASE(first) {
 
-	Telemetry test;
-	AprsPacket packet;
+	const char* input = "SR9WXS>AKLPRZ,WIDE2-1,qAR,SP9UVG-13:T#008,084,012,001,003,152,10001000";
 
-	const char* testo = str.c_str();
-	char* testpacket = packet.Data;
+	AprsPacket target;
+	Telemetry output;
 
-	strcpy(testpacket, testo);
+	int parsing_result = AprsPacket::ParseAPRSISData(const_cast<char*>(input), ::strlen(input), &target);
 
-//	test.ParseData(&packet);
+	if (parsing_result == OK) {
+		Telemetry::ParseData(target, &output);
+	}
+
+	BOOST_CHECK_EQUAL(output.num, 8);
+	BOOST_CHECK_EQUAL(output.ch1, 84);
+	BOOST_CHECK_EQUAL(output.ch2, 12);
+	BOOST_CHECK_EQUAL(output.ch3, 1);
+	BOOST_CHECK_EQUAL(output.ch4, 3);
+	BOOST_CHECK_EQUAL(output.ch5, 152);
+	BOOST_CHECK_EQUAL(output.digital, 136);
+	BOOST_CHECK_EQUAL(output.valid, true);
 }
-
-

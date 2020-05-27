@@ -220,8 +220,15 @@ int main(int argc, char **argv){
 						// the internal validity flag to false
 						AprsWXData::ParseData(isRxPacket, &wxIsTemp);
 
+						// Parsing telemetry data
+						Telemetry::ParseData(isRxPacket, &telemetry);
+
 						// marking if this packet was received from primary or secondary callsign (or none of them)
 						AprsWXData::checkIsPrimaryCall(wxIsTemp, sourceConfig);
+
+						// storing the telemetry values in db. This metod checks internally if that function is enabled
+						// and telemetry data are valid.
+						mysqlDb.InsertTelmetry(telemetry, programConfig.getStationName());
 
 						// wait for another packet if not WX data has been received. Protect against
 						// flooding with a lot of data from Holfuy after each heartbeat message from APRS-IS
@@ -257,13 +264,10 @@ int main(int argc, char **argv){
 
 						holfuyClient->getWxData(wxHolfuy);
 
-						std::cout << "--- main.cpp:260 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
+						std::cout << "--- main.cpp:267 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
 
 						wxHolfuy.PrintData();
 					}
-
-					// Parsing telemetry data
-					Telemetry::ParseData(isRxPacket, &telemetry);
 
 					// zeroing the usage flags in target object
 					AprsWXData::zeroUse(wxTarget);
@@ -294,8 +298,6 @@ int main(int argc, char **argv){
 
 					if (telemetry.valid) {
 						wxTarget.copy(telemetry, sourceConfig);
-
-						mysqlDb.InsertTelmetry(telemetry, programConfig.getStationName());
 					}
 
 					if (wxHolfuy.valid) {
@@ -310,7 +312,7 @@ int main(int argc, char **argv){
 					// exit immediately witout performing any changes
 
 					// printing target data
-					std::cout << "--- main.c:311 - Printing target WX data which will be used for further processing." << std::endl;
+					std::cout << "--- main.c:315 - Printing target WX data which will be used for further processing." << std::endl;
 					wxTarget.PrintData();
 
 					// limiting slew rates for measurements
@@ -361,7 +363,7 @@ int main(int argc, char **argv){
 				}
 				else {
 					if (Debug == true)
-						cout << "--- main.cpp:362 - This is not valid APRS packet" << endl;
+						cout << "--- main.cpp:366 - This is not valid APRS packet" << endl;
 				}
 			}
 			catch (ConnectionTimeoutEx &e) {
@@ -370,15 +372,15 @@ int main(int argc, char **argv){
 				break;
 			}
 			catch (std::exception &e) {
-				cout << "--- main:371 - std::exception " << e.what() << std::endl;
+				cout << "--- main:375 - std::exception " << e.what() << std::endl;
 			}
 			catch (...) {
-				cout << "--- main:374 - Unknown exception thrown during processing!" << std::endl;
+				cout << "--- main:378 - Unknown exception thrown during processing!" << std::endl;
 			}
 
 		}
 
-		std::cout << "--- main:379 - Connection to APRS server died. Reconnecting.." << std::endl;
+		std::cout << "--- main:383 - Connection to APRS server died. Reconnecting.." << std::endl;
 
 	} while (mainLoopExit);		// end of main loop
 

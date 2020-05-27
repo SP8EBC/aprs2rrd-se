@@ -142,7 +142,7 @@ void MySqlConnInterface::InsertDiff(const AprsWXData& input, const DiffCalculato
 		cout << er.what();
 	}
 	catch (...) {
-		cout << "--- MysqlConnInterface::InsertIntoDbSchema2:91 - unknown exception" << endl;
+		cout << "--- MysqlConnInterface::InsertDiff:145 - unknown exception" << endl;
 	}
 
 	cout << this->dbSimpleResult.info();
@@ -152,7 +152,7 @@ void MySqlConnInterface::InsertDiff(const AprsWXData& input, const DiffCalculato
 void MySqlConnInterface::InsertTelmetry(const Telemetry& input,
 		std::string station_name) {
 
-	if (!this->dumpTelemetry)
+	if (!this->dumpTelemetry || !input.valid)
 		return;
 
 	std::stringstream temp;
@@ -199,7 +199,7 @@ void MySqlConnInterface::InsertTelmetry(const Telemetry& input,
 		cout << er.what();
 	}
 	catch (...) {
-		cout << "--- MysqlConnInterface::InsertIntoDbSchema2:91 - unknown exception" << endl;
+		cout << "--- MysqlConnInterface::InsertTelmetry:202 - unknown exception" << endl;
 	}
 
 	cout << this->dbSimpleResult.info();

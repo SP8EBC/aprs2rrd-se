@@ -198,9 +198,10 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
     	digi |= (c == '0' ? 0 : 1);
     	digi <<= 1;
     }
+    digi >>= 1;
     output->digital = digi;
 
-	if (Debug) {
+	if (Telemetry::Debug) {
 		std::cout << "-----------------------------------------" << std::endl;
 		std::cout << "--- Telemetry data have been parsed -----" << std::endl;
 		std::cout << "--- Kanal 1 =  " << output->getCh1() << std::endl;
