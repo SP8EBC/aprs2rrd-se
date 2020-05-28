@@ -355,6 +355,9 @@ int main(int argc, char **argv){
 						catch(ConnError &e) {
 							cout << e.what();
 						}
+						catch (AlreadyDisconnected &e) {
+							cout << e.what();
+						}
 						catch (...) {
 
 						}

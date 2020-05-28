@@ -44,7 +44,9 @@ void MySqlConnInterface::OpenDBConnection() {
 }
 
 void MySqlConnInterface::CloseDBConnection() {
-	this->dbConnection.disconnect();
+	if (this-dbConnection.connected())
+		this->dbConnection.disconnect();
+	else throw AlreadyDisconnected();
 }
 
 void MySqlConnInterface::InsertIntoDbSchema2(const AprsWXData& cInput, const DataSourceConfig& config, std::string station_name) {
@@ -155,6 +157,10 @@ void MySqlConnInterface::InsertTelmetry(const Telemetry& input,
 	if (!this->dumpTelemetry || !input.valid)
 		return;
 
+	if (!this->dbConnection.connected()) {
+		this->OpenDBConnection();
+	}
+
 	std::stringstream temp;
 
 	boost::posix_time::ptime current_epoch = boost::posix_time::second_clock::universal_time();
@@ -204,6 +210,12 @@ void MySqlConnInterface::InsertTelmetry(const Telemetry& input,
 
 	cout << this->dbSimpleResult.info();
 
+	cout << "--- MysqlConnInterface::InsertTelmetry:207 - Data inserted successfully" << endl;
+
+	if (this->dbConnection.connected()) {
+		this->CloseDBConnection();
+	}
+
 }
 
 void MySqlConnInterface::Keepalive(void) {
@@ -221,7 +233,7 @@ void MySqlConnInterface::Keepalive(void) {
 		cout << e.what() << endl;
 	}
 	catch (...) {
-		cout << "--- MysqlConnInterface::Keepalive:113 - Unknown exception has been thrown" << endl;
+		cout << "--- MysqlConnInterface::Keepalive:226 - Unknown exception has been thrown" << endl;
 	}
 
 }
@@ -239,7 +251,7 @@ void MySqlConnInterface::InsertIntoDb(const AprsWXData* cInput) {
 	local = localtime(&currtime);
 
 	if (this->execBeforeInsert == true) {
-		cout << "--- MysqlConnInterface::InsertIntoDb:132 - Executing: " << this->execBeforeInsertPath.c_str();
+		cout << "--- MysqlConnInterface::InsertIntoDb:244 - Executing: " << this->execBeforeInsertPath.c_str();
 		(void)system(this->execBeforeInsertPath.c_str());
 		cout << endl;
 	}
@@ -275,7 +287,7 @@ void MySqlConnInterface::InsertIntoDb(const AprsWXData* cInput) {
 		//delete this->dbQuery;
 	}
 	catch (...) {
-		cout << "--- MysqlConnInterface::InsertIntoDb:167 - unknown exception" << endl;
+		cout << "--- MysqlConnInterface::InsertIntoDb:280 - unknown exception" << endl;
 	}
 
 	cout << this->dbSimpleResult.info();

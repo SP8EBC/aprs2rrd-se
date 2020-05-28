@@ -22,6 +22,13 @@ class BadSrvAddr : public exception {
 	
 };
 
+class AlreadyDisconnected: public exception {
+public:
+	virtual const char* what() const throw() {
+		return "\n--- libmysql++: This connection has been already closed\n";
+    }
+};
+
 class ConnError: public exception {
 	public:
 	virtual const char* what() const throw() {
