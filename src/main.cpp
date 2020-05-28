@@ -228,7 +228,7 @@ int main(int argc, char **argv){
 
 						// storing the telemetry values in db. This metod checks internally if that function is enabled
 						// and telemetry data are valid.
-						mysqlDb.InsertTelmetry(telemetry, programConfig.getStationName());
+						mysqlDb.InsertTelmetry(telemetry);
 
 						// wait for another packet if not WX data has been received. Protect against
 						// flooding with a lot of data from Holfuy after each heartbeat message from APRS-IS

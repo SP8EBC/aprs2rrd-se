@@ -26,6 +26,8 @@ public:
 	float getCh4() const;
 	float getCh5() const;
 
+	std::string call;
+
 	bool valid;
 
 	uint16_t num;

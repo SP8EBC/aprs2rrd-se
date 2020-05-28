@@ -151,8 +151,7 @@ void MySqlConnInterface::InsertDiff(const AprsWXData& input, const DiffCalculato
 
 }
 
-void MySqlConnInterface::InsertTelmetry(const Telemetry& input,
-		std::string station_name) {
+void MySqlConnInterface::InsertTelmetry(const Telemetry& input) {
 
 	if (!this->dumpTelemetry || !input.valid)
 		return;
@@ -162,6 +161,8 @@ void MySqlConnInterface::InsertTelmetry(const Telemetry& input,
 	}
 
 	std::stringstream temp;
+
+	std::string station_name = input.call;
 
 	boost::posix_time::ptime current_epoch = boost::posix_time::second_clock::universal_time();
 	//boost::date_time::second_clock<boost::posix_time::ptime>::local_time();	// static access should be here??

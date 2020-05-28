@@ -19,27 +19,27 @@ Telemetry::Telemetry() {
 
 	this->ch1 = 0;
 	this->ch1a = 0.0f;
-	this->ch1b = 0.0f;
+	this->ch1b = 1.0f;
 	this->ch1c = 0.0f;
 
 	this->ch2 = 0;
 	this->ch2a = 0.0f;
-	this->ch2b = 0.0f;
+	this->ch2b = 1.0f;
 	this->ch2c = 0.0f;
 
 	this->ch3 = 0;
 	this->ch3a = 0.0f;
-	this->ch3b = 0.0f;
+	this->ch3b = 1.0f;
 	this->ch3c = 0.0f;
 
 	this->ch4  = 0;
 	this->ch4a = 0.0f;
-	this->ch4b = 0.0f;
+	this->ch4b = 1.0f;
 	this->ch4c = 0.0f;
 
 	this->ch5  = 0;
 	this->ch5a = 0.0f;
-	this->ch5b = 0.0f;
+	this->ch5b = 1.0f;
 	this->ch5c = 0.0f;
 
 	this->digital = 0;
@@ -215,6 +215,8 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
 	}
 
 	output->valid = true;
+
+	output->call = input.SrcAddr + "-" + std::to_string((int)input.SrcSSID);
 
 	delete str;
     return 0;
