@@ -14,7 +14,6 @@
 #include "MySqlConnInterface.h"
 #include "AprsPacket.h"
 #include "AprsThreadConfig.h"
-#include "AprsThread.h"
 #include "AprsWXData.h"
 #include "Telemetry.h"
 #include "AprsAsioThread.h"
@@ -72,7 +71,6 @@ int main(int argc, char **argv){
 
 	SerialAsioThread * serialThread;
 	AprsThreadConfig aprsConfig;
-	AprsThread aprsThread;
 	MySqlConnInterface mysqlDb;
 	DataPresentation dataPresence;
 	Telemetry telemetry;
@@ -126,7 +124,7 @@ int main(int argc, char **argv){
 		return -1;
 	}
 	catch(const ParseException &ex) {
-		printf("--- main:128 - Error during parsing a content of configuration file near line %d" + ex.getLine());
+		printf("--- main:128 - Error during parsing a content of configuration file near line %d", ex.getLine());
 		return -2;
 	}
 

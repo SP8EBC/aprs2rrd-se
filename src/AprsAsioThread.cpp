@@ -30,10 +30,18 @@ AprsAsioThread::AprsAsioThread(AprsThreadConfig & config, uint8_t timeoutInSecon
 {
 	char buffer[256];
 
-	if (config.StationSSID == 0)
-		sprintf(buffer, "user %s pass %d vers %s %s filter p/%s \r\n", config.Call.c_str(), config.Passwd, SW_NAME, SW_VER, config.StationCall.c_str());
-    else
-		sprintf(buffer, "user %s pass %d vers %s %s filter p/%s-%d \r\n", config.Call.c_str(), config.Passwd, SW_NAME, SW_VER, config.StationCall.c_str(), config.StationSSID);
+	std::string call;
+
+	if (config.SecondaryCall.length() > 0) {
+		call = config.getStationCallStr() + "/" + config.getSecondaryCallStr();
+	}
+	else {
+		call = config.getStationCallStr();
+	}
+
+	sprintf(buffer, "user %s pass %d vers %s %s filter b/%s \r\n", config.Call.c_str(), config.Passwd, SW_NAME, SW_VER, call.c_str());
+//    else
+//		sprintf(buffer, "user %s pass %d vers %s %s filter p/%s-%d \r\n", config.Call.c_str(), config.Passwd, SW_NAME, SW_VER, config.StationCall.c_str(), config.StationSSID);
 
 	this->loginString = std::string(buffer);
 

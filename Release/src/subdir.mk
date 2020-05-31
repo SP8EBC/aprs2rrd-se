@@ -6,7 +6,6 @@
 CPP_SRCS += \
 ../src/AprsAsioThread.cpp \
 ../src/AprsPacket.cpp \
-../src/AprsThread.cpp \
 ../src/AprsThreadConfig.cpp \
 ../src/AprsWXData.cpp \
 ../src/Ax25Decoder.cpp \
@@ -30,7 +29,6 @@ CPP_SRCS += \
 OBJS += \
 ./src/AprsAsioThread.o \
 ./src/AprsPacket.o \
-./src/AprsThread.o \
 ./src/AprsThreadConfig.o \
 ./src/AprsWXData.o \
 ./src/Ax25Decoder.o \
@@ -54,7 +52,6 @@ OBJS += \
 CPP_DEPS += \
 ./src/AprsAsioThread.d \
 ./src/AprsPacket.d \
-./src/AprsThread.d \
 ./src/AprsThreadConfig.d \
 ./src/AprsWXData.d \
 ./src/Ax25Decoder.d \

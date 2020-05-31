@@ -25,6 +25,9 @@ public:
 
 	bool RetryServerLookup;
 
+	std::string getStationCallStr();
+	std::string getSecondaryCallStr();
+
 };
 
 #endif // APRSTHREADCONFIG_H

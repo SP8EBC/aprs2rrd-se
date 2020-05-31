@@ -20,6 +20,8 @@ AprsPacket::AprsPacket() {
     memset(this->Data,0x00,sizeof(this->Data));
 
     this->ToISOriginator.Call = "UNINITIALIZED";
+    this->protocol = 0;
+    this->ui = 0;
 }
 
 bool AprsPacket::SeparateCallSsid(const std::string& input, std::string& call,
