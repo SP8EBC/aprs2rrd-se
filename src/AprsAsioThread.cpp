@@ -101,7 +101,7 @@ void AprsAsioThread::connectedCallback(const boost::system::error_code& ec) {
 		return;
 	}
 	else {
-		std::cout << "--- AprsAsioThread::connectedCallback:104 - loginString = " << this->loginString;
+		std::cout << "--- AprsAsioThread::connectedCallback:104 - loginString = " << this->loginString << std::endl;
 
 		this->tsocket->async_send(boost::asio::buffer(this->loginString), &AprsAsioThread::writeCallback);
 		this->connected = true;
