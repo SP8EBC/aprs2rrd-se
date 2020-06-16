@@ -21,7 +21,7 @@
 #include "DataSourceConfig.h"
 #include "HolfuyClientConfig.h"
 #include "DiffCalculator.h"
-
+#include "PressureCalculator.h"
 
 class ProgramConfig {
 	std::string configFilename;
@@ -68,6 +68,7 @@ public:
 	void getDataSourceConfig(DataSourceConfig & config);
 	void getHolfuyConfig(HolfuyClientConfig & config);
 	void getDiffConfiguration(DiffCalculator & calculator);
+	void getPressureCalcConfig(PressureCalculator & pressureCalc);
 
 	void configureLogOutput();
 
@@ -99,7 +100,8 @@ public:
 									bool& useAsTemperature,
 									HolfuyClientConfig& holfuy,
 									DiffCalculator & calculator,
-									DataSourceConfig & source);
+									DataSourceConfig & source,
+									PressureCalculator& pressureCalc);
 
 
 

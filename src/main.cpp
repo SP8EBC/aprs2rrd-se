@@ -9,6 +9,7 @@
 #include <string>
 #include <queue>
 #include <unistd.h>
+#include <cmath>
 #include <libconfig.h++>
 
 #include "MySqlConnInterface.h"
@@ -24,6 +25,7 @@
 #include "HolfuyClientConfig.h"
 #include "HolfuyClient.h"
 #include "DiffCalculator.h"
+#include "PressureCalculator.h"
 
 #include "ConnectionTimeoutEx.h"
 #include "DataPresentation.h"
@@ -81,6 +83,7 @@ int main(int argc, char **argv){
 	HolfuyClientConfig holfuyConfig;
 	std::unique_ptr<HolfuyClient> holfuyClient;
 	DiffCalculator diffCalculator;
+	PressureCalculator pressureCalculator;
 
 
 	RRDFileDefinition sVectorRRDTemp;
@@ -115,16 +118,16 @@ int main(int argc, char **argv){
 
 	try {
 		programConfig.parseFile();
-		cout << "--- main:119 - Opening configuration file" << endl;
+		cout << "--- main:121 - Opening configuration file" << endl;
 	}
 
 	catch(const FileIOException &ex)
 	{
-		printf("--- main:124 - The configuration file cannot be opened.\r\n");
+		printf("--- main:126 - The configuration file cannot be opened.\r\n");
 		return -1;
 	}
 	catch(const ParseException &ex) {
-		printf("--- main:128 - Error during parsing a content of configuration file near line %d", ex.getLine());
+		printf("--- main:130 - Error during parsing a content of configuration file near line %d", ex.getLine());
 		return -2;
 	}
 
@@ -143,6 +146,7 @@ int main(int argc, char **argv){
 		programConfig.getHolfuyConfig(holfuyConfig);
 		programConfig.getDiffConfiguration(diffCalculator);
 		programConfig.getStationName();
+		programConfig.getPressureCalcConfig(pressureCalculator);
 
 		dataPresence.DebugOutput = Debug;
 		mysqlDb.Debug = Debug;
@@ -155,17 +159,17 @@ int main(int argc, char **argv){
 
 	}
 	catch (const SettingNotFoundException &ex) {
-		cout << "--- main:160 - Unrecoverable error during configuration file loading!" << endl;
+		cout << "--- main:162 - Unrecoverable error during configuration file loading!" << endl;
 		return -3;
 	}
 
 	aprsConfig.RetryServerLookup = true;
 
-	cout << "--- main:166 - Configuration parsed successfully" << endl;
+	cout << "--- main:168 - Configuration parsed successfully" << endl;
 
 	programConfig.configureLogOutput();
 
-	ProgramConfig::printConfigInPl(mysqlDb, aprsConfig, dataPresence, RRDCount, PlotsCount, telemetry, useFifthTelemAsTemperature, holfuyConfig, diffCalculator, sourceConfig);
+	ProgramConfig::printConfigInPl(mysqlDb, aprsConfig, dataPresence, RRDCount, PlotsCount, telemetry, useFifthTelemAsTemperature, holfuyConfig, diffCalculator, sourceConfig, pressureCalculator);
 
 	serialThread = new SerialAsioThread(syncCondition, syncLock, serialConfig.serialPort, serialConfig.baudrate);
 
@@ -262,7 +266,7 @@ int main(int argc, char **argv){
 
 						holfuyClient->getWxData(wxHolfuy);
 
-						std::cout << "--- main.cpp:267 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
+						std::cout << "--- main.cpp:269 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
 
 						wxHolfuy.PrintData();
 					}
@@ -306,11 +310,15 @@ int main(int argc, char **argv){
 					// if this feature is disabled completely the function will do nothing and return immediately
 					diffCalculator.calculate(wxIsTemp, wxSerialTemp, wxHolfuy, telemetry, wxDifference);
 
+					// recalculating pressure according to user configuration. If recalculation is not enabled
+					// the metod will return the same value as given on input
+					wxTarget.pressure = (int16_t)::roundf(pressureCalculator.convertPressure(wxTarget.pressure, wxTarget.temperature));
+
 					// each method below checks if passed WX packet is valid and if no they will
 					// exit immediately witout performing any changes
 
 					// printing target data
-					std::cout << "--- main.c:315 - Printing target WX data which will be used for further processing." << std::endl;
+					std::cout << "--- main.c:321 - Printing target WX data which will be used for further processing." << std::endl;
 					wxTarget.PrintData();
 
 					// limiting slew rates for measurements
@@ -364,7 +372,7 @@ int main(int argc, char **argv){
 				}
 				else {
 					if (Debug == true)
-						cout << "--- main.cpp:366 - This is not valid APRS packet" << endl;
+						cout << "--- main.cpp:375 - This is not valid APRS packet" << endl;
 				}
 			}
 			catch (ConnectionTimeoutEx &e) {
@@ -373,15 +381,15 @@ int main(int argc, char **argv){
 				break;
 			}
 			catch (std::exception &e) {
-				cout << "--- main:375 - std::exception " << e.what() << std::endl;
+				cout << "--- main:384 - std::exception " << e.what() << std::endl;
 			}
 			catch (...) {
-				cout << "--- main:378 - Unknown exception thrown during processing!" << std::endl;
+				cout << "--- main:387 - Unknown exception thrown during processing!" << std::endl;
 			}
 
 		}
 
-		std::cout << "--- main:383 - Connection to APRS server died. Reconnecting.." << std::endl;
+		std::cout << "--- main:392 - Connection to APRS server died. Reconnecting.." << std::endl;
 
 	} while (mainLoopExit);		// end of main loop
 

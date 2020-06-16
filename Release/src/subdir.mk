@@ -17,6 +17,7 @@ CPP_SRCS += \
 ../src/HolfuyClientConfig.cpp \
 ../src/MySqlConnInterface.cpp \
 ../src/PlotFileDefinition.cpp \
+../src/PressureCalculator.cpp \
 ../src/ProgramConfig.cpp \
 ../src/RRDFileDefinition.cpp \
 ../src/SerialAsioThread.cpp \
@@ -40,6 +41,7 @@ OBJS += \
 ./src/HolfuyClientConfig.o \
 ./src/MySqlConnInterface.o \
 ./src/PlotFileDefinition.o \
+./src/PressureCalculator.o \
 ./src/ProgramConfig.o \
 ./src/RRDFileDefinition.o \
 ./src/SerialAsioThread.o \
@@ -63,6 +65,7 @@ CPP_DEPS += \
 ./src/HolfuyClientConfig.d \
 ./src/MySqlConnInterface.d \
 ./src/PlotFileDefinition.d \
+./src/PressureCalculator.d \
 ./src/ProgramConfig.d \
 ./src/RRDFileDefinition.d \
 ./src/SerialAsioThread.d \

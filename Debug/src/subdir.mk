@@ -6,7 +6,6 @@
 CPP_SRCS += \
 ../src/AprsAsioThread.cpp \
 ../src/AprsPacket.cpp \
-../src/AprsThread.cpp \
 ../src/AprsThreadConfig.cpp \
 ../src/AprsWXData.cpp \
 ../src/Ax25Decoder.cpp \
@@ -18,6 +17,7 @@ CPP_SRCS += \
 ../src/HolfuyClientConfig.cpp \
 ../src/MySqlConnInterface.cpp \
 ../src/PlotFileDefinition.cpp \
+../src/PressureCalculator.cpp \
 ../src/ProgramConfig.cpp \
 ../src/RRDFileDefinition.cpp \
 ../src/SerialAsioThread.cpp \
@@ -30,7 +30,6 @@ CPP_SRCS += \
 OBJS += \
 ./src/AprsAsioThread.o \
 ./src/AprsPacket.o \
-./src/AprsThread.o \
 ./src/AprsThreadConfig.o \
 ./src/AprsWXData.o \
 ./src/Ax25Decoder.o \
@@ -42,6 +41,7 @@ OBJS += \
 ./src/HolfuyClientConfig.o \
 ./src/MySqlConnInterface.o \
 ./src/PlotFileDefinition.o \
+./src/PressureCalculator.o \
 ./src/ProgramConfig.o \
 ./src/RRDFileDefinition.o \
 ./src/SerialAsioThread.o \
@@ -54,7 +54,6 @@ OBJS += \
 CPP_DEPS += \
 ./src/AprsAsioThread.d \
 ./src/AprsPacket.d \
-./src/AprsThread.d \
 ./src/AprsThreadConfig.d \
 ./src/AprsWXData.d \
 ./src/Ax25Decoder.d \
@@ -66,6 +65,7 @@ CPP_DEPS += \
 ./src/HolfuyClientConfig.d \
 ./src/MySqlConnInterface.d \
 ./src/PlotFileDefinition.d \
+./src/PressureCalculator.d \
 ./src/ProgramConfig.d \
 ./src/RRDFileDefinition.d \
 ./src/SerialAsioThread.d \

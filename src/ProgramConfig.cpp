@@ -542,7 +542,30 @@ void ProgramConfig::getDiffConfiguration(DiffCalculator& calculator) {
 	}
 }
 
+void ProgramConfig::getPressureCalcConfig(PressureCalculator& pressureCalc) {
+	libconfig::Setting &root = config.getRoot();
+	std::string from, to;
+	int altitude;
 
+	try {
+		libconfig::Setting &d = root["Pressure"];
+		d.lookupValue("StationMeasures", from);
+		d.lookupValue("ConvertTo", to);
+		d.lookupValue("Altitude", altitude);
+
+		boost::to_upper(from);
+		boost::to_upper(to);
+
+		pressureCalc.setStationMeasures(PressureCalculator::fromString(from));
+		pressureCalc.setConvertTo(PressureCalculator::fromString(to));
+		pressureCalc.setAltitude((uint16_t)altitude);
+		pressureCalc.setEnable(true);
+
+	}
+	catch (libconfig::SettingNotFoundException &ex) {
+		pressureCalc.setEnable(false);
+	}
+}
 
 void ProgramConfig::printConfigInPl(
 											MySqlConnInterface& mysqlDb,
@@ -554,7 +577,8 @@ void ProgramConfig::printConfigInPl(
 											bool& useAsTemperature,
 											HolfuyClientConfig& holfuy,
 											DiffCalculator & calculator,
-											DataSourceConfig & source
+											DataSourceConfig & source,
+											PressureCalculator& pressureCalc
 
 									) {
 
@@ -608,6 +632,13 @@ void ProgramConfig::printConfigInPl(
 		cout << "--- Wiatr: " << wxDataSourceToStr(source.wind) << endl;
 		cout << "--- Wilgotnosc: " << wxDataSourceToStr(source.humidity) << endl;
 		cout << endl;
+		if (pressureCalc.isEnable()) {
+			cout << "-------- KONFIGURACJA PRZELICZANIA CIŚNIENIA --------" << endl;
+			cout << "--- Stacja mierzy: " << PressureCalculator::toString(pressureCalc.getStationMeasures()) << endl;
+			cout << "--- Przelicz na: " << PressureCalculator::toString(pressureCalc.getConvertTo()) << endl;
+			cout << "--- Wysokość zainstalowania stacji: " << ::to_string(pressureCalc.getAltitude()) << endl;
+			cout << endl;
+		}
 		cout << "--------KONFIGURACJA PLIKÓW RRD-----" << endl;
 		for (unsigned i = 0; i < dataPresence.vRRDFiles.size(); i++) {
 			cout << "--- Typ: " << dataPresence.RevSwitchPlotType(dataPresence.vRRDFiles[i].eType) << " - Ścieżka: " << dataPresence.vRRDFiles[i].sPath <<endl;

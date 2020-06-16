@@ -68,7 +68,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="DiffCalculator_test.cpp|HolfuyClient_test.cpp|SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+						<entry excluding="PressureCalculator_test.cpp|DiffCalculator_test.cpp|HolfuyClient_test.cpp|SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -137,7 +137,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="DiffCalculator_test.cpp|HolfuyClient_test.cpp|SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+						<entry excluding="PressureCalculator_test.cpp|DiffCalculator_test.cpp|HolfuyClient_test.cpp|SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
