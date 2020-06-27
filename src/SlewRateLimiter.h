@@ -31,7 +31,7 @@ private:
 	float maxGustsSleew;
 	int32_t maxDirectionSleew;
 
-
+	uint32_t callCounter;
 public:
 	SlewRateLimiter();
 	virtual ~SlewRateLimiter();

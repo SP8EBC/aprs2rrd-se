@@ -312,13 +312,17 @@ int main(int argc, char **argv){
 
 					// recalculating pressure according to user configuration. If recalculation is not enabled
 					// the metod will return the same value as given on input
-					wxTarget.pressure = (int16_t)::roundf(pressureCalculator.convertPressure(wxTarget.pressure, wxTarget.temperature));
+					if (wxTarget.convertPressure)
+						wxTarget.pressure = (int16_t)::roundf(pressureCalculator.convertPressure(wxTarget.pressure, wxTarget.temperature));
+
+					// seting this flag to false will prevent reconverting pressure when its value hasn't been updated
+					wxTarget.convertPressure = false;
 
 					// each method below checks if passed WX packet is valid and if no they will
 					// exit immediately witout performing any changes
 
 					// printing target data
-					std::cout << "--- main.c:321 - Printing target WX data which will be used for further processing." << std::endl;
+					std::cout << "--- main.c:325 - Printing target WX data which will be used for further processing." << std::endl;
 					wxTarget.PrintData();
 
 					// limiting slew rates for measurements
@@ -372,7 +376,7 @@ int main(int argc, char **argv){
 				}
 				else {
 					if (Debug == true)
-						cout << "--- main.cpp:375 - This is not valid APRS packet" << endl;
+						cout << "--- main.cpp:379 - This is not valid APRS packet" << endl;
 				}
 			}
 			catch (ConnectionTimeoutEx &e) {
@@ -381,15 +385,15 @@ int main(int argc, char **argv){
 				break;
 			}
 			catch (std::exception &e) {
-				cout << "--- main:384 - std::exception " << e.what() << std::endl;
+				cout << "--- main:388 - std::exception " << e.what() << std::endl;
 			}
 			catch (...) {
-				cout << "--- main:387 - Unknown exception thrown during processing!" << std::endl;
+				cout << "--- main:391 - Unknown exception thrown during processing!" << std::endl;
 			}
 
 		}
 
-		std::cout << "--- main:392 - Connection to APRS server died. Reconnecting.." << std::endl;
+		std::cout << "--- main:396 - Connection to APRS server died. Reconnecting.." << std::endl;
 
 	} while (mainLoopExit);		// end of main loop
 

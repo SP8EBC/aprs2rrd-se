@@ -45,6 +45,8 @@ class AprsWXData
         bool useWind;
         bool usePressure;
         bool useHumidity;
+
+	bool convertPressure;
     public:
         bool valid;
 
