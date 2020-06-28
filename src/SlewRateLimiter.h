@@ -31,12 +31,65 @@ private:
 	float maxGustsSleew;
 	int32_t maxDirectionSleew;
 
+	bool changedFromDefault;
 
 public:
 	SlewRateLimiter();
 	virtual ~SlewRateLimiter();
 
 	void limitFromSingleFrame(const AprsWXData & previous, AprsWXData & current);
+
+	void setMaxDirectionSleew(int32_t maxDirectionSleew) {
+		changedFromDefault = true;
+		this->maxDirectionSleew = maxDirectionSleew;
+	}
+
+	void setMaxGustsSleew(float maxGustsSleew) {
+		changedFromDefault = true;
+		this->maxGustsSleew = maxGustsSleew;
+	}
+
+	void setMaxPressureSlew(int16_t maxPressureSlew) {
+		changedFromDefault = true;
+
+		this->maxPressureSlew = maxPressureSlew;
+	}
+
+	void setMaxSpeedSleew(float maxSpeedSleew) {
+		changedFromDefault = true;
+
+		this->maxSpeedSleew = maxSpeedSleew;
+	}
+
+	void setMaxTempSlew(float maxTempSlew) {
+		changedFromDefault = true;
+
+		this->maxTempSlew = maxTempSlew;
+	}
+
+	bool isChangedFromDefault() const {
+		return changedFromDefault;
+	}
+
+	int32_t getMaxDirectionSleew() const {
+		return maxDirectionSleew;
+	}
+
+	float getMaxGustsSleew() const {
+		return maxGustsSleew;
+	}
+
+	int16_t getMaxPressureSlew() const {
+		return maxPressureSlew;
+	}
+
+	float getMaxSpeedSleew() const {
+		return maxSpeedSleew;
+	}
+
+	float getMaxTempSlew() const {
+		return maxTempSlew;
+	}
 };
 
 #endif /* SLEWRATELIMITER_H_ */

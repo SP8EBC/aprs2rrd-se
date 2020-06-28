@@ -288,7 +288,7 @@ std::string ProgramConfig::getDebugLogFn() {
 
 }
 
-void ProgramConfig::configureLogOutput() {
+bool ProgramConfig::configureLogOutput() {
 	if (this->Debug == true) {
 		cout << "--- Tryb debugowania włączony" << endl;
 		cout << endl;
@@ -297,10 +297,16 @@ void ProgramConfig::configureLogOutput() {
 				cout << "--- Wyjście z konsoli przekierownane do pliku: " << this->DebugLogFn;
 				//fDebug.open(LogFile.c_str());
 				//cout.rdbuf(fDebug.rdbuf());
-				freopen(this->DebugLogFn.c_str(), "w", stdout);
-				freopen(this->DebugLogFn.c_str(), "w", stderr);
+				FILE* result_out = freopen(this->DebugLogFn.c_str(), "w", stdout);
+				FILE* result_err = freopen(this->DebugLogFn.c_str(), "w", stderr);
+
+				if (result_out == NULL || result_err == NULL) {
+					return false;
+				}
 		}
 	}
+
+	return true;
 }
 
 void ProgramConfig::getDataSourceConfig(DataSourceConfig& config_out) {
@@ -567,6 +573,33 @@ void ProgramConfig::getPressureCalcConfig(PressureCalculator& pressureCalc) {
 	}
 }
 
+void ProgramConfig::getSlewRateLimitConfig(SlewRateLimiter& limiter) {
+	float temperatureSlew;
+	int32_t pressureSlew;
+	float speedSlew;
+	float gustsSlew;
+//	int32_t directionSlew;
+
+	libconfig::Setting &root = config.getRoot();
+	try {
+		libconfig::Setting &slew = root["SlewLimit"];
+
+		slew.lookupValue("Temperature", temperatureSlew);
+		slew.lookupValue("Pressure", pressureSlew);
+		slew.lookupValue("WindSpeed", speedSlew);
+		slew.lookupValue("WindGusts", gustsSlew);
+
+		limiter.setMaxTempSlew(temperatureSlew);
+		limiter.setMaxPressureSlew(pressureSlew);
+		limiter.setMaxSpeedSleew(speedSlew);
+		limiter.setMaxGustsSleew(gustsSlew);
+
+	}
+	catch (libconfig::SettingNotFoundException &ex) {
+		;
+	}
+}
+
 void ProgramConfig::printConfigInPl(
 											MySqlConnInterface& mysqlDb,
 											AprsThreadConfig& aprsConfig,
@@ -578,7 +611,8 @@ void ProgramConfig::printConfigInPl(
 											HolfuyClientConfig& holfuy,
 											DiffCalculator & calculator,
 											DataSourceConfig & source,
-											PressureCalculator& pressureCalc
+											PressureCalculator& pressureCalc,
+											SlewRateLimiter & limiter
 
 									) {
 
@@ -632,6 +666,17 @@ void ProgramConfig::printConfigInPl(
 		cout << "--- Wiatr: " << wxDataSourceToStr(source.wind) << endl;
 		cout << "--- Wilgotnosc: " << wxDataSourceToStr(source.humidity) << endl;
 		cout << endl;
+		if (limiter.isChangedFromDefault()) {
+			cout << "--------KONFIGURACJA OGRANICZNIKA SZYBKOŚCI NARASTANIA--------" << endl;
+			cout << "----- Jeżeli zmiana parametrów w dwóch kolejnych ramkach -----" << endl;
+			cout << "----- będzie większa niż poniższa, to zmiana ta zostanie -----" << endl;
+			cout << "------------------ ograniczona do poniższych -----------------" << endl;
+			cout << "--- Maksymalna zmiana temperatury: " << limiter.getMaxTempSlew() << endl;
+			cout << "--- Maksymalna zmiana ciśnienia: " << limiter.getMaxPressureSlew() << endl;
+			cout << "--- Maksymalna zmiana prędkoci wiatru: " << limiter.getMaxSpeedSleew() << endl;
+			cout << "--- Maksymalna zmiana porywów wiatru: " << limiter.getMaxGustsSleew() << endl;
+			cout << endl;
+		}
 		if (pressureCalc.isEnable()) {
 			cout << "-------- KONFIGURACJA PRZELICZANIA CIŚNIENIA --------" << endl;
 			cout << "--- Stacja mierzy: " << PressureCalculator::toString(pressureCalc.getStationMeasures()) << endl;

@@ -22,6 +22,7 @@
 #include "HolfuyClientConfig.h"
 #include "DiffCalculator.h"
 #include "PressureCalculator.h"
+#include "SlewRateLimiter.h"
 
 class ProgramConfig {
 	std::string configFilename;
@@ -69,8 +70,9 @@ public:
 	void getHolfuyConfig(HolfuyClientConfig & config);
 	void getDiffConfiguration(DiffCalculator & calculator);
 	void getPressureCalcConfig(PressureCalculator & pressureCalc);
+	void getSlewRateLimitConfig(SlewRateLimiter & limiter);
 
-	void configureLogOutput();
+	bool configureLogOutput();
 
 	bool getDebug();
 	bool getDebugToFile();
@@ -101,7 +103,8 @@ public:
 									HolfuyClientConfig& holfuy,
 									DiffCalculator & calculator,
 									DataSourceConfig & source,
-									PressureCalculator& pressureCalc);
+									PressureCalculator& pressureCalc,
+									SlewRateLimiter & limiter);
 
 
 

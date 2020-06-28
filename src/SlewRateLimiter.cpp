@@ -16,6 +16,8 @@ SlewRateLimiter::SlewRateLimiter() {
 	maxDirectionSleew = MAX_DIRECTION_SLEW;
 	maxGustsSleew = MAX_GUSTS_SLEW;
 
+	changedFromDefault = false;
+
 }
 
 SlewRateLimiter::~SlewRateLimiter() {

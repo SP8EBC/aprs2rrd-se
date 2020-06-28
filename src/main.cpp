@@ -167,9 +167,13 @@ int main(int argc, char **argv){
 
 	cout << "--- main:168 - Configuration parsed successfully" << endl;
 
-	programConfig.configureLogOutput();
+	bool result = programConfig.configureLogOutput();
 
-	ProgramConfig::printConfigInPl(mysqlDb, aprsConfig, dataPresence, RRDCount, PlotsCount, telemetry, useFifthTelemAsTemperature, holfuyConfig, diffCalculator, sourceConfig, pressureCalculator);
+	if (!result) {
+		return -5;
+	}
+
+	ProgramConfig::printConfigInPl(mysqlDb, aprsConfig, dataPresence, RRDCount, PlotsCount, telemetry, useFifthTelemAsTemperature, holfuyConfig, diffCalculator, sourceConfig, pressureCalculator, limiter);
 
 	serialThread = new SerialAsioThread(syncCondition, syncLock, serialConfig.serialPort, serialConfig.baudrate);
 
