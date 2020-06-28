@@ -590,7 +590,7 @@ void ProgramConfig::getSlewRateLimitConfig(SlewRateLimiter& limiter) {
 		slew.lookupValue("WindGusts", gustsSlew);
 
 		limiter.setMaxTempSlew(temperatureSlew);
-		limiter.setMaxPressureSlew(pressureSlew);
+		limiter.setMaxPressureSlew((int16_t)pressureSlew);
 		limiter.setMaxSpeedSleew(speedSlew);
 		limiter.setMaxGustsSleew(gustsSlew);
 

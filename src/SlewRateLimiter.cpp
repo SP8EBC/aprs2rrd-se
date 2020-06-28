@@ -7,9 +7,10 @@
 
 #include "SlewRateLimiter.h"
 #include <cmath>
+#include <iostream>
 
 SlewRateLimiter::SlewRateLimiter() {
-	// TODO Auto-generated constructor stub
+	//
 	maxTempSlew = MAX_TEMP_SLEW;
 	maxPressureSlew = MAX_PRESSURE_SLEW;
 	maxSpeedSleew = MAX_SPEED_SLEW;
@@ -22,7 +23,7 @@ SlewRateLimiter::SlewRateLimiter() {
 }
 
 SlewRateLimiter::~SlewRateLimiter() {
-	// TODO Auto-generated destructor stub
+	//
 }
 
 void SlewRateLimiter::limitFromSingleFrame(const AprsWXData& previous,
@@ -53,6 +54,8 @@ void SlewRateLimiter::limitFromSingleFrame(const AprsWXData& previous,
 
 	if (current.useWind && abs(windSpdDiff) > maxSpeedSleew)
 	{
+		std::cout << "SlewRateLimiter::limitFromSingleFrame:57 - Limiting windspeed" << std::endl;
+
 		// if the wind speed changed above the maximum speed limit apply a correction
 		if (windSpdDiff < 0)
 			// if difference is negative it means that previous value of wind speed is greater than current
@@ -64,6 +67,8 @@ void SlewRateLimiter::limitFromSingleFrame(const AprsWXData& previous,
 
 	// simmilar thing for gusts
 	if (current.useWind && abs(windGstDiff) > maxGustsSleew) {
+		std::cout << "SlewRateLimiter::limitFromSingleFrame:70 - Limiting wind gusts" << std::endl;
+
 		// if the wind speed changed above the maximum speed limit apply a correction
 		if (windGstDiff < 0)
 			// if difference is negative it means that previous value of wind speed is greater than current
@@ -75,6 +80,8 @@ void SlewRateLimiter::limitFromSingleFrame(const AprsWXData& previous,
 
 	// simmilar thing for gusts
 	if (current.useTemperature && abs(temperatureDiff) > maxTempSlew) {
+		std::cout << "SlewRateLimiter::limitFromSingleFrame:83 - Limiting temperature" << std::endl;
+
 		// if the wind speed changed above the maximum speed limit apply a correction
 		if (temperatureDiff < 0)
 			// if difference is negative it means that previous value of wind speed is greater than current

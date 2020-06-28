@@ -45,23 +45,39 @@ public:
 	}
 
 	void setMaxGustsSleew(float maxGustsSleew) {
+		if (maxPressureSlew > 20.0f || maxPressureSlew < -20.0f) {
+			return;
+		}
+
 		changedFromDefault = true;
 		this->maxGustsSleew = maxGustsSleew;
 	}
 
 	void setMaxPressureSlew(int16_t maxPressureSlew) {
+		if (maxPressureSlew > 40 || maxPressureSlew < -40) {
+			return;
+		}
+
 		changedFromDefault = true;
 
 		this->maxPressureSlew = maxPressureSlew;
 	}
 
 	void setMaxSpeedSleew(float maxSpeedSleew) {
+		if (maxPressureSlew > 20.0f || maxPressureSlew < -20.0f) {
+			return;
+		}
+
 		changedFromDefault = true;
 
 		this->maxSpeedSleew = maxSpeedSleew;
 	}
 
 	void setMaxTempSlew(float maxTempSlew) {
+		if (maxPressureSlew > 20.0f || maxPressureSlew < -20.0f) {
+			return;
+		}
+
 		changedFromDefault = true;
 
 		this->maxTempSlew = maxTempSlew;
