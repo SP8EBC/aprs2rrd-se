@@ -147,6 +147,7 @@ int main(int argc, char **argv){
 		programConfig.getDiffConfiguration(diffCalculator);
 		programConfig.getStationName();
 		programConfig.getPressureCalcConfig(pressureCalculator);
+		programConfig.getSlewRateLimitConfig(limiter);
 
 		dataPresence.DebugOutput = Debug;
 		mysqlDb.Debug = Debug;
