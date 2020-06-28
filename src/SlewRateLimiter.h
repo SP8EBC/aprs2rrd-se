@@ -30,9 +30,9 @@ private:
 	float maxSpeedSleew;
 	float maxGustsSleew;
 	int32_t maxDirectionSleew;
-
 	bool changedFromDefault;
 
+	uint32_t callCounter;
 public:
 	SlewRateLimiter();
 	virtual ~SlewRateLimiter();

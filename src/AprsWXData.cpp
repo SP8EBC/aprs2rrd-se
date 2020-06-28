@@ -30,6 +30,8 @@ AprsWXData::AprsWXData() {
     rain_day = 0;
     valid = false;
 
+	convertPressure = false;
+
     useHumidity = false;
     usePressure = false;
     useTemperature = false;
@@ -470,10 +472,17 @@ void AprsWXData::copy(const AprsWXData & source, const DataSourceConfig & config
 		if (source.call == config.primaryCall &&
 			source.ssid == config.primarySsid) {
 
+			if (this->DebugOutput)
+				std::cout << "--- AprsWXData::copy:473 - This is data from primary APRS-IS call." << std::endl;
+
 			true_if_primary = true;
 		}
 		else if (source.call == config.secondaryCall &&
 				source.ssid == config.secondarySsid) {
+
+			if (this->DebugOutput)
+				std::cout << "--- AprsWXData::copy:473 - This is data from secondary APRS-IS call." << std::endl;
+
 
 			true_if_primary = false;
 		}
@@ -498,6 +507,7 @@ void AprsWXData::copy(const AprsWXData & source, const DataSourceConfig & config
 			(config.pressure == WxDataSource::IS_SECONDARY && !true_if_primary)) {
 			this->pressure = source.pressure;
 			this->usePressure = true;
+			this->convertPressure = true;
 		}
 
 		// check if APRSIS should be used a source of humidity
@@ -541,6 +551,7 @@ void AprsWXData::copy(const AprsWXData & source, const DataSourceConfig & config
 		if (config.pressure == WxDataSource::SERIAL) {
 			this->pressure = source.pressure;
 			this->usePressure = true;
+			this->convertPressure = true;
 		}
 
 		if (config.humidity ==  WxDataSource::SERIAL) {
@@ -579,6 +590,7 @@ void AprsWXData::copy(const AprsWXData & source, const DataSourceConfig & config
 		if (config.pressure == WxDataSource::HOLFUY) {
 			this->pressure = source.pressure;
 			this->usePressure = true;
+			this->convertPressure = true;
 		}
 
 		if (config.humidity ==  WxDataSource::HOLFUY) {

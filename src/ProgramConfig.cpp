@@ -643,8 +643,10 @@ void ProgramConfig::printConfigInPl(
 		cout << "--------KONFIGURACJA ŁĄCZNOŚCI Z SERWEREM APRS-----" << endl;
 		cout << "--- Adres Serwera: " << aprsConfig.ServerURL << endl;
 		cout << "--- Port Serwera: " << aprsConfig.ServerPort << endl;
-		cout << "--- Znak monitorowanej stacji: " << aprsConfig.StationCall << endl;
-		cout << "--- SSID monitorowanej stacji: " << aprsConfig.StationSSID << endl;
+		cout << "--- Znak pierwszej  monitorowanej stacji: " << aprsConfig.StationCall << endl;
+		cout << "--- SSID pierwszej monitorowanej stacji: " << aprsConfig.StationSSID << endl;
+		cout << "--- Znak drugiej monitorowanej stacji: " << aprsConfig.SecondaryCall << endl;
+		cout << "--- SSID drugiej monitorowanej stacji: " << aprsConfig.SecondarySSID << endl;
 		cout << "--- Własny znak: " << aprsConfig.Call << endl;
 		cout << "--- Aprs Secret: " << aprsConfig.Passwd << endl;
 		cout << endl;
@@ -665,6 +667,14 @@ void ProgramConfig::printConfigInPl(
 		cout << "--- Cisnienie: " << wxDataSourceToStr(source.pressure) << endl;
 		cout << "--- Wiatr: " << wxDataSourceToStr(source.wind) << endl;
 		cout << "--- Wilgotnosc: " << wxDataSourceToStr(source.humidity) << endl;
+		if (source.primaryCall != aprsConfig.StationCall || source.primarySsid != aprsConfig.StationSSID) {
+			cout << "--- Uwaga! Znak i SSID pierwszej monitorowanej stacji różny od konfiguracji APRS-IS" << endl;
+			cout << "---  " << source.primaryCall << "-" << (int)source.primarySsid << endl;
+		}
+		if (source.secondaryCall != aprsConfig.SecondaryCall || source.secondarySsid != aprsConfig.SecondarySSID) {
+			cout << "--- Uwaga! Znak i SSID drugiej monitorowanej stacji różny od konfiguracji APRS-IS" << endl;
+			cout << "---  " << source.secondaryCall << "-" << (int)source.secondarySsid << endl;
+		}
 		cout << endl;
 		if (limiter.isChangedFromDefault()) {
 			cout << "--------KONFIGURACJA OGRANICZNIKA SZYBKOŚCI NARASTANIA--------" << endl;

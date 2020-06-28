@@ -18,6 +18,7 @@ SlewRateLimiter::SlewRateLimiter() {
 
 	changedFromDefault = false;
 
+	callCounter = 0;
 }
 
 SlewRateLimiter::~SlewRateLimiter() {
@@ -26,6 +27,11 @@ SlewRateLimiter::~SlewRateLimiter() {
 
 void SlewRateLimiter::limitFromSingleFrame(const AprsWXData& previous,
 		AprsWXData& current) {
+
+	this->callCounter++;
+
+	if (this->callCounter < 8)
+		return;
 
 	// calculating differences
 	float windDirDiff = current.wind_direction - previous.wind_direction;
