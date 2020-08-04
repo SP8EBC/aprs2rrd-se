@@ -178,8 +178,13 @@ void DiffCalculator::calculate(const AprsWXData& aprsIS,
 	}
 
 	out = *temporary - *temporary2;
-	out.useWind = true;
-	out.useTemperature = true;
+
+	if (temporary->useWind && temporary2->useWind)
+		out.useWind = true;
+
+	if (temporary->useTemperature && temporary2->useTemperature)
+		out.useTemperature = true;
+
 	out.useHumidity = false;
 	out.usePressure = false;
 

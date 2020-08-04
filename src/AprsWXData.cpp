@@ -339,7 +339,7 @@ AprsWXData& AprsWXData::operator -(AprsWXData& _in) {
 	// scalar values are subtracted directly
 	if (_in.humidity && this->humidity) {
 		if (AprsWXData::DebugOutput) {
-			std::cout << "--- AprsWXData::operator -:352 - subtracting wind parameters" << std::endl;
+			std::cout << "--- AprsWXData::operator -:342 - subtracting humidity parameters" << std::endl;
 		}
 
 		this->humidity = ::abs(this->humidity - _in.humidity);
@@ -347,7 +347,7 @@ AprsWXData& AprsWXData::operator -(AprsWXData& _in) {
 
 	if (_in.useTemperature && this->useTemperature) {
 		if (AprsWXData::DebugOutput) {
-			std::cout << "--- AprsWXData::operator -:352 - subtracting wind parameters" << std::endl;
+			std::cout << "--- AprsWXData::operator -:350 - subtracting temperature parameters" << std::endl;
 		}
 
 		this->temperature -= _in.temperature;
@@ -355,7 +355,7 @@ AprsWXData& AprsWXData::operator -(AprsWXData& _in) {
 
 	if (_in.usePressure && this->usePressure) {
 		if (AprsWXData::DebugOutput) {
-			std::cout << "--- AprsWXData::operator -:352 - subtracting wind parameters" << std::endl;
+			std::cout << "--- AprsWXData::operator -:358 - subtracting pressure parameters" << std::endl;
 		}
 
 		this->pressure = ::abs(this->pressure - _in.pressure);
@@ -364,7 +364,7 @@ AprsWXData& AprsWXData::operator -(AprsWXData& _in) {
 
 	if (_in.useWind && this->useWind) {
 		if (AprsWXData::DebugOutput) {
-			std::cout << "--- AprsWXData::operator -:352 - subtracting wind parameters" << std::endl;
+			std::cout << "--- AprsWXData::operator -:367 - subtracting wind parameters" << std::endl;
 		}
 
 		// wind direction is a vector value so there are always two
