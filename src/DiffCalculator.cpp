@@ -8,6 +8,7 @@
 #include "DiffCalculator.h"
 
 #include <memory>
+#include <iostream>
 
 DiffCalculator::DiffCalculator() {
 	// TODO Auto-generated constructor stub
@@ -28,6 +29,8 @@ void DiffCalculator::calculate(const AprsWXData& aprsIS,
 	if (!this->enable)
 		return;
 
+	std::cout << "--- DiffCalculator::calculate:31 - preparing the differential calculation" << std::endl;
+
 	std::unique_ptr<AprsWXData> temporary = std::make_unique<AprsWXData>();
 	std::unique_ptr<AprsWXData> temporary2 = std::make_unique<AprsWXData>();
 
@@ -35,24 +38,26 @@ void DiffCalculator::calculate(const AprsWXData& aprsIS,
 		case WxDataSource::IS_PRIMARY: {
 			if (aprsIS.is_primary) {
 				temporary->temperature = aprsIS.temperature;
+				temporary->useTemperature = true;
 			}
 			else {
-				return;
+				;
 			}
 			break;
 		}
 		case WxDataSource::IS_SECONDARY: {
 			if (aprsIS.is_secondary) {
 				temporary->temperature = aprsIS.temperature;
+				temporary->useTemperature = true;
 			}
 			else {
-				return;
+				;
 			}
 			break;
 		}
-		case WxDataSource::SERIAL: temporary->temperature = serial.temperature; break;
-		case WxDataSource::TELEMETRY: temporary->temperature = telemetry.getCh5(); break;
-		case WxDataSource::HOLFUY: temporary->temperature = holfuy.temperature; break;
+		case WxDataSource::SERIAL: temporary->temperature = serial.temperature; temporary->useTemperature = true; break;
+		case WxDataSource::TELEMETRY: temporary->temperature = telemetry.getCh5(); temporary->useTemperature = true; break;
+		case WxDataSource::HOLFUY: temporary->temperature = holfuy.temperature; temporary->useTemperature = true; break;
 		case WxDataSource::UNKNOWN: return;
 	}
 
@@ -60,24 +65,26 @@ void DiffCalculator::calculate(const AprsWXData& aprsIS,
 		case WxDataSource::IS_PRIMARY: {
 			if (aprsIS.is_primary) {
 				temporary2->temperature = aprsIS.temperature;
+				temporary2->useTemperature = true;
 			}
 			else {
-				return;
+				;
 			}
 			break;
 		}
 		case WxDataSource::IS_SECONDARY: {
 			if (aprsIS.is_secondary) {
 				temporary2->temperature = aprsIS.temperature;
+				temporary2->useTemperature = true;
 			}
 			else {
-				return;
+				;
 			}
 			break;
 		}
-		case WxDataSource::SERIAL: temporary2->temperature = serial.temperature; break;
-		case WxDataSource::TELEMETRY: temporary2->temperature = telemetry.getCh5(); break;
-		case WxDataSource::HOLFUY: temporary2->temperature = holfuy.temperature; break;
+		case WxDataSource::SERIAL: temporary2->temperature = serial.temperature; temporary2->useTemperature = true; break;
+		case WxDataSource::TELEMETRY: temporary2->temperature = telemetry.getCh5(); temporary2->useTemperature = true; break;
+		case WxDataSource::HOLFUY: temporary2->temperature = holfuy.temperature; temporary2->useTemperature = true; break;
 		case WxDataSource::UNKNOWN: return;
 	}
 
@@ -88,10 +95,11 @@ void DiffCalculator::calculate(const AprsWXData& aprsIS,
 				temporary->wind_direction = aprsIS.wind_direction;
 				temporary->wind_gusts = aprsIS.wind_gusts;
 				temporary->wind_speed = aprsIS.wind_speed;
+				temporary->useWind = true;
 				break;
 			}
 			else {
-				return;
+				;
 			}
 			break;
 		}
@@ -100,10 +108,11 @@ void DiffCalculator::calculate(const AprsWXData& aprsIS,
 				temporary->wind_direction = aprsIS.wind_direction;
 				temporary->wind_gusts = aprsIS.wind_gusts;
 				temporary->wind_speed = aprsIS.wind_speed;
+				temporary->useWind = true;
 				break;
 			}
 			else {
-				return;
+				;
 			}
 			break;
 		}
@@ -129,10 +138,11 @@ void DiffCalculator::calculate(const AprsWXData& aprsIS,
 			temporary2->wind_direction = aprsIS.wind_direction;
 			temporary2->wind_gusts = aprsIS.wind_gusts;
 			temporary2->wind_speed = aprsIS.wind_speed;
+			temporary2->useWind = true;
 			break;
 		}
 		else {
-			return;
+			;
 		}
 		break;
 	}
@@ -141,10 +151,11 @@ void DiffCalculator::calculate(const AprsWXData& aprsIS,
 			temporary2->wind_direction = aprsIS.wind_direction;
 			temporary2->wind_gusts = aprsIS.wind_gusts;
 			temporary2->wind_speed = aprsIS.wind_speed;
+			temporary2->useWind = true;
 			break;
 		}
 		else {
-			return;
+			;
 		}
 		break;
 	}
@@ -152,6 +163,7 @@ void DiffCalculator::calculate(const AprsWXData& aprsIS,
 		temporary2->wind_direction = serial.wind_direction;
 		temporary2->wind_gusts = serial.wind_gusts;
 		temporary2->wind_speed = serial.wind_speed;
+		temporary2->useWind = true;
 		break;
 	}
 	case WxDataSource::TELEMETRY: return;
@@ -159,6 +171,7 @@ void DiffCalculator::calculate(const AprsWXData& aprsIS,
 		temporary2->wind_direction = holfuy.wind_direction;
 		temporary2->wind_gusts = holfuy.wind_gusts;
 		temporary2->wind_speed = holfuy.wind_speed;
+		temporary2->useWind = true;
 		break;
 	}
 	case WxDataSource::UNKNOWN: return;
