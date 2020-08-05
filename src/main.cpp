@@ -160,13 +160,13 @@ int main(int argc, char **argv){
 
 	}
 	catch (const SettingNotFoundException &ex) {
-		cout << "--- main:162 - Unrecoverable error during configuration file loading!" << endl;
+		cout << "--- main:163 - Unrecoverable error during configuration file loading!" << endl;
 		return -3;
 	}
 
 	aprsConfig.RetryServerLookup = true;
 
-	cout << "--- main:168 - Configuration parsed successfully" << endl;
+	cout << "--- main:169 - Configuration parsed successfully" << endl;
 
 	bool result = programConfig.configureLogOutput();
 
@@ -271,7 +271,7 @@ int main(int argc, char **argv){
 
 						holfuyClient->getWxData(wxHolfuy);
 
-						std::cout << "--- main.cpp:269 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
+						std::cout << "--- main.cpp:274 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
 
 						wxHolfuy.PrintData();
 					}
@@ -327,7 +327,7 @@ int main(int argc, char **argv){
 					// exit immediately witout performing any changes
 
 					// printing target data
-					std::cout << "--- main.c:325 - Printing target WX data which will be used for further processing." << std::endl;
+					std::cout << "--- main.c:330 - Printing target WX data which will be used for further processing." << std::endl;
 					wxTarget.PrintData();
 
 					// limiting slew rates for measurements
@@ -380,8 +380,12 @@ int main(int argc, char **argv){
 
 				}
 				else {
-					if (Debug == true)
-						cout << "--- main.cpp:379 - This is not valid APRS packet" << endl;
+					cout << "--- main.cpp:383 - This is not valid APRS packet" << endl;
+
+					if (Debug)
+						cout << "--- main.cpp:386 - Inserting data from previous frame into RRD file" << endl;
+					// insert previous data into RRD file
+					dataPresence.FetchDataInRRD(&wxLastTarget);
 				}
 			}
 			catch (ConnectionTimeoutEx &e) {
@@ -390,15 +394,15 @@ int main(int argc, char **argv){
 				break;
 			}
 			catch (std::exception &e) {
-				cout << "--- main:388 - std::exception " << e.what() << std::endl;
+				cout << "--- main:395 - std::exception " << e.what() << std::endl;
 			}
 			catch (...) {
-				cout << "--- main:391 - Unknown exception thrown during processing!" << std::endl;
+				cout << "--- main:398 - Unknown exception thrown during processing!" << std::endl;
 			}
 
 		}
 
-		std::cout << "--- main:396 - Connection to APRS server died. Reconnecting.." << std::endl;
+		std::cout << "--- main:403 - Connection to APRS server died. Reconnecting.." << std::endl;
 
 	} while (mainLoopExit);		// end of main loop
 
