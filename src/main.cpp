@@ -382,8 +382,8 @@ int main(int argc, char **argv){
 				else {
 					cout << "--- main.cpp:383 - This is not valid APRS packet" << endl;
 
-					if (Debug)
-						cout << "--- main.cpp:386 - Inserting data from previous frame into RRD file" << endl;
+					//if (Debug)
+					//	cout << "--- main.cpp:386 - Inserting data from previous frame into RRD file" << endl;
 					// insert previous data into RRD file
 					dataPresence.FetchDataInRRD(&wxLastTarget);
 				}

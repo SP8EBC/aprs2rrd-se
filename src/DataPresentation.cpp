@@ -104,7 +104,7 @@ void DataPresentation::FetchDataInRRD(const AprsWXData* const cInput) {
 		return;
 
 	if (!cInput->valid) {
-		cout << "--- DataPresentation::FetchDataInRRD:107 - Input data is invalid and cannot be used";
+		cout << "--- DataPresentation::FetchDataInRRD:107 - Input data is invalid and cannot be used" << endl;
 		return;
 	}
 
