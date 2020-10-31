@@ -152,10 +152,10 @@ void HolfuyClient::parse() {
 
 	// A source buffer for DOM parser
 	xercesc_3_1::MemBufInputSource* memory_src = new xercesc_3_1::MemBufInputSource(
-																	source,
-																	this->response.length(),
-																	"response",
-																	false);
+															source,
+															this->response.length(),
+															"response",
+															false);
 
 	// parsing the document from the memory
 	dom_parser->parse(*memory_src);
@@ -174,6 +174,8 @@ void HolfuyClient::parse() {
 	this->response = "";
 	this->downloadResult = true;
 
+	delete memory_src;
+	delete dom_parser;
 
 }
 
