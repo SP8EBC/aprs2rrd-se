@@ -40,3 +40,5 @@ APRS2RRD
 /Debug/
 #/Release/
 /Release/
+/Debug_xerces_3_2/
+/Release_xerces_3_2/
