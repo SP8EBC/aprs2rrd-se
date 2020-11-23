@@ -44,7 +44,7 @@ all: APRS2RRD
 APRS2RRD: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C++ Linker'
-	g++ -L/usr/lib/i386-linux-gnu -L/usr/lib -o "APRS2RRD" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++ -L/lib/x86_64-linux-gnu -L/lib/i386-linux-gnu -L/usr/lib -o "APRS2RRD" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
