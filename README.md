@@ -10,8 +10,17 @@ System requiremenets:
 2) libboost and libboost-dev, version 1.58 or newer (pakages: asio, thread, date-time, regex, system)
 3) libconfig++ and libconfig++-dev, version 1.5
 4) libmysql++ and libmysql++-dev, version 3.2.2
-5) screen
-6) rrdtool
+5) libxerces-c and libxerces-c-dev
+6) libcurl and libcurl-dev
+7) screen
+8) rrdtool
+
+If You have linking errors like that
+
+	/usr/bin/ld: skipping incompatible /usr/lib/i386-linux-gnu/libgcc_s.so.1 when searching for libgcc_s.so.1
+	/usr/bin/ld: skipping incompatible /usr/lib/i386-linux-gnu/libgcc_s.so.1 when searching for libgcc_s.so.1
+
+You should install libc6-dev-i386
 
 
 Mateusz Lubecki

@@ -18,6 +18,11 @@
 
 #include "AprsWXData.h"
 
+#ifdef USE_XERCES_3_2
+using namespace xercesc_3_2;
+#else
+using namespace xercesc_3_1;
+#endif
 class HolfuyClient {
 private:
 	HolfuyClient* ptr;
@@ -64,9 +69,9 @@ private:
 		return this->apiUrl;
 	}
 
-	void parseElement(xercesc_3_1::DOMElement* element);
+	void parseElement(DOMElement* element);
 
-	void checkAndRetrievieParameter(char* node_name, xercesc_3_1::DOMElement* element);
+	void checkAndRetrievieParameter(char* node_name, DOMElement* element);
 
 	XMLCh* dateCh;
 

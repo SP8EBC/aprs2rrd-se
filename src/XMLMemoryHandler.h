@@ -11,7 +11,13 @@
 #include <xercesc/sax/HandlerBase.hpp>
 #include <xercesc/util/XercesDefs.hpp>
 
-class XMLMemoryHandler : public xercesc_3_1::HandlerBase {
+#ifdef USE_XERCES_3_2
+using namespace xercesc_3_2;
+#else
+using namespace xercesc_3_1;
+#endif
+
+class XMLMemoryHandler : public HandlerBase {
 
 	int errorCounter = 0;
 
@@ -25,9 +31,9 @@ public:
 //    void resetDocument();
 
 
-    void warning(const xercesc_3_1::SAXParseException& exc);
-    void error(const xercesc_3_1::SAXParseException& exc);
-    void fatalError(const xercesc_3_1::SAXParseException& exc);
+    void warning(const SAXParseException& exc);
+    void error(const SAXParseException& exc);
+    void fatalError(const SAXParseException& exc);
 };
 
 #endif /* XMLMEMORYHANDLER_H_ */

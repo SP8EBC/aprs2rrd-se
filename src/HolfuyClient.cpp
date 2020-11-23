@@ -48,21 +48,21 @@ HolfuyClient::HolfuyClient(uint32_t id, std::string apiPassword) : stationId(id)
 	response.reserve(255);
 
 	// Initializing the XML stuff in Xerces-C++ library
-	xercesc_3_1::XMLPlatformUtils::Initialize();
+	XMLPlatformUtils::Initialize();
 
-	dateCh = xercesc_3_1::XMLString::transcode("date");
+	dateCh = XMLString::transcode("date");
 
-	timeCh = xercesc_3_1::XMLString::transcode("time");
+	timeCh = XMLString::transcode("time");
 
-	windspeedCh = xercesc_3_1::XMLString::transcode("speed");
+	windspeedCh = XMLString::transcode("speed");
 
-	windgustsCh = xercesc_3_1::XMLString::transcode("gust");
+	windgustsCh = XMLString::transcode("gust");
 
-	winddirCh = xercesc_3_1::XMLString::transcode("dir");
+	winddirCh = XMLString::transcode("dir");
 
-	pressureCh = xercesc_3_1::XMLString::transcode("pressure");
+	pressureCh = XMLString::transcode("pressure");
 
-	temperatureCh = xercesc_3_1::XMLString::transcode("temp");
+	temperatureCh = XMLString::transcode("temp");
 
     header_string.fill(0);
 
@@ -73,7 +73,7 @@ HolfuyClient::HolfuyClient(uint32_t id, std::string apiPassword) : stationId(id)
 }
 
 HolfuyClient::~HolfuyClient() {
-	xercesc_3_1::XMLPlatformUtils::Terminate();
+	XMLPlatformUtils::Terminate();
 
 }
 
@@ -148,10 +148,10 @@ void HolfuyClient::parse() {
 	std::cout << this->response << std::endl;
 
 	// Creating the DOM parser
-	xercesc_3_1::XercesDOMParser* dom_parser = new xercesc_3_1::XercesDOMParser();
+	XercesDOMParser* dom_parser = new XercesDOMParser();
 
 	// A source buffer for DOM parser
-	xercesc_3_1::MemBufInputSource* memory_src = new xercesc_3_1::MemBufInputSource(
+	MemBufInputSource* memory_src = new MemBufInputSource(
 															source,
 															this->response.length(),
 															"response",
@@ -161,11 +161,11 @@ void HolfuyClient::parse() {
 	dom_parser->parse(*memory_src);
 
 	// retrieving the document
-	xercesc_3_1::DOMDocument* document =  dom_parser->getDocument();
+	DOMDocument* document =  dom_parser->getDocument();
 
 	// retrieving the root element. maybe SAX parser would be more convenient for
 	// this purpose but anyway..
-	xercesc_3_1::DOMElement* root = document->getDocumentElement();
+	DOMElement* root = document->getDocumentElement();
 
 	// start parsing on the tree
 	this->parseElement(root);
@@ -179,16 +179,16 @@ void HolfuyClient::parse() {
 
 }
 
-void HolfuyClient::parseElement(xercesc_3_1::DOMElement* element) {
+void HolfuyClient::parseElement(DOMElement* element) {
 
 	// decoding the node name
-	char* node_name = xercesc_3_1::XMLString::transcode(element->getNodeName());
+	char* node_name = XMLString::transcode(element->getNodeName());
 
 	// checking if this is somehow interesting parameter
 	this->checkAndRetrievieParameter(node_name, element);
 
 	// retrieving a list of all child nodes
-	xercesc_3_1::DOMNodeList* node_list = element->getChildNodes();
+	DOMNodeList* node_list = element->getChildNodes();
 
 	// casting the list size (amount of child nodes)
 	int nodes = static_cast<int>(node_list->getLength());
@@ -197,12 +197,12 @@ void HolfuyClient::parseElement(xercesc_3_1::DOMElement* element) {
 	for (int i = 0; i < nodes; i++) {
 
 		// checking the child type
-		xercesc_3_1::DOMNode::NodeType type = node_list->item(i)->getNodeType();
+		DOMNode::NodeType type = node_list->item(i)->getNodeType();
 
 		// if this is an element node
-		if (type == xercesc_3_1::DOMNode::NodeType::ELEMENT_NODE) {
+		if (type == DOMNode::NodeType::ELEMENT_NODE) {
 			// retrievind it..
-			xercesc_3_1::DOMElement* elem = dynamic_cast<xercesc_3_1::DOMElement*>( node_list->item(i));
+			DOMElement* elem = dynamic_cast<DOMElement*>( node_list->item(i));
 
 			// ...and go deeper
 			this->parseElement(elem);
@@ -212,13 +212,13 @@ void HolfuyClient::parseElement(xercesc_3_1::DOMElement* element) {
 }
 
 void HolfuyClient::checkAndRetrievieParameter(char* node_name,
-		xercesc_3_1::DOMElement* element) {
+		DOMElement* element) {
 	if (strcmp(node_name, "timestamp") == 0) {
 		XMLCh* date = const_cast<XMLCh*>(element->getAttribute(dateCh));
 		XMLCh* time = const_cast<XMLCh*>(element->getAttribute(timeCh));
 
-		char* decoded_date = xercesc_3_1::XMLString::transcode(date);
-		char* decoded_time = xercesc_3_1::XMLString::transcode(time);
+		char* decoded_date = XMLString::transcode(date);
+		char* decoded_time = XMLString::transcode(time);
 
 		std::string date_time_string = std::string(decoded_date) + " " + std::string(decoded_time);
 
@@ -226,8 +226,8 @@ void HolfuyClient::checkAndRetrievieParameter(char* node_name,
 
 		this->timestamp = timestamp;
 
-		xercesc_3_1::XMLString::release(&decoded_date);
-		xercesc_3_1::XMLString::release(&decoded_time);
+		XMLString::release(&decoded_date);
+		XMLString::release(&decoded_time);
 
 
 	}
@@ -236,9 +236,9 @@ void HolfuyClient::checkAndRetrievieParameter(char* node_name,
 		XMLCh* windgust_str = const_cast<XMLCh*>(element->getAttribute(windgustsCh));
 		XMLCh* direction_str = const_cast<XMLCh*>(element->getAttribute(winddirCh));
 
-		float windspeed_ = boost::lexical_cast<float>(xercesc_3_1::XMLString::transcode(windspeed_str));
-		float windgusts_ = boost::lexical_cast<float>(xercesc_3_1::XMLString::transcode(windgust_str));
-		float winddir_ = boost::lexical_cast<float>(xercesc_3_1::XMLString::transcode(direction_str));
+		float windspeed_ = boost::lexical_cast<float>(XMLString::transcode(windspeed_str));
+		float windgusts_ = boost::lexical_cast<float>(XMLString::transcode(windgust_str));
+		float winddir_ = boost::lexical_cast<float>(XMLString::transcode(direction_str));
 
 		this->windspeed = windspeed_;
 		this->windgusts = windgusts_;
@@ -250,7 +250,7 @@ void HolfuyClient::checkAndRetrievieParameter(char* node_name,
 	else if (strcmp(node_name, "temp") == 0) {
 		XMLCh* temperature_str = const_cast<XMLCh*>(element->getAttribute(temperatureCh));
 
-		float temperature_ = boost::lexical_cast<float>(xercesc_3_1::XMLString::transcode(temperature_str));
+		float temperature_ = boost::lexical_cast<float>(XMLString::transcode(temperature_str));
 
 		this->temperature = temperature_;
 
@@ -259,7 +259,7 @@ void HolfuyClient::checkAndRetrievieParameter(char* node_name,
 	else if (strcmp(node_name, "pressure") == 0) {
 		XMLCh* pressure_str = const_cast<XMLCh*>(element->getAttribute(pressureCh));
 
-		float pressure_ = boost::lexical_cast<float>(xercesc_3_1::XMLString::transcode(pressure_str));
+		float pressure_ = boost::lexical_cast<float>(XMLString::transcode(pressure_str));
 
 		this->pressure = pressure_;
 

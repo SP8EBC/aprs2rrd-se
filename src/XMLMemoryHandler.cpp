@@ -16,14 +16,14 @@ XMLMemoryHandler::~XMLMemoryHandler() {
 	// TODO Auto-generated destructor stub
 }
 
-void XMLMemoryHandler::warning(const xercesc_3_1::SAXParseException& exc) {
+void XMLMemoryHandler::warning(const SAXParseException& exc) {
 	errorCounter++;
 }
 
-void XMLMemoryHandler::error(const xercesc_3_1::SAXParseException& exc) {
+void XMLMemoryHandler::error(const SAXParseException& exc) {
 	errorCounter++;
 }
 
-void XMLMemoryHandler::fatalError(const xercesc_3_1::SAXParseException& exc) {
+void XMLMemoryHandler::fatalError(const SAXParseException& exc) {
 	errorCounter++;
 }

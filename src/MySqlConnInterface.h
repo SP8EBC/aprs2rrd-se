@@ -64,6 +64,8 @@ public:
 	string dbName;
 	string tableName;
 	
+	string stationNameInSchema2;
+
 	bool schema_v2;
 	bool schema_v1;
 
