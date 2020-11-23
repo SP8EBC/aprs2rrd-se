@@ -15,12 +15,8 @@ System requiremenets:
 7) screen
 8) rrdtool
 
-If You have linking errors like that
-
-	/usr/bin/ld: skipping incompatible /usr/lib/i386-linux-gnu/libgcc_s.so.1 when searching for libgcc_s.so.1
-	/usr/bin/ld: skipping incompatible /usr/lib/i386-linux-gnu/libgcc_s.so.1 when searching for libgcc_s.so.1
-
-You should install libc6-dev-i386
+If system has xerces-c in version 9.1 installed (like Debian 9 or Ubuntu 16.04/16.10) please use configuration Debug or Relese. If You are using
+xerces-c 9.2 (like Ubuntu 20.xx) please build using Debug_xerces_3_2 or Release_xerces_3_2
 
 
 Mateusz Lubecki
