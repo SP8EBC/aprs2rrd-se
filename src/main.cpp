@@ -355,6 +355,8 @@ int main(int argc, char **argv){
 						try {
 							mysqlDb.OpenDBConnection();
 
+							mysqlDb.InsertDiff(wxDifference, diffCalculator, programConfig.getStationName());
+
 							mysqlDb.InsertIntoDb(&wxTarget);
 
 							mysqlDb.InsertIntoDbSchema2(wxTarget, sourceConfig, programConfig.getStationName());

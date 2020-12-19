@@ -106,6 +106,9 @@ void MySqlConnInterface::InsertDiff(const AprsWXData& input, const DiffCalculato
 	if (!this->dumpDiff)
 		return;
 
+	if (!diffCalculator.enable)
+		return;
+
 	std::stringstream temp;
 
 	boost::posix_time::ptime current_epoch = boost::posix_time::second_clock::universal_time();
