@@ -1,0 +1,3 @@
+#!/bin/bash
+start-stop-daemon -S -x /home/aprs/skrzyczne/rc.aprs2rrd -c aprs
+

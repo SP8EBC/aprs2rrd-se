@@ -29,6 +29,7 @@ System requiremenets:
 If system has xerces-c in version 9.1 installed (like Debian 9 or Ubuntu 16.04/16.10) please use configuration Debug or Relese. If You are using
 xerces-c 9.2 (like Ubuntu 20.xx) please build using Debug_xerces_3_2 or Release_xerces_3_2
 
+Actually the APRS2RRD cannot run in background as a daemon so 'screen' command must be used to start it in background. Please look into 'doc' directory where example rc.aprs2rrd and rc.skrzyczne startup scripts are placed, along with example configuration files. It is strongly advised to run APRS2RRD as a separate non-root user with minial privileges required. Please remember that APRS2RRD executable must have a read-write access to all RRD files and directory where they are stored and also to directory where it will generate HTML and PNG files with plots. 
 
 Mateusz Lubecki
 email: sp8ebc@interia.pl
