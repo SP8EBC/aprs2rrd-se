@@ -119,7 +119,7 @@ void MySqlConnInterface::InsertDiff(const AprsWXData& input, const DiffCalculato
 	int64_t epoch_seconds = epoch_seconds_duration.total_seconds();
 
 	temp << "INSERT INTO `" << this->dbName << "`.`data_diff`";
-	temp << "(`epoch`, `datetime`, `station`, `temperaturefrom`, `temperaturesubtract`, `windfrom`, `windsubtract`, `winddir`, `windspeed`, " <<
+	temp << "(`epoch`, `datetime`, `station`, `temperaturefrom`, `temperaturesubtract`, `windfrom`, `windsubtract`, `temperature`, `winddir`, `windspeed`, " <<
 								"`windgusts`) VALUES (";
 
 	temp << epoch_seconds << ", ";
@@ -129,6 +129,7 @@ void MySqlConnInterface::InsertDiff(const AprsWXData& input, const DiffCalculato
 	temp << "'" << ::wxDataSourceToStr(diffCalculator.temperatureSubstract) << "', ";
 	temp << "'" << ::wxDataSourceToStr(diffCalculator.windFrom) << "', ";
 	temp << "'" << ::wxDataSourceToStr(diffCalculator.windSubstract) << "', ";
+	temp << input.temperature << ", ";
 	temp << input.wind_direction << ", ";
 	temp << input.wind_speed << ", ";
 	temp << input.wind_gusts << ");";
