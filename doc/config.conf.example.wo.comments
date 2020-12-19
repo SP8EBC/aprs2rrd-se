@@ -1,25 +1,15 @@
-# EN: This option will make an console output much more verbose.
-# PL: Włączenie tej opcji spowoduje zwiększenie "gadatliwości" programu na konsolę
 Debug = true;
-
-# EN: Enabling this option will redirect all output from a console to a file
-# PL: Włączenie opcji spowoduje przekierowanie całego wyjścia z konsoli to pliku
 DebugToFile = true;
 DebugLogFile = "/home/aprs/skrzyczne/bin/debug.log"
 
-# EN: 	This is mandatory option which names the weather station from application perspective. This name is used
-#	during inserting data info the MySQL database in V2 Schema (all station in one table). It will be also used in future
-#	functionalities 
-# PL:	Obowiązkowy parametr nazywający tą stację z punktu widzenia aplikacji APRS2RRD. Nazwa ta jest używana podczas zapisu danych
-#	pogodowych do bazy danych MySQL ze strukturą ze schematu V2 (wszystkie stacje zapisywane do jednej tabeli. Nazwa ta będzie
-#	też używana w przyszłych funkcjonalnościach.
 StationName = "skrzyczne";
 
-# EN:	MySQL database configuration. As for now the database might have two different schemas. V1 which stores each weather station in different table 
-#	(what is not recommended but it is held to provide backward compatibility) and V2 where all data are stored in 'data_station' table.
-# PL:	Konfiguracja bazy danych MySQL. Obecnie dane mogą być zapisywane w niej dwojako, tj. według dwóch różnych schematów. W wersji pierwszej każda
-#	stacja ma swoją osobną tabelę - jest to rozwiązanie niepolecane ale jest pozostawione dla zachowania kompatybilności wstecznej. W wersji drugiej (V2)
-#	wszystkie dane lądują w jednej i tej samej tabeli 'data_station'. Stacje mogą być rozróżnione między sobą na podstawie parametru 'StationName'
+
+FifthTelemAsTemperature = false;
+TelemAScaling = 0.0;
+TelemBScaling = 0.25;
+TelemCScaling = -25.0;
+
 MySQL = {
 	Enable = true;
 	Port = 3306;
@@ -27,36 +17,13 @@ MySQL = {
 	DbName = "aprs2rrd";
 	DbUser = "aprs2rrd";
 	DbPassword = "qwertyuiop";
-
-	# EN: Table name for V1 schema (structure is in schema_v1.sql file)
-	# PL: Nazwa tabeli dla schematu w wersji 1 (jej struktura jest w pliku schema_v1.sql)
 	DbTable = "skrzyczne";
-
-	# EN: APRS2RRD can execute any external script or application before inserting data to the MySQL. These two option controls this function
-	# PL: APRS2RRD może wywołać dowolny zewnętrzny skrypt bądź aplikację przed umieszczaniem danych w MySQL. Te dwie opcje kontrolują działanie tej funkcji.
 	ExecBeforeInsert = true;
 	ExecBeforeInsertPath = "/home/aprs/skrzyczne/rc.preinsert"
-
-	# EN: Enables or disables V1 schema.
-	# PL: Włącza bądź wyłącza zapis danych zgodnie ze schematem (strukturą) V1 -> każda stacja do osobnej tabeli
         SchemaV1 = true;
-
-	# EN: Enabled or disables V2 schema.
-	# PL : Włącza bądź wyłącza zapis danych zgodnie ze schematem (strukturą) V2 -> wszystkie stacje to tabeli 'data_station'
-	#
-	# WARNING! If MySQL is enabled either V1 or V2 (or both of them) has to be enabled
-	# UWAGA! Jeżeli baza danych jest włączona conajmniej jeden z jej schematów (V1, V2 albo obydwa) również musi zostać włączony.
         SchemaV2 = true;
-
-	# Currently unsupported. Must be set to false / Niewspierane, musi pozostać wyłączone
         DumpHolfuy = false;
-
-	# EN: Dumping differential measurements if this configuration has them enabled (see below)
-	# PL: Zrzucanie wyników pomiarów różnicowych jeżeli takowe są włączone (patrz niżej)
         DumpDiff = false;
-
-	# EN: Dumping telemetry packed in separate 'station_telemetry' table.
-	# PL: Zapis ramek telemetrycznych w osobnej tabeli 'station_telemetry'.
         DumpTelemetry = true;
 
 };
@@ -85,7 +52,7 @@ Serial = {
 Holfuy = {
 	Enable = true;
 	StationId = 1161;
-	ApiPassword = "J00DjmU5wouaUKf";
+	ApiPassword = "asdffgh";
 	DumpIntoMysql = false;
 };
 
@@ -110,7 +77,6 @@ Pressure = {
         ConvertTo = "QNH";
         Altitude = 1240;
 };
-
 
 Diffs = {
 	Enable = true;
@@ -181,12 +147,6 @@ Plots = (
                 DS0PlotType = "AREA";
                 DS0PlotColor = 0xFF9900;
 		DS0Label = "Temperatura";
-//		DS1 = "/home/aprs/skrzyczne/rrd/cisnienie.rrd";
-//		DS1Name = "cisnienie";
-//		DS1RRAType = "AVERAGE";
-//		DS1PlotType = "LINE2";
-//		DS1PlotColor = 0x00FFFF;
-//		DS1Label = "Cisnienie";
 		Title = "Temperatura na szczycie";
 		Width = 900;
 		Height = 450;
@@ -227,12 +187,6 @@ Plots = (
 		DS0PlotType = "AREA";
 		DS0PlotColor = 0x7298D4;
 		DS0Label = "Roznica w sredniej predkosci wiatru";
-#		DS1 = "/home/aprs/skrzyczne/rrd/diff_szkwaly.rrd";
-#		DS1Name = "szkwaly";
-#		DS1RRAType = "AVERAGE";
-#		DS1PlotType = "LINE2";
-#		DS1PlotColor = 0x0000FF;
-#		DS1Label = "Porywy";
 		Title = "Różnica średniej prędkości wiatru szczyt - startowisko (plus oznacza wiatr mocniejszy na szczycie)";
 		Width = 900;
 		Height = 600;	
@@ -288,14 +242,13 @@ Website = {
 	Title = "Warunki na Skrzycznem";
 	HeadingTitle = "Stacja pogodowa SR9NSK -- Góra Skrzyczne";
 	SubHeading = "Stacja na szczycie zamontowana na platformie widokowej COS-OPO. Stacja na startowisku zamontowana na słupie z rękawem znajdującym się na startowisku E.";
-	//SubHeading = "UWAGA!! Stacja uległa najprawdopodobniej awarii. Czasami (w losowych momentach) prędkość wiatru jest podawana nieprawidowo i jest zawyżana!! Kierunek wiatru, wilgotność i temperatura są mierzone poprawnie <br>ATTENTION!! The WX station seems to be damaged. The wind speed measuremenets are sometimes affected with an error (station sometimes shows stronger wind than it is in reality). Wind direction, temeprature and humidity is not affected with this problem" 
-	//SubHeading = "Uwaga! Wykres temperatury ma inną skalę czasu (3 dni) niż wykresy wiatru (15 godzin)<br><b><a href=\"https://www.aprsdirect.com/details/weather/sid/2464597\">Dane archiwalne</a></b><br> <div class=\"small\"><i>(aby przełączyć jednostki imperialne -> metryczne należy użyć menu z lewego panelu pod ikoną trybika i odznaczyć \"Use Imperial Units\")</i></div>";
 	LinkToMoreInfo = true;
-	Footer = "Wykonawca: Mateusz Lubecki & Beskidzkie Stowarzyszenie Paralotniowe - tel: +48 660 43 44 46<br>Warunki na Skrzycznym / Stacja podowa Skrzyczne / Pogoda na Skrzynym / Pogoda Szczyrk";
+	Footer = "Stopka pod wykresami";
 	PrintPressure = true;
 	PrintTemperature = true;
 	PrintTwoSourcesInTable = true;	
 	SecondarySource = "Holfuy";
 	SecondaryLabel = "Startowisko";
 	PrimaryLabel = "Szczyt";
+	DirectionCorrection = 0;	
 };
