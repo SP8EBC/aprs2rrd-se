@@ -155,7 +155,7 @@ void MySqlConnInterface::InsertDiff(const AprsWXData& input, const DiffCalculato
 
 }
 
-void MySqlConnInterface::InsertTelmetry(const Telemetry& input) {
+void MySqlConnInterface::InsertTelmetry(const Telemetry& input, std::string station_name) {
 
 	if (!this->dumpTelemetry || !input.valid)
 		return;
@@ -166,8 +166,6 @@ void MySqlConnInterface::InsertTelmetry(const Telemetry& input) {
 
 	std::stringstream temp;
 
-	std::string station_name = input.call;
-
 	boost::posix_time::ptime current_epoch = boost::posix_time::second_clock::universal_time();
 	//boost::date_time::second_clock<boost::posix_time::ptime>::local_time();	// static access should be here??
 
@@ -176,12 +174,13 @@ void MySqlConnInterface::InsertTelmetry(const Telemetry& input) {
 	int64_t epoch_seconds = epoch_seconds_duration.total_seconds();
 
 	temp << "INSERT INTO `" << this->dbName << "`.`data_telemetry`";
-	temp << "(`epoch`, `datetime`, `station`, `number`, `first`, `second`, `third`, `fourth`, `fifth`, " <<
+	temp << "(`epoch`, `datetime`, `station`, `callsign`, `number`, `first`, `second`, `third`, `fourth`, `fifth`, " <<
 								"`digital`, `type`, `rawfirst`, `rawsecond`, `rawthird`, `rawfourth`, `rawfifth`) VALUES (";
 
 	temp << epoch_seconds << ", ";
 	temp << "CURRENT_TIMESTAMP, ";
 	temp << "'" << station_name << "', ";
+	temp << "'" << input.call << "', ";
 	temp << (int)input.num << ", ";
 	temp << input.getCh1() << ", ";
 	temp << input.getCh2() << ", ";
