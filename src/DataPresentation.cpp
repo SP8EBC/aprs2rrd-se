@@ -149,6 +149,14 @@ void DataPresentation::FetchDataInRRD(const AprsWXData* const cInput) {
 			if (this->DebugOutput == true)
 				cout << command << endl;
 		}
+		else if (this->vRRDFiles[i].eType == PlotType::HUMIDITY && cInput->useHumidity == true) {
+			currtime =time(NULL);
+			currtimeint = (int)currtime;
+			memset(command, 0x00, sizeof(command));
+			sprintf(command, "rrdtool update %s %d:%f", this->vRRDFiles[i].sPath.c_str(), currtimeint, (float)cInput->humidity);
+			if (this->DebugOutput == true)
+				cout << command << endl;
+		}
 		else continue;
 
 		sys_retval = system(command);
@@ -213,8 +221,9 @@ void DataPresentation::PlotGraphsFromRRD() {
 
 	if (this->vPNGFiles[i].Exponent != -1)
 		exp << " -X " << this->vPNGFiles[i].Exponent;
-	else
+	else {
 		exp << " ";
+	}
 
 		memset(command, 0x00, sizeof(command));
 		if (this->vPNGFiles[i].DoubleDS == false) {
@@ -533,6 +542,8 @@ PlotType DataPresentation::SwitchPlotType(string input) {
 		out = PlotType::DIFF_WIND_GST;
 	else if (input == "DIFF_WIND_DIR")
 		out = PlotType::DIFF_WIND_DIR;
+	else if (input == "HUMIDITY")
+		out = PlotType::HUMIDITY;
 	return out;
 
 }

@@ -40,6 +40,7 @@ void SlewRateLimiter::limitFromSingleFrame(const AprsWXData& previous,
 	float windGstDiff = current.wind_gusts - previous.wind_gusts;
 	float temperatureDiff = current.temperature - previous.temperature;
 	float pressureDiff = current.pressure - previous.pressure;
+	int16_t humidityDiff = current.humidity - previous.humidity;
 
 	if (previous.wind_direction == 0 &&
 			previous.wind_gusts == 0.0f &&
@@ -89,6 +90,16 @@ void SlewRateLimiter::limitFromSingleFrame(const AprsWXData& previous,
 			current.temperature = previous.temperature - maxTempSlew;
 		else
 			current.temperature = previous.temperature + maxTempSlew;
+	}
+
+	if (current.usePressure && abs(pressureDiff) > maxPressureSlew) {
+		std::cout << "SlewRateLimiter::limitFromSingleFrame:96 - Limiting pressure" << std::endl;
+
+		if (pressureDiff < 0)
+			current.pressure = previous.pressure - maxPressureSlew;
+		else
+			current.pressure = previous.pressure + maxPressureSlew;
+
 	}
 
 }
