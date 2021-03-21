@@ -1,0 +1,259 @@
+root@pogodacc:~/mysql++-3.2.5# ./configure --prefix=/usr
+checking build system type... x86_64-pc-linux-gnu
+checking host system type... x86_64-pc-linux-gnu
+checking target system type... x86_64-pc-linux-gnu
+checking how to print strings... printf
+checking for gcc... gcc
+checking whether the C compiler works... yes
+checking for C compiler default output file name... a.out
+checking for suffix of executables... 
+checking whether we are cross compiling... no
+checking for suffix of object files... o
+checking whether we are using the GNU C compiler... yes
+checking whether gcc accepts -g... yes
+checking for gcc option to accept ISO C89... none needed
+checking for a sed that does not truncate output... /bin/sed
+checking for grep that handles long lines and -e... /bin/grep
+checking for egrep... /bin/grep -E
+checking for fgrep... /bin/grep -F
+checking for ld used by gcc... /usr/bin/ld
+checking if the linker (/usr/bin/ld) is GNU ld... yes
+checking for BSD- or MS-compatible name lister (nm)... /usr/bin/nm -B
+checking the name lister (/usr/bin/nm -B) interface... BSD nm
+checking whether ln -s works... yes
+checking the maximum length of command line arguments... 1572864
+checking how to convert x86_64-pc-linux-gnu file names to x86_64-pc-linux-gnu format... func_convert_file_noop
+checking how to convert x86_64-pc-linux-gnu file names to toolchain format... func_convert_file_noop
+checking for /usr/bin/ld option to reload object files... -r
+checking for objdump... objdump
+checking how to recognize dependent libraries... pass_all
+checking for dlltool... no
+checking how to associate runtime and link libraries... printf %s\n
+checking for ar... ar
+checking for archiver @FILE support... @
+checking for strip... strip
+checking for ranlib... ranlib
+checking for gawk... gawk
+checking command to parse /usr/bin/nm -B output from gcc object... ok
+checking for sysroot... no
+checking for a working dd... /bin/dd
+checking how to truncate binary pipes... /bin/dd bs=4096 count=1
+checking for mt... mt
+checking if mt is a manifest tool... no
+checking how to run the C preprocessor... gcc -E
+checking for ANSI C header files... yes
+checking for sys/types.h... yes
+checking for sys/stat.h... yes
+checking for stdlib.h... yes
+checking for string.h... yes
+checking for memory.h... yes
+checking for strings.h... yes
+checking for inttypes.h... yes
+checking for stdint.h... yes
+checking for unistd.h... yes
+checking for dlfcn.h... yes
+checking for objdir... .libs
+checking if gcc supports -fno-rtti -fno-exceptions... no
+checking for gcc option to produce PIC... -fPIC -DPIC
+checking if gcc PIC flag -fPIC -DPIC works... yes
+checking if gcc static flag -static works... yes
+checking if gcc supports -c -o file.o... yes
+checking if gcc supports -c -o file.o... (cached) yes
+checking whether the gcc linker (/usr/bin/ld -m elf_x86_64) supports shared libraries... yes
+checking whether -lc should be explicitly linked in... no
+checking dynamic linker characteristics... GNU/Linux ld.so
+checking how to hardcode library paths into programs... immediate
+checking whether stripping libraries is possible... yes
+checking if libtool supports shared libraries... yes
+checking whether to build shared libraries... yes
+checking whether to build static libraries... yes
+checking for gcc... (cached) gcc
+checking whether we are using the GNU C compiler... (cached) yes
+checking whether gcc accepts -g... (cached) yes
+checking for gcc option to accept ISO C89... (cached) none needed
+checking for ANSI C header files... (cached) yes
+checking for getopt... yes
+checking whether -lm is needed to use C math functions... no
+checking whether -lsocket is needed... no
+checking whether -lnsl is needed... no
+checking for MySQL include directory... /usr/include/mysql
+checking for MySQL C API library directory... /usr/lib
+checking for mysql_ssl_set in -lmysqlclient... yes
+checking for localtime_r()... yes
+checking for main in -lintl... no
+checking for g++... g++
+checking whether we are using the GNU C++ compiler... yes
+checking whether g++ accepts -g... yes
+checking how to run the C++ preprocessor... g++ -E
+checking for ld used by g++... /usr/bin/ld -m elf_x86_64
+checking if the linker (/usr/bin/ld -m elf_x86_64) is GNU ld... yes
+checking whether the g++ linker (/usr/bin/ld -m elf_x86_64) supports shared libraries... yes
+checking for g++ option to produce PIC... -fPIC -DPIC
+checking if g++ PIC flag -fPIC -DPIC works... yes
+checking if g++ static flag -static works... yes
+checking if g++ supports -c -o file.o... yes
+checking if g++ supports -c -o file.o... (cached) yes
+checking whether the g++ linker (/usr/bin/ld -m elf_x86_64) supports shared libraries... yes
+checking dynamic linker characteristics... (cached) GNU/Linux ld.so
+checking how to hardcode library paths into programs... immediate
+checking for STL slist extension... <ext/slist>, namespace __gnu_cxx
+checking whether we are using the Intel C compiler... no
+checking whether we are using the Intel C++ compiler... no
+checking whether we are using the Sun C++ compiler... no
+checking for a BSD-compatible install... /usr/bin/install -c
+checking for ranlib... (cached) ranlib
+checking whether ln -s works... yes
+checking whether make sets $(MAKE)... yes
+checking for ar... (cached) ar
+checking for strip... (cached) strip
+checking for nm... /usr/bin/nm -B
+checking if make is GNU make... yes
+checking for dependency tracking method... gcc
+configure: creating ./config.status
+config.status: creating doc/userman/userman.dbx
+config.status: creating install.hta
+config.status: creating lib/Doxyfile
+config.status: creating lib/mysql++.h
+config.status: creating ssx/Doxyfile
+config.status: creating abi.xml
+config.status: creating mysql++.spec
+config.status: creating Makefile
+config.status: creating version
+config.status: creating config.h
+config.status: executing libtool commands
+root@pogodacc:~/mysql++-3.2.5# mc
+
+root@pogodacc:~/mysql++-3.2.5# make
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_beemutex.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/beemutex.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_cmdline.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/cmdline.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_connection.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/connection.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_cpool.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/cpool.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_datetime.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/datetime.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_dbdriver.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/dbdriver.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_field_names.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/field_names.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_field_types.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/field_types.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_manip.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/manip.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_myset.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/myset.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_mysql++.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/mysql++.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_mystring.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/mystring.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_null.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/null.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_options.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/options.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_qparms.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/qparms.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_query.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/query.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_result.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/result.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_row.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/row.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_scopedconnection.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/scopedconnection.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_sql_buffer.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/sql_buffer.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_sqlstream.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/sqlstream.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_ssqls2.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/ssqls2.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_stadapter.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/stadapter.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_tcp_connection.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/tcp_connection.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_transaction.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/transaction.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_type_info.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/type_info.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_uds_connection.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/uds_connection.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_utility.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/utility.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_vallist.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/vallist.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o mysqlpp_wnp_connection.o -I. -I/usr/include/mysql -fPIC -DPIC  -g -O2 ./lib/wnp_connection.cpp
+g++ -shared -fPIC -o libmysqlpp.so.3.2.5 mysqlpp_beemutex.o mysqlpp_cmdline.o mysqlpp_connection.o mysqlpp_cpool.o mysqlpp_datetime.o mysqlpp_dbdriver.o mysqlpp_field_names.o mysqlpp_field_types.o mysqlpp_manip.o mysqlpp_myset.o mysqlpp_mysql++.o mysqlpp_mystring.o mysqlpp_null.o mysqlpp_options.o mysqlpp_qparms.o mysqlpp_query.o mysqlpp_result.o mysqlpp_row.o mysqlpp_scopedconnection.o mysqlpp_sql_buffer.o mysqlpp_sqlstream.o mysqlpp_ssqls2.o mysqlpp_stadapter.o mysqlpp_tcp_connection.o mysqlpp_transaction.o mysqlpp_type_info.o mysqlpp_uds_connection.o mysqlpp_utility.o mysqlpp_vallist.o mysqlpp_wnp_connection.o   -Wl,-soname,libmysqlpp.so.3    -L/usr/lib -lmysqlclient     
+(cd .; rm -f libmysqlpp.so libmysqlpp.so.3; ln -s libmysqlpp.so.3.2.5 libmysqlpp.so.3; ln -s libmysqlpp.so.3 libmysqlpp.so)
+/root/mysql++-3.2.5/bk-deps g++ -c -o ssqls2parse_parsev2.o -Ilib -I/usr/include/mysql -I.  -g -O2 ./ssx/parsev2.cpp
+rm -f libmysqlpp_ssqls2parse.a
+ar rc libmysqlpp_ssqls2parse.a ssqls2parse_parsev2.o
+ranlib libmysqlpp_ssqls2parse.a
+/root/mysql++-3.2.5/bk-deps g++ -c -o ssqlsxlat_genv2.o -Ilib -I/usr/include/mysql   -g -O2 ./ssx/genv2.cpp
+/root/mysql++-3.2.5/bk-deps g++ -c -o ssqlsxlat_main.o -Ilib -I/usr/include/mysql   -g -O2 ./ssx/main.cpp
+g++ -o ssqlsxlat ssqlsxlat_genv2.o ssqlsxlat_main.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp -lmysqlpp_ssqls2parse -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o test_array_index_array_index.o -Ilib -I/usr/include/mysql  -g -O2 ./test/array_index.cpp
+g++ -o test_array_index test_array_index_array_index.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o test_cpool_cpool.o -Ilib -I/usr/include/mysql   -g -O2 ./test/cpool.cpp
+g++ -o test_cpool test_cpool_cpool.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o test_datetime_datetime.o -Ilib -I/usr/include/mysql   -g -O2 ./test/datetime.cpp
+g++ -o test_datetime test_datetime_datetime.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o test_inttypes_inttypes.o -Ilib -I/usr/include/mysql   -g -O2 ./test/inttypes.cpp
+g++ -o test_inttypes test_inttypes_inttypes.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o test_insertpolicy_insertpolicy.o -Ilib -I/usr/include/mysql  -g -O2 ./test/insertpolicy.cpp
+g++ -o test_insertpolicy test_insertpolicy_insertpolicy.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o test_manip_manip.o -Ilib -I/usr/include/mysql   -g -O2 ./test/manip.cpp
+g++ -o test_manip test_manip_manip.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o test_null_comparison_null_comparison.o -Ilib -I/usr/include/mysql  -g -O2 ./test/null_comparison.cpp
+g++ -o test_null_comparison test_null_comparison_null_comparison.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o test_query_copy_query_copy.o -Ilib -I/usr/include/mysql  -g -O2 ./test/query_copy.cpp
+g++ -o test_query_copy test_query_copy_query_copy.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o test_qssqls_qssqls.o -Ilib -I/usr/include/mysql   -g -O2 ./test/qssqls.cpp
+g++ -o test_qssqls test_qssqls_qssqls.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o test_qstream_qstream.o -Ilib -I/usr/include/mysql   -g -O2 ./test/qstream.cpp
+g++ -o test_qstream test_qstream_qstream.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o test_sqlstream_sqlstream.o -Ilib -I/usr/include/mysql  -g -O2 ./test/sqlstream.cpp
+g++ -o test_sqlstream test_sqlstream_sqlstream.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o test_ssqls2_ssqls2.o -Ilib -I/usr/include/mysql   -g -O2 ./test/ssqls2.cpp
+g++ -o test_ssqls2 test_ssqls2_ssqls2.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp -lmysqlpp_ssqls2parse -lmysqlpp -lmysqlpp_ssqls2parse 
+/root/mysql++-3.2.5/bk-deps g++ -c -o test_string_string.o -Ilib -I/usr/include/mysql   -g -O2 ./test/string.cpp
+g++ -o test_string test_string_string.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o test_tcp_tcp.o -Ilib -I/usr/include/mysql   -g -O2 ./test/tcp.cpp
+g++ -o test_tcp test_tcp_tcp.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o test_uds_uds.o -Ilib -I/usr/include/mysql   -g -O2 ./test/uds.cpp
+g++ -o test_uds test_uds_uds.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o test_wnp_wnp.o -Ilib -I/usr/include/mysql   -g -O2 ./test/wnp.cpp
+g++ -o test_wnp test_wnp_wnp.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o excommon_printdata.o -Ilib -I/usr/include/mysql   -g -O2 ./examples/printdata.cpp
+rm -f libmysqlpp_excommon.a
+ar rc libmysqlpp_excommon.a excommon_printdata.o
+ranlib libmysqlpp_excommon.a
+/root/mysql++-3.2.5/bk-deps g++ -c -o cgi_jpeg_cgi_jpeg.o -Ilib -I/usr/include/mysql   -g -O2 ./examples/cgi_jpeg.cpp
+g++ -o cgi_jpeg cgi_jpeg_cgi_jpeg.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp_excommon -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o cpool_cpool.o -Ilib -I/usr/include/mysql   -g -O2 ./examples/cpool.cpp
+g++ -o cpool cpool_cpool.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp_excommon -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o dbinfo_dbinfo.o -Ilib -I/usr/include/mysql   -g -O2 ./examples/dbinfo.cpp
+g++ -o dbinfo dbinfo_dbinfo.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp_excommon -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o deadlock_deadlock.o -Ilib -I/usr/include/mysql   -g -O2 ./examples/deadlock.cpp
+g++ -o deadlock deadlock_deadlock.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp_excommon -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o fieldinf_fieldinf.o -Ilib -I/usr/include/mysql   -g -O2 ./examples/fieldinf.cpp
+g++ -o fieldinf fieldinf_fieldinf.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp_excommon -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o for_each_for_each.o -Ilib -I/usr/include/mysql   -g -O2 ./examples/for_each.cpp
+g++ -o for_each for_each_for_each.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp_excommon -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o load_jpeg_load_jpeg.o -Ilib -I/usr/include/mysql   -g -O2 ./examples/load_jpeg.cpp
+g++ -o load_jpeg load_jpeg_load_jpeg.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp_excommon -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o multiquery_multiquery.o -Ilib -I/usr/include/mysql   -g -O2 ./examples/multiquery.cpp
+g++ -o multiquery multiquery_multiquery.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp_excommon -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o resetdb_resetdb.o -Ilib -I/usr/include/mysql   -g -O2 ./examples/resetdb.cpp
+g++ -o resetdb resetdb_resetdb.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp_excommon -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o simple1_simple1.o -Ilib -I/usr/include/mysql   -g -O2 ./examples/simple1.cpp
+g++ -o simple1 simple1_simple1.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp_excommon -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o simple2_simple2.o -Ilib -I/usr/include/mysql   -g -O2 ./examples/simple2.cpp
+g++ -o simple2 simple2_simple2.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp_excommon -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o simple3_simple3.o -Ilib -I/usr/include/mysql   -g -O2 ./examples/simple3.cpp
+g++ -o simple3 simple3_simple3.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp_excommon -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o ssqls1_ssqls1.o -Ilib -I/usr/include/mysql   -g -O2 ./examples/ssqls1.cpp
+g++ -o ssqls1 ssqls1_ssqls1.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp_excommon -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o ssqls2_ssqls2.o -Ilib -I/usr/include/mysql   -g -O2 ./examples/ssqls2.cpp
+g++ -o ssqls2 ssqls2_ssqls2.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp_excommon -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o ssqls3_ssqls3.o -Ilib -I/usr/include/mysql   -g -O2 ./examples/ssqls3.cpp
+g++ -o ssqls3 ssqls3_ssqls3.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp_excommon -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o ssqls4_ssqls4.o -Ilib -I/usr/include/mysql   -g -O2 ./examples/ssqls4.cpp
+g++ -o ssqls4 ssqls4_ssqls4.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp_excommon -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o ssqls5_ssqls5.o -Ilib -I/usr/include/mysql   -g -O2 ./examples/ssqls5.cpp
+g++ -o ssqls5 ssqls5_ssqls5.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp_excommon -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o ssqls6_ssqls6.o -Ilib -I/usr/include/mysql   -g -O2 ./examples/ssqls6.cpp
+g++ -o ssqls6 ssqls6_ssqls6.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp_excommon -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o store_if_store_if.o -Ilib -I/usr/include/mysql   -g -O2 ./examples/store_if.cpp
+g++ -o store_if store_if_store_if.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp_excommon -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o tquery1_tquery1.o -Ilib -I/usr/include/mysql   -g -O2 ./examples/tquery1.cpp
+g++ -o tquery1 tquery1_tquery1.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp_excommon -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o tquery2_tquery2.o -Ilib -I/usr/include/mysql   -g -O2 ./examples/tquery2.cpp
+g++ -o tquery2 tquery2_tquery2.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp_excommon -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o tquery3_tquery3.o -Ilib -I/usr/include/mysql   -g -O2 ./examples/tquery3.cpp
+g++ -o tquery3 tquery3_tquery3.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp_excommon -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o tquery4_tquery4.o -Ilib -I/usr/include/mysql   -g -O2 ./examples/tquery4.cpp
+g++ -o tquery4 tquery4_tquery4.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp_excommon -lmysqlpp 
+/root/mysql++-3.2.5/bk-deps g++ -c -o transaction_transaction.o -Ilib -I/usr/include/mysql   -g -O2 ./examples/transaction.cpp
+g++ -o transaction transaction_transaction.o    -L/usr/lib -L. -lmysqlclient     -lmysqlpp_excommon -lmysqlpp 
+root@pogodacc:~/mysql++-3.2.5# make install
+mkdir -p /usr/lib
+/usr/bin/install -c -m 644 libmysqlpp.so /usr/lib
+/usr/bin/install -c libmysqlpp.so.3.2.5 /usr/lib
+(cd /usr/lib ; rm -f libmysqlpp.so libmysqlpp.so.3; ln -s libmysqlpp.so.3.2.5 libmysqlpp.so.3; ln -s libmysqlpp.so.3 libmysqlpp.so)
+mkdir -p /usr/include/mysql++
+(cd . ; /usr/bin/install -c -m 644  lib/*.h /usr/include/mysql++)
+root@pogodacc:~/mysql++-3.2.5# ./configure --prefix=/usr
+
+

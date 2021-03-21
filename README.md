@@ -27,11 +27,16 @@ System requiremenets:
 8) rrdtool
 
 If system has xerces-c in version 9.1 installed (like Debian 9 or Ubuntu 16.04/16.10) please use configuration Debug or Relese. If You are using
-xerces-c 9.2 (like Ubuntu 20.xx) please build using Debug_xerces_3_2 or Release_xerces_3_2
+xerces-c 9.2 (like Ubuntu 20.xx / Debian 10) please build using Debug_xerces_3_2 or Release_xerces_3_2
+
+Information about installing in Debian 10:
+If You want to upgrade Your Debian 9 installation, or install APRS2RRD in fresh and current installation You will very quickly see that libmysql++ is no longer avaliable in the Debian 10. Thankfully this isn't something which don't have any workaround, but You need to install libmysql++ manually. First at all visit https://tangentsoft.com/mysqlpp/home and download the tarball containing all sources needed like this one: https://tangentsoft.com/mysqlpp/releases/mysql++-3.2.5.tar.gz. 
+
+Then check if You have all libmysql++ dependiences installed. Use aptitude and check 'aptitude show default-libmysqlclient-dev' if this metapackage is in the system and install it if not. Then decompress the tarball and configure sources with './configure --prefix=/usr' When sources are configured w/o errors just type standard make and then make install. If everything is OK You can proceed to APRS2RRD.
 
 Actually the APRS2RRD cannot run in background as a daemon so 'screen' command must be used to start it in background. Please look into 'doc' directory where example rc.aprs2rrd and rc.skrzyczne startup scripts are placed, along with example configuration files. It is strongly advised to run APRS2RRD as a separate non-root user with minial privileges required. Please remember that APRS2RRD executable must have a read-write access to all RRD files and directory where they are stored and also to directory where it will generate HTML and PNG files with plots. 
 
 Mateusz Lubecki
 email: sp8ebc@interia.pl
 
-Bielsko-Biała 2019, 2020
+Bielsko-Biała 2019, 2020, 2021
