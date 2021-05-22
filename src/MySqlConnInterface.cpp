@@ -55,6 +55,7 @@ void MySqlConnInterface::InsertIntoDbSchema2(const AprsWXData& cInput, const Dat
 		return;
 
 	std::stringstream temp;
+	temp.str("");
 
 	boost::posix_time::ptime current_epoch = boost::posix_time::second_clock::universal_time();
 	//boost::date_time::second_clock<boost::posix_time::ptime>::local_time();	// static access should be here??
@@ -79,7 +80,7 @@ void MySqlConnInterface::InsertIntoDbSchema2(const AprsWXData& cInput, const Dat
 	temp << "'" << config.getWindSource() << "', ";
 	temp << "'" << config.getPressureSource() << "', ";
 	temp << "'" << config.getHumiditySource() << "', ";
-	temp << "'" << config.getRainSource() << "');";
+	temp << "'" << config.getRainSource() << "');" << endl;
 
 	if (this->Debug == true)
 		cout << temp.str() << endl;
@@ -110,6 +111,7 @@ void MySqlConnInterface::InsertDiff(const AprsWXData& input, const DiffCalculato
 		return;
 
 	std::stringstream temp;
+	temp.str("");
 
 	boost::posix_time::ptime current_epoch = boost::posix_time::second_clock::universal_time();
 	//boost::date_time::second_clock<boost::posix_time::ptime>::local_time();	// static access should be here??
@@ -132,7 +134,7 @@ void MySqlConnInterface::InsertDiff(const AprsWXData& input, const DiffCalculato
 	temp << input.temperature << ", ";
 	temp << input.wind_direction << ", ";
 	temp << input.wind_speed << ", ";
-	temp << input.wind_gusts << ");";
+	temp << input.wind_gusts << ");" << endl;
 
 	if (this->Debug == true)
 		cout << temp.str() << endl;
@@ -165,6 +167,7 @@ void MySqlConnInterface::InsertTelmetry(const Telemetry& input, std::string stat
 	}
 
 	std::stringstream temp;
+	temp.str("");
 
 	boost::posix_time::ptime current_epoch = boost::posix_time::second_clock::universal_time();
 	//boost::date_time::second_clock<boost::posix_time::ptime>::local_time();	// static access should be here??
@@ -193,7 +196,7 @@ void MySqlConnInterface::InsertTelmetry(const Telemetry& input, std::string stat
 	temp << (int)input.ch2 << ", ";
 	temp << (int)input.ch3 << ", ";
 	temp << (int)input.ch4 << ", ";
-	temp << (int)input.ch5 << ");";
+	temp << (int)input.ch5 << ");" << endl;
 
 	if (this->Debug == true)
 		cout << temp.str() << endl;
@@ -250,6 +253,8 @@ void MySqlConnInterface::InsertIntoDb(const AprsWXData* cInput) {
 	stringstream temp;
 	time_t currtime;
 	struct tm* local;
+
+	temp.str("");
 
 	currtime = time(NULL);
 	local = localtime(&currtime);
