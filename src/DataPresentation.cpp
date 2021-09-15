@@ -487,13 +487,17 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 			if (this->PrintPressure)
 				html << "<tr><td class=table_caption><b>Ciśnienie:</b></td><td class=table_value id=Ciśnienie> " << WX.pressure << " hPa ";
 			if (this->PrintHumidity)
-				html << "<tr><td class=table_caption><b>Wilgotność:</b></td><td class=table_value id=wilgotnosc> " << WX.humidity << " %% ";
+				html << "<tr><td class=table_caption><b>Wilgotność:</b></td><td class=table_value id=wilgotnosc> " << WX.humidity << " % ";
 		}
 		html << "</tbody></table>";
 
 		html.imbue(std::locale(std::locale::classic(), formatter));
 		html << "<P class=last_update><b>Czas ostatniej aktualizacji: " << localtime << "</b> </P>";
 		html << "<table class=sub_heading><td class=sub_heading>" << this->WebsiteSubHeading << "</td></table>\r\n";
+
+		if (this->WebsiteAdditionalImage.size() > 1) {
+			html << "<img class = \"additional\"  src=\"" << this->WebsiteAdditionalImage << "\"><br>\r\n";
+		}
 
 		if(this->WebsiteLinkToMoreInfo == true)
 			html << "<table class=sub_heading><td class=sub_heading><a href=\"info.html\">Informacje o stacji i startowisku</a></td></table>\r\n";

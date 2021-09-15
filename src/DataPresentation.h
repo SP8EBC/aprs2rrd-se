@@ -54,6 +54,8 @@ public:
 	string PrimaryLabel;
 	WxDataSource SecondarySource;
 
+	string WebsiteAdditionalImage;
+
 	int8_t directionCorrection;
 
 	bool DebugOutput;

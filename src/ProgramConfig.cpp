@@ -171,6 +171,13 @@ void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCo
 	rWWW.lookupValue("DirectionCorrection", (int32_t&)data.directionCorrection);
 
 	try {
+		rWWW.lookupValue("AdditionalImageBetweenTableAndPlots", data.WebsiteAdditionalImage);
+	}
+	catch (libconfig::SettingNotFoundException &ex) {
+		data.WebsiteAdditionalImage = "";
+	}
+
+	try {
 		rWWW.lookupValue("PrintTwoSourcesInTable", data.PrintTwoSourcesInTable);
 		rWWW.lookupValue("SecondaryLabel", data.SecondaryLabel);
 		rWWW.lookupValue("PrimaryLabel", data.PrimaryLabel);
