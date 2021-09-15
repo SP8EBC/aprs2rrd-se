@@ -493,11 +493,13 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 
 		html.imbue(std::locale(std::locale::classic(), formatter));
 		html << "<P class=last_update><b>Czas ostatniej aktualizacji: " << localtime << "</b> </P>";
-		html << "<table class=sub_heading><td class=sub_heading>" << this->WebsiteSubHeading << "</td></table>\r\n";
+		html << "<table class=sub_heading><tbody><tr><td class=sub_heading>" << this->WebsiteSubHeading << "</td></tr>";
 
 		if (this->WebsiteAdditionalImage.size() > 1) {
-			html << "<img class = \"additional\"  src=\"" << this->WebsiteAdditionalImage << "\"><br>\r\n";
+			html << "<tr><td><img class = \"additional\"  src=\"" << this->WebsiteAdditionalImage << "\"><td></tr>";
 		}
+
+		html << "</tbody></table><br>\r\n";
 
 		if(this->WebsiteLinkToMoreInfo == true)
 			html << "<table class=sub_heading><td class=sub_heading><a href=\"info.html\">Informacje o stacji i startowisku</a></td></table>\r\n";

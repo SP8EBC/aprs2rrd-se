@@ -726,6 +726,9 @@ void ProgramConfig::printConfigInPl(
         	cout << "-- Etykieta Drugiego: " << dataPresence.SecondaryLabel << endl;
         	cout << "-- Drugie źrodło danych: " << wxDataSourceToStr(dataPresence.SecondarySource) << endl;
         }
+        if (dataPresence.WebsiteAdditionalImage.size() > 2) {
+        	cout << "--- Dodatkowa grafika nad wykresami: " << dataPresence.WebsiteAdditionalImage << endl;
+        }
 		cout << endl;
 		cout << "--------KONFIGURACJA WYKRESÓW-----" << endl;
 		cout << "--- Ilość wykresów do wygenerowania: " << dataPresence.vPNGFiles.size() << endl;
