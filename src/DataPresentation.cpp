@@ -317,7 +317,7 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 		html << "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\"></head>" << std::endl;
 		html << "<P><H2>" << this->WebsiteHeadingTitle << "</H2></P>" << std::endl;
 
-		html << "<table><tbody>" << std::endl;
+		html << "<table class=\"data\"><tbody>" << std::endl;
 		if (this->PrintTwoSourcesInTable) {
 			html << "<tr class=\"header\">" << std::endl;
 			html << "<td></td>" << std::endl;
@@ -325,17 +325,17 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 			html << "<td>" << this->SecondaryLabel << "</td>" << std::endl;
 			html << "</tr>" << std::endl;
 			html << "<tr>" << std::endl;
-			html << "<td class=table_caption><b>" << locale.windSpeed << ":</b></td>" << std::endl;
+			html << "<td class=table_caption>" << locale.windSpeed << ":</td>" << std::endl;
 			html << "<td class=table_value> "<< std::setprecision(windspeedPrecision) << WX.wind_speed << " m/s </td>" << std::endl;
 			html << "<td class=table_value> "<< std::setprecision(windspeedPrecision) << secondaryWX.wind_speed << " m/s </td>" << std::endl;
 			html << "</tr>" << std::endl;
 			html << "<tr>" << std::endl;
-			html << "<td class=table_caption><b>" << locale.windGusts << ":</b></td>" << std::endl;
+			html << "<td class=table_caption>" << locale.windGusts << ":</td>" << std::endl;
 			html << "<td class=table_value> " << std::setprecision(windgustsPrecision) <<   WX.wind_gusts << " m/s </td>" << std::endl;
 			html << "<td class=table_value> " << std::setprecision(windgustsPrecision) <<   secondaryWX.wind_gusts << " m/s </td>" << std::endl;
 			html << "</tr>" << std::endl;
 			html << "<tr>" << std::endl;
-			html << "<td class=table_caption><b>" << locale.windDirection <<":</b></td>" << std::endl;
+			html << "<td class=table_caption>" << locale.windDirection <<":</td>" << std::endl;
 			html << "<td class=table_value id=kierunek> " << WX.wind_direction << " stopni ";
 
 			if (WX.wind_direction <= 11 && WX.wind_direction >= 349)
@@ -414,21 +414,21 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 
 			if (this->PrintTemperature) {
 				html << "<tr>" << endl;
-				html << "<td class=table_caption><b>" << locale.temperature <<":</b></td>" << endl;
+				html << "<td class=table_caption>" << locale.temperature <<":</td>" << endl;
 				html << "<td class=table_value> " << std::setprecision(temperaturePrecision) << WX.temperature << " ⁰C " << endl;
 				html << "<td class=table_value> " << std::setprecision(temperaturePrecision) << secondaryWX.temperature << " ⁰C " << endl;
 				html << "</tr>" << endl;
 			}
 			if (this->PrintPressure) {
 				html << "<tr>" << endl;
-				html << "<td class=table_caption><b>" << locale.pressure <<":</b></td>" << endl;
+				html << "<td class=table_caption" << locale.pressure <<":</td>" << endl;
 				html << "<td class=table_value> " << WX.pressure << " hPa " << endl;
 				html << "<td class=table_value> " << secondaryWX.pressure << " hPa " << endl;
 				html << "</tr>" << endl;
 			}
 			if (this->PrintHumidity) {
 				html << "<tr>" << endl;
-				html << "<td class=table_caption><b>" << locale.humidity <<":</b></td>" << endl;
+				html << "<td class=table_caption>" << locale.humidity <<":</td>" << endl;
 				html << "<td class=table_value id=wilgotnosc> " << WX.humidity << " %% ";
 				html << "<td class=table_value id=wilgotnosc> " << secondaryWX.humidity << " %% ";
 				html << "</tr>" << endl;
@@ -436,15 +436,15 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 		}
 		else {
 			html << "<tr>" << std::endl;
-			html << "<td class=table_caption><b>" << locale.windSpeed << ":</b></td>" << std::endl;
+			html << "<td class=table_caption>" << locale.windSpeed << ":</td>" << std::endl;
 			html << "<td class=table_value id=srednia> "<< std::setprecision(windspeedPrecision) << WX.wind_speed << " m/s </td>" << std::endl;
 			html << "</tr>" << std::endl;
 			html << "<tr>" << std::endl;
-			html << "<td class=table_caption><b>" << locale.windGusts << ":</b></td>" << std::endl;
+			html << "<td class=table_caption>" << locale.windGusts << ":</td>" << std::endl;
 			html << "<td class=table_value id=porywy> " << std::setprecision(windgustsPrecision) <<   WX.wind_gusts << " m/s </td>" << std::endl;
 			html << "</tr>" << std::endl;
 			html << "<tr>" << std::endl;
-			html << "<td class=table_caption><b>" << locale.windDirection <<":</b></td><td class=table_value id=kierunek> " << WX.wind_direction << " stopni ";
+			html << "<td class=table_caption>" << locale.windDirection <<":</td><td class=table_value id=kierunek> " << WX.wind_direction << " stopni ";
 
 			if (WX.wind_direction <= 11 && WX.wind_direction >= 349)
 				html << "- z północy";
@@ -483,16 +483,16 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 			html << "</td></tr>";
 
 			if (this->PrintTemperature)
-				html << "<tr><td class=table_caption><b>" << locale.temperature <<":</b></td><td class=table_value id=temperatura> " << std::setprecision(temperaturePrecision) << WX.temperature << " ⁰C ";
+				html << "<tr><td class=table_caption>" << locale.temperature <<":</td><td class=table_value id=temperatura> " << std::setprecision(temperaturePrecision) << WX.temperature << " ⁰C ";
 			if (this->PrintPressure)
-				html << "<tr><td class=table_caption><b>" << locale.pressure << ":</b></td><td class=table_value id=Ciśnienie> " << WX.pressure << " hPa ";
+				html << "<tr><td class=table_caption>" << locale.pressure << ":</td><td class=table_value id=Ciśnienie> " << WX.pressure << " hPa ";
 			if (this->PrintHumidity)
-				html << "<tr><td class=table_caption><b>" << locale.humidity << ":</b></td><td class=table_value id=wilgotnosc> " << WX.humidity << " % ";
+				html << "<tr><td class=table_caption>" << locale.humidity << ":</td><td class=table_value id=wilgotnosc> " << WX.humidity << " % ";
 		}
 		html << "</tbody></table>";
 
 		html.imbue(std::locale(std::locale::classic(), formatter));
-		html << "<P class=last_update><b>" << locale.lastUpdate << ": " << localtime << "</b> </P>";
+		html << "<P class=last_update>" << locale.lastUpdate << ": " << localtime << " </P>";
 		html << "<table class=sub_heading><tbody><tr><td class=sub_heading>" << this->WebsiteSubHeading << "</td></tr>";
 
 		if (this->WebsiteAdditionalImage.size() > 1) {
