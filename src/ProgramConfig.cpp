@@ -172,6 +172,7 @@ void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCo
 
 	try {
 		rWWW.lookupValue("AdditionalImageBetweenTableAndPlots", data.WebsiteAdditionalImage);
+		rWWW.lookupValue("AdditionalImageUrl", data.WebsiteAdditionalImgeUrl);
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
 		data.WebsiteAdditionalImage = "";
