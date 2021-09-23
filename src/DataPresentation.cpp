@@ -497,10 +497,10 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 
 		if (this->WebsiteAdditionalImage.size() > 1) {
 			if (this->WebsiteAdditionalImgeUrl.size() > 1) {
-
+				html << "<tr><td><a href = \"" << this->WebsiteAdditionalImgeUrl <<  "\"><img class = \"additional\"  src=\"" << this->WebsiteAdditionalImage << "\"></a><td></tr>";
 			}
 			else {
-				html << "<tr><td><a href = \"" << this->WebsiteAdditionalImgeUrl <<  "\"><img class = \"additional\"  src=\"" << this->WebsiteAdditionalImage << "\"></a><td></tr>";
+				html << "<tr><td><img class = \"additional\"  src=\"" << this->WebsiteAdditionalImage << "\"><td></tr>";
 			}
 		}
 
