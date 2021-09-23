@@ -607,6 +607,31 @@ void ProgramConfig::getSlewRateLimitConfig(SlewRateLimiter& limiter) {
 	}
 }
 
+void ProgramConfig::getLocaleStaticString(Locale &l) {
+
+	try {
+		libconfig::Setting &root = config.getRoot();
+		libconfig::Setting &locale = root["LocaleStaticStrings"];
+
+		locale.lookupValue("generatedBy", l.generatedBy);
+		locale.lookupValue("generatedBy2", l.generatedBy2);
+		locale.lookupValue("humidity", l.humidity);
+		locale.lookupValue("lastUpdate", l.lastUpdate);
+		locale.lookupValue("moreInfo", l.moreInfo);
+		locale.lookupValue("pressure", l.pressure);
+		locale.lookupValue("temperature", l.temperature);
+		locale.lookupValue("windDirection", l.windDirection);
+		locale.lookupValue("windGusts", l.windGusts);
+		locale.lookupValue("windSpeed", l.windSpeed);
+
+		std::cout << "--- ProgramConfig::getDataSourceConfig:627 - Locale text data loaded successfully." << std::endl;
+	}
+	catch (libconfig::SettingNotFoundException &ex) {
+		std::cout << "--- ProgramConfig::getDataSourceConfig:630 - Error during loading locale! Default values will be used" << std::endl;
+	}
+
+}
+
 void ProgramConfig::printConfigInPl(
 											MySqlConnInterface& mysqlDb,
 											AprsThreadConfig& aprsConfig,
@@ -619,7 +644,8 @@ void ProgramConfig::printConfigInPl(
 											DiffCalculator & calculator,
 											DataSourceConfig & source,
 											PressureCalculator& pressureCalc,
-											SlewRateLimiter & limiter
+											SlewRateLimiter & limiter,
+											Locale & locale
 
 									) {
 
@@ -728,6 +754,10 @@ void ProgramConfig::printConfigInPl(
         }
         if (dataPresence.WebsiteAdditionalImage.size() > 2) {
         	cout << "--- Dodatkowa grafika nad wykresami: " << dataPresence.WebsiteAdditionalImage << endl;
+        	if (dataPresence.WebsiteAdditionalImgeUrl.size() > 2) {
+            	cout << "--- Link ustawiony na dodatkowej grafice: " << dataPresence.WebsiteAdditionalImgeUrl << endl;
+
+        	}
         }
 		cout << endl;
 		cout << "--------KONFIGURACJA WYKRESÓW-----" << endl;
@@ -756,6 +786,19 @@ void ProgramConfig::printConfigInPl(
 			cout << "--- Szerokość wykresu: " << dec << dataPresence.vPNGFiles[ii].Width << endl;
 
 		}
+		cout << endl;
+		cout << "--------ZWROTY UŻYWANE DO GENEROWANIA STRONY WWW (LOKALIZACJA)-----" << endl;
+		cout << "--- " << locale.generatedBy << endl;
+		cout << "--- " << locale.generatedBy2 << endl;
+		cout << "--- " << locale.humidity << endl;
+		cout << "--- " << locale.lastUpdate << endl;
+		cout << "--- " << locale.moreInfo << endl;
+		cout << "--- " << locale.pressure << endl;
+		cout << "--- " << locale.temperature << endl;
+		cout << "--- " << locale.windDirection << endl;
+		cout << "--- " << locale.windGusts << endl;
+		cout << "--- " << locale.windSpeed << endl;
+
 //	}
 
 }

@@ -23,6 +23,7 @@
 #include "DiffCalculator.h"
 #include "PressureCalculator.h"
 #include "SlewRateLimiter.h"
+#include "Locale.h"
 
 class ProgramConfig {
 	std::string configFilename;
@@ -71,6 +72,7 @@ public:
 	void getDiffConfiguration(DiffCalculator & calculator);
 	void getPressureCalcConfig(PressureCalculator & pressureCalc);
 	void getSlewRateLimitConfig(SlewRateLimiter & limiter);
+	void getLocaleStaticString(Locale& l);
 
 	bool configureLogOutput();
 
@@ -104,7 +106,8 @@ public:
 									DiffCalculator & calculator,
 									DataSourceConfig & source,
 									PressureCalculator& pressureCalc,
-									SlewRateLimiter & limiter);
+									SlewRateLimiter & limiter,
+									Locale & locale);
 
 
 

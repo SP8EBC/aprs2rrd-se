@@ -84,6 +84,7 @@ int main(int argc, char **argv){
 	std::unique_ptr<HolfuyClient> holfuyClient;
 	DiffCalculator diffCalculator;
 	PressureCalculator pressureCalculator;
+	Locale locale;
 
 
 	RRDFileDefinition sVectorRRDTemp;
@@ -148,6 +149,7 @@ int main(int argc, char **argv){
 		programConfig.getStationName();
 		programConfig.getPressureCalcConfig(pressureCalculator);
 		programConfig.getSlewRateLimitConfig(limiter);
+		programConfig.getLocaleStaticString(locale);
 
 		dataPresence.DebugOutput = Debug;
 		mysqlDb.Debug = Debug;
@@ -174,7 +176,7 @@ int main(int argc, char **argv){
 		return -5;
 	}
 
-	ProgramConfig::printConfigInPl(mysqlDb, aprsConfig, dataPresence, RRDCount, PlotsCount, telemetry, useFifthTelemAsTemperature, holfuyConfig, diffCalculator, sourceConfig, pressureCalculator, limiter);
+	ProgramConfig::printConfigInPl(mysqlDb, aprsConfig, dataPresence, RRDCount, PlotsCount, telemetry, useFifthTelemAsTemperature, holfuyConfig, diffCalculator, sourceConfig, pressureCalculator, limiter, locale);
 
 	serialThread = new SerialAsioThread(syncCondition, syncLock, serialConfig.serialPort, serialConfig.baudrate);
 
@@ -346,7 +348,7 @@ int main(int argc, char **argv){
 					dataPresence.PlotGraphsFromRRD();
 
 					// generating the website
-					dataPresence.GenerateWebiste(wxTarget, wxSecondarySrcForPage);
+					dataPresence.GenerateWebiste(wxTarget, wxSecondarySrcForPage, locale);
 
 					// storing values for slew rate corrections
 					wxLastTarget = wxTarget;

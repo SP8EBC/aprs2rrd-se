@@ -9,6 +9,7 @@
 #include "AprsWXData.h"
 #include "PlotFileDefinition.h"
 #include "DataSourceConfig.h"
+#include "Locale.h"
 
 using namespace std;
 
@@ -22,7 +23,7 @@ public:
 	void FetchDataInRRD(const AprsWXData* const cInput);
 	void FetchDiffInRRD(AprsWXData & data);
 	void PlotGraphsFromRRD(void);
-	void GenerateWebiste(const AprsWXData & WX, const AprsWXData & secondaryWX);
+	void GenerateWebiste(const AprsWXData & WX, const AprsWXData & secondaryWX, const Locale & locale);
 	void GetSecondarySource(const AprsWXData& aprsIS,
 			const AprsWXData& serial,
 			const AprsWXData& holfuy,
@@ -55,6 +56,7 @@ public:
 	WxDataSource SecondarySource;
 
 	string WebsiteAdditionalImage;
+	string WebsiteAdditionalImgeUrl;
 
 	int8_t directionCorrection;
 
