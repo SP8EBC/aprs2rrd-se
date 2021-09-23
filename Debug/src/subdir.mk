@@ -15,6 +15,7 @@ CPP_SRCS += \
 ../src/DiffCalculator.cpp \
 ../src/HolfuyClient.cpp \
 ../src/HolfuyClientConfig.cpp \
+../src/Locale.cpp \
 ../src/MySqlConnInterface.cpp \
 ../src/PlotFileDefinition.cpp \
 ../src/PressureCalculator.cpp \
@@ -39,6 +40,7 @@ OBJS += \
 ./src/DiffCalculator.o \
 ./src/HolfuyClient.o \
 ./src/HolfuyClientConfig.o \
+./src/Locale.o \
 ./src/MySqlConnInterface.o \
 ./src/PlotFileDefinition.o \
 ./src/PressureCalculator.o \
@@ -63,6 +65,7 @@ CPP_DEPS += \
 ./src/DiffCalculator.d \
 ./src/HolfuyClient.d \
 ./src/HolfuyClientConfig.d \
+./src/Locale.d \
 ./src/MySqlConnInterface.d \
 ./src/PlotFileDefinition.d \
 ./src/PressureCalculator.d \
