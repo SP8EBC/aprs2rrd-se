@@ -663,11 +663,26 @@ void AprsWXData::DirectionCorrection(AprsWXData& packet, short correction) {
 	if (!packet.valid)
 		return;
 
+    int direction = packet.wind_direction;
+
+    int out;
+
+    // correction of wind direction bug in ParaMETEO version EA00 software
+    if (direction >= 65354 && direction <= 65535) {
+
+			std::cout << "--- AprsWXData::DirectionCorrection:673 - Wind direction was : " << direction << std::endl;
+
+    	direction = 180 + (65535 - direction);
+
+        packet.wind_direction = direction;
+
+			std::cout << "--- AprsWXData::DirectionCorrection:679 - Wind direction has been corrected to : " << direction << std::endl;
+
+
+    }
+
 	if (correction == 0)
 		return;
-
-    short direction = packet.wind_direction;
-    short out;
 
     if (direction + correction > 360)
     {
