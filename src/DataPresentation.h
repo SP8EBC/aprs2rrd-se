@@ -42,7 +42,7 @@ public:
 	string WebsitePath;
 	string Plot0Path, Plot1Path, Plot2Path, Plot3Path, Plot4Path;
 
-	bool PrintTemperature, PrintPressure, PrintHumidity;
+	bool PrintTemperature, PrintPressure, PrintHumidity, PrintWind;
 
 	string WebsiteTitle;
 	string WebsiteHeadingTitle;

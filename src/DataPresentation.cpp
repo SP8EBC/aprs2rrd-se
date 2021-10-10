@@ -18,6 +18,7 @@ DataPresentation::DataPresentation() : 	WebsitePath(""),
 										PrintTemperature(false),
 										PrintPressure (false),
 										PrintHumidity (false),
+										PrintWind(true),
 										WebsiteTitle(""),
 										WebsiteHeadingTitle(""),
 										WebsiteSubHeading(""),
@@ -54,7 +55,7 @@ void DataPresentation::FetchDiffInRRD(AprsWXData& data) {
 	if (!data.useTemperature && !data.useWind)
 		return;
 
-	std::cout << "--- DataPresentation::FetchDiffInRRD:57 - Inserting diffs into RRD files" << std::endl;
+	std::cout << "--- DataPresentation::FetchDiffInRRD:58 - Inserting diffs into RRD files" << std::endl;
 
 	auto diff_temperature_it = std::find(this->vRRDFiles.begin(), this->vRRDFiles.end(), RRDFileDefinition(PlotType::DIFF_TEMPERATURE));
 	auto diff_winddir_it = std::find(this->vRRDFiles.begin(), this->vRRDFiles.end(), RRDFileDefinition(PlotType::DIFF_WIND_DIR));
@@ -104,7 +105,7 @@ void DataPresentation::FetchDataInRRD(const AprsWXData* const cInput) {
 		return;
 
 	if (!cInput->valid) {
-		cout << "--- DataPresentation::FetchDataInRRD:107 - Input data is invalid and cannot be used" << endl;
+		cout << "--- DataPresentation::FetchDataInRRD:108 - Input data is invalid and cannot be used" << endl;
 		return;
 	}
 
@@ -197,7 +198,7 @@ void DataPresentation::PlotGraphsFromRRD() {
 	std::string graph2Type;
 
 	if (this->DebugOutput == true) {
-		cout << "--- DataPresentation::PlotGraphsFromRRD:192 -  Count of plots to be generated: " <<  this->vPNGFiles.size() << endl;
+		cout << "--- DataPresentation::PlotGraphsFromRRD:201 -  Count of plots to be generated: " <<  this->vPNGFiles.size() << endl;
 	}
 
 	for (i = 0; i < this->vPNGFiles.size(); i++) {
@@ -290,12 +291,12 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 	html.open(this->WebsitePath.c_str(), ios::out | ios::trunc);
 
 	if (!html.is_open()) {
-		std::cout << "--- DataPresentation::GenerateWebiste:284 - Html file cannot by opend because of unknown reason" << std::endl;
+		std::cout << "--- DataPresentation::GenerateWebiste:294 - Html file cannot by opened because of unknown reason" << std::endl;
 		return;
 	}
 
 	if (!html.good()) {
-		std::cout << "--- DataPresentation::GenerateWebiste:289 - Something is wrong with the html file!" << std::endl;
+		std::cout << "--- DataPresentation::GenerateWebiste:299 - Something is wrong with the html file!" << std::endl;
 		return;
 	}
 
@@ -307,7 +308,7 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 
 	//html.precision(3);
 
-	std::cout << "--- DataPresentation::GenerateWebiste:299 - Html file opened" << std::endl;
+	std::cout << "--- DataPresentation::GenerateWebiste:311 - Html file opened" << std::endl;
 
 	try {
 		html << " <!DOCTYPE html>" << std::endl;
@@ -435,59 +436,62 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 			}
 		}
 		else {
-			html << "<tr>" << std::endl;
-			html << "<td class=table_caption>" << locale.windSpeed << ":</td>" << std::endl;
-			html << "<td class=table_value id=srednia> "<< std::setprecision(windspeedPrecision) << WX.wind_speed << " m/s </td>" << std::endl;
-			html << "</tr>" << std::endl;
-			html << "<tr>" << std::endl;
-			html << "<td class=table_caption>" << locale.windGusts << ":</td>" << std::endl;
-			html << "<td class=table_value id=porywy> " << std::setprecision(windgustsPrecision) <<   WX.wind_gusts << " m/s </td>" << std::endl;
-			html << "</tr>" << std::endl;
-			html << "<tr>" << std::endl;
-			html << "<td class=table_caption>" << locale.windDirection <<":</td><td class=table_value id=kierunek> " << WX.wind_direction << " stopni ";
+			if (this->PrintWind) {
+				html << "<tr>" << std::endl;
+				html << "<td class=table_caption>" << locale.windSpeed << ":</td>" << std::endl;
+				html << "<td class=table_value id=average> "<< std::setprecision(windspeedPrecision) << WX.wind_speed << " m/s </td>" << std::endl;
+				html << "</tr>" << std::endl;
+				html << "<tr>" << std::endl;
+				html << "<td class=table_caption>" << locale.windGusts << ":</td>" << std::endl;
+				html << "<td class=table_value id=gusts> " << std::setprecision(windgustsPrecision) <<   WX.wind_gusts << " m/s </td>" << std::endl;
+				html << "</tr>" << std::endl;
+				html << "<tr>" << std::endl;
+				html << "<td class=table_caption>" << locale.windDirection <<":</td><td class=table_value id=kierunek> " << WX.wind_direction << " stopni ";
 
-			if (WX.wind_direction <= 11 && WX.wind_direction >= 349)
-				html << "- z północy";
-			else if (WX.wind_direction <= 34 && WX.wind_direction > 11)
-				html << "- z północy-północnego wschodu";
-			else if (WX.wind_direction <= 56 && WX.wind_direction > 34)
-				html << "- z północnego wschodu";
-			else if (WX.wind_direction <= 79 && WX.wind_direction > 56)
-				html << "- ze wschodu-północnego wschodu";
-			else if (WX.wind_direction <= 101 && WX.wind_direction > 79)
-				html << "- ze wschodu";
-			else if (WX.wind_direction <= 124 && WX.wind_direction > 101)
-				html << "- ze wschodu-południowego wschodu";
-			else if (WX.wind_direction <= 146 && WX.wind_direction > 124)
-				html << "- z południowego wschodu";
-			else if (WX.wind_direction <= 169 && WX.wind_direction > 146)
-				html << "- z południa-południowego wschodu";
-			else if (WX.wind_direction <= 191 && WX.wind_direction > 169)
-				html << "- z południa";
-			else if (WX.wind_direction <= 214 && WX.wind_direction > 191)
-				html << "- z południa-południowego zachodu";
-			else if (WX.wind_direction <= 236 && WX.wind_direction > 214)
-				html << "- z południowego zachodu";
-			else if (WX.wind_direction <= 259 && WX.wind_direction > 236)
-				html <<"- z zachodu-południowego zachodu";
-			else if (WX.wind_direction <= 281 && WX.wind_direction > 259)
-				html << "- z zachodu";
-			else if (WX.wind_direction <= 304 && WX.wind_direction > 281)
-				html << "- z zachodu-północnego zachodu";
-			else if (WX.wind_direction <= 327 && WX.wind_direction > 304)
-				html << "- z północnego zachodu";
-			else if (WX.wind_direction <= 349 && WX.wind_direction > 327)
-				html << "- z północy-północnego zachodu";
-			else;
 
-			html << "</td></tr>";
+				if (WX.wind_direction <= 11 && WX.wind_direction >= 349)
+					html << "- z północy";
+				else if (WX.wind_direction <= 34 && WX.wind_direction > 11)
+					html << "- z północy-północnego wschodu";
+				else if (WX.wind_direction <= 56 && WX.wind_direction > 34)
+					html << "- z północnego wschodu";
+				else if (WX.wind_direction <= 79 && WX.wind_direction > 56)
+					html << "- ze wschodu-północnego wschodu";
+				else if (WX.wind_direction <= 101 && WX.wind_direction > 79)
+					html << "- ze wschodu";
+				else if (WX.wind_direction <= 124 && WX.wind_direction > 101)
+					html << "- ze wschodu-południowego wschodu";
+				else if (WX.wind_direction <= 146 && WX.wind_direction > 124)
+					html << "- z południowego wschodu";
+				else if (WX.wind_direction <= 169 && WX.wind_direction > 146)
+					html << "- z południa-południowego wschodu";
+				else if (WX.wind_direction <= 191 && WX.wind_direction > 169)
+					html << "- z południa";
+				else if (WX.wind_direction <= 214 && WX.wind_direction > 191)
+					html << "- z południa-południowego zachodu";
+				else if (WX.wind_direction <= 236 && WX.wind_direction > 214)
+					html << "- z południowego zachodu";
+				else if (WX.wind_direction <= 259 && WX.wind_direction > 236)
+					html <<"- z zachodu-południowego zachodu";
+				else if (WX.wind_direction <= 281 && WX.wind_direction > 259)
+					html << "- z zachodu";
+				else if (WX.wind_direction <= 304 && WX.wind_direction > 281)
+					html << "- z zachodu-północnego zachodu";
+				else if (WX.wind_direction <= 327 && WX.wind_direction > 304)
+					html << "- z północnego zachodu";
+				else if (WX.wind_direction <= 349 && WX.wind_direction > 327)
+					html << "- z północy-północnego zachodu";
+				else;
+
+				html << "</td></tr>";
+			}
 
 			if (this->PrintTemperature)
-				html << "<tr><td class=table_caption>" << locale.temperature <<":</td><td class=table_value id=temperatura> " << std::setprecision(temperaturePrecision) << WX.temperature << " ⁰C ";
+				html << "<tr><td class=table_caption>" << locale.temperature <<":</td><td class=table_value id=temperature> " << std::setprecision(temperaturePrecision) << WX.temperature << " ⁰C ";
 			if (this->PrintPressure)
-				html << "<tr><td class=table_caption>" << locale.pressure << ":</td><td class=table_value id=Ciśnienie> " << WX.pressure << " hPa ";
+				html << "<tr><td class=table_caption>" << locale.pressure << ":</td><td class=table_value id=pressure> " << WX.pressure << " hPa ";
 			if (this->PrintHumidity)
-				html << "<tr><td class=table_caption>" << locale.humidity << ":</td><td class=table_value id=wilgotnosc> " << WX.humidity << " % ";
+				html << "<tr><td class=table_caption>" << locale.humidity << ":</td><td class=table_value id=humidity> " << WX.humidity << " % ";
 		}
 		html << "</tbody></table>";
 

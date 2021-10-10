@@ -169,6 +169,12 @@ void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCo
 	rWWW.lookupValue("PrintPressure", data.PrintPressure);
 	rWWW.lookupValue("PrintHumidity", data.PrintHumidity);
 	rWWW.lookupValue("DirectionCorrection", (int32_t&)data.directionCorrection);
+	try {
+		rWWW.lookupValue("PrintWind", data.PrintWind);
+	}
+	catch (libconfig::SettingNotFoundException &ex) {
+		data.PrintWind = true;
+	}
 
 	try {
 		rWWW.lookupValue("AdditionalImageBetweenTableAndPlots", data.WebsiteAdditionalImage);
