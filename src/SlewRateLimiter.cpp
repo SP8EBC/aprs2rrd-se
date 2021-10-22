@@ -16,6 +16,7 @@ SlewRateLimiter::SlewRateLimiter() {
 	maxSpeedSleew = MAX_SPEED_SLEW;
 	maxDirectionSleew = MAX_DIRECTION_SLEW;
 	maxGustsSleew = MAX_GUSTS_SLEW;
+	maxHumiditySlew = MAX_HUMIDITY_SLEW;
 
 	changedFromDefault = false;
 
@@ -100,6 +101,15 @@ void SlewRateLimiter::limitFromSingleFrame(const AprsWXData& previous,
 		else
 			current.pressure = previous.pressure + maxPressureSlew;
 
+	}
+
+	if (current.useHumidity && abs(humidityDiff) > maxHumiditySlew) {
+		std::cout << "SlewRateLimiter::limitFromSingleFrame:106 - Limiting humidity" << std::endl;
+
+		if (humidityDiff < 0)
+			current.humidity = previous.humidity - maxHumiditySlew;
+		else
+			current.humidity = previous.humidity + maxHumiditySlew;
 	}
 
 }

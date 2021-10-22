@@ -17,6 +17,7 @@
 #define MAX_SPEED_SLEW 5.0f
 #define MAX_GUSTS_SLEW 12.0f
 #define MAX_DIRECTION_SLEW 0
+#define MAX_HUMIDITY_SLEW	2
 
 /**
  * This class is used to correct unwanted spikes in parameter values which sometimes
@@ -30,6 +31,7 @@ private:
 	float maxSpeedSleew;
 	float maxGustsSleew;
 	int32_t maxDirectionSleew;
+	int32_t maxHumiditySlew;
 	bool changedFromDefault;
 
 	uint32_t callCounter;
@@ -105,6 +107,16 @@ public:
 
 	float getMaxTempSlew() const {
 		return maxTempSlew;
+	}
+
+	int32_t getMaxHumiditySlew() const {
+		return maxHumiditySlew;
+	}
+
+	void setMaxHumiditySlew(int32_t maxHumiditySlew) {
+		this->maxHumiditySlew = maxHumiditySlew;
+
+		changedFromDefault = true;
 	}
 };
 
