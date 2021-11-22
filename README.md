@@ -12,7 +12,7 @@ Value of each monitored parameter could come from different source, so for insta
 7. Storing results in RRD files and optionally in MySQL database.
 8. Generating set of plots from RRD files with a simple HTML file.
 
-The most recent release version of APRS2RRD is 1.3.2, which should be coosen from git repository using command 'git checkout 1.3.2'. Please be aware that master branch is used to daily development and 'mainline' source coud even not compile in certain situations. 
+The most recent release version of APRS2RRD is 1.5.3, which should be coosen from git repository using command 'git checkout 1.5.3'. Please be aware that master branch is used to daily development and 'mainline' source coud even not compile in certain situations. 
 
 APRS2RRD is intended to be used in Linux environment and it is developed and tested using this operating system. APRS2RRD uses Boost C++ library instead of platform specific calls hence compilation under Windows environment should be theoretically possible, unless apropriate binary version of Boost C++ will be avaliable. 
 
