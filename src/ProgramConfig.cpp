@@ -593,6 +593,7 @@ void ProgramConfig::getSlewRateLimitConfig(SlewRateLimiter& limiter) {
 	float speedSlew;
 	float gustsSlew;
 	int32_t humiditySlew = 2;
+	bool humidityZeroAsHundret = false;
 //	int32_t directionSlew;
 
 	libconfig::Setting &root = config.getRoot();
@@ -620,6 +621,17 @@ void ProgramConfig::getSlewRateLimitConfig(SlewRateLimiter& limiter) {
 		slew.lookupValue("Humidity", humiditySlew);
 
 		limiter.setMaxHumiditySlew(humiditySlew);
+	}
+	catch (libconfig::SettingNotFoundException &ex) {
+		;
+	}
+
+	try {
+		libconfig::Setting &slew = root["SlewLimit"];
+
+		slew.lookupValue("HumidityZeroAsHundret", humidityZeroAsHundret);
+
+		limiter.setHmZeroAs100(humidityZeroAsHundret);
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
 		;
@@ -739,6 +751,9 @@ void ProgramConfig::printConfigInPl(
 			cout << "--- Maksymalna zmiana prędkoci wiatru: " << limiter.getMaxSpeedSleew() << endl;
 			cout << "--- Maksymalna zmiana porywów wiatru: " << limiter.getMaxGustsSleew() << endl;
 			cout << "--- Maksymalna zmiana wilgotności: " << limiter.getMaxHumiditySlew() << endl;
+			if (limiter.isHmZeroAs100()) {
+				cout << "----- Wilgotność 0 procent będzie zamieniana na 100 ------" << endl;
+			}
 			cout << endl;
 		}
 		if (pressureCalc.isEnable()) {

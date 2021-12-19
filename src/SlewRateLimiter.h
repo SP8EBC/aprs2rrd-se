@@ -33,6 +33,7 @@ private:
 	int32_t maxDirectionSleew;
 	int32_t maxHumiditySlew;
 	bool changedFromDefault;
+	bool hmZeroAs100;
 
 	uint32_t callCounter;
 public:
@@ -117,6 +118,14 @@ public:
 		this->maxHumiditySlew = maxHumiditySlew;
 
 		changedFromDefault = true;
+	}
+
+	bool isHmZeroAs100() const {
+		return hmZeroAs100;
+	}
+
+	void setHmZeroAs100(bool hmZeroAs100) {
+		this->hmZeroAs100 = hmZeroAs100;
 	}
 };
 
