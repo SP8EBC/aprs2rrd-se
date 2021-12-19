@@ -588,39 +588,35 @@ void ProgramConfig::getPressureCalcConfig(PressureCalculator& pressureCalc) {
 }
 
 void ProgramConfig::getSlewRateLimitConfig(SlewRateLimiter& limiter) {
-	float temperatureSlew;
-	int32_t pressureSlew;
-	float speedSlew;
-	float gustsSlew;
-	int32_t humiditySlew = 2;
+	float temperatureSlew = MAX_TEMP_SLEW;
+	int32_t pressureSlew = MAX_PRESSURE_SLEW;
+	float speedSlew = MAX_SPEED_SLEW;
+	float gustsSlew = MAX_GUSTS_SLEW;
+	int32_t humiditySlew = MAX_HUMIDITY_SLEW;
 	bool humidityZeroAsHundret = false;
 //	int32_t directionSlew;
+
+	bool lookupSucceded = true;
 
 	libconfig::Setting &root = config.getRoot();
 	try {
 		libconfig::Setting &slew = root["SlewLimit"];
 
-		slew.lookupValue("Temperature", temperatureSlew);
-		slew.lookupValue("Pressure", pressureSlew);
-		slew.lookupValue("WindSpeed", speedSlew);
-		slew.lookupValue("WindGusts", gustsSlew);
+		lookupSucceded = (slew.lookupValue("Temperature", temperatureSlew) ? lookupSucceded : false);
+		lookupSucceded = (slew.lookupValue("Pressure", pressureSlew)) ? lookupSucceded : false;
+		lookupSucceded = (slew.lookupValue("WindSpeed", speedSlew)) ? lookupSucceded : false;
+		lookupSucceded = (slew.lookupValue("WindGusts", gustsSlew)) ? lookupSucceded : false;
+		lookupSucceded = (slew.lookupValue("Humidity", humiditySlew)) ? lookupSucceded : false;
 
-		limiter.setMaxTempSlew(temperatureSlew);
-		limiter.setMaxPressureSlew((int16_t)pressureSlew);
-		limiter.setMaxSpeedSleew(speedSlew);
-		limiter.setMaxGustsSleew(gustsSlew);
 
-	}
-	catch (libconfig::SettingNotFoundException &ex) {
-		;
-	}
+		if (lookupSucceded) {
+			limiter.setMaxTempSlew(temperatureSlew);
+			limiter.setMaxPressureSlew((int16_t)pressureSlew);
+			limiter.setMaxSpeedSleew(speedSlew);
+			limiter.setMaxGustsSleew(gustsSlew);
+			limiter.setMaxHumiditySlew(humiditySlew);
+		}
 
-	try {
-		libconfig::Setting &slew = root["SlewLimit"];
-
-		slew.lookupValue("Humidity", humiditySlew);
-
-		limiter.setMaxHumiditySlew(humiditySlew);
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
 		;
