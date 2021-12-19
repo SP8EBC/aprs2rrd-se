@@ -34,8 +34,15 @@ void SlewRateLimiter::limitFromSingleFrame(const AprsWXData& previous,
 
 	this->callCounter++;
 
-	if (this->callCounter < 8)
+	if (this->callCounter < 8) {
+		if (hmZeroAs100 && current.humidity == 0) {
+			std::cout << "SlewRateLimiter::limitFromSingleFrame:118 - " << std::endl;
+
+			current.humidity = 100;
+		}
+
 		return;
+	}
 
 	// calculating differences
 	float windDirDiff = current.wind_direction - previous.wind_direction;
