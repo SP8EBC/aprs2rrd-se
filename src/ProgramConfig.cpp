@@ -603,10 +603,10 @@ void ProgramConfig::getSlewRateLimitConfig(SlewRateLimiter& limiter) {
 		libconfig::Setting &slew = root["SlewLimit"];
 
 		lookupSucceded = (slew.lookupValue("Temperature", temperatureSlew) ? lookupSucceded : false);
-		lookupSucceded = (slew.lookupValue("Pressure", pressureSlew)) ? lookupSucceded : false;
-		lookupSucceded = (slew.lookupValue("WindSpeed", speedSlew)) ? lookupSucceded : false;
-		lookupSucceded = (slew.lookupValue("WindGusts", gustsSlew)) ? lookupSucceded : false;
-		lookupSucceded = (slew.lookupValue("Humidity", humiditySlew)) ? lookupSucceded : false;
+		lookupSucceded = (slew.lookupValue("Pressure", pressureSlew) ? lookupSucceded : false);
+		lookupSucceded = (slew.lookupValue("WindSpeed", speedSlew) ? lookupSucceded : false);
+		lookupSucceded = (slew.lookupValue("WindGusts", gustsSlew) ? lookupSucceded : false);
+		lookupSucceded = (slew.lookupValue("Humidity", humiditySlew) ? lookupSucceded : false);
 
 
 		if (lookupSucceded) {
