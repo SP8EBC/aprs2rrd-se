@@ -32,15 +32,18 @@ SlewRateLimiter::~SlewRateLimiter() {
 void SlewRateLimiter::limitFromSingleFrame(const AprsWXData& previous,
 		AprsWXData& current) {
 
+	bool humidityUpdated = false;
+
 	this->callCounter++;
 
+	if (hmZeroAs100 && current.humidity == 0) {
+		std::cout << "SlewRateLimiter::limitFromSingleFrame:38 - " << std::endl;
+
+		current.humidity = 100;
+		humidityUpdated = true;
+	}
+
 	if (this->callCounter < 8) {
-		if (hmZeroAs100 && current.humidity == 0) {
-			std::cout << "SlewRateLimiter::limitFromSingleFrame:118 - " << std::endl;
-
-			current.humidity = 100;
-		}
-
 		return;
 	}
 
@@ -65,7 +68,7 @@ void SlewRateLimiter::limitFromSingleFrame(const AprsWXData& previous,
 
 	if (current.useWind && abs(windSpdDiff) > maxSpeedSleew)
 	{
-		std::cout << "SlewRateLimiter::limitFromSingleFrame:61 - Limiting windspeed" << std::endl;
+		std::cout << "SlewRateLimiter::limitFromSingleFrame:71 - Limiting windspeed" << std::endl;
 
 		// if the wind speed changed above the maximum speed limit apply a correction
 		if (windSpdDiff < 0)
@@ -78,7 +81,7 @@ void SlewRateLimiter::limitFromSingleFrame(const AprsWXData& previous,
 
 	// simmilar thing for gusts
 	if (current.useWind && abs(windGstDiff) > maxGustsSleew) {
-		std::cout << "SlewRateLimiter::limitFromSingleFrame:74 - Limiting wind gusts" << std::endl;
+		std::cout << "SlewRateLimiter::limitFromSingleFrame:84 - Limiting wind gusts" << std::endl;
 
 		// if the wind speed changed above the maximum speed limit apply a correction
 		if (windGstDiff < 0)
@@ -91,7 +94,7 @@ void SlewRateLimiter::limitFromSingleFrame(const AprsWXData& previous,
 
 	// simmilar thing for gusts
 	if (current.useTemperature && abs(temperatureDiff) > maxTempSlew) {
-		std::cout << "SlewRateLimiter::limitFromSingleFrame:87 - Limiting temperature" << std::endl;
+		std::cout << "SlewRateLimiter::limitFromSingleFrame:97 - Limiting temperature" << std::endl;
 
 		// if the wind speed changed above the maximum speed limit apply a correction
 		if (temperatureDiff < 0)
@@ -103,7 +106,7 @@ void SlewRateLimiter::limitFromSingleFrame(const AprsWXData& previous,
 	}
 
 	if (current.usePressure && abs(pressureDiff) > maxPressureSlew) {
-		std::cout << "SlewRateLimiter::limitFromSingleFrame:99 - Limiting pressure" << std::endl;
+		std::cout << "SlewRateLimiter::limitFromSingleFrame:109 - Limiting pressure" << std::endl;
 
 		if (pressureDiff < 0)
 			current.pressure = previous.pressure - maxPressureSlew;
@@ -112,19 +115,13 @@ void SlewRateLimiter::limitFromSingleFrame(const AprsWXData& previous,
 
 	}
 
-	if (current.useHumidity && abs(humidityDiff) > maxHumiditySlew) {
-		std::cout << "SlewRateLimiter::limitFromSingleFrame:109 - Limiting humidity" << std::endl;
+	if (!humidityUpdated && current.useHumidity && abs(humidityDiff) > maxHumiditySlew) {
+		std::cout << "SlewRateLimiter::limitFromSingleFrame:119 - Limiting humidity" << std::endl;
 
 		if (humidityDiff < 0)
 			current.humidity = previous.humidity - maxHumiditySlew;
 		else
 			current.humidity = previous.humidity + maxHumiditySlew;
-	}
-
-	if (hmZeroAs100 && current.humidity == 0) {
-		std::cout << "SlewRateLimiter::limitFromSingleFrame:118 - " << std::endl;
-
-		current.humidity = 100;
 	}
 
 }
