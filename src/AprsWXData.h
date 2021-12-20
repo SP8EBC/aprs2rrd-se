@@ -15,6 +15,7 @@ enum class WXDataSource {
 	APRSIS,
 	SERIAL,
 	HOLFUY,
+	ZYWIEC,
 	UNKNOWN
 };
 
