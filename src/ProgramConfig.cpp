@@ -7,6 +7,7 @@
 
 #include "ProgramConfig.h"
 
+#include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 
 
@@ -302,6 +303,15 @@ std::string ProgramConfig::getDebugLogFn() {
 
 }
 
+bool ProgramConfig::getBatchMode() {
+
+	bool out = false;
+
+	config.lookupValue("BatchMode", out);
+
+	return out;
+}
+
 bool ProgramConfig::configureLogOutput() {
 	if (this->Debug == true) {
 		cout << "--- Tryb debugowania włączony" << endl;
@@ -343,7 +353,7 @@ void ProgramConfig::getDataSourceConfig(DataSourceConfig& config_out) {
 		config_out.wind = this->getWindSource();
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
-		std::cout << "--- ProgramConfig::getDataSourceConfig:294 - Error in data sources configuration. Using defaul values!" << std::endl;
+		std::cout << "--- ProgramConfig::getDataSourceConfig:356 - Error in data sources configuration. Using defaul values!" << std::endl;
 
 		config_out.globalBackup = WxDataSource::IS_PRIMARY;
 		config_out.humidity = WxDataSource::IS_PRIMARY;
@@ -362,7 +372,7 @@ void ProgramConfig::getDataSourceConfig(DataSourceConfig& config_out) {
 
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
-		std::cout << "--- ProgramConfig::getDataSourceConfig:313 - No Serial KISS communcation is configured." << std::endl;
+		std::cout << "--- ProgramConfig::getDataSourceConfig:375 - No Serial KISS communcation is configured." << std::endl;
 
 	}
 
@@ -372,7 +382,7 @@ void ProgramConfig::getDataSourceConfig(DataSourceConfig& config_out) {
 		h.lookupValue("StationId", config_out.holfuyNumber);
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
-		std::cout << "--- ProgramConfig::getDataSourceConfig:323 - No Holfuy communcation is configured." << std::endl;
+		std::cout << "--- ProgramConfig::getDataSourceConfig:385 - No Holfuy communcation is configured." << std::endl;
 
 	}
 }
@@ -410,6 +420,7 @@ WxDataSource ProgramConfig::getTemperatureSource() {
 	case swstring("TELEMETRY"): out = WxDataSource::TELEMETRY;  break;
 	case swstring("SERIAL"): out = WxDataSource::SERIAL;  break;
 	case swstring("HOLFUY"): out = WxDataSource::HOLFUY;  break;
+	case swstring("ZYWIEC"): out = WxDataSource::ZYWIEC;  break;
 	default: break;
 	}
 
@@ -434,6 +445,7 @@ WxDataSource ProgramConfig::getPressureSource() {
 	case swstring("TELEMETRY"): out = WxDataSource::TELEMETRY;  break;
 	case swstring("SERIAL"): out = WxDataSource::SERIAL;  break;
 	case swstring("HOLFUY"): out = WxDataSource::HOLFUY;  break;
+	case swstring("ZYWIEC"): out = WxDataSource::ZYWIEC;  break;
 	default: break;
 	}
 
@@ -458,6 +470,7 @@ WxDataSource ProgramConfig::getWindSource() {
 	case swstring("TELEMETRY"): out = WxDataSource::TELEMETRY;  break;
 	case swstring("SERIAL"): out = WxDataSource::SERIAL;  break;
 	case swstring("HOLFUY"): out = WxDataSource::HOLFUY;  break;
+	case swstring("ZYWIEC"): out = WxDataSource::ZYWIEC;  break;
 	default: break;
 	}
 
@@ -482,6 +495,7 @@ WxDataSource ProgramConfig::getRainSource() {
 	case swstring("TELEMETRY"): out = WxDataSource::TELEMETRY;  break;
 	case swstring("SERIAL"): out = WxDataSource::SERIAL;  break;
 	case swstring("HOLFUY"): out = WxDataSource::HOLFUY;  break;
+	case swstring("ZYWIEC"): out = WxDataSource::ZYWIEC;  break;
 	default: break;
 	}
 
@@ -506,6 +520,7 @@ WxDataSource ProgramConfig::getHumiditySource() {
 	case swstring("TELEMETRY"): out = WxDataSource::TELEMETRY;  break;
 	case swstring("SERIAL"): out = WxDataSource::SERIAL;  break;
 	case swstring("HOLFUY"): out = WxDataSource::HOLFUY;  break;
+	case swstring("ZYWIEC"): out = WxDataSource::ZYWIEC;  break;
 	default: break;
 	}
 
@@ -530,6 +545,7 @@ WxDataSource ProgramConfig::getGlobalBackup() {
 	case swstring("TELEMETRY"): out = WxDataSource::TELEMETRY;  break;
 	case swstring("SERIAL"): out = WxDataSource::SERIAL;  break;
 	case swstring("HOLFUY"): out = WxDataSource::HOLFUY;  break;
+	case swstring("ZYWIEC"): out = WxDataSource::ZYWIEC;  break;
 	default: break;
 	}
 
@@ -652,12 +668,41 @@ void ProgramConfig::getLocaleStaticString(Locale &l) {
 		locale.lookupValue("windGusts", l.windGusts);
 		locale.lookupValue("windSpeed", l.windSpeed);
 
-		std::cout << "--- ProgramConfig::getDataSourceConfig:627 - Locale text data loaded successfully." << std::endl;
+		std::cout << "--- ProgramConfig::getDataSourceConfig:671 - Locale text data loaded successfully." << std::endl;
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
-		std::cout << "--- ProgramConfig::getDataSourceConfig:630 - Error during loading locale! Default values will be used" << std::endl;
+		std::cout << "--- ProgramConfig::getDataSourceConfig:674 - Error during loading locale! Default values will be used" << std::endl;
 	}
 
+}
+
+void ProgramConfig::getZywiecMeteoConfig(ZywiecMeteoConfig & z) {
+	libconfig::Setting &rRoot = config.getRoot();
+	std::string temp;
+
+	z.enable = true;
+
+	try {
+		libconfig::Setting &zywiec = rRoot["ZywiecMeteo"];
+
+		if(!zywiec.lookupValue("Enabled", z.enable)) {
+			z.enable = false;
+		}
+	
+		if (zywiec.lookupValue("BaseUrl", temp)){
+			z.baseUrl = temp;
+		}
+		else {
+			z.baseUrl = "http://monitoring.zywiec.powiat.pl/";
+		}
+
+		zywiec.lookupValue("StationId", z.stationId);
+
+	}
+	catch (libconfig::SettingNotFoundException &ex) {
+		z.enable = false;
+	}
+ 
 }
 
 void ProgramConfig::printConfigInPl(
@@ -668,6 +713,7 @@ void ProgramConfig::printConfigInPl(
 											int& plotCount,
 											Telemetry& data,
 											bool& useAsTemperature,
+											ZywiecMeteoConfig & zywiec,
 											HolfuyClientConfig& holfuy,
 											DiffCalculator & calculator,
 											DataSourceConfig & source,
@@ -711,6 +757,12 @@ void ProgramConfig::printConfigInPl(
 		cout << "--- Własny znak: " << aprsConfig.Call << endl;
 		cout << "--- Aprs Secret: " << aprsConfig.Passwd << endl;
 		cout << endl;
+		if (zywiec.enable) {
+			cout << "--------KONFIGURACJA ŁĄCZNOŚCI Z API STAROSTWA POWIATOWEGO W ZYWCU -----" << endl;
+			cout << "--- Bazowy URL do API: " << zywiec.baseUrl << endl;
+			cout << "--- Numeryczny identyfikator stacji: " << boost::lexical_cast<std::string>(zywiec.stationId) << endl;
+			cout << endl;
+		}
 		if (holfuy.enable) {
 			cout << "--------KONFIGURACJA ŁĄCZNOŚCI Z API HOLFUY -----" << endl;
 			cout << "--- Nr stacji pogodowej: " << holfuy.stationId << endl;
@@ -830,6 +882,8 @@ void ProgramConfig::printConfigInPl(
 		cout << "--- " << locale.windDirection << endl;
 		cout << "--- " << locale.windGusts << endl;
 		cout << "--- " << locale.windSpeed << endl;
+
+		cout << endl;
 
 //	}
 

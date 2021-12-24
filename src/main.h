@@ -4,5 +4,6 @@
 extern bool Debug;
 extern bool DebugToFile;
 extern ofstream fDebug;
+extern bool batchMode;
 
 #endif

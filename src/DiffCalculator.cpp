@@ -23,6 +23,7 @@ DiffCalculator::DiffCalculator() {
 void DiffCalculator::calculate(const AprsWXData& aprsIS,
 		const AprsWXData& serial,
 		const AprsWXData& holfuy,
+		const AprsWXData& zywiec,
 		const Telemetry& telemetry,
 		AprsWXData& out)
 {
@@ -58,6 +59,7 @@ void DiffCalculator::calculate(const AprsWXData& aprsIS,
 		case WxDataSource::SERIAL: temporary->temperature = serial.temperature; temporary->useTemperature = true; break;
 		case WxDataSource::TELEMETRY: temporary->temperature = telemetry.getCh5(); temporary->useTemperature = true; break;
 		case WxDataSource::HOLFUY: temporary->temperature = holfuy.temperature; temporary->useTemperature = true; break;
+		case WxDataSource::ZYWIEC: temporary->temperature = zywiec.temperature; temporary->useTemperature = true; break;
 		case WxDataSource::UNKNOWN: return;
 	}
 
@@ -85,6 +87,7 @@ void DiffCalculator::calculate(const AprsWXData& aprsIS,
 		case WxDataSource::SERIAL: temporary2->temperature = serial.temperature; temporary2->useTemperature = true; break;
 		case WxDataSource::TELEMETRY: temporary2->temperature = telemetry.getCh5(); temporary2->useTemperature = true; break;
 		case WxDataSource::HOLFUY: temporary2->temperature = holfuy.temperature; temporary2->useTemperature = true; break;
+		case WxDataSource::ZYWIEC: temporary2->temperature = zywiec.temperature; temporary2->useTemperature = true; break;
 		case WxDataSource::UNKNOWN: return;
 	}
 
@@ -128,6 +131,13 @@ void DiffCalculator::calculate(const AprsWXData& aprsIS,
 			temporary->wind_gusts = holfuy.wind_gusts;
 			temporary->wind_speed = holfuy.wind_speed;
 			break;
+		}
+		case WxDataSource::ZYWIEC: {
+			temporary->wind_direction = zywiec.wind_direction;
+			temporary->wind_gusts = zywiec.wind_gusts;
+			temporary->wind_speed = zywiec.wind_speed;
+			break;
+
 		}
 		case WxDataSource::UNKNOWN: return;
 	}
@@ -173,6 +183,13 @@ void DiffCalculator::calculate(const AprsWXData& aprsIS,
 		temporary2->wind_speed = holfuy.wind_speed;
 		temporary2->useWind = true;
 		break;
+	}
+	case WxDataSource::ZYWIEC: {
+		temporary->wind_direction = zywiec.wind_direction;
+		temporary->wind_gusts = zywiec.wind_gusts;
+		temporary->wind_speed = zywiec.wind_speed;
+		break;
+
 	}
 	case WxDataSource::UNKNOWN: return;
 	}
