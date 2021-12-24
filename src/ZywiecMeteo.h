@@ -41,11 +41,14 @@ class ZywiecMeteo {
 
 	boost::posix_time::time_facet * formatter;
 
-	//std::unique_ptr<boost::posix_time::time_facet> formatter;
+	/**
+	 * Set to true to use temp2m (2 meters abouve ground???), keep set to false to use temp ('normal' temperature??)
+	 */
+	bool temperatureSwitch;
 
 
 public:
-	ZywiecMeteo(std::string _base_url);
+	ZywiecMeteo(std::string _base_url, bool _temperature_switch);
 	virtual ~ZywiecMeteo();
 	ZywiecMeteo(const ZywiecMeteo &other);
 	ZywiecMeteo(ZywiecMeteo &&other);

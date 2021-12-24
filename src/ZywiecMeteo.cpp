@@ -19,7 +19,7 @@
 #include <boost/locale.hpp>
 #include <locale>
 
-ZywiecMeteo::ZywiecMeteo(std::string _base_url) :baseUrl(_base_url), hour(1, 0, 0, 0) {
+ZywiecMeteo::ZywiecMeteo(std::string _base_url, bool _temperature_switch) :baseUrl(_base_url), hour(1, 0, 0, 0), temperatureSwitch(_temperature_switch) {
 	// TODO Auto-generated constructor stub
 
 	//formatter = std::make_unique<boost::posix_time::time_facet>("%Y-%m-%d %H:%M:%S");
@@ -198,20 +198,92 @@ void ZywiecMeteo::parseJson(std::string &in, AprsWXData &out) {
 	float windspeed = 0.0f;
 	float windgust = 0.0f;
 	float winddirection = 0.0f;
+	float pressure = 0.0f;
 
 	if (j.contains("result")) {
 		nlohmann::json arr = j["result"];
 
-		nlohmann::json measObject = arr[0];
+		std::size_t results_size = arr.size();
 
-		if (measObject.contains("temp")) {
-			temporary = measObject["temp"];
-			temperature = ::stof(temporary, 0);
-		}
+		if (results_size > 0) {
 
-		if (measObject.contains("humid")) {
-			temporary = measObject["humid"];
-			humidity = ::stof(temporary, 0);
+			nlohmann::json measObject = arr[results_size - 1];
+
+			if (temperatureSwitch) {
+				if (measObject.contains("temp2")) {
+					temporary = measObject["temp2"];
+					temperature = ::stof(temporary, 0);
+					out.useTemperature = true;
+				}
+			}
+			else {
+				if (measObject.contains("temp")) {
+					temporary = measObject["temp"];
+					temperature = ::stof(temporary, 0);
+					out.useTemperature = true;
+				}
+			}
+
+
+			if (measObject.contains("humid")) {
+				temporary = measObject["humid"];
+				humidity = ::stof(temporary, 0);
+				out.useHumidity = true;
+			}
+
+			if (measObject.contains("pressure")) {
+				temporary = measObject["pressure"];
+				pressure = ::stof(temporary, 0) / 10.0f;
+				out.usePressure = true;
+			}
+
+			if (measObject.contains("wind_direct")) {
+				temporary = measObject["wind_direct"];
+				winddirection = ::stof(temporary, 0);
+				out.useWind = true;
+			}
+			else {
+				out.useWind = false;
+
+			}
+
+			if (measObject.contains("wind_max")) {
+				temporary = measObject["wind_max"];
+				windspeed = ::stof(temporary, 0);
+				out.useWind = true;
+			}
+			else {
+				out.useWind = false;
+
+			}
+
+			if (measObject.contains("wind_speed")) {
+				temporary = measObject["wind_speed"];
+				windspeed = ::stof(temporary, 0);
+				out.useWind = true;
+			}
+			else {
+				out.useWind = false;
+
+			}
+
+			if (out.useWind) {
+				out.wind_direction = winddirection;
+				out.wind_speed = windspeed;
+				out.wind_gusts = windgust;
+			}
+
+			if (out.usePressure) {
+				out.pressure = pressure;
+			}
+
+			if (out.useTemperature) {
+				out.temperature = temperature;
+			}
+
+			if (out.useHumidity) {
+				out.humidity = humidity;
+			}
 		}
 	}
 
