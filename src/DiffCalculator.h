@@ -25,6 +25,7 @@ public:
 	void calculate(	const AprsWXData& aprsIS,
 					const AprsWXData& serial,
 					const AprsWXData& holfuy,
+					const AprsWXData& zywiec,
 					const Telemetry& telemetry,
 					AprsWXData& out);
 

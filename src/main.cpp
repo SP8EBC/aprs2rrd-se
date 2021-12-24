@@ -26,6 +26,8 @@
 #include "HolfuyClient.h"
 #include "DiffCalculator.h"
 #include "PressureCalculator.h"
+#include "ZywiecMeteo.h"
+#include "ZywiecMeteoConfig.h"
 
 #include "ConnectionTimeoutEx.h"
 #include "DataPresentation.h"
@@ -40,6 +42,8 @@ ofstream fDebug;
 
 bool doZeroCorrection = false;
 int correction = 0;
+
+bool batchMode = false;
 
 std::shared_ptr<std::condition_variable> syncCondition;
 std::shared_ptr<std::mutex> syncLock;
@@ -82,6 +86,8 @@ int main(int argc, char **argv){
 	DataSourceConfig sourceConfig;
 	HolfuyClientConfig holfuyConfig;
 	std::unique_ptr<HolfuyClient> holfuyClient;
+	ZywiecMeteoConfig zywiecMeteoConfig;
+	std::unique_ptr<ZywiecMeteo> zywiecMeteo;
 	DiffCalculator diffCalculator;
 	PressureCalculator pressureCalculator;
 	Locale locale;
@@ -90,7 +96,7 @@ int main(int argc, char **argv){
 	RRDFileDefinition sVectorRRDTemp;
 	PlotFileDefinition cVectorPNGTemp;
 
-	AprsWXData wxIsTemp, wxSerialTemp, wxTelemetry, wxHolfuy;
+	AprsWXData wxIsTemp, wxSerialTemp, wxTelemetry, wxHolfuy, wxZywiec;
 	AprsWXData wxTarget; // target wx data to be inserted into RRD DB & printed onto website
 	AprsWXData wxLastTarget;
 	AprsWXData wxDifference;
@@ -103,6 +109,8 @@ int main(int argc, char **argv){
 
 	syncCondition.reset(new std::condition_variable());
 	syncLock.reset(new std::mutex());
+
+	string response;	// for zywiec
 
 	string LogFile;
 
@@ -150,6 +158,7 @@ int main(int argc, char **argv){
 		programConfig.getPressureCalcConfig(pressureCalculator);
 		programConfig.getSlewRateLimitConfig(limiter);
 		programConfig.getLocaleStaticString(locale);
+		programConfig.getZywiecMeteoConfig(zywiecMeteoConfig);
 
 		dataPresence.DebugOutput = Debug;
 		mysqlDb.Debug = Debug;
@@ -162,13 +171,13 @@ int main(int argc, char **argv){
 
 	}
 	catch (const SettingNotFoundException &ex) {
-		cout << "--- main:163 - Unrecoverable error during configuration file loading!" << endl;
+		cout << "--- main:167 - Unrecoverable error during configuration file loading!" << endl;
 		return -3;
 	}
 
 	aprsConfig.RetryServerLookup = true;
 
-	cout << "--- main:169 - Configuration parsed successfully" << endl;
+	cout << "--- main:173 - Configuration parsed successfully" << endl;
 
 	bool result = programConfig.configureLogOutput();
 
@@ -176,7 +185,7 @@ int main(int argc, char **argv){
 		return -5;
 	}
 
-	ProgramConfig::printConfigInPl(mysqlDb, aprsConfig, dataPresence, RRDCount, PlotsCount, telemetry, useFifthTelemAsTemperature, holfuyConfig, diffCalculator, sourceConfig, pressureCalculator, limiter, locale);
+	ProgramConfig::printConfigInPl(mysqlDb, aprsConfig, dataPresence, RRDCount, PlotsCount, telemetry, useFifthTelemAsTemperature, zywiecMeteoConfig, holfuyConfig, diffCalculator, sourceConfig, pressureCalculator, limiter, locale);
 
 	serialThread = new SerialAsioThread(syncCondition, syncLock, serialConfig.serialPort, serialConfig.baudrate);
 
@@ -186,7 +195,11 @@ int main(int argc, char **argv){
 	}
 
 	if (holfuyConfig.enable) {
-		holfuyClient.reset(new HolfuyClient(holfuyConfig.stationId, holfuyConfig.apiPassword));
+		holfuyClient = std::make_unique<HolfuyClient>(holfuyConfig.stationId, holfuyConfig.apiPassword);
+	}
+
+	if (zywiecMeteoConfig.enable) {
+		zywiecMeteo = std::make_unique<ZywiecMeteo>(zywiecMeteoConfig.baseUrl, zywiecMeteoConfig.secondaryTemperature);
 	}
 
 	// creating a new copy of ASIO thread
@@ -196,16 +209,33 @@ int main(int argc, char **argv){
 	asioThread->DebugOutput = Debug;
 	serialThread->debug = Debug;
 
+	// check operation mode chosen by an user
+	batchMode = programConfig.getBatchMode();
+	mainLoopExit = !batchMode;
+
+	if (batchMode) {
+		std::cout << "--- main.cpp:217 - RUNNING IN BATCH MODE" << std::endl;
+	}
+
 	// main loop
 	do {
-		// initializing connection
-		asioThread->connect();
 
-		// a timeout handling shall be included here. Now it is only waiting
-		while (!asioThread->isConnected()) { sleep(1);};
+		// check if APRS-IS tcp connection is enabled
+		if (aprsConfig.enable) {
 
-		// here the connection shall be full OK
-		isConnectionAlive = true;
+			// initializing connection
+			asioThread->connect();
+
+			// a timeout handling shall be included here. Now it is only waiting
+			while (!asioThread->isConnected()) { sleep(1);};
+
+			// here the connection shall be full OK
+			isConnectionAlive = true;
+		}
+		else {
+			// if aprs-is is not enabled set the flag to true to proceed further
+			isConnectionAlive = true;
+		}
 
 		while (isConnectionAlive) {
 			try {
@@ -215,11 +245,13 @@ int main(int argc, char **argv){
 				// starting serial receive
 				serialThread->receive(false);
 
-				// waiting for new data
-				wait_for_data();
+				if (aprsConfig.enable || serialConfig.enable) {
+					// waiting for new data
+					wait_for_data();
+				}
 
 				// checkig if correct data has been received
-				if (asioThread->isPacketValid() || serialThread->isPacketValid()) {
+				if (asioThread->isPacketValid() || serialThread->isPacketValid() || batchMode) {
 
 					// checking from what input data has been received
 					if (asioThread->isPacketValid()) {
@@ -265,6 +297,17 @@ int main(int argc, char **argv){
 					}
 					else;
 
+					// dwonload data from Zywiec meteo system
+					if (zywiecMeteoConfig.enable) {
+						zywiecMeteo->downloadMeasuresFromRangeForStation(zywiecMeteoConfig.stationId, response);
+
+						zywiecMeteo->parseJson(response, wxZywiec);
+
+						std::cout << "--- main.cpp:306 - Parsing data from Zywiec county meteo system API" << std::endl;
+
+						wxZywiec.PrintData();
+					}
+
 					// downloading Holfuy data if it is enabled
 					if (holfuyConfig.enable) {
 						holfuyClient->download();
@@ -273,7 +316,7 @@ int main(int argc, char **argv){
 
 						holfuyClient->getWxData(wxHolfuy);
 
-						std::cout << "--- main.cpp:274 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
+						std::cout << "--- main.cpp:319 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
 
 						wxHolfuy.PrintData();
 					}
@@ -309,13 +352,17 @@ int main(int argc, char **argv){
 						wxTarget.copy(telemetry, sourceConfig);
 					}
 
+					if (wxZywiec.valid) {
+						wxTarget.copy(wxZywiec, sourceConfig);
+					}
+
 					if (wxHolfuy.valid) {
 						wxTarget.copy(wxHolfuy, sourceConfig);
 					}
 
 					// calculating the difference between sources according to user configuration
 					// if this feature is disabled completely the function will do nothing and return immediately
-					diffCalculator.calculate(wxIsTemp, wxSerialTemp, wxHolfuy, telemetry, wxDifference);
+					diffCalculator.calculate(wxIsTemp, wxSerialTemp, wxHolfuy, wxZywiec, telemetry, wxDifference);
 
 					// recalculating pressure according to user configuration. If recalculation is not enabled
 					// the metod will return the same value as given on input
@@ -329,7 +376,7 @@ int main(int argc, char **argv){
 					// exit immediately witout performing any changes
 
 					// printing target data
-					std::cout << "--- main.c:330 - Printing target WX data which will be used for further processing." << std::endl;
+					std::cout << "--- main.c:379 - Printing target WX data which will be used for further processing." << std::endl;
 					wxTarget.PrintData();
 
 					// limiting slew rates for measurements
@@ -382,9 +429,13 @@ int main(int argc, char **argv){
 						}
 					}
 
+					if (batchMode) {
+						break;
+					}
+
 				}
 				else {
-					cout << "--- main.cpp:383 - This is not valid APRS packet" << endl;
+					cout << "--- main.cpp:438 - This is not valid APRS packet" << endl;
 
 					//if (Debug)
 					//	cout << "--- main.cpp:386 - Inserting data from previous frame into RRD file" << endl;
@@ -398,15 +449,19 @@ int main(int argc, char **argv){
 				break;
 			}
 			catch (std::exception &e) {
-				cout << "--- main:395 - std::exception " << e.what() << std::endl;
+				cout << "--- main:452 - std::exception " << e.what() << std::endl;
 			}
 			catch (...) {
-				cout << "--- main:398 - Unknown exception thrown during processing!" << std::endl;
+				cout << "--- main:455 - Unknown exception thrown during processing!" << std::endl;
 			}
 
 		}
 
-		std::cout << "--- main:403 - Connection to APRS server died. Reconnecting.." << std::endl;
+		if (batchMode) {
+			break;
+		}
+
+		std::cout << "--- main:464 - Connection to APRS server died. Reconnecting.." << std::endl;
 
 	} while (mainLoopExit);		// end of main loop
 

@@ -96,6 +96,10 @@ public:
 																		std::shared_ptr<std::mutex> syncLock);
 	virtual ~AprsAsioThread();
 
+	bool isEnabled() {
+		return this->conf.enable;
+	}
+
 	bool DebugOutput;
 };
 

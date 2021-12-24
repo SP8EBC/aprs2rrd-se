@@ -15,6 +15,7 @@
 #include <string>
 #include <array>
 
+#include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/locale.hpp>
 #include <locale>
@@ -23,7 +24,6 @@ ZywiecMeteo::ZywiecMeteo(std::string _base_url, bool _temperature_switch) :baseU
 	// TODO Auto-generated constructor stub
 
 	//formatter = std::make_unique<boost::posix_time::time_facet>("%Y-%m-%d %H:%M:%S");
-	formatter = new boost::posix_time::time_facet("%Y-%m-%d %H:%M:%S");
 
 	ptr = this;
 
@@ -72,7 +72,9 @@ bool ZywiecMeteo::downloadLastMeasureForStation(int stationId, std::string &resp
     auto curl = curl_easy_init();
     if (curl) {
 
-    	std::cout << "--- ZywiecMeteo::downloadForStation:64 - Downloading data for stationId " << stationId << std::endl;
+    	std::cout << "--- ZywiecMeteo::downloadLastMeasureForStation:75 - Downloading data for stationId " << stationId << std::endl;
+        std::cout << "--- ZywiecMeteo::downloadLastMeasureForStation:76 - url : " << url << std::endl;
+
 
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
@@ -97,6 +99,8 @@ bool ZywiecMeteo::downloadLastMeasureForStation(int stationId, std::string &resp
         result = curl_easy_perform(curl);
         curl_easy_cleanup(curl);
         curl = NULL;
+
+        std::cout << "--- ZywiecMeteo::downloadLastMeasureForStation:103 - response_code : " << boost::lexical_cast<std::string>(response_code) << std::endl;
 
         if (result == CURLcode::CURLE_OK) {
         	out = true;
@@ -129,6 +133,8 @@ bool ZywiecMeteo::downloadMeasuresFromRangeForStation(int stationId,
 	boost::posix_time::ptime past = now - hour;
 	boost::posix_time::ptime future = now + hour;
 
+	formatter = new boost::posix_time::time_facet("%Y-%m-%d %H:%M:%S");
+
 	urlBuilder << this->baseUrl << "/server.php?action=getMeasuresFromRange&deviceID=" << to_string(stationId) << "&fromDate=";
 	urlBuilder.imbue(std::locale(std::locale::classic(), formatter));
 	urlBuilder << past << "&toDate=" << future << "&timeStep=10minutowy";
@@ -149,7 +155,8 @@ bool ZywiecMeteo::downloadMeasuresFromRangeForStation(int stationId,
     auto curl = curl_easy_init();
     if (curl) {
 
-    	std::cout << "--- ZywiecMeteo::downloadForStation:64 - Downloading data for stationId " << stationId << std::endl;
+    	std::cout << "--- ZywiecMeteo::downloadMeasuresFromRangeForStation:158 - Downloading data for stationId " << stationId << std::endl;
+        std::cout << "--- ZywiecMeteo::downloadMeasuresFromRangeForStation:159 - url : " << url << std::endl;
 
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
@@ -172,6 +179,8 @@ bool ZywiecMeteo::downloadMeasuresFromRangeForStation(int stationId,
         result = curl_easy_perform(curl);
         curl_easy_cleanup(curl);
         curl = NULL;
+
+        std::cout << "--- ZywiecMeteo::downloadMeasuresFromRangeForStation:183 - response_code : " << boost::lexical_cast<std::string>(response_code) << std::endl;
 
         if (result == CURLcode::CURLE_OK) {
         	out = true;
@@ -233,7 +242,7 @@ void ZywiecMeteo::parseJson(std::string &in, AprsWXData &out) {
 
 			if (measObject.contains("pressure")) {
 				temporary = measObject["pressure"];
-				pressure = ::stof(temporary, 0) / 10.0f;
+				pressure = ::stof(temporary, 0) / 100.0f;
 				out.usePressure = true;
 			}
 
@@ -249,7 +258,7 @@ void ZywiecMeteo::parseJson(std::string &in, AprsWXData &out) {
 
 			if (measObject.contains("wind_max")) {
 				temporary = measObject["wind_max"];
-				windspeed = ::stof(temporary, 0);
+				windgust = ::stof(temporary, 0);
 				out.useWind = true;
 			}
 			else {
@@ -285,6 +294,11 @@ void ZywiecMeteo::parseJson(std::string &in, AprsWXData &out) {
 				out.humidity = humidity;
 			}
 		}
+	}
+
+	if (out.useHumidity || out.usePressure || out.useTemperature || out.useWind) {
+		out.valid = true;
+		out.dataSource = WXDataSource::ZYWIEC;
 	}
 
 

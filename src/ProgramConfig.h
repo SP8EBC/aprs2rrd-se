@@ -24,6 +24,7 @@
 #include "PressureCalculator.h"
 #include "SlewRateLimiter.h"
 #include "Locale.h"
+#include "ZywiecMeteoConfig.h"
 
 class ProgramConfig {
 	std::string configFilename;
@@ -73,12 +74,15 @@ public:
 	void getPressureCalcConfig(PressureCalculator & pressureCalc);
 	void getSlewRateLimitConfig(SlewRateLimiter & limiter);
 	void getLocaleStaticString(Locale& l);
+	void getZywiecMeteoConfig(ZywiecMeteoConfig & z);
 
 	bool configureLogOutput();
 
 	bool getDebug();
 	bool getDebugToFile();
 	std::string getDebugLogFn();
+	bool getBatchMode();
+
 
 	std::string getStationName();
 
@@ -90,6 +94,7 @@ public:
 		case swstring("TELEMETRY"): return WxDataSource::TELEMETRY;
 		case swstring("SERIAL"): return WxDataSource::SERIAL;
 		case swstring("HOLFUY"): return WxDataSource::HOLFUY;
+		case swstring("ZYWIEC"): return WxDataSource::ZYWIEC;
 		}
 
 		return WxDataSource::UNKNOWN;
@@ -102,6 +107,7 @@ public:
 									int& plotCount,
 									Telemetry& telemetry,
 									bool& useAsTemperature,
+									ZywiecMeteoConfig & zywiec,
 									HolfuyClientConfig& holfuy,
 									DiffCalculator & calculator,
 									DataSourceConfig & source,

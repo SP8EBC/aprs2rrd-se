@@ -27,7 +27,7 @@ CPP_SRCS += \
 ../src/Telemetry.cpp \
 ../src/XMLMemoryHandler.cpp \
 ../src/ZywiecMeteo.cpp \
-../src/ZywiecMeteo_test.cpp 
+../src/main.cpp 
 
 OBJS += \
 ./src/AprsAsioThread.o \
@@ -53,7 +53,7 @@ OBJS += \
 ./src/Telemetry.o \
 ./src/XMLMemoryHandler.o \
 ./src/ZywiecMeteo.o \
-./src/ZywiecMeteo_test.o 
+./src/main.o 
 
 CPP_DEPS += \
 ./src/AprsAsioThread.d \
@@ -79,7 +79,7 @@ CPP_DEPS += \
 ./src/Telemetry.d \
 ./src/XMLMemoryHandler.d \
 ./src/ZywiecMeteo.d \
-./src/ZywiecMeteo_test.d 
+./src/main.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

@@ -60,6 +60,19 @@ public:
 
 	void parseJson(std::string & in, AprsWXData & out);
 
+	static std::string convertToName(int stationId) {
+		switch (stationId) {
+		case 502: return "Zlatna";
+		case 503: return "Pewel Slemienska";
+		case 505: return "U Rumcajsa na cyplu nad Jeziorem";
+		case 507: return "Urząd Gminy w Jelesni";
+		case 508: return "Koniakow Ochodzita";
+		case 509: return "Miedzybrodzie Zywieckie - GSS Zar";
+		case 511: return "Zarzadzanie Kryzysowe w Zywcu";
+		default: return "";
+		}
+	}
+
 };
 
 /**
