@@ -70,8 +70,8 @@ std::string DataSourceConfig::get(const WxDataSource& source) const {
 	std::string ssid;
 
 	switch (source) {
-	case WxDataSource::HOLFUY: out = boost::lexical_cast<std::string>("H" + holfuyNumber); break;
-	case WxDataSource::ZYWIEC: out = boost::lexical_cast<std::string>("Z" + zywiecNumber); break;
+	case WxDataSource::HOLFUY: out = "H" + boost::lexical_cast<std::string>(holfuyNumber); break;
+	case WxDataSource::ZYWIEC: out = "Z" + boost::lexical_cast<std::string>(zywiecNumber); break;
 	case WxDataSource::IS_PRIMARY: {
 		if (this->primarySsid > 0) {
 			ssid = boost::lexical_cast<std::string>(this->primarySsid);
