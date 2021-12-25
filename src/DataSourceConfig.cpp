@@ -29,6 +29,7 @@ DataSourceConfig::DataSourceConfig() {
 	this->serialCaptureAll = false;
 
 	this->holfuyNumber = 0;
+	this->zywiecNumber = 0;
 
 }
 
@@ -69,7 +70,8 @@ std::string DataSourceConfig::get(const WxDataSource& source) const {
 	std::string ssid;
 
 	switch (source) {
-	case WxDataSource::HOLFUY: out = boost::lexical_cast<std::string>("H" + this->holfuyNumber); break;
+	case WxDataSource::HOLFUY: out = boost::lexical_cast<std::string>("H" + holfuyNumber); break;
+	case WxDataSource::ZYWIEC: out = boost::lexical_cast<std::string>("Z" + zywiecNumber); break;
 	case WxDataSource::IS_PRIMARY: {
 		if (this->primarySsid > 0) {
 			ssid = boost::lexical_cast<std::string>(this->primarySsid);

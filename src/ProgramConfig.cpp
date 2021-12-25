@@ -378,15 +378,15 @@ void ProgramConfig::getDataSourceConfig(DataSourceConfig& config_out) {
 
 	}
 
-	try {
-		libconfig::Setting &h = root["Holfuy"];
-
-		h.lookupValue("StationId", config_out.holfuyNumber);
-	}
-	catch (libconfig::SettingNotFoundException &ex) {
-		std::cout << "--- ProgramConfig::getDataSourceConfig:385 - No Holfuy communcation is configured." << std::endl;
-
-	}
+//	try {
+//		libconfig::Setting &h = root["Holfuy"];
+//
+//		//h.lookupValue("StationId", config_out.holfuyNumber);
+//	}
+//	catch (libconfig::SettingNotFoundException &ex) {
+//		std::cout << "--- ProgramConfig::getDataSourceConfig:385 - No Holfuy communcation is configured." << std::endl;
+//
+//	}
 }
 
 void ProgramConfig::getHolfuyConfig(HolfuyClientConfig& config_out) {
