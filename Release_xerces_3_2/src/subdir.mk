@@ -27,7 +27,7 @@ CPP_SRCS += \
 ../src/Telemetry.cpp \
 ../src/XMLMemoryHandler.cpp \
 ../src/ZywiecMeteo.cpp \
-../src/ZywiecMeteo_test.cpp 
+../src/main.cpp 
 
 OBJS += \
 ./src/AprsAsioThread.o \
@@ -53,7 +53,7 @@ OBJS += \
 ./src/Telemetry.o \
 ./src/XMLMemoryHandler.o \
 ./src/ZywiecMeteo.o \
-./src/ZywiecMeteo_test.o 
+./src/main.o 
 
 CPP_DEPS += \
 ./src/AprsAsioThread.d \
@@ -79,14 +79,14 @@ CPP_DEPS += \
 ./src/Telemetry.d \
 ./src/XMLMemoryHandler.d \
 ./src/ZywiecMeteo.d \
-./src/ZywiecMeteo_test.d 
+./src/main.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
 src/%.o: ../src/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C++ Compiler'
-	g++ -std=c++1y -DUSE_XERCES_3_2 -I/usr/include/mysql++ -I/usr/include/xercesc -I/usr/include/mysql -I/usr/include/curl -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
+	g++ -std=c++1y -DUSE_XERCES_3_2 -I/usr/include/mysql++ -I../lib -I/usr/include/xercesc -I/usr/include/mysql -I/usr/include/curl -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
