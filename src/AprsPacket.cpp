@@ -111,7 +111,7 @@ void AprsPacket::PrintPacketData() {
     }
     cout << "-- APRS originator type: " << this->qOrigin << endl;
     cout << "-- APRS originator callsign: " << this->ToISOriginator.Call << endl;
-    cout << "-- Frame payload: " << this->Data << endl;
+    cout << "-- Frame payload: " <<  this->DataAsStr << endl;
     cout << "---------------------------------------------- \r\n";
 }
 
@@ -270,6 +270,10 @@ int AprsPacket::ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cT
 	// copying the payload to the output object. There is no need to check the lenght of
 	// payload due to 'buff_len > 1000' check done just at the begining of this method
 	std::copy(payload.begin(), payload.end(), cTarget->Data);
+
+	cTarget->DataAsStr = std::string(cTarget->Data);
+
+	boost::trim(cTarget->DataAsStr);
 
 	return OK;
 }

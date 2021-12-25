@@ -10,6 +10,8 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 
+#include "ZywiecMeteo.h"
+
 
 ProgramConfig::ProgramConfig(std::string fn) : configFilename(fn) {
 	// TODO Auto-generated constructor stub
@@ -761,6 +763,7 @@ void ProgramConfig::printConfigInPl(
 			cout << "--------KONFIGURACJA ŁĄCZNOŚCI Z API STAROSTWA POWIATOWEGO W ZYWCU -----" << endl;
 			cout << "--- Bazowy URL do API: " << zywiec.baseUrl << endl;
 			cout << "--- Numeryczny identyfikator stacji: " << boost::lexical_cast<std::string>(zywiec.stationId) << endl;
+			cout << "--- Nazwa stacji: " << ZywiecMeteo::convertToName(zywiec.stationId) << endl;
 			cout << endl;
 		}
 		if (holfuy.enable) {

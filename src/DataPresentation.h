@@ -20,7 +20,7 @@ public:
 	DataPresentation();
 	~DataPresentation();
 
-	void FetchDataInRRD(const AprsWXData* const cInput);
+	void FetchDataInRRD(const AprsWXData* const cInput, bool inhibitLog);
 	void FetchDiffInRRD(AprsWXData & data);
 	void PlotGraphsFromRRD(void);
 	void GenerateWebiste(const AprsWXData & WX, const AprsWXData & secondaryWX, const Locale & locale);

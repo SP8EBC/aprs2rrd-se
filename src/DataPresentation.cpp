@@ -94,7 +94,7 @@ void DataPresentation::FetchDiffInRRD(AprsWXData& data) {
 	}
 }
 
-void DataPresentation::FetchDataInRRD(const AprsWXData* const cInput) {
+void DataPresentation::FetchDataInRRD(const AprsWXData* const cInput, bool inhibitLog) {
 	char command[512];
 	int currtimeint;
 	time_t currtime;
@@ -115,7 +115,7 @@ void DataPresentation::FetchDataInRRD(const AprsWXData* const cInput) {
 			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
 			sprintf(command, "rrdtool update %s %d:%f", this->vRRDFiles[i].sPath.c_str(), currtimeint, cInput->temperature);
-			if (this->DebugOutput == true)
+			if (this->DebugOutput == true && inhibitLog == false)
 				cout << command << endl;
 		}
 		else if (this->vRRDFiles[i].eType == PlotType::QNH && cInput->usePressure == true) {
@@ -123,7 +123,7 @@ void DataPresentation::FetchDataInRRD(const AprsWXData* const cInput) {
 			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
 			sprintf(command, "rrdtool update %s %d:%d", this->vRRDFiles[i].sPath.c_str(), currtimeint, cInput->pressure);
-			if (this->DebugOutput == true)
+			if (this->DebugOutput == true && inhibitLog == false)
 				cout << command << endl;
 		}
 		else if (this->vRRDFiles[i].eType == PlotType::WIND_DIR && cInput->useWind == true) {
@@ -131,7 +131,7 @@ void DataPresentation::FetchDataInRRD(const AprsWXData* const cInput) {
 			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
 			sprintf(command, "rrdtool update %s %d:%d", this->vRRDFiles[i].sPath.c_str(), currtimeint, cInput->wind_direction);
-			if (this->DebugOutput == true)
+			if (this->DebugOutput == true && inhibitLog == false)
 				cout << command << endl;
 		}
 		else if (this->vRRDFiles[i].eType == PlotType::WIND_SPD && cInput->useWind == true) {
@@ -139,7 +139,7 @@ void DataPresentation::FetchDataInRRD(const AprsWXData* const cInput) {
 			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
 			sprintf(command, "rrdtool update %s %d:%f", this->vRRDFiles[i].sPath.c_str(), currtimeint, cInput->wind_speed);
-			if (this->DebugOutput == true)
+			if (this->DebugOutput == true && inhibitLog == false)
 				cout << command << endl;
 		}
 		else if (this->vRRDFiles[i].eType == PlotType::WIND_GST && cInput->useWind == true) {
@@ -147,7 +147,7 @@ void DataPresentation::FetchDataInRRD(const AprsWXData* const cInput) {
 			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
 			sprintf(command, "rrdtool update %s %d:%f", this->vRRDFiles[i].sPath.c_str(), currtimeint, cInput->wind_gusts);
-			if (this->DebugOutput == true)
+			if (this->DebugOutput == true && inhibitLog == false)
 				cout << command << endl;
 		}
 		else if (this->vRRDFiles[i].eType == PlotType::HUMIDITY && cInput->useHumidity == true) {
@@ -155,7 +155,7 @@ void DataPresentation::FetchDataInRRD(const AprsWXData* const cInput) {
 			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
 			sprintf(command, "rrdtool update %s %d:%f", this->vRRDFiles[i].sPath.c_str(), currtimeint, (float)cInput->humidity);
-			if (this->DebugOutput == true)
+			if (this->DebugOutput == true && inhibitLog == false)
 				cout << command << endl;
 		}
 		else continue;

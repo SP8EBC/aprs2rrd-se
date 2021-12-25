@@ -121,22 +121,21 @@ int main(int argc, char **argv){
 	int RRDCount = 0;
 
 	bool useFifthTelemAsTemperature = false;
-	//float telemA = 0.0f;
-	//float telemB = 0.0f;
-	//float telemC = 0.0f;
+
+	bool tcpOrSerialPacketGood = false;
 
 	try {
 		programConfig.parseFile();
-		cout << "--- main:121 - Opening configuration file" << endl;
+		cout << "--- main:129 - Opening configuration file" << endl;
 	}
 
 	catch(const FileIOException &ex)
 	{
-		printf("--- main:126 - The configuration file cannot be opened.\r\n");
+		printf("--- main:134 - The configuration file cannot be opened.\r\n");
 		return -1;
 	}
 	catch(const ParseException &ex) {
-		printf("--- main:130 - Error during parsing a content of configuration file near line %d", ex.getLine());
+		printf("--- main:138 - Error during parsing a content of configuration file near line %d \r\n", ex.getLine());
 		return -2;
 	}
 
@@ -171,13 +170,13 @@ int main(int argc, char **argv){
 
 	}
 	catch (const SettingNotFoundException &ex) {
-		cout << "--- main:167 - Unrecoverable error during configuration file loading!" << endl;
+		cout << "--- main:173 - Unrecoverable error during configuration file loading!" << endl;
 		return -3;
 	}
 
 	aprsConfig.RetryServerLookup = true;
 
-	cout << "--- main:173 - Configuration parsed successfully" << endl;
+	cout << "--- main:179 - Configuration parsed successfully" << endl;
 
 	bool result = programConfig.configureLogOutput();
 
@@ -213,8 +212,12 @@ int main(int argc, char **argv){
 	batchMode = programConfig.getBatchMode();
 	mainLoopExit = !batchMode;
 
+	if (!batchMode && !aprsConfig.enable && !serialConfig.enable) {
+		std::cout << "--- main:216 - You cannot run continuous mode w/o APRS-IS connection or Serial port enabled" << std::endl;
+	}
+
 	if (batchMode) {
-		std::cout << "--- main.cpp:217 - RUNNING IN BATCH MODE" << std::endl;
+		std::cout << "--- main:220 - RUNNING IN BATCH MODE" << std::endl;
 	}
 
 	// main loop
@@ -250,8 +253,13 @@ int main(int argc, char **argv){
 					wait_for_data();
 				}
 
+				// check if legit packet has been received asynchronously from APRS-IS or serial port
+				tcpOrSerialPacketGood = asioThread->isPacketValid() || serialThread->isPacketValid();
+
+				std::cout << "--- main:259 - tcpOrSerialPacketGood: " << boost::lexical_cast<std::string>(tcpOrSerialPacketGood) << std::endl;
+
 				// checkig if correct data has been received
-				if (asioThread->isPacketValid() || serialThread->isPacketValid() || batchMode) {
+				if (tcpOrSerialPacketGood || batchMode) {
 
 					// checking from what input data has been received
 					if (asioThread->isPacketValid()) {
@@ -303,7 +311,7 @@ int main(int argc, char **argv){
 
 						zywiecMeteo->parseJson(response, wxZywiec);
 
-						std::cout << "--- main.cpp:306 - Parsing data from Zywiec county meteo system API" << std::endl;
+						std::cout << "--- main:314 - Parsing data from Zywiec county meteo system API" << std::endl;
 
 						wxZywiec.PrintData();
 					}
@@ -316,7 +324,7 @@ int main(int argc, char **argv){
 
 						holfuyClient->getWxData(wxHolfuy);
 
-						std::cout << "--- main.cpp:319 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
+						std::cout << "--- main:327 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
 
 						wxHolfuy.PrintData();
 					}
@@ -360,6 +368,10 @@ int main(int argc, char **argv){
 						wxTarget.copy(wxHolfuy, sourceConfig);
 					}
 
+					if (!wxTarget.valid) {
+						continue;
+					}
+
 					// calculating the difference between sources according to user configuration
 					// if this feature is disabled completely the function will do nothing and return immediately
 					diffCalculator.calculate(wxIsTemp, wxSerialTemp, wxHolfuy, wxZywiec, telemetry, wxDifference);
@@ -376,7 +388,7 @@ int main(int argc, char **argv){
 					// exit immediately witout performing any changes
 
 					// printing target data
-					std::cout << "--- main.c:379 - Printing target WX data which will be used for further processing." << std::endl;
+					std::cout << "--- main:391 - Printing target WX data which will be used for further processing." << std::endl;
 					wxTarget.PrintData();
 
 					// limiting slew rates for measurements
@@ -386,7 +398,7 @@ int main(int argc, char **argv){
 					dataPresence.GetSecondarySource(wxIsTemp, wxSerialTemp, wxHolfuy, wxSecondarySrcForPage);
 
 					// inserting the data inside a RRD file
-					dataPresence.FetchDataInRRD(&wxTarget);
+					dataPresence.FetchDataInRRD(&wxTarget, false);
 
 					// insertind diff-data inside RRD files
 					dataPresence.FetchDiffInRRD(wxDifference);
@@ -429,18 +441,18 @@ int main(int argc, char **argv){
 						}
 					}
 
-					if (batchMode) {
+					if (batchMode && ( !aprsConfig.enable || tcpOrSerialPacketGood)) {
 						break;
 					}
 
 				}
 				else {
-					cout << "--- main.cpp:438 - This is not valid APRS packet" << endl;
+					cout << "--- main.cpp:450 - This is not valid APRS packet" << endl;
 
 					//if (Debug)
 					//	cout << "--- main.cpp:386 - Inserting data from previous frame into RRD file" << endl;
 					// insert previous data into RRD file
-					dataPresence.FetchDataInRRD(&wxLastTarget);
+					dataPresence.FetchDataInRRD(&wxLastTarget, true);
 				}
 			}
 			catch (ConnectionTimeoutEx &e) {
@@ -449,10 +461,10 @@ int main(int argc, char **argv){
 				break;
 			}
 			catch (std::exception &e) {
-				cout << "--- main:452 - std::exception " << e.what() << std::endl;
+				cout << "--- main:464 - std::exception " << e.what() << std::endl;
 			}
 			catch (...) {
-				cout << "--- main:455 - Unknown exception thrown during processing!" << std::endl;
+				cout << "--- main:467 - Unknown exception thrown during processing!" << std::endl;
 			}
 
 		}
@@ -461,7 +473,7 @@ int main(int argc, char **argv){
 			break;
 		}
 
-		std::cout << "--- main:464 - Connection to APRS server died. Reconnecting.." << std::endl;
+		std::cout << "--- main:476 - Connection to APRS server died. Reconnecting.." << std::endl;
 
 	} while (mainLoopExit);		// end of main loop
 
