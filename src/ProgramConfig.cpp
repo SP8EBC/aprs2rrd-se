@@ -23,7 +23,7 @@ ProgramConfig::~ProgramConfig() {
 }
 
 void ProgramConfig::parseFile() {
-	config.readFile("config.conf");
+	config.readFile(configFilename.c_str());
 
 //	root = config.getRoot();
 }

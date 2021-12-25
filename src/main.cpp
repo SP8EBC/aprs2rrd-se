@@ -72,8 +72,19 @@ void wait_for_data() {
 
 int main(int argc, char **argv){
 
+	std::string configFn;
+
+	if (argc > 0) {
+		configFn = std::string(argv[0]);
+	}
+	else {
+		configFn = "config.conf";
+	}
+
+	std::cout << "--- main:84 - Using configuration from file: " << configFn << std::endl;
+
 	Config config;
-	ProgramConfig programConfig("config.conf");
+	ProgramConfig programConfig(configFn);
 
 	SerialAsioThread * serialThread;
 	AprsThreadConfig aprsConfig;
@@ -126,16 +137,16 @@ int main(int argc, char **argv){
 
 	try {
 		programConfig.parseFile();
-		cout << "--- main:129 - Opening configuration file" << endl;
+		cout << "--- main:140 - Opening configuration file" << endl;
 	}
 
 	catch(const FileIOException &ex)
 	{
-		printf("--- main:134 - The configuration file cannot be opened.\r\n");
+		printf("--- main:145 - The configuration file cannot be opened.\r\n");
 		return -1;
 	}
 	catch(const ParseException &ex) {
-		printf("--- main:138 - Error during parsing a content of configuration file near line %d \r\n", ex.getLine());
+		printf("--- main:149 - Error during parsing a content of configuration file near line %d \r\n", ex.getLine());
 		return -2;
 	}
 
@@ -173,13 +184,13 @@ int main(int argc, char **argv){
 
 	}
 	catch (const SettingNotFoundException &ex) {
-		cout << "--- main:173 - Unrecoverable error during configuration file loading!" << endl;
+		cout << "--- main:187 - Unrecoverable error during configuration file loading!" << endl;
 		return -3;
 	}
 
 	aprsConfig.RetryServerLookup = true;
 
-	cout << "--- main:179 - Configuration parsed successfully" << endl;
+	cout << "--- main:193 - Configuration parsed successfully" << endl;
 
 	bool result = programConfig.configureLogOutput();
 
@@ -216,11 +227,11 @@ int main(int argc, char **argv){
 	mainLoopExit = !batchMode;
 
 	if (!batchMode && !aprsConfig.enable && !serialConfig.enable) {
-		std::cout << "--- main:216 - You cannot run continuous mode w/o APRS-IS connection or Serial port enabled" << std::endl;
+		std::cout << "--- main:230 - You cannot run continuous mode w/o APRS-IS connection or Serial port enabled" << std::endl;
 	}
 
 	if (batchMode) {
-		std::cout << "--- main:220 - RUNNING IN BATCH MODE" << std::endl;
+		std::cout << "--- main:234 - RUNNING IN BATCH MODE" << std::endl;
 	}
 
 	// main loop
@@ -259,7 +270,7 @@ int main(int argc, char **argv){
 				// check if legit packet has been received asynchronously from APRS-IS or serial port
 				tcpOrSerialPacketGood = asioThread->isPacketValid() || serialThread->isPacketValid();
 
-				std::cout << "--- main:259 - tcpOrSerialPacketGood: " << boost::lexical_cast<std::string>(tcpOrSerialPacketGood) << std::endl;
+				std::cout << "--- main:273 - tcpOrSerialPacketGood: " << boost::lexical_cast<std::string>(tcpOrSerialPacketGood) << std::endl;
 
 				// checkig if correct data has been received
 				if (tcpOrSerialPacketGood || batchMode) {
@@ -314,7 +325,7 @@ int main(int argc, char **argv){
 
 						zywiecMeteo->parseJson(response, wxZywiec);
 
-						std::cout << "--- main:314 - Parsing data from Zywiec county meteo system API" << std::endl;
+						std::cout << "--- main:328 - Parsing data from Zywiec county meteo system API" << std::endl;
 
 						wxZywiec.PrintData();
 					}
@@ -327,7 +338,7 @@ int main(int argc, char **argv){
 
 						holfuyClient->getWxData(wxHolfuy);
 
-						std::cout << "--- main:327 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
+						std::cout << "--- main:341 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
 
 						wxHolfuy.PrintData();
 					}
@@ -391,7 +402,7 @@ int main(int argc, char **argv){
 					// exit immediately witout performing any changes
 
 					// printing target data
-					std::cout << "--- main:391 - Printing target WX data which will be used for further processing." << std::endl;
+					std::cout << "--- main:405 - Printing target WX data which will be used for further processing." << std::endl;
 					wxTarget.PrintData();
 
 					// limiting slew rates for measurements
@@ -450,7 +461,7 @@ int main(int argc, char **argv){
 
 				}
 				else {
-					cout << "--- main.cpp:450 - This is not valid APRS packet" << endl;
+					cout << "--- main.cpp:464 - This is not valid APRS packet" << endl;
 
 					//if (Debug)
 					//	cout << "--- main.cpp:386 - Inserting data from previous frame into RRD file" << endl;
@@ -464,10 +475,10 @@ int main(int argc, char **argv){
 				break;
 			}
 			catch (std::exception &e) {
-				cout << "--- main:464 - std::exception " << e.what() << std::endl;
+				cout << "--- main:478 - std::exception " << e.what() << std::endl;
 			}
 			catch (...) {
-				cout << "--- main:467 - Unknown exception thrown during processing!" << std::endl;
+				cout << "--- main:481 - Unknown exception thrown during processing!" << std::endl;
 			}
 
 		}
@@ -476,7 +487,7 @@ int main(int argc, char **argv){
 			break;
 		}
 
-		std::cout << "--- main:476 - Connection to APRS server died. Reconnecting.." << std::endl;
+		std::cout << "--- main:490 - Connection to APRS server died. Reconnecting.." << std::endl;
 
 	} while (mainLoopExit);		// end of main loop
 
