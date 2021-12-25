@@ -37,6 +37,7 @@ class AprsPacket
         PathElement ToISOriginator;     // APRS-IS originator. It might be Igate callsign or APRS server name, if packet
                                         // was sent directly to Internet from some APRS client.
         char Data[1024];         // Frame payload
+        std::string DataAsStr;
         void PrintPacketData();     // Function witch print data from processed packet
         
         uint8_t ui;
