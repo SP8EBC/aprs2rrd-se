@@ -27,6 +27,7 @@ public:
 	void GetSecondarySource(const AprsWXData& aprsIS,
 			const AprsWXData& serial,
 			const AprsWXData& holfuy,
+			const AprsWXData& zywiec,
 			AprsWXData& out);
 	PlotType SwitchPlotType(string input);
 	PlotGraphType SwitchPlotGraphType(string input);

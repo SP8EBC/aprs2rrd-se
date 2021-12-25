@@ -7,6 +7,9 @@
 
 #include <string>
 
+#include "ZywiecMeteoConfig.h"
+#include "HolfuyClientConfig.h"
+
 #ifndef DATASOURCECONFIG_H_
 #define DATASOURCECONFIG_H_
 
@@ -61,6 +64,7 @@ public:
 	bool serialCaptureAll;
 
 	unsigned holfuyNumber;
+	unsigned zywiecNumber;
 
 	std::string getTemperatureSource() const;
 	std::string getPressureSource() const;

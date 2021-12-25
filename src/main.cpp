@@ -164,6 +164,9 @@ int main(int argc, char **argv){
 		AprsWXData::DebugOutput = Debug;
 		Telemetry::Debug = Debug;
 
+		sourceConfig.holfuyNumber = holfuyConfig.stationId;
+		sourceConfig.zywiecNumber = zywiecMeteoConfig.stationId;
+
 		if (useFifthTelemAsTemperature) {
 			sourceConfig.temperature = WxDataSource::TELEMETRY;
 		}
@@ -395,7 +398,7 @@ int main(int argc, char **argv){
 					limiter.limitFromSingleFrame(wxLastTarget, wxTarget);
 
 					// geting the data for second source
-					dataPresence.GetSecondarySource(wxIsTemp, wxSerialTemp, wxHolfuy, wxSecondarySrcForPage);
+					dataPresence.GetSecondarySource(wxIsTemp, wxSerialTemp, wxHolfuy, wxZywiec, wxSecondarySrcForPage);
 
 					// inserting the data inside a RRD file
 					dataPresence.FetchDataInRRD(&wxTarget, false);
