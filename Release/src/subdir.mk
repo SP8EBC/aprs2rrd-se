@@ -26,6 +26,7 @@ CPP_SRCS += \
 ../src/SlewRateLimiter.cpp \
 ../src/Telemetry.cpp \
 ../src/XMLMemoryHandler.cpp \
+../src/ZywiecMeteo.cpp \
 ../src/main.cpp 
 
 OBJS += \
@@ -51,6 +52,7 @@ OBJS += \
 ./src/SlewRateLimiter.o \
 ./src/Telemetry.o \
 ./src/XMLMemoryHandler.o \
+./src/ZywiecMeteo.o \
 ./src/main.o 
 
 CPP_DEPS += \
@@ -76,6 +78,7 @@ CPP_DEPS += \
 ./src/SlewRateLimiter.d \
 ./src/Telemetry.d \
 ./src/XMLMemoryHandler.d \
+./src/ZywiecMeteo.d \
 ./src/main.d 
 
 
@@ -83,7 +86,7 @@ CPP_DEPS += \
 src/%.o: ../src/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C++ Compiler'
-	g++ -std=c++1y -I/usr/include/mysql++ -I/usr/include/xercesc -I/usr/include/mysql -I/usr/include/curl -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
+	g++ -std=c++1y -I/usr/include/mysql++ -I../lib/nlohman_json_3_7_1/include/ -I/usr/include/xercesc -I/usr/include/mysql -I/usr/include/curl -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

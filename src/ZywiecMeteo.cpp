@@ -10,7 +10,7 @@
 #include "curl/curl.h"
 
 //#include "nlohmann/json.hpp"
-#include "nlohman_json_3_7_1/include/nlohmann/json.hpp"
+#include "nlohmann/json.hpp"
 
 #include <iostream>
 #include <string>
