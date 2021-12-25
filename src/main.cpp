@@ -74,8 +74,8 @@ int main(int argc, char **argv){
 
 	std::string configFn;
 
-	if (argc > 0) {
-		configFn = std::string(argv[0]);
+	if (argc > 1) {
+		configFn = std::string(argv[1]);
 	}
 	else {
 		configFn = "config.conf";
