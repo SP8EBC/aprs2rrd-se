@@ -1,0 +1,9 @@
+#!/bin/bash
+rrdtool create temperatura.rrd --start N --step 240 DS:temperatura:GAUGE:300:U:U RRA:AVERAGE:0.5:1:950
+rrdtool create cisnienie.rrd --start N --step 240 DS:cisnienie:GAUGE:300:U:U RRA:AVERAGE:0.5:1:950
+rrdtool create predkosc.rrd --start N --step 240 DS:predkosc:GAUGE:300:U:U RRA:AVERAGE:0.5:1:950
+rrdtool create szkwaly.rrd --start N --step 240 DS:szkwaly:GAUGE:300:U:U RRA:AVERAGE:0.5:1:950
+rrdtool create kierunek.rrd --start N --step 240 DS:kierunek:GAUGE:300:U:U RRA:AVERAGE:0.5:1:950
+rrdtool create wilgotnosc.rrd --start N --step 240 DS:wilgotnosc:GAUGE:300:U:U RRA:AVERAGE:0.5:1:950
+chown aprs:aprs *
+
