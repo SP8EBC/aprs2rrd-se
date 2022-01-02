@@ -4,6 +4,8 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
+../src/AmbigiousDataSourceConfig.cpp \
+../src/AmbigiousDataSourceConfig_test.cpp \
 ../src/AprsAsioThread.cpp \
 ../src/AprsPacket.cpp \
 ../src/AprsThreadConfig.cpp \
@@ -30,6 +32,8 @@ CPP_SRCS += \
 ../src/main.cpp 
 
 OBJS += \
+./src/AmbigiousDataSourceConfig.o \
+./src/AmbigiousDataSourceConfig_test.o \
 ./src/AprsAsioThread.o \
 ./src/AprsPacket.o \
 ./src/AprsThreadConfig.o \
@@ -56,6 +60,8 @@ OBJS += \
 ./src/main.o 
 
 CPP_DEPS += \
+./src/AmbigiousDataSourceConfig.d \
+./src/AmbigiousDataSourceConfig_test.d \
 ./src/AprsAsioThread.d \
 ./src/AprsPacket.d \
 ./src/AprsThreadConfig.d \
