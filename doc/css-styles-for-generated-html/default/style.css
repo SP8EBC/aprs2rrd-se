@@ -1,0 +1,7 @@
+td.table_caption {text-align: right; font-weight: bold; font-family: sans-serif} 
+td.table_value {text-align: left; font-family: sans-serif} 
+td.sub_heading{text-align: center; line-height: 25px} 
+table.data {width: 80%; font-size: large}
+table.sub_heading {width: 90%; font-family: sans-serif} 
+p.last_update {font-style: italic; margin-top: 3px; margin-bottom: 3px; font-size: smaller}
+img.additional {width: 25%; height: auto; display: block; margin-left: auto; margin-right: auto; font-size: medium}

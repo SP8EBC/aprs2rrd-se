@@ -1,0 +1,14 @@
+table {margin-left: auto; margin-right: auto}
+table.data {border-collapse: collapse; border: 1px solid #535e56; font-size: large}
+table.data tr.header{font-family: sans-serif; background-color: #1eb346}
+table.data tr:nth-child(even) {background-color: #bae3c5}
+table.data tr:first-child td {border-top: 0}
+table.data tr:last-child td {border-bottom: 0}
+table.data tr td:first-child {border-left: 0}
+table.data tr td:last-child {border-right: 0}
+table.sub_heading {font-family: sans-serif} 
+td.table_caption {text-align: right; font-weight: bold; font-family: sans-serif; border: 1px solid #ddd} 
+td.table_value {text-align: left; font-family: sans-serif; border: 1px solid #ddd} 
+td.sub_heading{text-align: center; line-height: 25px} 
+p.last_update {font-style: italic; margin-top: 3px; margin-bottom: 3px; font-size: smaller}
+img.additional {width: 25%; height: auto; display: block; margin-left: auto; margin-right: auto; font-size: medium}

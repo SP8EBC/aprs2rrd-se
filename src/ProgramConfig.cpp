@@ -6,6 +6,7 @@
  */
 
 #include "ProgramConfig.h"
+#include "AmbigiousDataSourceConfig.h"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
@@ -168,6 +169,7 @@ void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCo
 		data.Plot3Path = "";
 		data.Plot4Path = "";
 	}
+	rWWW.lookupValue("colorfulResultTable", data.colorfulResultTable);
 	rWWW.lookupValue("PrintTemperature", data.PrintTemperature);
 	rWWW.lookupValue("PrintPressure", data.PrintPressure);
 	rWWW.lookupValue("PrintHumidity", data.PrintHumidity);
@@ -355,7 +357,17 @@ void ProgramConfig::getDataSourceConfig(DataSourceConfig& config_out) {
 		config_out.wind = this->getWindSource();
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
-		std::cout << "--- ProgramConfig::getDataSourceConfig:356 - Error in data sources configuration. Using defaul values!" << std::endl;
+		std::cout << "--- ProgramConfig::getDataSourceConfig:360 - Error in data sources configuration. Using defaul values!" << std::endl;
+
+		config_out.globalBackup = WxDataSource::IS_PRIMARY;
+		config_out.humidity = WxDataSource::IS_PRIMARY;
+		config_out.pressure = WxDataSource::IS_PRIMARY;
+		config_out.rain = WxDataSource::IS_PRIMARY;
+		config_out.temperature = WxDataSource::IS_PRIMARY;
+		config_out.wind = WxDataSource::IS_PRIMARY;
+	}
+	catch (AmbigiousDataSourceConfig & ex) {
+		std::cout << "--- ProgramConfig::getDataSourceConfig:370 - Error in data sources configuration. Using defaul values!" << std::endl;
 
 		config_out.globalBackup = WxDataSource::IS_PRIMARY;
 		config_out.humidity = WxDataSource::IS_PRIMARY;
@@ -374,7 +386,7 @@ void ProgramConfig::getDataSourceConfig(DataSourceConfig& config_out) {
 
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
-		std::cout << "--- ProgramConfig::getDataSourceConfig:375 - No Serial KISS communcation is configured." << std::endl;
+		std::cout << "--- ProgramConfig::getDataSourceConfig:389 - No Serial KISS communcation is configured." << std::endl;
 
 	}
 
@@ -423,7 +435,7 @@ WxDataSource ProgramConfig::getTemperatureSource() {
 	case swstring("SERIAL"): out = WxDataSource::SERIAL;  break;
 	case swstring("HOLFUY"): out = WxDataSource::HOLFUY;  break;
 	case swstring("ZYWIEC"): out = WxDataSource::ZYWIEC;  break;
-	default: break;
+	default: throw AmbigiousDataSourceConfig();
 	}
 
 	return out;
@@ -448,7 +460,7 @@ WxDataSource ProgramConfig::getPressureSource() {
 	case swstring("SERIAL"): out = WxDataSource::SERIAL;  break;
 	case swstring("HOLFUY"): out = WxDataSource::HOLFUY;  break;
 	case swstring("ZYWIEC"): out = WxDataSource::ZYWIEC;  break;
-	default: break;
+	default: throw AmbigiousDataSourceConfig();
 	}
 
 	return out;
@@ -473,7 +485,7 @@ WxDataSource ProgramConfig::getWindSource() {
 	case swstring("SERIAL"): out = WxDataSource::SERIAL;  break;
 	case swstring("HOLFUY"): out = WxDataSource::HOLFUY;  break;
 	case swstring("ZYWIEC"): out = WxDataSource::ZYWIEC;  break;
-	default: break;
+	default: throw AmbigiousDataSourceConfig();
 	}
 
 	return out;
@@ -498,7 +510,7 @@ WxDataSource ProgramConfig::getRainSource() {
 	case swstring("SERIAL"): out = WxDataSource::SERIAL;  break;
 	case swstring("HOLFUY"): out = WxDataSource::HOLFUY;  break;
 	case swstring("ZYWIEC"): out = WxDataSource::ZYWIEC;  break;
-	default: break;
+	default: throw AmbigiousDataSourceConfig();
 	}
 
 	return out;
@@ -523,7 +535,7 @@ WxDataSource ProgramConfig::getHumiditySource() {
 	case swstring("SERIAL"): out = WxDataSource::SERIAL;  break;
 	case swstring("HOLFUY"): out = WxDataSource::HOLFUY;  break;
 	case swstring("ZYWIEC"): out = WxDataSource::ZYWIEC;  break;
-	default: break;
+	default: throw AmbigiousDataSourceConfig();
 	}
 
 	return out;
@@ -548,7 +560,7 @@ WxDataSource ProgramConfig::getGlobalBackup() {
 	case swstring("SERIAL"): out = WxDataSource::SERIAL;  break;
 	case swstring("HOLFUY"): out = WxDataSource::HOLFUY;  break;
 	case swstring("ZYWIEC"): out = WxDataSource::ZYWIEC;  break;
-	default: break;
+	default: throw AmbigiousDataSourceConfig();
 	}
 
 	return out;
@@ -670,10 +682,10 @@ void ProgramConfig::getLocaleStaticString(Locale &l) {
 		locale.lookupValue("windGusts", l.windGusts);
 		locale.lookupValue("windSpeed", l.windSpeed);
 
-		std::cout << "--- ProgramConfig::getDataSourceConfig:671 - Locale text data loaded successfully." << std::endl;
+		std::cout << "--- ProgramConfig::getDataSourceConfig:685 - Locale text data loaded successfully." << std::endl;
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
-		std::cout << "--- ProgramConfig::getDataSourceConfig:674 - Error during loading locale! Default values will be used" << std::endl;
+		std::cout << "--- ProgramConfig::getDataSourceConfig:688 - Error during loading locale! Default values will be used" << std::endl;
 	}
 
 }
@@ -825,6 +837,12 @@ void ProgramConfig::printConfigInPl(
 		cout << "--- Nagłówek: " << dataPresence.WebsiteHeadingTitle << endl;
 		cout << "--- Wiersz pomimędzy danymi num. a wykresami: " << dataPresence.WebsiteSubHeading << endl;
 		cout << "--- Stopka: " << dataPresence.WebisteFooter << endl;
+		if (dataPresence.colorfulResultTable) {
+			cout << "--- Style CSS będą ładowane w zależności od temperatury, blue-style.css dla ujemnych i green-style.css dla dodatnich" << endl;
+		}
+		else {
+			;
+		}
 		if (dataPresence.WebsiteLinkToMoreInfo == true)
 			cout << "--- Link do dodatkowych info zostanie wygenerowany" << endl;
 		if (dataPresence.PrintPressure == true)
