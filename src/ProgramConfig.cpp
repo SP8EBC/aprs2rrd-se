@@ -83,7 +83,7 @@ void ProgramConfig::getDbConfig(MySqlConnInterface& db) {
 			db.dumpTelemetry = false;
 		}
 	}
-
+	std::cout << "---ProgramConfig::getDbConfig:86 - Configuration loaded successfully" << std::endl;
 }
 
 void ProgramConfig::getAprsThreadConfig(AprsThreadConfig& aprs) {
@@ -107,6 +107,7 @@ void ProgramConfig::getAprsThreadConfig(AprsThreadConfig& aprs) {
 		aprs.SecondaryCall = "";
 		aprs.SecondarySSID = 0xFF;
 	}
+	std::cout << "---ProgramConfig::getAprsThreadConfig:110 - Configuration loaded successfully" << std::endl;
 }
 
 void ProgramConfig::getSerialConfig(SerialConfig& serial) {
@@ -127,7 +128,7 @@ void ProgramConfig::getSerialConfig(SerialConfig& serial) {
 		serial.captureAll = false;
 	}
 
-
+	std::cout << "---ProgramConfig::getSerialConfig:130 - Configuration loaded successfully" << std::endl;
 }
 
 void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCount, int& plotCount) {
@@ -152,6 +153,11 @@ void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCo
 
 	libconfig::Setting &rWWW = rRoot["Website"];
 
+	bool result = rWWW.lookupValue("colorfulResultTable", data.colorfulResultTable);
+
+	std::cout << "---ProgramConfig::getDataPresentationConfig:158 - result = " << result << std::endl;
+	std::cout << "---ProgramConfig::getDataPresentationConfig:159 - data.colorfulResultTable = " << data.colorfulResultTable << std::endl;
+
 	rWWW.lookupValue("IndexHtml", data.WebsitePath);
 	rWWW.lookupValue("Title", data.WebsiteTitle);
 	rWWW.lookupValue("HeadingTitle", data.WebsiteHeadingTitle);
@@ -169,7 +175,6 @@ void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCo
 		data.Plot3Path = "";
 		data.Plot4Path = "";
 	}
-	rWWW.lookupValue("colorfulResultTable", data.colorfulResultTable);
 	rWWW.lookupValue("PrintTemperature", data.PrintTemperature);
 	rWWW.lookupValue("PrintPressure", data.PrintPressure);
 	rWWW.lookupValue("PrintHumidity", data.PrintHumidity);
@@ -202,6 +207,9 @@ void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCo
 
 	libconfig::Setting &rPlots = rRoot["Plots"];
 	plotCount = rPlots.getLength();
+
+	std::cout << "---ProgramConfig::getDataPresentationConfig:211 - plotCount: " << plotCount << std::endl;
+
 	for (int ii = 0; ii < plotCount; ii++) {
 		string temp;
 
@@ -251,6 +259,8 @@ void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCo
 
 		data.vPNGFiles.push_back(cVectorPNGTemp);
 	}
+
+	std::cout << "---ProgramConfig::getDataPresentationConfig:263 - Configuration loaded successfully" << std::endl;
 }
 
 void ProgramConfig::getTelemetryConfig(Telemetry& data, bool& useAsTemperature) {
@@ -320,18 +330,18 @@ bool ProgramConfig::configureLogOutput() {
 	if (this->Debug == true) {
 		cout << "--- Tryb debugowania włączony" << endl;
 		cout << endl;
+	}
 
-		if (DebugToFile == true && this->DebugLogFn.length() > 3) {
-				cout << "--- Wyjście z konsoli przekierownane do pliku: " << this->DebugLogFn;
-				//fDebug.open(LogFile.c_str());
-				//cout.rdbuf(fDebug.rdbuf());
-				FILE* result_out = freopen(this->DebugLogFn.c_str(), "w", stdout);
-				FILE* result_err = freopen(this->DebugLogFn.c_str(), "w", stderr);
+	if (DebugToFile == true && this->DebugLogFn.length() > 3) {
+			cout << "--- Wyjście z konsoli przekierownane do pliku: " << this->DebugLogFn;
+			//fDebug.open(LogFile.c_str());
+			//cout.rdbuf(fDebug.rdbuf());
+			FILE* result_out = freopen(this->DebugLogFn.c_str(), "w", stdout);
+			FILE* result_err = freopen(this->DebugLogFn.c_str(), "w", stderr);
 
-				if (result_out == NULL || result_err == NULL) {
-					return false;
-				}
-		}
+			if (result_out == NULL || result_err == NULL) {
+				return false;
+			}
 	}
 
 	return true;
@@ -357,7 +367,7 @@ void ProgramConfig::getDataSourceConfig(DataSourceConfig& config_out) {
 		config_out.wind = this->getWindSource();
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
-		std::cout << "--- ProgramConfig::getDataSourceConfig:360 - Error in data sources configuration. Using defaul values!" << std::endl;
+		std::cout << "--- ProgramConfig::getDataSourceConfig:370 - Error in data sources configuration. Using defaul values!" << std::endl;
 
 		config_out.globalBackup = WxDataSource::IS_PRIMARY;
 		config_out.humidity = WxDataSource::IS_PRIMARY;
@@ -367,7 +377,7 @@ void ProgramConfig::getDataSourceConfig(DataSourceConfig& config_out) {
 		config_out.wind = WxDataSource::IS_PRIMARY;
 	}
 	catch (AmbigiousDataSourceConfig & ex) {
-		std::cout << "--- ProgramConfig::getDataSourceConfig:370 - Error in data sources configuration. Using defaul values!" << std::endl;
+		std::cout << "--- ProgramConfig::getDataSourceConfig:380 - Error in data sources configuration. Using defaul values!" << std::endl;
 
 		config_out.globalBackup = WxDataSource::IS_PRIMARY;
 		config_out.humidity = WxDataSource::IS_PRIMARY;
@@ -386,7 +396,7 @@ void ProgramConfig::getDataSourceConfig(DataSourceConfig& config_out) {
 
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
-		std::cout << "--- ProgramConfig::getDataSourceConfig:389 - No Serial KISS communcation is configured." << std::endl;
+		std::cout << "--- ProgramConfig::getDataSourceConfig:399 - No Serial KISS communcation is configured." << std::endl;
 
 	}
 
@@ -682,10 +692,10 @@ void ProgramConfig::getLocaleStaticString(Locale &l) {
 		locale.lookupValue("windGusts", l.windGusts);
 		locale.lookupValue("windSpeed", l.windSpeed);
 
-		std::cout << "--- ProgramConfig::getDataSourceConfig:685 - Locale text data loaded successfully." << std::endl;
+		std::cout << "--- ProgramConfig::getDataSourceConfig:695 - Locale text data loaded successfully." << std::endl;
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
-		std::cout << "--- ProgramConfig::getDataSourceConfig:688 - Error during loading locale! Default values will be used" << std::endl;
+		std::cout << "--- ProgramConfig::getDataSourceConfig:698 - Error during loading locale! Default values will be used" << std::endl;
 	}
 
 }
