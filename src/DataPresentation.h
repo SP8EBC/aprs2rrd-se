@@ -61,6 +61,8 @@ public:
 
 	int8_t directionCorrection;
 
+	bool colorfulResultTable;
+
 	bool DebugOutput;
 
 };

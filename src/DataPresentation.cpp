@@ -28,6 +28,7 @@ DataPresentation::DataPresentation() : 	WebsitePath(""),
 										SecondaryLabel (""),
 										PrimaryLabel (""),
 										directionCorrection (0),
+										colorfulResultTable(false),
 										DebugOutput(false)
 {
 	this->Plot0Path.clear();
@@ -43,7 +44,6 @@ DataPresentation::~DataPresentation()
 }
 
 void DataPresentation::FetchDiffInRRD(AprsWXData& data) {
-	int result = 0;
 
 	std::stringstream command;
 	RRDFileDefinition diff_temperature, diff_windspd, diff_winddir;
@@ -64,7 +64,7 @@ void DataPresentation::FetchDiffInRRD(AprsWXData& data) {
 
 	if (diff_temperature_it != this->vRRDFiles.end()) {
 		command << "rrdtool update " << diff_temperature_it->sPath << " " << seconds << ":" << data.temperature;
-		result = ::system(command.str().c_str());
+		::system(command.str().c_str());
 		if (this->DebugOutput == true)
 			cout << command.str() << endl;
 	}
@@ -72,7 +72,7 @@ void DataPresentation::FetchDiffInRRD(AprsWXData& data) {
 	if (diff_winddir_it != this->vRRDFiles.end()) {
 		command.str("");
 		command << "rrdtool update " << diff_winddir_it->sPath << " " << seconds << ":" << data.wind_direction;
-		result = ::system(command.str().c_str());
+		::system(command.str().c_str());
 		if (this->DebugOutput == true)
 			cout << command.str() << endl;
 	}
@@ -80,7 +80,7 @@ void DataPresentation::FetchDiffInRRD(AprsWXData& data) {
 	if (diff_windspd_it != this->vRRDFiles.end()) {
 		command.str("");
 		command << "rrdtool update " << diff_windspd_it->sPath << " " << seconds << ":" << data.wind_speed;
-		result = ::system(command.str().c_str());
+		::system(command.str().c_str());
 		if (this->DebugOutput == true)
 			cout << command.str() << endl;
 	}
@@ -88,7 +88,7 @@ void DataPresentation::FetchDiffInRRD(AprsWXData& data) {
 	if (diff_windgst_it != this->vRRDFiles.end()) {
 		command.str("");
 		command << "rrdtool update " << diff_windgst_it->sPath << " " << seconds << ":" << data.wind_gusts;
-		result = ::system(command.str().c_str());
+		::system(command.str().c_str());
 		if (this->DebugOutput == true)
 			cout << command.str() << endl;
 	}
@@ -291,12 +291,12 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 	html.open(this->WebsitePath.c_str(), ios::out | ios::trunc);
 
 	if (!html.is_open()) {
-		std::cout << "--- DataPresentation::GenerateWebiste:294 - Html file cannot by opened because of unknown reason" << std::endl;
+		std::cout << "--- DataPresentation::GenerateWebiste:295 - Html file cannot by opened because of unknown reason" << std::endl;
 		return;
 	}
 
 	if (!html.good()) {
-		std::cout << "--- DataPresentation::GenerateWebiste:299 - Something is wrong with the html file!" << std::endl;
+		std::cout << "--- DataPresentation::GenerateWebiste:300 - Something is wrong with the html file!" << std::endl;
 		return;
 	}
 
@@ -308,14 +308,24 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 
 	//html.precision(3);
 
-	std::cout << "--- DataPresentation::GenerateWebiste:311 - Html file opened" << std::endl;
+	std::cout << "--- DataPresentation::GenerateWebiste:312 - Html file opened" << std::endl;
 
 	try {
 		html << " <!DOCTYPE html>" << std::endl;
 		html <<	"<HTML><head>" << std::endl;
 		html << "<TITLE>" << this->WebsiteTitle << "</TITLE>" << std::endl;
 		html << "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">" << std::endl;
-		html << "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\"></head>" << std::endl;
+		if (colorfulResultTable) {
+			if (WX.temperature > 0.0f) {
+				html << "<link rel=\"stylesheet\" type=\"text/css\" href=\"green-style.css\"></head>" << std::endl;
+			}
+			else {
+				html << "<link rel=\"stylesheet\" type=\"text/css\" href=\"blue-style.css\"></head>" << std::endl;
+			}
+		}
+		else {
+			html << "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\"></head>" << std::endl;
+		}
 		html << "<P><H2>" << this->WebsiteHeadingTitle << "</H2></P>" << std::endl;
 
 		html << "<table class=\"data\"><tbody>" << std::endl;
@@ -422,7 +432,7 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 			}
 			if (this->PrintPressure) {
 				html << "<tr>" << endl;
-				html << "<td class=table_caption" << locale.pressure <<":</td>" << endl;
+				html << "<td class=table_caption>" << locale.pressure <<":</td>" << endl;
 				html << "<td class=table_value> " << WX.pressure << " hPa " << endl;
 				html << "<td class=table_value> " << secondaryWX.pressure << " hPa " << endl;
 				html << "</tr>" << endl;
