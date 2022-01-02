@@ -155,8 +155,8 @@ void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCo
 
 	bool result = rWWW.lookupValue("colorfulResultTable", data.colorfulResultTable);
 
-	std::cout << "---ProgramConfig::getDataPresentationConfig:158 - result = " << result << std::endl;
-	std::cout << "---ProgramConfig::getDataPresentationConfig:159 - data.colorfulResultTable = " << data.colorfulResultTable << std::endl;
+//	std::cout << "---ProgramConfig::getDataPresentationConfig:158 - result = " << result << std::endl;
+//	std::cout << "---ProgramConfig::getDataPresentationConfig:159 - data.colorfulResultTable = " << data.colorfulResultTable << std::endl;
 
 	rWWW.lookupValue("IndexHtml", data.WebsitePath);
 	rWWW.lookupValue("Title", data.WebsiteTitle);
@@ -692,10 +692,10 @@ void ProgramConfig::getLocaleStaticString(Locale &l) {
 		locale.lookupValue("windGusts", l.windGusts);
 		locale.lookupValue("windSpeed", l.windSpeed);
 
-		std::cout << "--- ProgramConfig::getDataSourceConfig:695 - Locale text data loaded successfully." << std::endl;
+		std::cout << "--- ProgramConfig::getLocaleStaticString:695 - Locale text data loaded successfully." << std::endl;
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
-		std::cout << "--- ProgramConfig::getDataSourceConfig:698 - Error during loading locale! Default values will be used" << std::endl;
+		std::cout << "--- ProgramConfig::getLocaleStaticString:698 - Error during loading locale! Default values will be used" << std::endl;
 	}
 
 }

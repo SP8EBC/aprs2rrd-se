@@ -200,8 +200,8 @@ int main(int argc, char **argv){
 		return -5;
 	}
 
-	cout << "------------- APRS2RRD version " << SW_VER << " ------------- " << endl;
-	cout << "-------- Startup time in UTC " << boost::posix_time::to_iso_string(boost::posix_time::second_clock::universal_time()) << " --------" << endl;
+	cout << "------------- APRS2RRD version " << SW_VER << " --------------" << endl;
+	cout << "-------- Startup time in UTC " << boost::posix_time::to_simple_string(boost::posix_time::second_clock::universal_time()) << " --------" << endl << endl;	// 20
 
 	ProgramConfig::printConfigInPl(mysqlDb, aprsConfig, dataPresence, RRDCount, PlotsCount, telemetry, useFifthTelemAsTemperature, zywiecMeteoConfig, holfuyConfig, diffCalculator, sourceConfig, pressureCalculator, limiter, locale);
 

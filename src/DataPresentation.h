@@ -59,7 +59,7 @@ public:
 	string WebsiteAdditionalImage;
 	string WebsiteAdditionalImgeUrl;
 
-	int8_t directionCorrection;
+	int32_t directionCorrection;
 
 	bool colorfulResultTable;
 
