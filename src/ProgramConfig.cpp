@@ -326,6 +326,14 @@ bool ProgramConfig::getBatchMode() {
 	return out;
 }
 
+bool ProgramConfig::getExitOnException() {
+	bool out = true;
+
+	config.lookupValue("ExitOnCriticalException", out);
+
+	return out;
+}
+
 bool ProgramConfig::configureLogOutput() {
 	if (this->Debug == true) {
 		cout << "--- Tryb debugowania włączony" << endl;

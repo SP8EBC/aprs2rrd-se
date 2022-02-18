@@ -82,6 +82,7 @@ public:
 	bool getDebugToFile();
 	std::string getDebugLogFn();
 	bool getBatchMode();
+	bool getExitOnException();
 
 
 	std::string getStationName();

@@ -47,6 +47,8 @@ int correction = 0;
 
 bool batchMode = false;
 
+bool exitOnException = true;
+
 std::shared_ptr<std::condition_variable> syncCondition;
 std::shared_ptr<std::mutex> syncLock;
 
@@ -155,6 +157,7 @@ int main(int argc, char **argv){
 	Debug = programConfig.getDebug();
 	DebugToFile = programConfig.getDebugToFile();
 	LogFile = programConfig.getDebugLogFn();
+	exitOnException = programConfig.getExitOnException();
 
 
 	try {
@@ -481,9 +484,23 @@ int main(int argc, char **argv){
 			}
 			catch (std::exception &e) {
 				cout << "--- main:482 - std::exception " << e.what() << std::endl;
+
+				if (exitOnException) {
+					std::cout << "--- Exiting application";
+
+					fDebug.close();
+					return -482;
+				}
 			}
 			catch (...) {
 				cout << "--- main:485 - Unknown exception thrown during processing!" << std::endl;
+
+				if (exitOnException) {
+					std::cout << "--- Exiting application";
+
+					fDebug.close();
+					return -485;
+				}
 			}
 
 		}

@@ -106,6 +106,8 @@ bool ZywiecMeteo::downloadLastMeasureForStation(int stationId, std::string &resp
         if (result == CURLcode::CURLE_OK) {
         	out = true;
 
+        	std::cout << responseBuffer;
+
         	response = std::move(responseBuffer);
         }
         else {
@@ -185,6 +187,8 @@ bool ZywiecMeteo::downloadMeasuresFromRangeForStation(int stationId,
 
         if (result == CURLcode::CURLE_OK) {
         	out = true;
+
+        	std::cout << responseBuffer;
 
         	respons = std::move(responseBuffer);
         }
