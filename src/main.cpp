@@ -392,7 +392,14 @@ int main(int argc, char **argv){
 					}
 
 					if (!wxTarget.valid) {
-						continue;
+						if (batchMode) {
+							std::cout << "-- main:396 - No valid data have been received from configured sources!!" << std::endl;
+
+							throw std::exception();
+						}
+						else {
+							continue;
+						}
 					}
 
 					// calculating the difference between sources according to user configuration
@@ -411,7 +418,7 @@ int main(int argc, char **argv){
 					// exit immediately witout performing any changes
 
 					// printing target data
-					std::cout << "--- main:414 - Printing target WX data which will be used for further processing." << std::endl;
+					std::cout << "--- main:420 - Printing target WX data which will be used for further processing." << std::endl;
 					wxTarget.PrintData();
 
 					// limiting slew rates for measurements
@@ -470,7 +477,7 @@ int main(int argc, char **argv){
 
 				}
 				else {
-					cout << "--- main.cpp:473 - This is not valid APRS packet" << endl;
+					cout << "--- main.cpp:478 - This is not valid APRS packet" << endl;
 
 					//if (Debug)
 					//	cout << "--- main.cpp:386 - Inserting data from previous frame into RRD file" << endl;
@@ -484,7 +491,7 @@ int main(int argc, char **argv){
 				break;
 			}
 			catch (std::exception &e) {
-				cout << "--- main:487 - std::exception " << e.what() << std::endl;
+				cout << "--- main:492 - std::exception " << e.what() << std::endl;
 
 				if (exitOnException) {
 					std::cout << "--- Exiting application";
@@ -494,7 +501,7 @@ int main(int argc, char **argv){
 				}
 			}
 			catch (...) {
-				cout << "--- main:497 - Unknown exception thrown during processing!" << std::endl;
+				cout << "--- main:502 - Unknown exception thrown during processing!" << std::endl;
 
 				if (exitOnException) {
 					std::cout << "--- Exiting application";
@@ -510,7 +517,7 @@ int main(int argc, char **argv){
 			break;
 		}
 
-		std::cout << "--- main:513 - Connection to APRS server died. Reconnecting.." << std::endl;
+		std::cout << "--- main:518 - Connection to APRS server died. Reconnecting.." << std::endl;
 
 	} while (mainLoopExit);		// end of main loop
 

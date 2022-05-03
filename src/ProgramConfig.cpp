@@ -725,7 +725,7 @@ void ProgramConfig::getZywiecMeteoConfig(ZywiecMeteoConfig & z) {
 			z.baseUrl = temp;
 		}
 		else {
-			z.baseUrl = "http://monitoring.zywiec.powiat.pl/";
+			z.baseUrl = "https://monitoring.zywiec.powiat.pl/";
 		}
 
 		zywiec.lookupValue("StationId", z.stationId);

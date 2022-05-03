@@ -301,9 +301,13 @@ void ZywiecMeteo::parseJson(std::string &in, AprsWXData &out) {
 		}
 	}
 
+	// check if any data have been parse
 	if (out.useHumidity || out.usePressure || out.useTemperature || out.useWind) {
 		out.valid = true;
 		out.dataSource = WXDataSource::ZYWIEC;
+	}
+	else {
+		out.valid = false;
 	}
 
 
