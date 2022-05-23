@@ -650,20 +650,29 @@ void ProgramConfig::getSlewRateLimitConfig(SlewRateLimiter& limiter) {
 	try {
 		libconfig::Setting &slew = root["SlewLimit"];
 
-		lookupSucceded = (slew.lookupValue("Temperature", temperatureSlew) ? lookupSucceded : false);
+		lookupSucceded = slew.lookupValue("Temperature", temperatureSlew);
+		std::cout << "--- ProgramConfig::getSlewRateLimitConfig:654 - lookupSucceded: " << lookupSucceded << ", temperatureSlew: " << temperatureSlew << std::endl;
+
 		lookupSucceded = (slew.lookupValue("Pressure", pressureSlew) ? lookupSucceded : false);
+		std::cout << "--- ProgramConfig::getSlewRateLimitConfig:657 - lookupSucceded: " << lookupSucceded << ", pressureSlew: " << pressureSlew << std::endl;
+
 		lookupSucceded = (slew.lookupValue("WindSpeed", speedSlew) ? lookupSucceded : false);
+		std::cout << "--- ProgramConfig::getSlewRateLimitConfig:660 - lookupSucceded: " << lookupSucceded << ", speedSlew: " << speedSlew << std::endl;
+
 		lookupSucceded = (slew.lookupValue("WindGusts", gustsSlew) ? lookupSucceded : false);
+		std::cout << "--- ProgramConfig::getSlewRateLimitConfig:663 - lookupSucceded: " << lookupSucceded << ", gustsSlew: " << gustsSlew << std::endl;
+
 		lookupSucceded = (slew.lookupValue("Humidity", humiditySlew) ? lookupSucceded : false);
+		std::cout << "--- ProgramConfig::getSlewRateLimitConfig:666 - lookupSucceded: " << lookupSucceded << ", humidiySlew: " << humiditySlew << std::endl;
 
 
-		if (lookupSucceded) {
+		//if (lookupSucceded) {
 			limiter.setMaxTempSlew(temperatureSlew);
 			limiter.setMaxPressureSlew((int16_t)pressureSlew);
 			limiter.setMaxSpeedSleew(speedSlew);
 			limiter.setMaxGustsSleew(gustsSlew);
 			limiter.setMaxHumiditySlew(humiditySlew);
-		}
+		//}
 
 	}
 	catch (libconfig::SettingNotFoundException &ex) {

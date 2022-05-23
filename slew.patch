@@ -1,0 +1,46 @@
+diff --git a/src/ProgramConfig.cpp b/src/ProgramConfig.cpp
+index 0187945..021cb51 100644
+--- a/src/ProgramConfig.cpp
++++ b/src/ProgramConfig.cpp
+@@ -650,20 +650,29 @@ void ProgramConfig::getSlewRateLimitConfig(SlewRateLimiter& limiter) {
+ 	try {
+ 		libconfig::Setting &slew = root["SlewLimit"];
+ 
+-		lookupSucceded = (slew.lookupValue("Temperature", temperatureSlew) ? lookupSucceded : false);
++		lookupSucceded = slew.lookupValue("Temperature", temperatureSlew);
++		std::cout << "--- ProgramConfig::getSlewRateLimitConfig:654 - lookupSucceded: " << lookupSucceded << ", temperatureSlew: " << temperatureSlew << std::endl;
++
+ 		lookupSucceded = (slew.lookupValue("Pressure", pressureSlew) ? lookupSucceded : false);
++		std::cout << "--- ProgramConfig::getSlewRateLimitConfig:657 - lookupSucceded: " << lookupSucceded << ", pressureSlew: " << pressureSlew << std::endl;
++
+ 		lookupSucceded = (slew.lookupValue("WindSpeed", speedSlew) ? lookupSucceded : false);
++		std::cout << "--- ProgramConfig::getSlewRateLimitConfig:660 - lookupSucceded: " << lookupSucceded << ", speedSlew: " << speedSlew << std::endl;
++
+ 		lookupSucceded = (slew.lookupValue("WindGusts", gustsSlew) ? lookupSucceded : false);
++		std::cout << "--- ProgramConfig::getSlewRateLimitConfig:663 - lookupSucceded: " << lookupSucceded << ", gustsSlew: " << gustsSlew << std::endl;
++
+ 		lookupSucceded = (slew.lookupValue("Humidity", humiditySlew) ? lookupSucceded : false);
++		std::cout << "--- ProgramConfig::getSlewRateLimitConfig:666 - lookupSucceded: " << lookupSucceded << ", humidiySlew: " << humiditySlew << std::endl;
+ 
+ 
+-		if (lookupSucceded) {
++		//if (lookupSucceded) {
+ 			limiter.setMaxTempSlew(temperatureSlew);
+ 			limiter.setMaxPressureSlew((int16_t)pressureSlew);
+ 			limiter.setMaxSpeedSleew(speedSlew);
+ 			limiter.setMaxGustsSleew(gustsSlew);
+ 			limiter.setMaxHumiditySlew(humiditySlew);
+-		}
++		//}
+ 
+ 	}
+ 	catch (libconfig::SettingNotFoundException &ex) {
+diff --git a/src/SOFTWARE_VERSION.h b/src/SOFTWARE_VERSION.h
+index edc712f..c6da4f5 100644
+--- a/src/SOFTWARE_VERSION.h
++++ b/src/SOFTWARE_VERSION.h
+@@ -1,3 +1,3 @@
+ #define SW_NAME "APRS2RRD"
+-#define SW_VER "1.6.2-03052022"
++#define SW_VER "1.6.3-18052022"
+ 
