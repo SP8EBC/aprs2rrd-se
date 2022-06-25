@@ -37,7 +37,7 @@ std::string AprsThreadConfig::getSecondaryCallStr() {
 		out += std::to_string(this->SecondarySSID);
 	}
 	else {
-		out = this->StationCall;
+		out = this->SecondaryCall;
 	}
 
 	return out;
