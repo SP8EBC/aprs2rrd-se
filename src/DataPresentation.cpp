@@ -280,6 +280,14 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 	uint8_t windgustsPrecision = 3;
 	uint8_t temperaturePrecision = 3;
 
+	if (WX.wind_speed < 10.0f) {
+		windspeedPrecision = 2;
+	}
+
+	if (WX.wind_gusts < 10.0f) {
+		windgustsPrecision = 2;
+	}
+
 	boost::posix_time::ptime localtime(boost::date_time::second_clock<boost::posix_time::ptime>::local_time());
 
 	boost::posix_time::time_facet * formatter = new boost::posix_time::time_facet();
