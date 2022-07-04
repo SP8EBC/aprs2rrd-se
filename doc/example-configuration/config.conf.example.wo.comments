@@ -4,11 +4,8 @@ DebugLogFile = "/home/aprs/skrzyczne/bin/debug.log"
 
 StationName = "skrzyczne";
 
-
-FifthTelemAsTemperature = false;
-TelemAScaling = 0.0;
-TelemBScaling = 0.25;
-TelemCScaling = -25.0;
+BatchMode = false;
+ExitOnCriticalException = true;
 
 MySQL = {
 	Enable = true;

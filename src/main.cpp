@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <cmath>
 #include <libconfig.h++>
+#include <locale.h>
 
 #include "MySqlConnInterface.h"
 #include "AprsPacket.h"
@@ -94,7 +95,6 @@ int main(int argc, char **argv){
 	AprsThreadConfig aprsConfig;
 	MySqlConnInterface mysqlDb;
 	DataPresentation dataPresence;
-	Telemetry telemetry;
 	AprsAsioThread * asioThread;
 	SlewRateLimiter limiter;
 	SerialConfig serialConfig;
@@ -106,7 +106,10 @@ int main(int argc, char **argv){
 	DiffCalculator diffCalculator;
 	PressureCalculator pressureCalculator;
 	Locale locale;
+	char datetimeLocale[16];
+	char * currrentLocale;
 
+	Telemetry telemetry;
 
 	RRDFileDefinition sVectorRRDTemp;
 	PlotFileDefinition cVectorPNGTemp;
@@ -135,9 +138,9 @@ int main(int argc, char **argv){
 	int PlotsCount = 0;
 	int RRDCount = 0;
 
-	bool useFifthTelemAsTemperature = false;
-
 	bool tcpOrSerialPacketGood = false;
+
+	memset(datetimeLocale, 0, 16);
 
 	try {
 		programConfig.parseFile();
@@ -161,7 +164,6 @@ int main(int argc, char **argv){
 
 	try {
 		programConfig.getDataSourceConfig(sourceConfig);
-		programConfig.getTelemetryConfig(telemetry, useFifthTelemAsTemperature);
 		programConfig.getDbConfig(mysqlDb);
 		programConfig.getAprsThreadConfig(aprsConfig);
 		programConfig.getDataPresentationConfig(dataPresence, RRDCount, PlotsCount);
@@ -182,9 +184,11 @@ int main(int argc, char **argv){
 		sourceConfig.holfuyNumber = holfuyConfig.stationId;
 		sourceConfig.zywiecNumber = zywiecMeteoConfig.stationId;
 
-		if (useFifthTelemAsTemperature) {
-			sourceConfig.temperature = WxDataSource::TELEMETRY;
+		if (programConfig.getDateTimeLocale(datetimeLocale, 16)) {
+			(void)setlocale(LC_TIME, datetimeLocale);
 		}
+
+		(void)setlocale(LC_NUMERIC, "en_US.UTF-8");
 
 	}
 	catch (const SettingNotFoundException &ex) {
@@ -204,8 +208,13 @@ int main(int argc, char **argv){
 
 	cout << "------------- APRS2RRD version " << SW_VER << " --------------" << endl;
 	cout << "-------- Startup time in UTC " << boost::posix_time::to_simple_string(boost::posix_time::second_clock::universal_time()) << " --------" << endl << endl;	// 20
+	cout << "----------------------------------------------------------" << endl;
+	currrentLocale = setlocale(LC_TIME, NULL);
+	cout << "--- Current LC_TIME locale: " << currrentLocale << endl;
+	currrentLocale = setlocale(LC_NUMERIC, NULL);
+	cout << "--- Current LC_NUMERIC locale: " << currrentLocale << endl;
 
-	ProgramConfig::printConfigInPl(mysqlDb, aprsConfig, dataPresence, RRDCount, PlotsCount, telemetry, useFifthTelemAsTemperature, zywiecMeteoConfig, holfuyConfig, diffCalculator, sourceConfig, pressureCalculator, limiter, locale);
+	ProgramConfig::printConfigInPl(mysqlDb, aprsConfig, dataPresence, RRDCount, PlotsCount, zywiecMeteoConfig, holfuyConfig, diffCalculator, sourceConfig, pressureCalculator, limiter, locale);
 
 	cout << "--- main:210 - exitOnException: " << exitOnException << endl;
 

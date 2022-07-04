@@ -263,13 +263,13 @@ void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCo
 	std::cout << "---ProgramConfig::getDataPresentationConfig:263 - Configuration loaded successfully" << std::endl;
 }
 
-void ProgramConfig::getTelemetryConfig(Telemetry& data, bool& useAsTemperature) {
-
-	config.lookupValue("FifthTelemAsTemperature", useAsTemperature);
-	config.lookupValue("TelemAScaling", data.ch5a);
-	config.lookupValue("TelemBScaling", data.ch5b);
-	config.lookupValue("TelemCScaling", data.ch5c);
-}
+//void ProgramConfig::getTelemetryConfig(Telemetry& data, bool& useAsTemperature) {
+//
+//	config.lookupValue("FifthTelemAsTemperature", useAsTemperature);
+//	config.lookupValue("TelemAScaling", data.ch5a);
+//	config.lookupValue("TelemBScaling", data.ch5b);
+//	config.lookupValue("TelemCScaling", data.ch5c);
+//}
 
 std::string ProgramConfig::getStationName() {
 
@@ -746,14 +746,31 @@ void ProgramConfig::getZywiecMeteoConfig(ZywiecMeteoConfig & z) {
  
 }
 
+bool ProgramConfig::getDateTimeLocale(char *localeString, basic_string<char>::size_type ln) {
+
+	std::string l;
+
+	bool output = false;
+
+	if (localeString != 0) {
+		config.lookupValue("DatetimeLocale", l);
+
+		if (l.length() > 0 && ln > l.length()) {
+			strcpy(localeString, l.c_str());
+			output = true;
+		}
+	}
+
+	return output;
+
+}
+
 void ProgramConfig::printConfigInPl(
 											MySqlConnInterface& mysqlDb,
 											AprsThreadConfig& aprsConfig,
 											DataPresentation& dataPresence,
 											int& rrdCount,
 											int& plotCount,
-											Telemetry& data,
-											bool& useAsTemperature,
 											ZywiecMeteoConfig & zywiec,
 											HolfuyClientConfig& holfuy,
 											DiffCalculator & calculator,
@@ -763,12 +780,6 @@ void ProgramConfig::printConfigInPl(
 											Locale & locale
 
 									) {
-
-		cout << "--------KONFIGURACJA TELEMETRII------" << endl;
-		cout << "--- FifthTelemAsTemperature: " << useAsTemperature << endl;
-		cout << "--- scalingA: " << data.ch5a << endl;
-		cout << "--- scalingB: " << data.ch5b << endl;
-		cout << "--- scalingC: " << data.ch5c << endl;
 		if (mysqlDb.enable) {
 			cout << "--------KONFIGURACJA BAZY DANYCH-----" << endl;
 			cout << "--- Adres Serwera: " << mysqlDb.IP << endl;

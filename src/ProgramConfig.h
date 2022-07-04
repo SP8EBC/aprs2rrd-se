@@ -67,7 +67,6 @@ public:
 	void getAprsThreadConfig(AprsThreadConfig& aprs);
 	void getSerialConfig(SerialConfig& serial);
 	void getDataPresentationConfig(DataPresentation& data, int& rrdCount, int& plotCount);
-	void getTelemetryConfig(Telemetry& data, bool& useAsTemperature);
 	void getDataSourceConfig(DataSourceConfig & config);
 	void getHolfuyConfig(HolfuyClientConfig & config);
 	void getDiffConfiguration(DiffCalculator & calculator);
@@ -75,6 +74,7 @@ public:
 	void getSlewRateLimitConfig(SlewRateLimiter & limiter);
 	void getLocaleStaticString(Locale& l);
 	void getZywiecMeteoConfig(ZywiecMeteoConfig & z);
+	bool getDateTimeLocale(char * localeString, basic_string<char>::size_type ln);
 
 	bool configureLogOutput();
 
@@ -106,8 +106,6 @@ public:
 									DataPresentation& dataPresence,
 									int& rrdCount,
 									int& plotCount,
-									Telemetry& telemetry,
-									bool& useAsTemperature,
 									ZywiecMeteoConfig & zywiec,
 									HolfuyClientConfig& holfuy,
 									DiffCalculator & calculator,

@@ -11,6 +11,8 @@ Debug = true;
 DebugToFile = true;
 DebugLogFile = "/home/aprs/skrzyczne/bin/debug.log"
 
+StationName = "skrzyczne";
+
 # EN: 	This is mandatory option which names the weather station from application perspective. This name is used
 #	during inserting data info the MySQL database in V2 Schema (all station in one table). It will be also used in future
 #	functionalities 
@@ -19,19 +21,10 @@ DebugLogFile = "/home/aprs/skrzyczne/bin/debug.log"
 #	też używana w przyszłych funkcjonalnościach.
 StationName = "skrzyczne";
 
+BatchMode = false;
+ExitOnCriticalException = true;
 
-# EN: 	This is an obsolete option (planned to be removed from future releases!!!) which gives an ability to use fifth telemetry channel as a temperature source
-# 	Parameter 'FifthTelemAsTemperature' is obsolete, it is not used to anything but it still must be preset and set to false. WARNING! Telemetry data are parsed
-#	from all incoming packets regardless if they comes from primary or secondary APRS-IS station or KISS serial TNC modem.
-#
-# PL: 	Przestarzała opcja (planowana do usunięcia w przyszłych wydaniach) która umożliwia użycie piątego kanału telemetrii APRS jako źródła temperatury. Parametr
-#	'FifthTelemAsTemperature' nie jest obecnie używany ale musi być obecny i ustawiony na false. Wartości skalujące A, B oraz C muszą być podane ręcznie gdyż
-#	program nie jest w stanie odczytać ich z opisów kanałów APRS. UWAGA! Dane telemetryczne są parsowane z wszystkich danych przychodzących bez rozróżnienia czy
-#	jest to podstawowa czy drugorzędna stacja APRS-IS czy też pakiety z modemu KISS TNC podłączonego do portu szeregowego.
-FifthTelemAsTemperature = false;
-TelemAScaling = 0.0;
-TelemBScaling = 0.25;
-TelemCScaling = -25.0;
+DatetimeLocale = pl_PL.UTF-8
 
 # EN:	MySQL database configuration. As for now the database might have two different schemas. V1 which stores each weather station in different table 
 #	(what is not recommended but it is held to provide backward compatibility) and V2 where all data are stored in 'data_station' table.
@@ -357,7 +350,8 @@ Plots = (
                 DS0PlotColor = 0x7298D4;
 		DS0Label = "Roznica Kierunku";
                 Title = "Roznica kierunku wiatru szczyt - startowisko (plus oznacza kierunek 'bardziej w prawo' czyli 'wiecej stopni' na szczycie)";
-                Width = 900;
+                Width = 900;StationName = "skrzyczne";
+                
                 Height = 400;
 		Axis = "stopnie"
 		MinScale = -180.0;
