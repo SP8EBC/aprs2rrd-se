@@ -207,12 +207,12 @@ int main(int argc, char **argv){
 	}
 
 	cout << "------------- APRS2RRD version " << SW_VER << " --------------" << endl;
-	cout << "-------- Startup time in UTC " << boost::posix_time::to_simple_string(boost::posix_time::second_clock::universal_time()) << " --------" << endl << endl;	// 20
-	cout << "----------------------------------------------------------" << endl;
+	cout << "----------- Startup time in UTC " << boost::posix_time::to_simple_string(boost::posix_time::second_clock::universal_time()) << " ---------" << endl;	// 20
+	cout << "---------------------------------------------------------------" << endl;
 	currrentLocale = setlocale(LC_TIME, NULL);
 	cout << "--- Current LC_TIME locale: " << currrentLocale << endl;
 	currrentLocale = setlocale(LC_NUMERIC, NULL);
-	cout << "--- Current LC_NUMERIC locale: " << currrentLocale << endl;
+	cout << "--- Current LC_NUMERIC locale: " << currrentLocale << endl << endl;
 
 	ProgramConfig::printConfigInPl(mysqlDb, aprsConfig, dataPresence, RRDCount, PlotsCount, zywiecMeteoConfig, holfuyConfig, diffCalculator, sourceConfig, pressureCalculator, limiter, locale);
 
