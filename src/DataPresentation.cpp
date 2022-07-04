@@ -274,7 +274,7 @@ void DataPresentation::PlotGraphsFromRRD() {
 	}
 }
 
-void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData & secondaryWX, const Locale & locale) {
+void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData & secondaryWX, const Locale & locale, const char * datetimeLocale) {
 
 	uint8_t windspeedPrecision = 3;
 	uint8_t windgustsPrecision = 3;
@@ -505,7 +505,12 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 		}
 		html << "</tbody></table>";
 
-		html.imbue(std::locale(std::locale::classic(), formatter));
+		if (datetimeLocale == NULL) {
+			html.imbue(std::locale(std::locale::classic(), formatter));
+		}
+		else {
+			html.imbue(std::locale(std::locale(datetimeLocale), formatter));
+		}
 		html << "<P class=last_update>" << locale.lastUpdate << ": " << localtime << " </P>";
 		html << "<table class=sub_heading><tbody><tr><td class=sub_heading>" << this->WebsiteSubHeading << "</td></tr>";
 

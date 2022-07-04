@@ -23,7 +23,7 @@ public:
 	void FetchDataInRRD(const AprsWXData* const cInput, bool inhibitLog);
 	void FetchDiffInRRD(AprsWXData & data);
 	void PlotGraphsFromRRD(void);
-	void GenerateWebiste(const AprsWXData & WX, const AprsWXData & secondaryWX, const Locale & locale);
+	void GenerateWebiste(const AprsWXData & WX, const AprsWXData & secondaryWX, const Locale & locale, const char * datetimeLocale);
 	void GetSecondarySource(const AprsWXData& aprsIS,
 			const AprsWXData& serial,
 			const AprsWXData& holfuy,
