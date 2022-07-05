@@ -276,17 +276,7 @@ void DataPresentation::PlotGraphsFromRRD() {
 
 void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData & secondaryWX, const Locale & locale, const char * datetimeLocale) {
 
-	uint8_t windspeedPrecision = 3;
-	uint8_t windgustsPrecision = 3;
 	uint8_t temperaturePrecision = 3;
-
-	if (WX.wind_speed < 10.0f) {
-		windspeedPrecision = 2;
-	}
-
-	if (WX.wind_gusts < 10.0f) {
-		windgustsPrecision = 2;
-	}
 
 	boost::posix_time::ptime localtime(boost::date_time::second_clock<boost::posix_time::ptime>::local_time());
 
@@ -345,13 +335,13 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 			html << "</tr>" << std::endl;
 			html << "<tr>" << std::endl;
 			html << "<td class=table_caption>" << locale.windSpeed << ":</td>" << std::endl;
-			html << "<td class=table_value> "<< std::setprecision(windspeedPrecision) << WX.wind_speed << " m/s </td>" << std::endl;
-			html << "<td class=table_value> "<< std::setprecision(windspeedPrecision) << secondaryWX.wind_speed << " m/s </td>" << std::endl;
+			html << "<td class=table_value> "<< WX.wind_speed << " m/s </td>" << std::endl;
+			html << "<td class=table_value> "<< secondaryWX.wind_speed << " m/s </td>" << std::endl;
 			html << "</tr>" << std::endl;
 			html << "<tr>" << std::endl;
 			html << "<td class=table_caption>" << locale.windGusts << ":</td>" << std::endl;
-			html << "<td class=table_value> " << std::setprecision(windgustsPrecision) <<   WX.wind_gusts << " m/s </td>" << std::endl;
-			html << "<td class=table_value> " << std::setprecision(windgustsPrecision) <<   secondaryWX.wind_gusts << " m/s </td>" << std::endl;
+			html << "<td class=table_value> "<<   WX.wind_gusts << " m/s </td>" << std::endl;
+			html << "<td class=table_value> "<<   secondaryWX.wind_gusts << " m/s </td>" << std::endl;
 			html << "</tr>" << std::endl;
 			html << "<tr>" << std::endl;
 			html << "<td class=table_caption>" << locale.windDirection <<":</td>" << std::endl;
@@ -457,11 +447,11 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 			if (this->PrintWind) {
 				html << "<tr>" << std::endl;
 				html << "<td class=table_caption>" << locale.windSpeed << ":</td>" << std::endl;
-				html << "<td class=table_value id=average> "<< std::setprecision(windspeedPrecision) << WX.wind_speed << " m/s </td>" << std::endl;
+				html << "<td class=table_value id=average> "<< WX.wind_speed << " m/s </td>" << std::endl;
 				html << "</tr>" << std::endl;
 				html << "<tr>" << std::endl;
 				html << "<td class=table_caption>" << locale.windGusts << ":</td>" << std::endl;
-				html << "<td class=table_value id=gusts> " << std::setprecision(windgustsPrecision) <<   WX.wind_gusts << " m/s </td>" << std::endl;
+				html << "<td class=table_value id=gusts> " << WX.wind_gusts << " m/s </td>" << std::endl;
 				html << "</tr>" << std::endl;
 				html << "<tr>" << std::endl;
 				html << "<td class=table_caption>" << locale.windDirection <<":</td><td class=table_value id=kierunek> " << WX.wind_direction << " stopni ";

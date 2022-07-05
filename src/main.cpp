@@ -445,6 +445,12 @@ int main(int argc, char **argv){
 					// replotting the graphs set
 					dataPresence.PlotGraphsFromRRD();
 
+					// limit precision of the wind speed
+					wxTarget.NarrowPrecisionOfWindspeed();
+
+					// and temperature also
+					wxTarget.NarrowPrecisionOfTemperature();
+
 					// generating the website
 					dataPresence.GenerateWebiste(wxTarget, wxSecondarySrcForPage, locale, datetimeLocale);
 

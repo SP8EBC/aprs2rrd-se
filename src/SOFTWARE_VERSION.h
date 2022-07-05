@@ -1,3 +1,3 @@
 #define SW_NAME "APRS2RRD"
-#define SW_VER "1.7.BETA-04072022"
+#define SW_VER "1.7.BETA-05072022"
 

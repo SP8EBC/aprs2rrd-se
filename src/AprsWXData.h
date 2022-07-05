@@ -64,9 +64,11 @@ class AprsWXData
         AprsWXData& operator-(AprsWXData&);
 
         ~AprsWXData();
-		void PrintData(void);
+		void PrintData(void) const;
 		void ZeroCorrection(queue <AprsWXData> & qMeteo);
 		float QnhQfeCorrection(float qnh, float alti);
+		void NarrowPrecisionOfWindspeed();
+		void NarrowPrecisionOfTemperature();
 
 		void copy(AprsWXData & source, bool withoutTemperature, bool onlyTemperature);
 		void copy(float temperature, bool onlyTemperature);

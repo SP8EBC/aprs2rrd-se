@@ -138,7 +138,7 @@ int AprsWXData::ParseData(AprsPacket input, AprsWXData* output) {
     return 0;
 }
 
-void AprsWXData::PrintData(void) {
+void AprsWXData::PrintData(void) const {
     if (this->valid == true && AprsWXData::DebugOutput == true) {
     	std::cout << std::dec;
         std::cout << "--------- WX DATA -------" << std::endl;
@@ -702,20 +702,6 @@ void AprsWXData::DirectionCorrection(AprsWXData& packet, short correction) {
 
     int out;
 
-    // correction of wind direction bug in ParaMETEO version EA00 software
-    if (direction >= 65354 && direction <= 65535) {
-
-			std::cout << "--- AprsWXData::DirectionCorrection:673 - Wind direction was : " << direction << std::endl;
-
-    	direction = 180 + (65535 - direction);
-
-        packet.wind_direction = direction;
-
-			std::cout << "--- AprsWXData::DirectionCorrection:679 - Wind direction has been corrected to : " << direction << std::endl;
-
-
-    }
-
 	if (correction == 0)
 		return;
 
@@ -731,6 +717,23 @@ void AprsWXData::DirectionCorrection(AprsWXData& packet, short correction) {
         out = direction + correction;
 
     packet.wind_direction = out;
+}
+
+void AprsWXData::NarrowPrecisionOfWindspeed() {
+	uint32_t temp = 0;
+
+	temp = (uint32_t)(this->wind_speed * 10.0f);
+	this->wind_speed = (float)temp / 10.0f;
+
+	temp = (uint32_t)(this->wind_gusts * 10.0f);
+	this->wind_gusts = (float)temp / 10.0f;
+}
+
+void AprsWXData::NarrowPrecisionOfTemperature() {
+	uint32_t temp = 0;
+
+	temp = (uint32_t)(this->temperature * 10.0f);
+	this->temperature = (float)temp / 10.0f;
 }
 
 void AprsWXData::checkIsPrimaryCall(AprsWXData& packet,
