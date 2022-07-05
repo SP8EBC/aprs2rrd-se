@@ -139,7 +139,7 @@ int AprsWXData::ParseData(AprsPacket input, AprsWXData* output) {
 }
 
 void AprsWXData::PrintData(void) const {
-    if (this->valid == true && AprsWXData::DebugOutput == true) {
+    if (this->valid == true) {
     	std::cout << std::dec;
         std::cout << "--------- WX DATA -------" << std::endl;
         std::cout << "-- Wind speed: " << this->wind_speed << " - use " << this->useWind << std::endl;

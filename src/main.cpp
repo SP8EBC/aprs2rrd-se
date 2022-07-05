@@ -288,7 +288,7 @@ int main(int argc, char **argv){
 				// check if legit packet has been received asynchronously from APRS-IS or serial port
 				tcpOrSerialPacketGood = asioThread->isPacketValid() || serialThread->isPacketValid();
 
-				std::cout << "--- main:282 - tcpOrSerialPacketGood: " << boost::lexical_cast<std::string>(tcpOrSerialPacketGood) << std::endl;
+				//std::cout << "--- main:282 - tcpOrSerialPacketGood: " << boost::lexical_cast<std::string>(tcpOrSerialPacketGood) << std::endl;
 
 				// checkig if correct data has been received
 				if (tcpOrSerialPacketGood || batchMode) {
@@ -492,7 +492,9 @@ int main(int argc, char **argv){
 
 				}
 				else {
-					cout << "--- main.cpp:478 - This is not valid APRS packet" << endl;
+					if (Debug) {
+						cout << "--- main.cpp:478 - This is not valid APRS packet" << endl;
+					}
 
 					//if (Debug)
 					//	cout << "--- main.cpp:386 - Inserting data from previous frame into RRD file" << endl;
