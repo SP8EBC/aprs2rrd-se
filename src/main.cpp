@@ -55,6 +55,10 @@ std::shared_ptr<std::mutex> syncLock;
 
 #define DEFAULT_APRS_SERVER_TIMEOUT_SECONDS 73
 
+#define set_locale(); 		if (*datetimeLocale != 0x00) {	\
+								(void)setlocale(LC_TIME, datetimeLocale);	\
+							}		\
+
 void wait_for_data() {
 	std::unique_lock<std::mutex> lock(*syncLock);
 
@@ -175,6 +179,7 @@ int main(int argc, char **argv){
 		programConfig.getSlewRateLimitConfig(limiter);
 		programConfig.getLocaleStaticString(locale);
 		programConfig.getZywiecMeteoConfig(zywiecMeteoConfig);
+		programConfig.getDateTimeLocale(datetimeLocale, 16);
 
 		dataPresence.DebugOutput = Debug;
 		mysqlDb.Debug = Debug;
@@ -184,9 +189,7 @@ int main(int argc, char **argv){
 		sourceConfig.holfuyNumber = holfuyConfig.stationId;
 		sourceConfig.zywiecNumber = zywiecMeteoConfig.stationId;
 
-		if (programConfig.getDateTimeLocale(datetimeLocale, 16)) {
-			(void)setlocale(LC_TIME, datetimeLocale);
-		}
+		set_locale();
 
 		(void)setlocale(LC_NUMERIC, "en_US.UTF-8");
 
@@ -441,6 +444,9 @@ int main(int argc, char **argv){
 
 					// insertind diff-data inside RRD files
 					dataPresence.FetchDiffInRRD(wxDifference);
+
+					// configuring locale before plotting graphs
+					set_locale();
 
 					// replotting the graphs set
 					dataPresence.PlotGraphsFromRRD();

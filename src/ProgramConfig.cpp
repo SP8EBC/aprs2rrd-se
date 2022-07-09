@@ -153,7 +153,7 @@ void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCo
 
 	libconfig::Setting &rWWW = rRoot["Website"];
 
-	bool result = rWWW.lookupValue("colorfulResultTable", data.colorfulResultTable);
+	rWWW.lookupValue("colorfulResultTable", data.colorfulResultTable);
 
 //	std::cout << "---ProgramConfig::getDataPresentationConfig:158 - result = " << result << std::endl;
 //	std::cout << "---ProgramConfig::getDataPresentationConfig:159 - data.colorfulResultTable = " << data.colorfulResultTable << std::endl;
@@ -251,6 +251,15 @@ void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCo
 		rPlots[ii].lookupValue("LabelStep", cVectorPNGTemp.LabelStep);
 
 		rPlots[ii].lookupValue("Exponent", cVectorPNGTemp.Exponent);
+
+		temp = std::string();
+		rPlots[ii].lookupValue("LongTimescaleFormat", temp);
+		if (temp.size() > 0) {
+			cVectorPNGTemp.LongTimescaleFormat = temp;
+		}
+		else {
+			cVectorPNGTemp.LongTimescaleFormat = "%a-%H:00";
+		}
 
 		if (cVectorPNGTemp.sDS1Name.length() == 0)
 			cVectorPNGTemp.DoubleDS = false;

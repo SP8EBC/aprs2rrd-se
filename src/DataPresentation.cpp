@@ -211,9 +211,9 @@ void DataPresentation::PlotGraphsFromRRD() {
         else if (this->vPNGFiles[i].timeScaleLn > 840 && this->vPNGFiles[i].timeScaleLn <= 1680 /* 28 godziny*/)
             xgrid << "MINUTE:20:HOUR:2:HOUR:2:0:%H:00";
         else if (this->vPNGFiles[i].timeScaleLn > 1680 && this->vPNGFiles[i].timeScaleLn <= 2520 /* 42 godziny*/)
-             xgrid << "MINUTE:30:HOUR:4:HOUR:4:0:%a-%H:00";
+             xgrid << "MINUTE:30:HOUR:4:HOUR:4:0:" << this->vPNGFiles[i].LongTimescaleFormat;
         else
-             xgrid << "MINUTE:60:HOUR:6:HOUR:6:0:%a-%H:00";
+             xgrid << "MINUTE:60:HOUR:6:HOUR:6:0:"  << this->vPNGFiles[i].LongTimescaleFormat;
 
 	if (this->vPNGFiles[i].ScaleStep > 0 && this->vPNGFiles[i].LabelStep > 0) {
 		scalestep << " --y-grid " << this->vPNGFiles[i].ScaleStep << ":" << this->vPNGFiles[i].LabelStep << " ";

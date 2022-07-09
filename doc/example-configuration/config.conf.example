@@ -24,7 +24,8 @@ StationName = "skrzyczne";
 BatchMode = false;
 ExitOnCriticalException = true;
 
-DatetimeLocale = pl_PL.UTF-8
+# EN: This is locale used to set LC_TIME
+DatetimeLocale = "pl_PL.UTF-8";
 
 # EN:	MySQL database configuration. As for now the database might have two different schemas. V1 which stores each weather station in different table 
 #	(what is not recommended but it is held to provide backward compatibility) and V2 where all data are stored in 'data_station' table.
@@ -344,15 +345,15 @@ Plots = (
 		Type = "WIND_DIR";
 		Path = "/home/www-server/skrzyczne/diff_kierunek.png";
 		DS0 = "/home/aprs/skrzyczne/rrd/diff_kierunek.rrd";
-                DS0Name = "kierunek";
+        DS0Name = "kierunek";
 		DS0RRAType = "AVERAGE";
-                DS0PlotType = "AREA";
-                DS0PlotColor = 0x7298D4;
+        DS0PlotType = "AREA";
+        DS0PlotColor = 0x7298D4;
 		DS0Label = "Roznica Kierunku";
-                Title = "Roznica kierunku wiatru szczyt - startowisko (plus oznacza kierunek 'bardziej w prawo' czyli 'wiecej stopni' na szczycie)";
-                Width = 900;StationName = "skrzyczne";
-                
-                Height = 400;
+        Title = "Roznica kierunku wiatru szczyt - startowisko (plus oznacza kierunek 'bardziej w prawo' czyli 'wiecej stopni' na szczycie)";
+        Width = 900;
+        StationName = "skrzyczne";
+        Height = 400;
 		Axis = "stopnie"
 		MinScale = -180.0;
 		MaxScale = 180.0;

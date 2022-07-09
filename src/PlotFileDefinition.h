@@ -41,6 +41,7 @@ public:
 	string Axis, AxisR;
 	float MinScale, MaxScale;
 	float MinScaleR, MaxScaleR;
+	string LongTimescaleFormat;
 
 	int ScaleStep, LabelStep;
 

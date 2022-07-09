@@ -48,7 +48,6 @@ void SlewRateLimiter::limitFromSingleFrame(const AprsWXData& previous,
 	}
 
 	// calculating differences
-	float windDirDiff = current.wind_direction - previous.wind_direction;
 	float windSpdDiff = current.wind_speed - previous.wind_speed;
 	float windGstDiff = current.wind_gusts - previous.wind_gusts;
 	float temperatureDiff = current.temperature - previous.temperature;
