@@ -730,9 +730,9 @@ void AprsWXData::NarrowPrecisionOfWindspeed() {
 }
 
 void AprsWXData::NarrowPrecisionOfTemperature() {
-	uint32_t temp = 0;
+	int32_t temp = 0;
 
-	temp = (uint32_t)(this->temperature * 10.0f);
+	temp = (int32_t)(this->temperature * 10.0f);
 	this->temperature = (float)temp / 10.0f;
 }
 
