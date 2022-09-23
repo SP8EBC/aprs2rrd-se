@@ -103,6 +103,8 @@ void HolfuyClient::download() {
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, this);
         curl_easy_setopt(curl, CURLOPT_HEADERDATA, header_string_data);
 
+        result = curl_easy_perform(curl);
+
         char* url;
         long response_code;
         double elapsed;
@@ -110,14 +112,12 @@ void HolfuyClient::download() {
         curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME, &elapsed);
         curl_easy_getinfo(curl, CURLINFO_EFFECTIVE_URL, &url);
 
-        result = curl_easy_perform(curl);
-        curl_easy_cleanup(curl);
-        curl = NULL;
-
         std::cout << "--- HolfuyClient::download:117 - response_code : " << boost::lexical_cast<std::string>(response_code) << std::endl;
         std::cout << "--- HolfuyClient::download:118 - elapsed : " << boost::lexical_cast<std::string>(elapsed) << std::endl;
         std::cout << "--- HolfuyClient::download:119 - result : " << curlCodeToStr(result) << std::endl;
 
+        curl_easy_cleanup(curl);
+        curl = NULL;
 
         if (result == CURLcode::CURLE_OK) {
         	downloadResult = true;
