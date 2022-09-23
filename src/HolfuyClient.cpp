@@ -25,6 +25,9 @@
 
 #include <boost/lexical_cast.hpp>
 
+#include "curl_code_to_str.h"
+
+
 HolfuyClient::HolfuyClient(uint32_t id, std::string apiPassword) : stationId(id), apiPassword(apiPassword) {
 
 	stationLocation = "";
@@ -110,6 +113,11 @@ void HolfuyClient::download() {
         result = curl_easy_perform(curl);
         curl_easy_cleanup(curl);
         curl = NULL;
+
+        std::cout << "--- HolfuyClient::download:117 - response_code : " << boost::lexical_cast<std::string>(response_code) << std::endl;
+        std::cout << "--- HolfuyClient::download:118 - elapsed : " << boost::lexical_cast<std::string>(elapsed) << std::endl;
+        std::cout << "--- HolfuyClient::download:119 - result : " << curlCodeToStr(result) << std::endl;
+
 
         if (result == CURLcode::CURLE_OK) {
         	downloadResult = true;

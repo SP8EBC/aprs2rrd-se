@@ -46,7 +46,6 @@ class ZywiecMeteo {
 	 */
 	bool temperatureSwitch;
 
-
 public:
 	ZywiecMeteo(std::string _base_url, bool _temperature_switch);
 	virtual ~ZywiecMeteo();

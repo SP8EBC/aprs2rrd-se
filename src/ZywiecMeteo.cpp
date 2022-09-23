@@ -21,6 +21,8 @@
 #include <boost/locale.hpp>
 #include <locale>
 
+#include "curl_code_to_str.h"
+
 ZywiecMeteo::ZywiecMeteo(std::string _base_url, bool _temperature_switch) :baseUrl(_base_url), hour(1, 0, 0, 0), temperatureSwitch(_temperature_switch) {
 	// TODO Auto-generated constructor stub
 
@@ -83,7 +85,8 @@ bool ZywiecMeteo::downloadLastMeasureForStation(int stationId, std::string &resp
         curl_easy_setopt(curl, CURLOPT_USERAGENT, "curl/7.42.0");
         curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 50L);
         curl_easy_setopt(curl, CURLOPT_TCP_KEEPALIVE, 1L);
-        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 2L);
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 5L);
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, 5000L);
 
         header_string.fill(0);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &ZywiecMeteo::static_write_callback);	// needs to be bind
@@ -101,7 +104,10 @@ bool ZywiecMeteo::downloadLastMeasureForStation(int stationId, std::string &resp
         curl_easy_cleanup(curl);
         curl = NULL;
 
-        std::cout << "--- ZywiecMeteo::downloadLastMeasureForStation:103 - response_code : " << boost::lexical_cast<std::string>(response_code) << std::endl;
+        std::cout << "--- ZywiecMeteo::downloadLastMeasureForStation:105 - response_code : " << boost::lexical_cast<std::string>(response_code) << std::endl;
+        std::cout << "--- ZywiecMeteo::downloadLastMeasureForStation:106 - elapsed : " << boost::lexical_cast<std::string>(elapsed) << std::endl;
+        std::cout << "--- ZywiecMeteo::downloadLastMeasureForStation:107 - result : " << curlCodeToStr(result) << std::endl;
+
 
         if (result == CURLcode::CURLE_OK) {
         	out = true;
@@ -167,7 +173,8 @@ bool ZywiecMeteo::downloadMeasuresFromRangeForStation(int stationId,
         curl_easy_setopt(curl, CURLOPT_USERAGENT, "curl/7.42.0");
         curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 50L);
         curl_easy_setopt(curl, CURLOPT_TCP_KEEPALIVE, 1L);
-        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 2L);
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT, 5L);
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, 5000L);
 
         header_string.fill(0);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &ZywiecMeteo::static_write_callback);	// needs to be bind
@@ -183,7 +190,9 @@ bool ZywiecMeteo::downloadMeasuresFromRangeForStation(int stationId,
         curl_easy_cleanup(curl);
         curl = NULL;
 
-        std::cout << "--- ZywiecMeteo::downloadMeasuresFromRangeForStation:183 - response_code : " << boost::lexical_cast<std::string>(response_code) << std::endl;
+        std::cout << "--- ZywiecMeteo::downloadLastMeasureForStation:193 - response_code : " << boost::lexical_cast<std::string>(response_code) << std::endl;
+        std::cout << "--- ZywiecMeteo::downloadLastMeasureForStation:194 - elapsed : " << boost::lexical_cast<std::string>(elapsed) << std::endl;
+        std::cout << "--- ZywiecMeteo::downloadLastMeasureForStation:195 - result : " << curlCodeToStr(result) << std::endl;
 
         if (result == CURLcode::CURLE_OK) {
         	out = true;
