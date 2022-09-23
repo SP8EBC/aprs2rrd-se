@@ -141,9 +141,6 @@ static std::string curlCodeToStr(CURLcode code) {
 	                                    */
 	case CURLE_RECURSIVE_API_CALL: return "CURLE_RECURSIVE_API_CALL";      /* 93 - an api function was called from
 	                                    inside a callback */
-	case CURLE_AUTH_ERROR: return "CURLE_AUTH_ERROR";              /* 94 - an authentication function returned an
-	                                    error */
-	case CURLE_HTTP3: return "CURLE_HTTP3";                   /* 95 - An HTTP/3 layer problem */
 	default: return "";
 	}
 
