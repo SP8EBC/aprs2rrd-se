@@ -467,7 +467,7 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 			}
 		}	// print two sources
 		else {
-			if (this->PrintWind) {
+			if (this->PrintWind != PRINT_OFF) {
 				html << "<tr>" << std::endl;
 				html << "<td class=table_caption>" << locale.windSpeed << ":</td>" << std::endl;
 				html << "<td class=table_value id=average> "<< WX.wind_speed << " m/s </td>" << std::endl;

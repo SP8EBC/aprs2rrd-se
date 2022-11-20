@@ -205,6 +205,8 @@ void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCo
 		data.Plot4Path = "";
 	}
 
+	rWWW.lookupValue("DirectionCorrection", (int32_t&)data.directionCorrection);
+
 	temp = "";
 
 	rWWW.lookupValue("PrintTemperature", temp);
@@ -216,9 +218,9 @@ void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCo
 	rWWW.lookupValue("PrintHumidity", temp);
 	data.PrintHumidity = this->parseParameterPrinting(std::move(temp));
 
-	rWWW.lookupValue("DirectionCorrection", (int32_t&)data.directionCorrection);
 	try {
 		rWWW.lookupValue("PrintWind", temp);
+		data.PrintWind = this->parseParameterPrinting(std::move(temp));
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
 		data.PrintWind = PRINT_BOTH;
@@ -934,7 +936,9 @@ void ProgramConfig::printConfigInPl(
 		cout << "--- Wyświetlanie wiatru: " << DataPresentation::ParametersPrintEnumToStr(dataPresence.PrintWind) << endl;
 		cout << "--- Wyświetlanie ciśnienia: " << DataPresentation::ParametersPrintEnumToStr(dataPresence.PrintPressure) << endl;
 		cout << "--- Wyświetlanie temperatury: " << DataPresentation::ParametersPrintEnumToStr(dataPresence.PrintTemperature) << endl;
-        if (dataPresence.directionCorrection != 0) {
+		cout << "--- Wyświetlanie wilgotności: " << DataPresentation::ParametersPrintEnumToStr(dataPresence.PrintHumidity) << endl;
+
+		if (dataPresence.directionCorrection != 0) {
 			cout << "--- Korekcja kierunku wiatru" << endl;
         }
         if (dataPresence.PrintTwoSourcesInTable) {
