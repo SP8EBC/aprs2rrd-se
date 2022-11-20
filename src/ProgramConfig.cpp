@@ -219,8 +219,13 @@ void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCo
 	data.PrintHumidity = this->parseParameterPrinting(std::move(temp));
 
 	try {
-		rWWW.lookupValue("PrintWind", temp);
-		data.PrintWind = this->parseParameterPrinting(std::move(temp));
+		const bool result = rWWW.lookupValue("PrintWind", temp);
+		if (result) {
+			data.PrintWind = this->parseParameterPrinting(std::move(temp));
+		}
+		else {
+			data.PrintWind = PRINT_BOTH;
+		}
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
 		data.PrintWind = PRINT_BOTH;
