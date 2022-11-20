@@ -13,6 +13,15 @@
 
 using namespace std;
 
+/**
+ *
+ */
+enum DataPresentationParametersPrint {
+	PRINT_OFF,
+	PRINT_BOTH,
+	PRINT_LEFT_PRIMARY,
+	PRINT_RIGHT_SECONDARY
+};
 
 class DataPresentation
 {
@@ -43,7 +52,7 @@ public:
 	string WebsitePath;
 	string Plot0Path, Plot1Path, Plot2Path, Plot3Path, Plot4Path;
 
-	bool PrintTemperature, PrintPressure, PrintHumidity, PrintWind;
+	DataPresentationParametersPrint PrintTemperature, PrintPressure, PrintHumidity, PrintWind;
 
 	string WebsiteTitle;
 	string WebsiteHeadingTitle;
@@ -64,6 +73,17 @@ public:
 	bool colorfulResultTable;
 
 	bool DebugOutput;
+
+	static std::string ParametersPrintEnumToStr(DataPresentationParametersPrint e) {
+		switch (e) {
+		case PRINT_OFF: return "Print disable";
+		case PRINT_BOTH: return "Print enable for both";
+		case PRINT_LEFT_PRIMARY: return "Enable only left (primary)";
+		case PRINT_RIGHT_SECONDARY: return "Enable only right (secondary)";
+		}
+
+		return "";
+	}
 
 };
 

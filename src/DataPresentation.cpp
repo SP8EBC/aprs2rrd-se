@@ -15,10 +15,10 @@
 //#include "main.h"
 
 DataPresentation::DataPresentation() : 	WebsitePath(""),
-										PrintTemperature(false),
-										PrintPressure (false),
-										PrintHumidity (false),
-										PrintWind(true),
+										PrintTemperature(PRINT_OFF),
+										PrintPressure (PRINT_OFF),
+										PrintHumidity (PRINT_OFF),
+										PrintWind(PRINT_OFF),
 										WebsiteTitle(""),
 										WebsiteHeadingTitle(""),
 										WebsiteSubHeading(""),
@@ -327,7 +327,7 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 		html << "<P><H2>" << this->WebsiteHeadingTitle << "</H2></P>" << std::endl;
 
 		html << "<table class=\"data\"><tbody>" << std::endl;
-		if (this->PrintTwoSourcesInTable) {
+		if (this->PrintTwoSourcesInTable) {		// print two sources
 			html << "<tr class=\"header\">" << std::endl;
 			html << "<td></td>" << std::endl;
 			html << "<td>" << this->PrimaryLabel << "</td>" << std::endl;
@@ -421,28 +421,51 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 			html << "</td>" << std::endl;
 			html << "</tr>";
 
-			if (this->PrintTemperature) {
+			if (this->PrintTemperature != PRINT_OFF) {
 				html << "<tr>" << endl;
 				html << "<td class=table_caption>" << locale.temperature <<":</td>" << endl;
-				html << "<td class=table_value> " << std::setprecision(temperaturePrecision) << WX.temperature << " ⁰C " << endl;
-				html << "<td class=table_value> " << std::setprecision(temperaturePrecision) << secondaryWX.temperature << " ⁰C " << endl;
+				if (this->PrintTemperature == PRINT_BOTH || this->PrintTemperature == PRINT_LEFT_PRIMARY) {
+					html << "<td class=table_value> " << std::setprecision(temperaturePrecision) << WX.temperature << " ⁰C " << endl;
+				}
+				else {
+					html << "<td class=table_value> --- " << endl;
+				}
+
+				if (this->PrintTemperature == PRINT_BOTH || this->PrintTemperature == PRINT_RIGHT_SECONDARY) {
+					html << "<td class=table_value> " << std::setprecision(temperaturePrecision) << secondaryWX.temperature << " ⁰C " << endl;
+				}
+				else {
+					html << "<td class=table_value> --- " << endl;
+				}
+
 				html << "</tr>" << endl;
 			}
-			if (this->PrintPressure) {
+			if (this->PrintPressure != PRINT_OFF) {
 				html << "<tr>" << endl;
 				html << "<td class=table_caption>" << locale.pressure <<":</td>" << endl;
-				html << "<td class=table_value> " << WX.pressure << " hPa " << endl;
-				html << "<td class=table_value> " << secondaryWX.pressure << " hPa " << endl;
+				if (this->PrintPressure == PRINT_BOTH || this->PrintPressure == PRINT_LEFT_PRIMARY) {
+					html << "<td class=table_value> " << WX.pressure << " hPa " << endl;
+				}
+				else {
+					html << "<td class=table_value> --- " << endl;
+				}
+
+				if (this->PrintPressure == PRINT_BOTH || this->PrintPressure == PRINT_RIGHT_SECONDARY) {
+					html << "<td class=table_value> " << secondaryWX.pressure << " hPa " << endl;
+				}
+				else {
+					html << "<td class=table_value> --- " << endl;
+				}
 				html << "</tr>" << endl;
 			}
-			if (this->PrintHumidity) {
+			if (this->PrintHumidity != PRINT_OFF) {
 				html << "<tr>" << endl;
 				html << "<td class=table_caption>" << locale.humidity <<":</td>" << endl;
 				html << "<td class=table_value id=wilgotnosc> " << WX.humidity << " %% ";
 				html << "<td class=table_value id=wilgotnosc> " << secondaryWX.humidity << " %% ";
 				html << "</tr>" << endl;
 			}
-		}
+		}	// print two sources
 		else {
 			if (this->PrintWind) {
 				html << "<tr>" << std::endl;
@@ -494,11 +517,11 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 				html << "</td></tr>";
 			}
 
-			if (this->PrintTemperature)
+			if (this->PrintTemperature != PRINT_OFF)
 				html << "<tr><td class=table_caption>" << locale.temperature <<":</td><td class=table_value id=temperature> " << std::setprecision(temperaturePrecision) << WX.temperature << " ⁰C ";
-			if (this->PrintPressure)
+			if (this->PrintPressure != PRINT_OFF)
 				html << "<tr><td class=table_caption>" << locale.pressure << ":</td><td class=table_value id=pressure> " << WX.pressure << " hPa ";
-			if (this->PrintHumidity)
+			if (this->PrintHumidity != PRINT_OFF)
 				html << "<tr><td class=table_caption>" << locale.humidity << ":</td><td class=table_value id=humidity> " << WX.humidity << " % ";
 		}
 		html << "</tbody></table>";

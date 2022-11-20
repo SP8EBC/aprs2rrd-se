@@ -17,6 +17,35 @@
 ProgramConfig::ProgramConfig(std::string fn) : configFilename(fn) {
 	// TODO Auto-generated constructor stub
 
+	parseParameterPrinting = [](std::string input) {
+
+		boost::to_upper(input);
+
+		int in = swstring(input.c_str());
+
+		switch (in) {
+			case swstring("FALSE"):
+			case swstring("OFF"):
+			case swstring("NONE"):
+					return PRINT_OFF;
+
+			case swstring("TRUE"):
+			case swstring("ON"):
+			case swstring("BOTH"):
+				return PRINT_BOTH;
+
+			case swstring("LEFT"):
+			case swstring("PRIMARY"):
+				return PRINT_LEFT_PRIMARY;
+
+			case swstring("RIGHT"):
+			case swstring("SECONDARY"):
+				return PRINT_LEFT_PRIMARY;
+
+		}
+
+		return PRINT_OFF;
+	};
 }
 
 ProgramConfig::~ProgramConfig() {
@@ -175,15 +204,24 @@ void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCo
 		data.Plot3Path = "";
 		data.Plot4Path = "";
 	}
-	rWWW.lookupValue("PrintTemperature", data.PrintTemperature);
-	rWWW.lookupValue("PrintPressure", data.PrintPressure);
-	rWWW.lookupValue("PrintHumidity", data.PrintHumidity);
+
+	temp = "";
+
+	rWWW.lookupValue("PrintTemperature", temp);
+	data.PrintTemperature = this->parseParameterPrinting(std::move(temp));
+
+	rWWW.lookupValue("PrintPressure", temp);
+	data.PrintPressure = this->parseParameterPrinting(std::move(temp));
+
+	rWWW.lookupValue("PrintHumidity", temp);
+	data.PrintHumidity = this->parseParameterPrinting(std::move(temp));
+
 	rWWW.lookupValue("DirectionCorrection", (int32_t&)data.directionCorrection);
 	try {
-		rWWW.lookupValue("PrintWind", data.PrintWind);
+		rWWW.lookupValue("PrintWind", temp);
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
-		data.PrintWind = true;
+		data.PrintWind = PRINT_BOTH;
 	}
 
 	try {
@@ -890,14 +928,15 @@ void ProgramConfig::printConfigInPl(
 		else {
 			;
 		}
-		if (dataPresence.WebsiteLinkToMoreInfo == true)
+		if (dataPresence.WebsiteLinkToMoreInfo == true) {
 			cout << "--- Link do dodatkowych info zostanie wygenerowany" << endl;
-		if (dataPresence.PrintPressure == true)
-			cout << "--- Wyświetlanie ciśnienia włączone" << endl;
-		if (dataPresence.PrintTemperature == true)
-			cout << "--- Wyświetlanie temperatury włączone" << endl;
-        if (dataPresence.directionCorrection != 0)
+		}
+		cout << "--- Wyświetlanie wiatru: " << DataPresentation::ParametersPrintEnumToStr(dataPresence.PrintWind) << endl;
+		cout << "--- Wyświetlanie ciśnienia: " << DataPresentation::ParametersPrintEnumToStr(dataPresence.PrintPressure) << endl;
+		cout << "--- Wyświetlanie temperatury: " << DataPresentation::ParametersPrintEnumToStr(dataPresence.PrintTemperature) << endl;
+        if (dataPresence.directionCorrection != 0) {
 			cout << "--- Korekcja kierunku wiatru" << endl;
+        }
         if (dataPresence.PrintTwoSourcesInTable) {
         	cout << "--- Tabela będzie zawierała dane z dwóch różnych źródeł" << endl;
         	cout << "-- Etykieta Pierwszego: " << dataPresence.PrimaryLabel << endl;

@@ -9,6 +9,7 @@
 #define PROGRAMCONFIG_H_
 
 #include <string>
+#include <functional>
 #include <libconfig.h++>
 
 #include <boost/algorithm/string.hpp>
@@ -38,6 +39,8 @@ class ProgramConfig {
 	std::string DebugLogFn = "";
 
 	std::string stationName;
+
+	std::function<const DataPresentationParametersPrint(std::string&&)> parseParameterPrinting;
 
 	constexpr static int swstring(const char* _in) {
 		int out = 0;
