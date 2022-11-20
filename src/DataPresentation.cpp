@@ -458,11 +458,23 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 				}
 				html << "</tr>" << endl;
 			}
+
 			if (this->PrintHumidity != PRINT_OFF) {
 				html << "<tr>" << endl;
 				html << "<td class=table_caption>" << locale.humidity <<":</td>" << endl;
-				html << "<td class=table_value id=wilgotnosc> " << WX.humidity << " %% ";
-				html << "<td class=table_value id=wilgotnosc> " << secondaryWX.humidity << " %% ";
+				if (this->PrintHumidity == PRINT_BOTH || this->PrintHumidity == PRINT_LEFT_PRIMARY) {
+					html << "<td class=table_value id=wilgotnosc> " << WX.humidity << " % ";
+				}
+				else {
+					html << "<td class=table_value> --- " << endl;
+				}
+
+				if (this->PrintPressure == PRINT_BOTH || this->PrintPressure == PRINT_RIGHT_SECONDARY) {
+					html << "<td class=table_value id=wilgotnosc> " << secondaryWX.humidity << " % ";
+				}
+				else {
+					html << "<td class=table_value> --- " << endl;
+				}
 				html << "</tr>" << endl;
 			}
 		}	// print two sources
