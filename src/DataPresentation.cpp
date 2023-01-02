@@ -286,6 +286,9 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 	//boost::filesystem::path html{this->WebsitePath.c_str()};
 	std::ofstream html;
 
+	float batteryVoltage = telemetry.getBatteryVoltage();
+	int rawMeasurement = (int)telemetry.getRawMeasurement();
+
 	html.open(this->WebsitePath.c_str(), ios::out | ios::trunc);
 
 	if (!html.is_open()) {
@@ -387,8 +390,8 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 		if (this->PrintHumidity != PRINT_OFF) {
 			html << "<tr><td class=table_caption>" << locale.humidity << ":</td><td class=table_value id=humidity> " << WX.humidity << " % ";
 		}
-		html << "<tr><td class=table_caption>Napięcie akumulatora:</td><td class=table_value id=vbat> " << telemetry.getBatteryVoltage() << " V ";
-		html << "<tr><td class=table_caption>Surowy odczyt </td><td class=table_value id=raw> 0x" << std::hex << (int)telemetry.getRawMeasurement() <<  std::dec << " ";
+		html << "<tr><td class=table_caption>Napięcie akumulatora:</td><td class=table_value id=vbat> " << std::setprecision(temperaturePrecision) << batteryVoltage << " V ";
+		html << "<tr><td class=table_caption>Surowy odczyt </td><td class=table_value id=raw> 0x" << std::hex << rawMeasurement <<  std::dec << " ";
 
 		html << "</tbody></table>";
 
