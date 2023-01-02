@@ -56,7 +56,7 @@ Telemetry::~Telemetry() {
 
 // TODO Do something with the fact that there is no way to choose if the telemetry shall be parsed
 // 		from Secondary or Primary call
-int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
+int Telemetry::ParseData(AprsPacket input, Telemetry* output) {
     char *src;
     int numi, c1i, c2i, c3i, c4i, c5i, digi = 0;
 
@@ -67,6 +67,7 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
     output->ch5 = 0;
 
     if (*(input.Data) != 'T') {
+    	std::cout << "--- Telemetry::ParseData:70 - This is not valid APRS telemetry packet ";
         output->valid = false;
         return -1;
     }
