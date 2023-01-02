@@ -536,8 +536,8 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 			if (this->PrintHumidity != PRINT_OFF)
 				html << "<tr><td class=table_caption>" << locale.humidity << ":</td><td class=table_value id=humidity> " << WX.humidity << " % ";
 //		}
-			html << "<tr><td class=table_caption>Napięcie akumulatora:</td><td class=table_value id=vbat> " << std::setprecision(temperaturePrecision) << telemetry.getBatteryVoltage() << " V ";
-			html << "<tr><td class=table_caption>Surowy odczyt </td><td class=table_value id=raw> 0x" << std::hex << (int)telemetry.getRawMeasurement() <<  std::dec << " ";
+//			html << "<tr><td class=table_caption>Napięcie akumulatora:</td><td class=table_value id=vbat> " << std::setprecision(temperaturePrecision) << telemetry.getBatteryVoltage() << " V ";
+//			html << "<tr><td class=table_caption>Surowy odczyt </td><td class=table_value id=raw> 0x" << std::hex << (int)telemetry.getRawMeasurement() <<  std::dec << " ";
 
 		html << "</tbody></table>";
 
