@@ -26,6 +26,11 @@ public:
 	float getCh4() const;
 	float getCh5() const;
 
+	float getLastTemperature() const;
+	float getBatteryVoltage() const;
+	uint16_t getRawMeasurement() const;
+	float getTemperatureFromRawMeasurement() const;
+
 	std::string call;
 
 	bool valid;

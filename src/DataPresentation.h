@@ -10,6 +10,7 @@
 #include "PlotFileDefinition.h"
 #include "DataSourceConfig.h"
 #include "Locale.h"
+#include "Telemetry.h"
 
 using namespace std;
 
@@ -32,7 +33,7 @@ public:
 	void FetchDataInRRD(const AprsWXData* const cInput, bool inhibitLog);
 	void FetchDiffInRRD(AprsWXData & data);
 	void PlotGraphsFromRRD(void);
-	void GenerateWebiste(const AprsWXData & WX, const AprsWXData & secondaryWX, const Locale & locale, const char * datetimeLocale);
+	void GenerateWebiste(const AprsWXData & WX, const AprsWXData & secondaryWX, const Locale & locale, const char * datetimeLocale, const Telemetry & telemetry);
 	void GetSecondarySource(const AprsWXData& aprsIS,
 			const AprsWXData& serial,
 			const AprsWXData& holfuy,

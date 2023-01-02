@@ -682,15 +682,15 @@ void AprsWXData::copy(const AprsWXData & source, const DataSourceConfig & config
 
 void AprsWXData::copy(const Telemetry & source, const DataSourceConfig & config) {
 
-	if (config.temperature == WxDataSource::TELEMETRY) {
-		this->temperature = source.getCh5();
+//	if (config.temperature == WxDataSource::TELEMETRY) {
+		this->temperature = source.getTemperatureFromRawMeasurement();
 		//this->useHumidity = false;
 		//this->usePressure = false;
 		this->useTemperature = true;
 		//this->useWind = false;
 
 		this->valid = true;
-	}
+//	}
 
 }
 

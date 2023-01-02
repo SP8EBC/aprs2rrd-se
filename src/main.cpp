@@ -458,7 +458,7 @@ int main(int argc, char **argv){
 					wxTarget.NarrowPrecisionOfTemperature();
 
 					// generating the website
-					dataPresence.GenerateWebiste(wxTarget, wxSecondarySrcForPage, locale, datetimeLocale);
+					dataPresence.GenerateWebiste(wxTarget, wxSecondarySrcForPage, locale, datetimeLocale, telemetry);
 
 					// storing values for slew rate corrections
 					wxLastTarget = wxTarget;

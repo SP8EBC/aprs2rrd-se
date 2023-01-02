@@ -274,7 +274,7 @@ void DataPresentation::PlotGraphsFromRRD() {
 	}
 }
 
-void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData & secondaryWX, const Locale & locale, const char * datetimeLocale) {
+void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData & secondaryWX, const Locale & locale, const char * datetimeLocale, const Telemetry & telemetry) {
 
 	uint8_t temperaturePrecision = 3;
 
@@ -327,158 +327,158 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 		html << "<P><H2>" << this->WebsiteHeadingTitle << "</H2></P>" << std::endl;
 
 		html << "<table class=\"data\"><tbody>" << std::endl;
-		if (this->PrintTwoSourcesInTable) {		// print two sources
-			html << "<tr class=\"header\">" << std::endl;
-			html << "<td></td>" << std::endl;
-			html << "<td>" << this->PrimaryLabel << "</td>" << std::endl;
-			html << "<td>" << this->SecondaryLabel << "</td>" << std::endl;
-			html << "</tr>" << std::endl;
-			html << "<tr>" << std::endl;
-			html << "<td class=table_caption>" << locale.windSpeed << ":</td>" << std::endl;
-			html << "<td class=table_value> "<< WX.wind_speed << " m/s </td>" << std::endl;
-			html << "<td class=table_value> "<< secondaryWX.wind_speed << " m/s </td>" << std::endl;
-			html << "</tr>" << std::endl;
-			html << "<tr>" << std::endl;
-			html << "<td class=table_caption>" << locale.windGusts << ":</td>" << std::endl;
-			html << "<td class=table_value> "<<   WX.wind_gusts << " m/s </td>" << std::endl;
-			html << "<td class=table_value> "<<   secondaryWX.wind_gusts << " m/s </td>" << std::endl;
-			html << "</tr>" << std::endl;
-			html << "<tr>" << std::endl;
-			html << "<td class=table_caption>" << locale.windDirection <<":</td>" << std::endl;
-			html << "<td class=table_value id=kierunek> " << WX.wind_direction << " stopni ";
-
-			if (WX.wind_direction <= 11 && WX.wind_direction >= 349)
-				html << "- N";
-			else if (WX.wind_direction <= 34 && WX.wind_direction > 11)
-				html << "- N NE";
-			else if (WX.wind_direction <= 56 && WX.wind_direction > 34)
-				html << "- NE";
-			else if (WX.wind_direction <= 79 && WX.wind_direction > 56)
-				html << "- E NE";
-			else if (WX.wind_direction <= 101 && WX.wind_direction > 79)
-				html << "- E";
-			else if (WX.wind_direction <= 124 && WX.wind_direction > 101)
-				html << "- E SE";
-			else if (WX.wind_direction <= 146 && WX.wind_direction > 124)
-				html << "- SE";
-			else if (WX.wind_direction <= 169 && WX.wind_direction > 146)
-				html << "- S SE";
-			else if (WX.wind_direction <= 191 && WX.wind_direction > 169)
-				html << "- S";
-			else if (WX.wind_direction <= 214 && WX.wind_direction > 191)
-				html << "- S SW";
-			else if (WX.wind_direction <= 236 && WX.wind_direction > 214)
-				html << "- SW";
-			else if (WX.wind_direction <= 259 && WX.wind_direction > 236)
-				html <<"-  W SW";
-			else if (WX.wind_direction <= 281 && WX.wind_direction > 259)
-				html << "- W";
-			else if (WX.wind_direction <= 304 && WX.wind_direction > 281)
-				html << "- W NW";
-			else if (WX.wind_direction <= 327 && WX.wind_direction > 304)
-				html << "- NW";
-			else if (WX.wind_direction <= 349 && WX.wind_direction > 327)
-				html << "- N NW";
-			else;
-
-			html << "</td>" << std::endl;
-			html << "<td class=table_value> " << secondaryWX.wind_direction << " stopni ";
-
-			if (secondaryWX.wind_direction <= 11 && secondaryWX.wind_direction >= 349)
-				html << "- N";
-			else if (secondaryWX.wind_direction <= 34 && secondaryWX.wind_direction > 11)
-				html << "- N NE";
-			else if (secondaryWX.wind_direction <= 56 && secondaryWX.wind_direction > 34)
-				html << "- NE";
-			else if (secondaryWX.wind_direction <= 79 && secondaryWX.wind_direction > 56)
-				html << "- E NE";
-			else if (secondaryWX.wind_direction <= 101 && secondaryWX.wind_direction > 79)
-				html << "- E";
-			else if (secondaryWX.wind_direction <= 124 && secondaryWX.wind_direction > 101)
-				html << "- E SE";
-			else if (secondaryWX.wind_direction <= 146 && secondaryWX.wind_direction > 124)
-				html << "- SE";
-			else if (secondaryWX.wind_direction <= 169 && secondaryWX.wind_direction > 146)
-				html << "- S SE";
-			else if (secondaryWX.wind_direction <= 191 && secondaryWX.wind_direction > 169)
-				html << "- S";
-			else if (secondaryWX.wind_direction <= 214 && secondaryWX.wind_direction > 191)
-				html << "- S SW";
-			else if (secondaryWX.wind_direction <= 236 && secondaryWX.wind_direction > 214)
-				html << "- SW";
-			else if (secondaryWX.wind_direction <= 259 && secondaryWX.wind_direction > 236)
-				html <<"-  W SW";
-			else if (secondaryWX.wind_direction <= 281 && secondaryWX.wind_direction > 259)
-				html << "- W";
-			else if (secondaryWX.wind_direction <= 304 && secondaryWX.wind_direction > 281)
-				html << "- W NW";
-			else if (secondaryWX.wind_direction <= 327 && secondaryWX.wind_direction > 304)
-				html << "- NW";
-			else if (secondaryWX.wind_direction <= 349 && secondaryWX.wind_direction > 327)
-				html << "- N NW";
-			else;
-
-			html << "</td>" << std::endl;
-			html << "</tr>";
-
-			if (this->PrintTemperature != PRINT_OFF) {
-				html << "<tr>" << endl;
-				html << "<td class=table_caption>" << locale.temperature <<":</td>" << endl;
-				if (this->PrintTemperature == PRINT_BOTH || this->PrintTemperature == PRINT_LEFT_PRIMARY) {
-					html << "<td class=table_value> " << std::setprecision(temperaturePrecision) << WX.temperature << " ⁰C " << endl;
-				}
-				else {
-					html << "<td class=table_value> --- " << endl;
-				}
-
-				if (this->PrintTemperature == PRINT_BOTH || this->PrintTemperature == PRINT_RIGHT_SECONDARY) {
-					html << "<td class=table_value> " << std::setprecision(temperaturePrecision) << secondaryWX.temperature << " ⁰C " << endl;
-				}
-				else {
-					html << "<td class=table_value> --- " << endl;
-				}
-
-				html << "</tr>" << endl;
-			}
-			if (this->PrintPressure != PRINT_OFF) {
-				html << "<tr>" << endl;
-				html << "<td class=table_caption>" << locale.pressure <<":</td>" << endl;
-				if (this->PrintPressure == PRINT_BOTH || this->PrintPressure == PRINT_LEFT_PRIMARY) {
-					html << "<td class=table_value> " << WX.pressure << " hPa " << endl;
-				}
-				else {
-					html << "<td class=table_value> --- " << endl;
-				}
-
-				if (this->PrintPressure == PRINT_BOTH || this->PrintPressure == PRINT_RIGHT_SECONDARY) {
-					html << "<td class=table_value> " << secondaryWX.pressure << " hPa " << endl;
-				}
-				else {
-					html << "<td class=table_value> --- " << endl;
-				}
-				html << "</tr>" << endl;
-			}
-
-			if (this->PrintHumidity != PRINT_OFF) {
-				html << "<tr>" << endl;
-				html << "<td class=table_caption>" << locale.humidity <<":</td>" << endl;
-				if (this->PrintHumidity == PRINT_BOTH || this->PrintHumidity == PRINT_LEFT_PRIMARY) {
-					html << "<td class=table_value id=wilgotnosc> " << WX.humidity << " % ";
-				}
-				else {
-					html << "<td class=table_value> --- " << endl;
-				}
-
-				if (this->PrintPressure == PRINT_BOTH || this->PrintPressure == PRINT_RIGHT_SECONDARY) {
-					html << "<td class=table_value id=wilgotnosc> " << secondaryWX.humidity << " % ";
-				}
-				else {
-					html << "<td class=table_value> --- " << endl;
-				}
-				html << "</tr>" << endl;
-			}
-		}	// print two sources
-		else {
+//		if (this->PrintTwoSourcesInTable) {		// print two sources
+//			html << "<tr class=\"header\">" << std::endl;
+//			html << "<td></td>" << std::endl;
+//			html << "<td>" << this->PrimaryLabel << "</td>" << std::endl;
+//			html << "<td>" << this->SecondaryLabel << "</td>" << std::endl;
+//			html << "</tr>" << std::endl;
+//			html << "<tr>" << std::endl;
+//			html << "<td class=table_caption>" << locale.windSpeed << ":</td>" << std::endl;
+//			html << "<td class=table_value> "<< WX.wind_speed << " m/s </td>" << std::endl;
+//			html << "<td class=table_value> "<< secondaryWX.wind_speed << " m/s </td>" << std::endl;
+//			html << "</tr>" << std::endl;
+//			html << "<tr>" << std::endl;
+//			html << "<td class=table_caption>" << locale.windGusts << ":</td>" << std::endl;
+//			html << "<td class=table_value> "<<   WX.wind_gusts << " m/s </td>" << std::endl;
+//			html << "<td class=table_value> "<<   secondaryWX.wind_gusts << " m/s </td>" << std::endl;
+//			html << "</tr>" << std::endl;
+//			html << "<tr>" << std::endl;
+//			html << "<td class=table_caption>" << locale.windDirection <<":</td>" << std::endl;
+//			html << "<td class=table_value id=kierunek> " << WX.wind_direction << " stopni ";
+//
+//			if (WX.wind_direction <= 11 && WX.wind_direction >= 349)
+//				html << "- N";
+//			else if (WX.wind_direction <= 34 && WX.wind_direction > 11)
+//				html << "- N NE";
+//			else if (WX.wind_direction <= 56 && WX.wind_direction > 34)
+//				html << "- NE";
+//			else if (WX.wind_direction <= 79 && WX.wind_direction > 56)
+//				html << "- E NE";
+//			else if (WX.wind_direction <= 101 && WX.wind_direction > 79)
+//				html << "- E";
+//			else if (WX.wind_direction <= 124 && WX.wind_direction > 101)
+//				html << "- E SE";
+//			else if (WX.wind_direction <= 146 && WX.wind_direction > 124)
+//				html << "- SE";
+//			else if (WX.wind_direction <= 169 && WX.wind_direction > 146)
+//				html << "- S SE";
+//			else if (WX.wind_direction <= 191 && WX.wind_direction > 169)
+//				html << "- S";
+//			else if (WX.wind_direction <= 214 && WX.wind_direction > 191)
+//				html << "- S SW";
+//			else if (WX.wind_direction <= 236 && WX.wind_direction > 214)
+//				html << "- SW";
+//			else if (WX.wind_direction <= 259 && WX.wind_direction > 236)
+//				html <<"-  W SW";
+//			else if (WX.wind_direction <= 281 && WX.wind_direction > 259)
+//				html << "- W";
+//			else if (WX.wind_direction <= 304 && WX.wind_direction > 281)
+//				html << "- W NW";
+//			else if (WX.wind_direction <= 327 && WX.wind_direction > 304)
+//				html << "- NW";
+//			else if (WX.wind_direction <= 349 && WX.wind_direction > 327)
+//				html << "- N NW";
+//			else;
+//
+//			html << "</td>" << std::endl;
+//			html << "<td class=table_value> " << secondaryWX.wind_direction << " stopni ";
+//
+//			if (secondaryWX.wind_direction <= 11 && secondaryWX.wind_direction >= 349)
+//				html << "- N";
+//			else if (secondaryWX.wind_direction <= 34 && secondaryWX.wind_direction > 11)
+//				html << "- N NE";
+//			else if (secondaryWX.wind_direction <= 56 && secondaryWX.wind_direction > 34)
+//				html << "- NE";
+//			else if (secondaryWX.wind_direction <= 79 && secondaryWX.wind_direction > 56)
+//				html << "- E NE";
+//			else if (secondaryWX.wind_direction <= 101 && secondaryWX.wind_direction > 79)
+//				html << "- E";
+//			else if (secondaryWX.wind_direction <= 124 && secondaryWX.wind_direction > 101)
+//				html << "- E SE";
+//			else if (secondaryWX.wind_direction <= 146 && secondaryWX.wind_direction > 124)
+//				html << "- SE";
+//			else if (secondaryWX.wind_direction <= 169 && secondaryWX.wind_direction > 146)
+//				html << "- S SE";
+//			else if (secondaryWX.wind_direction <= 191 && secondaryWX.wind_direction > 169)
+//				html << "- S";
+//			else if (secondaryWX.wind_direction <= 214 && secondaryWX.wind_direction > 191)
+//				html << "- S SW";
+//			else if (secondaryWX.wind_direction <= 236 && secondaryWX.wind_direction > 214)
+//				html << "- SW";
+//			else if (secondaryWX.wind_direction <= 259 && secondaryWX.wind_direction > 236)
+//				html <<"-  W SW";
+//			else if (secondaryWX.wind_direction <= 281 && secondaryWX.wind_direction > 259)
+//				html << "- W";
+//			else if (secondaryWX.wind_direction <= 304 && secondaryWX.wind_direction > 281)
+//				html << "- W NW";
+//			else if (secondaryWX.wind_direction <= 327 && secondaryWX.wind_direction > 304)
+//				html << "- NW";
+//			else if (secondaryWX.wind_direction <= 349 && secondaryWX.wind_direction > 327)
+//				html << "- N NW";
+//			else;
+//
+//			html << "</td>" << std::endl;
+//			html << "</tr>";
+//
+//			if (this->PrintTemperature != PRINT_OFF) {
+//				html << "<tr>" << endl;
+//				html << "<td class=table_caption>" << locale.temperature <<":</td>" << endl;
+//				if (this->PrintTemperature == PRINT_BOTH || this->PrintTemperature == PRINT_LEFT_PRIMARY) {
+//					html << "<td class=table_value> " << std::setprecision(temperaturePrecision) << WX.temperature << " ⁰C " << endl;
+//				}
+//				else {
+//					html << "<td class=table_value> --- " << endl;
+//				}
+//
+//				if (this->PrintTemperature == PRINT_BOTH || this->PrintTemperature == PRINT_RIGHT_SECONDARY) {
+//					html << "<td class=table_value> " << std::setprecision(temperaturePrecision) << secondaryWX.temperature << " ⁰C " << endl;
+//				}
+//				else {
+//					html << "<td class=table_value> --- " << endl;
+//				}
+//
+//				html << "</tr>" << endl;
+//			}
+//			if (this->PrintPressure != PRINT_OFF) {
+//				html << "<tr>" << endl;
+//				html << "<td class=table_caption>" << locale.pressure <<":</td>" << endl;
+//				if (this->PrintPressure == PRINT_BOTH || this->PrintPressure == PRINT_LEFT_PRIMARY) {
+//					html << "<td class=table_value> " << WX.pressure << " hPa " << endl;
+//				}
+//				else {
+//					html << "<td class=table_value> --- " << endl;
+//				}
+//
+//				if (this->PrintPressure == PRINT_BOTH || this->PrintPressure == PRINT_RIGHT_SECONDARY) {
+//					html << "<td class=table_value> " << secondaryWX.pressure << " hPa " << endl;
+//				}
+//				else {
+//					html << "<td class=table_value> --- " << endl;
+//				}
+//				html << "</tr>" << endl;
+//			}
+//
+//			if (this->PrintHumidity != PRINT_OFF) {
+//				html << "<tr>" << endl;
+//				html << "<td class=table_caption>" << locale.humidity <<":</td>" << endl;
+//				if (this->PrintHumidity == PRINT_BOTH || this->PrintHumidity == PRINT_LEFT_PRIMARY) {
+//					html << "<td class=table_value id=wilgotnosc> " << WX.humidity << " % ";
+//				}
+//				else {
+//					html << "<td class=table_value> --- " << endl;
+//				}
+//
+//				if (this->PrintPressure == PRINT_BOTH || this->PrintPressure == PRINT_RIGHT_SECONDARY) {
+//					html << "<td class=table_value id=wilgotnosc> " << secondaryWX.humidity << " % ";
+//				}
+//				else {
+//					html << "<td class=table_value> --- " << endl;
+//				}
+//				html << "</tr>" << endl;
+//			}
+//		}	// print two sources
+//		else {
 			if (this->PrintWind != PRINT_OFF) {
 				html << "<tr>" << std::endl;
 				html << "<td class=table_caption>" << locale.windSpeed << ":</td>" << std::endl;
@@ -535,7 +535,10 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 				html << "<tr><td class=table_caption>" << locale.pressure << ":</td><td class=table_value id=pressure> " << WX.pressure << " hPa ";
 			if (this->PrintHumidity != PRINT_OFF)
 				html << "<tr><td class=table_caption>" << locale.humidity << ":</td><td class=table_value id=humidity> " << WX.humidity << " % ";
-		}
+//		}
+			html << "<tr><td class=table_caption>Napięcie akumulatora:</td><td class=table_value id=vbat> " << std::setprecision(temperaturePrecision) << telemetry.getBatteryVoltage() << " V ";
+			html << "<tr><td class=table_caption>Surowy odczyt </td><td class=table_value id=raw> 0x" << std::hex << (int)telemetry.getRawMeasurement() <<  std::dec << " ";
+
 		html << "</tbody></table>";
 
 		if (datetimeLocale == NULL) {
