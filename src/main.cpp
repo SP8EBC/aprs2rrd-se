@@ -316,7 +316,7 @@ int main(int argc, char **argv){
 
 						// wait for another packet if not WX data has been received. Protect against
 						// flooding with a lot of data from Holfuy after each heartbeat message from APRS-IS
-						if (!wxIsTemp.valid) {
+						if (!wxIsTemp.valid && !telemetry.valid) {
 							continue;
 						}
 
@@ -441,6 +441,9 @@ int main(int argc, char **argv){
 
 					// inserting the data inside a RRD file
 					dataPresence.FetchDataInRRD(&wxTarget, false);
+
+					// insert battery voltage into RRD
+					dataPresence.FetchBatteryVoltageInRRD(telemetry.getBatteryVoltage());
 
 					// insertind diff-data inside RRD files
 					dataPresence.FetchDiffInRRD(wxDifference);

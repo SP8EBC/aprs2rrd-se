@@ -1,3 +1,3 @@
 #define SW_NAME "APRS2RRD"
-#define SW_VER "1.8.TATRY-20112022"
+#define SW_VER "1.8.TATRY-02012023"
 

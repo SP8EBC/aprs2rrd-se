@@ -32,6 +32,7 @@ public:
 
 	void FetchDataInRRD(const AprsWXData* const cInput, bool inhibitLog);
 	void FetchDiffInRRD(AprsWXData & data);
+	void FetchBatteryVoltageInRRD(float voltage);
 	void PlotGraphsFromRRD(void);
 	void GenerateWebiste(const AprsWXData & WX, const AprsWXData & secondaryWX, const Locale & locale, const char * datetimeLocale, const Telemetry & telemetry);
 	void GetSecondarySource(const AprsWXData& aprsIS,

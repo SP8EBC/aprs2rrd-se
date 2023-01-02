@@ -176,6 +176,32 @@ void DataPresentation::FetchDataInRRD(const AprsWXData* const cInput, bool inhib
 	}
 }
 
+void DataPresentation::FetchBatteryVoltageInRRD(float voltage) {
+	char command[512];
+	int currtimeint;
+	time_t currtime;
+
+	int sys_retval = 0;
+
+	cout << "--- DataPresentation::FetchBatteryVoltageInRRD:186 - voltage: " << voltage << endl;
+	for (unsigned i = 0; i < this->vRRDFiles.size(); i++) {
+		if (this->vRRDFiles[i].eType == PlotType::VOLTAGE) {
+			currtime =time(NULL);
+			currtimeint = (int)currtime;
+			memset(command, 0x00, sizeof(command));
+			sprintf(command, "rrdtool update %s %d:%f", this->vRRDFiles[i].sPath.c_str(), currtimeint, voltage);
+			if (this->DebugOutput == true)
+				cout << command << endl;
+
+			sys_retval = system(command);
+
+			if (sys_retval != 0) {
+				;
+			}
+		}
+	}
+}
+
 void DataPresentation::PlotGraphsFromRRD() {
 	char command[1024];
 	int currtimeint;
@@ -198,7 +224,7 @@ void DataPresentation::PlotGraphsFromRRD() {
 	std::string graph2Type;
 
 	if (this->DebugOutput == true) {
-		cout << "--- DataPresentation::PlotGraphsFromRRD:201 -  Count of plots to be generated: " <<  this->vPNGFiles.size() << endl;
+		cout << "--- DataPresentation::PlotGraphsFromRRD:227 -  Count of plots to be generated: " <<  this->vPNGFiles.size() << endl;
 	}
 
 	for (i = 0; i < this->vPNGFiles.size(); i++) {
@@ -292,12 +318,12 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 	html.open(this->WebsitePath.c_str(), ios::out | ios::trunc);
 
 	if (!html.is_open()) {
-		std::cout << "--- DataPresentation::GenerateWebiste:295 - Html file cannot by opened because of unknown reason" << std::endl;
+		std::cout << "--- DataPresentation::GenerateWebiste:321 - Html file cannot by opened because of unknown reason" << std::endl;
 		return;
 	}
 
 	if (!html.good()) {
-		std::cout << "--- DataPresentation::GenerateWebiste:300 - Something is wrong with the html file!" << std::endl;
+		std::cout << "--- DataPresentation::GenerateWebiste:326 - Something is wrong with the html file!" << std::endl;
 		return;
 	}
 
@@ -309,9 +335,9 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 
 	//html.precision(3);
 
-	std::cout << "--- DataPresentation::GenerateWebiste:312 - Html file opened" << std::endl;
+	std::cout << "--- DataPresentation::GenerateWebiste:338 - Html file opened" << std::endl;
 
-	std::cout << "--- DataPresentation::GenerateWebiste:314 - batteryVoltage: " << batteryVoltage << ", rawMeasurement: " << rawMeasurement << std::endl;
+	std::cout << "--- DataPresentation::GenerateWebiste:340 - batteryVoltage: " << batteryVoltage << ", rawMeasurement: " << rawMeasurement << std::endl;
 
 	try {
 		html << " <!DOCTYPE html>" << std::endl;
@@ -466,6 +492,8 @@ PlotType DataPresentation::SwitchPlotType(string input) {
 		out = PlotType::DIFF_WIND_DIR;
 	else if (input == "HUMIDITY")
 		out = PlotType::HUMIDITY;
+	else if (input == "VOLTAGE")
+		out = PlotType::VOLTAGE;
 	return out;
 
 }
@@ -496,6 +524,8 @@ const std::string DataPresentation::RevSwitchPlotType(PlotType in) {
 		return "WIND_GST";
 	else if (in == PlotType::WIND_SPD)
 		return "WIND_SPD";
+	else if (in == PlotType::VOLTAGE)
+		return "VOLTAGE";
 	else if (in == PlotType::N)
 		return "N";
 	return "unknown";
