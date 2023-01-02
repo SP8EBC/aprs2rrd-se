@@ -266,15 +266,15 @@ uint16_t Telemetry::getRawMeasurement() const {
 	return out;
 }
 
-#define max31865_rref 4700
+#define max31865_rref 4700.0
 #define max31865_raw_result this->getRawMeasurement();
-#define RTDnominal 1000
+#define RTDnominal 1000.0
 #define RTD_A 3.9083e-3
 #define RTD_B -5.775e-7
 
 float Telemetry::getTemperatureFromRawMeasurement() const {
 
-	  float Z1, Z2, Z3, Z4, Rt, temp;
+	  double Z1, Z2, Z3, Z4, Rt, temp;
 
 	  //float R_ohms = (max31865_raw_result * REFERENCE_RESISTOR) / 32768.0f;
 
@@ -292,14 +292,16 @@ float Telemetry::getTemperatureFromRawMeasurement() const {
 	  temp = Z2 + (Z3 * Rt);
 	  temp = (sqrt((double)temp) + Z1) / Z4;
 
+	std::cout << "--- Telemetry::getTemperatureFromRawMeasurement:295 - temp: " << temp << ", this->getRawMeasurement(): " << std::hex << this->getRawMeasurement() << std::dec << std::endl;
+
 	  if (temp >= 0)
-		  return (int32_t) (temp * 10.0f);
+		  return temp;
 
 	  // ugh.
 	  Rt /= RTDnominal;
 	  Rt *= 100; // normalize to 100 ohm
 
-	  float rpoly = Rt;
+	  double rpoly = Rt;
 
 	  temp = -242.02;
 	  temp += 2.2228 * rpoly;
@@ -312,6 +314,6 @@ float Telemetry::getTemperatureFromRawMeasurement() const {
 	  rpoly *= Rt; // ^5
 	  temp += 1.5243e-10 * rpoly;
 
-	  return (int32_t) (temp * 10.0f);
+	  return temp;
 
 }
