@@ -255,7 +255,7 @@ float Telemetry::getLastTemperature() const {
 }
 
 float Telemetry::getBatteryVoltage() const {
-	this->getCh4();
+	return this->getCh4();
 }
 
 uint16_t Telemetry::getRawMeasurement() const {
