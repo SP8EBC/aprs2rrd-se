@@ -1,62 +1,71 @@
-Running 8 test cases...
-Entering test suite "AprsPacket_test"
-Entering test case "PacketFromUncompressPositionData"
-../src/AprsPacket_test.cpp(42): info: check strcmp(out.Data, "!5037.74N/01837.78E-145.275MHz Lubomir") == 0 passed
-../src/AprsPacket_test.cpp(43): info: check out.SrcAddr == "SQ9GPS" passed
-../src/AprsPacket_test.cpp(44): info: check out.SrcSSID == 1 passed
-../src/AprsPacket_test.cpp(45): info: check out.DestAddr == "APRX29" passed
-../src/AprsPacket_test.cpp(46): info: check out.DstSSID == 0 passed
-../src/AprsPacket_test.cpp(47): info: check out.Path.size() == 2 passed
-../src/AprsPacket_test.cpp(48): info: check out.ToISOriginator.Call == "SR6NKB" passed
-../src/AprsPacket_test.cpp(49): info: check out.ToISOriginator.SSID == 0 passed
-Leaving test case "PacketFromUncompressPositionData"; testing time: 1188mks
-Entering test case "brokenSSID"
-unknown location(0): fatal error in "brokenSSID": std::bad_cast: bad lexical cast: source type value could not be interpreted as target
-Leaving test case "brokenSSID"; testing time: 462mks
-Entering test case "SecondPacketFromUncompressPositionData"
-../src/AprsPacket_test.cpp(80): info: check strcmp(out.Data, "=4937.44N/01911.13E>PHG1030172") == 0 passed
-../src/AprsPacket_test.cpp(81): info: check out.SrcAddr == "SQ9MYX" passed
-../src/AprsPacket_test.cpp(82): info: check out.SrcSSID == 9 passed
-../src/AprsPacket_test.cpp(83): info: check out.DestAddr == "APMT01" passed
-../src/AprsPacket_test.cpp(84): info: check out.DstSSID == 0 passed
-../src/AprsPacket_test.cpp(85): info: check out.Path.size() == 2 passed
-../src/AprsPacket_test.cpp(86): info: check out.ToISOriginator.Call == "SR9NSK" passed
-../src/AprsPacket_test.cpp(87): info: check out.ToISOriginator.SSID == 0 passed
-Leaving test case "SecondPacketFromUncompressPositionData"; testing time: 292mks
-Entering test case "FirstPacketWithCompressedData"
-../src/AprsPacket_test.cpp(99): info: check strcmp(out.Data, "`0,Cmq;>/]\"5v}=") == 0 passed
-../src/AprsPacket_test.cpp(100): info: check out.SrcAddr == "SQ9FQJ" passed
-../src/AprsPacket_test.cpp(101): info: check out.SrcSSID == 0 passed
-../src/AprsPacket_test.cpp(102): info: check out.DestAddr == "UP0S66" passed
-../src/AprsPacket_test.cpp(103): info: check out.DstSSID == 0 passed
-../src/AprsPacket_test.cpp(104): info: check out.Path.size() == 2 passed
-../src/AprsPacket_test.cpp(105): info: check out.ToISOriginator.Call == "SR9NSK" passed
-../src/AprsPacket_test.cpp(106): info: check out.ToISOriginator.SSID == 0 passed
-Leaving test case "FirstPacketWithCompressedData"; testing time: 295mks
-Entering test case "SecondPacketWithCompressedData"
-../src/AprsPacket_test.cpp(118): info: check strcmp(out.Data, "`0,Yl w>/]\"6%}=") == 0 passed
-../src/AprsPacket_test.cpp(119): info: check out.SrcAddr == "SQ9FQJ" passed
-../src/AprsPacket_test.cpp(120): info: check out.SrcSSID == 0 passed
-../src/AprsPacket_test.cpp(121): info: check out.DestAddr == "UP0S16" passed
-../src/AprsPacket_test.cpp(122): info: check out.DstSSID == 0 passed
-../src/AprsPacket_test.cpp(123): info: check out.Path.size() == 2 passed
-../src/AprsPacket_test.cpp(124): info: check out.ToISOriginator.Call == "SQ9ZAY" passed
-../src/AprsPacket_test.cpp(125): info: check out.ToISOriginator.SSID == 3 passed
-Leaving test case "SecondPacketWithCompressedData"; testing time: 291mks
-Entering test case "wxPacketWoPath"
-../src/AprsPacket_test.cpp(137): info: check strcmp(out.Data, "!4944.20N/02150.45E_000/000g000t...r...p...P...b...") == 0 passed
-../src/AprsPacket_test.cpp(138): info: check out.SrcAddr == "SR8WXO" passed
-../src/AprsPacket_test.cpp(139): info: check out.SrcSSID == 0 passed
-../src/AprsPacket_test.cpp(140): info: check out.DestAddr == "AKLPRZ" passed
-../src/AprsPacket_test.cpp(141): info: check out.DstSSID == 0 passed
-../src/AprsPacket_test.cpp(142): info: check out.Path.size() == 0 passed
-../src/AprsPacket_test.cpp(143): info: check out.ToISOriginator.Call == "SR9NFB" passed
-../src/AprsPacket_test.cpp(144): info: check out.ToISOriginator.SSID == 0 passed
-Leaving test case "wxPacketWoPath"; testing time: 259mks
-Entering test case "packetWithBrokenSrcCall"
-../src/AprsPacket_test.cpp(158): info: check parsingResult == NOT_VALID_APRS_PACKET passed
-Leaving test case "packetWithBrokenSrcCall"; testing time: 283mks
-Entering test case "packetWithBrokenPath"
-../src/AprsPacket_test.cpp(173): info: check parsingResult == NOT_VALID_APRS_PACKET passed
-Leaving test case "packetWithBrokenPath"; testing time: 346mks
-Leaving test suite "AprsPacket_test"
+Running 9 test cases...
+Entering test module "AprsPacket_test"
+../src/AprsPacket_test.cpp(34): Entering test case "litworowy"
+../src/AprsPacket_test.cpp(42): info: check OK == result has passed
+../src/AprsPacket_test.cpp(44): info: check out.SrcAddr == "SR0L" has passed
+../src/AprsPacket_test.cpp(45): info: check out.SrcSSID == 0 has passed
+../src/AprsPacket_test.cpp(46): info: check out.DestAddr == "AKLPRZ" has passed
+../src/AprsPacket_test.cpp(47): info: check out.DstSSID == 0 has passed
+../src/AprsPacket_test.cpp(48): info: check out.Path.size() == 1 has passed
+../src/AprsPacket_test.cpp(49): info: check strcmp(out.Data, "!4914.14N/01954.77E_000/001g001t050r...p...P...b00000h00") == 0 has passed
+../src/AprsPacket_test.cpp(34): Leaving test case "litworowy"; testing time: 254us
+../src/AprsPacket_test.cpp(55): Entering test case "PacketFromUncompressPositionData"
+../src/AprsPacket_test.cpp(63): info: check strcmp(out.Data, "!5037.74N/01837.78E-145.275MHz Lubomir") == 0 has passed
+../src/AprsPacket_test.cpp(64): info: check out.SrcAddr == "SQ9GPS" has passed
+../src/AprsPacket_test.cpp(65): info: check out.SrcSSID == 1 has passed
+../src/AprsPacket_test.cpp(66): info: check out.DestAddr == "APRX29" has passed
+../src/AprsPacket_test.cpp(67): info: check out.DstSSID == 0 has passed
+../src/AprsPacket_test.cpp(68): info: check out.Path.size() == 2 has passed
+../src/AprsPacket_test.cpp(69): info: check out.ToISOriginator.Call == "SR6NKB" has passed
+../src/AprsPacket_test.cpp(70): info: check out.ToISOriginator.SSID == 0 has passed
+../src/AprsPacket_test.cpp(55): Leaving test case "PacketFromUncompressPositionData"; testing time: 198us
+../src/AprsPacket_test.cpp(74): Entering test case "brokenSSID"
+../src/AprsPacket_test.cpp(91): info: check result == NOT_VALID_APRS_PACKET has passed
+../src/AprsPacket_test.cpp(74): Leaving test case "brokenSSID"; testing time: 200us
+../src/AprsPacket_test.cpp(95): Entering test case "SecondPacketFromUncompressPositionData"
+../src/AprsPacket_test.cpp(103): info: check strcmp(out.Data, "=4937.44N/01911.13E>PHG1030172") == 0 has passed
+../src/AprsPacket_test.cpp(104): info: check out.SrcAddr == "SQ9MYX" has passed
+../src/AprsPacket_test.cpp(105): info: check out.SrcSSID == 9 has passed
+../src/AprsPacket_test.cpp(106): info: check out.DestAddr == "APMT01" has passed
+../src/AprsPacket_test.cpp(107): info: check out.DstSSID == 0 has passed
+../src/AprsPacket_test.cpp(108): info: check out.Path.size() == 2 has passed
+../src/AprsPacket_test.cpp(109): info: check out.ToISOriginator.Call == "SR9NSK" has passed
+../src/AprsPacket_test.cpp(110): info: check out.ToISOriginator.SSID == 0 has passed
+../src/AprsPacket_test.cpp(95): Leaving test case "SecondPacketFromUncompressPositionData"; testing time: 205us
+../src/AprsPacket_test.cpp(114): Entering test case "FirstPacketWithCompressedData"
+../src/AprsPacket_test.cpp(122): info: check strcmp(out.Data, "`0,Cmq;>/]\"5v}=") == 0 has passed
+../src/AprsPacket_test.cpp(123): info: check out.SrcAddr == "SQ9FQJ" has passed
+../src/AprsPacket_test.cpp(124): info: check out.SrcSSID == 0 has passed
+../src/AprsPacket_test.cpp(125): info: check out.DestAddr == "UP0S66" has passed
+../src/AprsPacket_test.cpp(126): info: check out.DstSSID == 0 has passed
+../src/AprsPacket_test.cpp(127): info: check out.Path.size() == 2 has passed
+../src/AprsPacket_test.cpp(128): info: check out.ToISOriginator.Call == "SR9NSK" has passed
+../src/AprsPacket_test.cpp(129): info: check out.ToISOriginator.SSID == 0 has passed
+../src/AprsPacket_test.cpp(114): Leaving test case "FirstPacketWithCompressedData"; testing time: 193us
+../src/AprsPacket_test.cpp(133): Entering test case "SecondPacketWithCompressedData"
+../src/AprsPacket_test.cpp(141): info: check strcmp(out.Data, "`0,Yl w>/]\"6%}=") == 0 has passed
+../src/AprsPacket_test.cpp(142): info: check out.SrcAddr == "SQ9FQJ" has passed
+../src/AprsPacket_test.cpp(143): info: check out.SrcSSID == 0 has passed
+../src/AprsPacket_test.cpp(144): info: check out.DestAddr == "UP0S16" has passed
+../src/AprsPacket_test.cpp(145): info: check out.DstSSID == 0 has passed
+../src/AprsPacket_test.cpp(146): info: check out.Path.size() == 2 has passed
+../src/AprsPacket_test.cpp(147): info: check out.ToISOriginator.Call == "SQ9ZAY" has passed
+../src/AprsPacket_test.cpp(148): info: check out.ToISOriginator.SSID == 3 has passed
+../src/AprsPacket_test.cpp(133): Leaving test case "SecondPacketWithCompressedData"; testing time: 201us
+../src/AprsPacket_test.cpp(152): Entering test case "wxPacketWoPath"
+../src/AprsPacket_test.cpp(160): info: check strcmp(out.Data, "!4944.20N/02150.45E_000/000g000t...r...p...P...b...") == 0 has passed
+../src/AprsPacket_test.cpp(161): info: check out.SrcAddr == "SR8WXO" has passed
+../src/AprsPacket_test.cpp(162): info: check out.SrcSSID == 0 has passed
+../src/AprsPacket_test.cpp(163): info: check out.DestAddr == "AKLPRZ" has passed
+../src/AprsPacket_test.cpp(164): info: check out.DstSSID == 0 has passed
+../src/AprsPacket_test.cpp(165): info: check out.Path.size() == 0 has passed
+../src/AprsPacket_test.cpp(166): info: check out.ToISOriginator.Call == "SR9NFB" has passed
+../src/AprsPacket_test.cpp(167): info: check out.ToISOriginator.SSID == 0 has passed
+../src/AprsPacket_test.cpp(152): Leaving test case "wxPacketWoPath"; testing time: 184us
+../src/AprsPacket_test.cpp(171): Entering test case "packetWithBrokenSrcCall"
+../src/AprsPacket_test.cpp(181): info: check parsingResult == NOT_VALID_APRS_PACKET has passed
+../src/AprsPacket_test.cpp(171): Leaving test case "packetWithBrokenSrcCall"; testing time: 140us
+../src/AprsPacket_test.cpp(186): Entering test case "packetWithBrokenPath"
+../src/AprsPacket_test.cpp(196): info: check parsingResult == NOT_VALID_APRS_PACKET has passed
+../src/AprsPacket_test.cpp(186): Leaving test case "packetWithBrokenPath"; testing time: 167us
+Leaving test module "AprsPacket_test"; testing time: 1869us

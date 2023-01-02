@@ -119,7 +119,7 @@ void AprsPacket::PrintPacketData() {
 int AprsPacket::ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cTarget) {
 
 	// simple regex to match most of callsign systems
-	boost::regex callsignPattern("^[A-Z1-9]{3}[A-Z]{1,3}", boost::regex::icase);
+	boost::regex callsignPattern("^[A-Z0-9]{3}[A-Z]{1,3}", boost::regex::icase);
 
 	// q-construct regex
 	boost::regex qc("q[A-Z]{2}");

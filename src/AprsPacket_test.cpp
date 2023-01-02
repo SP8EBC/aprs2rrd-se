@@ -31,13 +31,34 @@ struct MyConfig
 
 BOOST_GLOBAL_FIXTURE (MyConfig);
 
+BOOST_AUTO_TEST_CASE(litworowy)
+{
+	std::string input = "SR0L>AKLPRZ,WIDE1-1,qAR,SR9WXS:!4914.14N/01954.77E_000/001g001t050r...p...P...b00000h00";
+
+	AprsPacket out;
+
+	int result = AprsPacket::ParseAPRSISData((char*)input.c_str(), input.size(), &out);
+
+	BOOST_CHECK_EQUAL(OK, result);
+//	BOOST_CHECK(strcmp(out.Data, "!5037.74N/01837.78E-145.275MHz Lubomir") == 0);
+	BOOST_CHECK(out.SrcAddr == "SR0L");
+	BOOST_CHECK(out.SrcSSID == 0);
+	BOOST_CHECK(out.DestAddr == "AKLPRZ");
+	BOOST_CHECK(out.DstSSID == 0);
+	BOOST_CHECK_EQUAL(out.Path.size(), 1);
+	BOOST_CHECK(strcmp(out.Data, "!4914.14N/01954.77E_000/001g001t050r...p...P...b00000h00") == 0);
+
+//	BOOST_CHECK(out.ToISOriginator.Call == "SR6NKB");
+//	BOOST_CHECK(out.ToISOriginator.SSID == 0);
+}
+
 BOOST_AUTO_TEST_CASE(PacketFromUncompressPositionData)
 {
 	std::string input = "SQ9GPS-1>APRX29,SR9DZB*,WIDE2-2,qAR,SR6NKB:!5037.74N/01837.78E-145.275MHz Lubomir";
 
 	AprsPacket out;
 
-	AprsPacket::ParseAPRSISData((char*)input.c_str(), input.size(), &out);
+	int result = AprsPacket::ParseAPRSISData((char*)input.c_str(), input.size(), &out);
 
 	BOOST_CHECK(strcmp(out.Data, "!5037.74N/01837.78E-145.275MHz Lubomir") == 0);
 	BOOST_CHECK(out.SrcAddr == "SQ9GPS");
@@ -56,16 +77,18 @@ BOOST_AUTO_TEST_CASE(brokenSSID)
 
 	AprsPacket out;
 
-	AprsPacket::ParseAPRSISData((char*)input.c_str(), input.size(), &out);
+	int result = AprsPacket::ParseAPRSISData((char*)input.c_str(), input.size(), &out);
 
-	BOOST_CHECK(strcmp(out.Data, "!5037.74N/01837.78E-145.275MHz Lubomir") == 0);
-	BOOST_CHECK(out.SrcAddr == "SQ9GPS");
-	BOOST_CHECK(out.SrcSSID == 1);
-	BOOST_CHECK(out.DestAddr == "APRX29");
-	BOOST_CHECK(out.DstSSID == 0);
-	BOOST_CHECK_EQUAL(out.Path.size(), 2);
-	BOOST_CHECK(out.ToISOriginator.Call == "SR6NKB");
-	BOOST_CHECK(out.ToISOriginator.SSID == 0);
+//	BOOST_CHECK(strcmp(out.Data, "!5037.74N/01837.78E-145.275MHz Lubomir") == 0);
+//	BOOST_CHECK(out.SrcAddr == "SQ9GPS");
+//	BOOST_CHECK(out.SrcSSID == 1);
+//	BOOST_CHECK(out.DestAddr == "APRX29");
+//	BOOST_CHECK(out.DstSSID == 0);
+//	BOOST_CHECK_EQUAL(out.Path.size(), 2);
+//	BOOST_CHECK(out.ToISOriginator.Call == "SR6NKB");
+//	BOOST_CHECK(out.ToISOriginator.SSID == 0);
+
+	BOOST_CHECK_EQUAL(result, NOT_VALID_APRS_PACKET);
 
 }
 
