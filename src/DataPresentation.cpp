@@ -311,6 +311,8 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 
 	std::cout << "--- DataPresentation::GenerateWebiste:312 - Html file opened" << std::endl;
 
+	std::cout << "--- DataPresentation::GenerateWebiste:314 - batteryVoltage: " << batteryVoltage << ", rawMeasurement: " << rawMeasurement << std::endl;
+
 	try {
 		html << " <!DOCTYPE html>" << std::endl;
 		html <<	"<HTML><head>" << std::endl;
