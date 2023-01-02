@@ -11,11 +11,14 @@
 #include <string>
 #include <stdexcept>
 #include <iostream>
+#include <cmath>
 
 bool Telemetry::Debug = false;
 
 Telemetry::Telemetry() {
 	this->valid = false;
+
+	// :EQNS.0,1,0, 0,1,0, 0,0.25,-40, 0,0.02,10, 0,1,0
 
 	this->ch1 = 0;
 	this->ch1a = 0.0f;
@@ -29,13 +32,13 @@ Telemetry::Telemetry() {
 
 	this->ch3 = 0;
 	this->ch3a = 0.0f;
-	this->ch3b = 1.0f;
-	this->ch3c = 0.0f;
+	this->ch3b = 0.25f;
+	this->ch3c = -40.0f;
 
 	this->ch4  = 0;
 	this->ch4a = 0.0f;
-	this->ch4b = 1.0f;
-	this->ch4c = 0.0f;
+	this->ch4b = .02f;
+	this->ch4c = 10.0f;
 
 	this->ch5  = 0;
 	this->ch5a = 0.0f;
@@ -244,5 +247,71 @@ float Telemetry::getCh4() const {
 
 float Telemetry::getCh5() const {
 	return (ch5a * ch5 * ch5) + (ch5b * ch5) + ch5c;
+
+}
+
+float Telemetry::getLastTemperature() const {
+	return getCh3();
+}
+
+float Telemetry::getBatteryVoltage() const {
+	this->getCh4();
+}
+
+uint16_t Telemetry::getRawMeasurement() const {
+	uint16_t out = 0;
+
+	out = this->ch1 | (this->ch2 << 8);
+
+	return out;
+}
+
+#define max31865_rref 4700
+#define max31865_raw_result this->getRawMeasurement();
+#define RTDnominal 1000
+#define RTD_A 3.9083e-3
+#define RTD_B -5.775e-7
+
+float Telemetry::getTemperatureFromRawMeasurement() const {
+
+	  float Z1, Z2, Z3, Z4, Rt, temp;
+
+	  //float R_ohms = (max31865_raw_result * REFERENCE_RESISTOR) / 32768.0f;
+
+	  Rt = max31865_raw_result;
+	  Rt /= 32768.0f;
+	  Rt *= max31865_rref;
+
+	  // Serial.print("\nResistance: "); Serial.println(Rt, 8);
+
+	  Z1 = -RTD_A;
+	  Z2 = RTD_A * RTD_A - (4 * RTD_B);
+	  Z3 = (4 * RTD_B) / RTDnominal;
+	  Z4 = 2 * RTD_B;
+
+	  temp = Z2 + (Z3 * Rt);
+	  temp = (sqrt((double)temp) + Z1) / Z4;
+
+	  if (temp >= 0)
+		  return (int32_t) (temp * 10.0f);
+
+	  // ugh.
+	  Rt /= RTDnominal;
+	  Rt *= 100; // normalize to 100 ohm
+
+	  float rpoly = Rt;
+
+	  temp = -242.02;
+	  temp += 2.2228 * rpoly;
+	  rpoly *= Rt; // square
+	  temp += 2.5859e-3 * rpoly;
+	  rpoly *= Rt; // ^3
+	  temp -= 4.8260e-6 * rpoly;
+	  rpoly *= Rt; // ^4
+	  temp -= 2.8183e-8 * rpoly;
+	  rpoly *= Rt; // ^5
+	  temp += 1.5243e-10 * rpoly;
+
+	  return (int32_t) (temp * 10.0f);
 
 }
