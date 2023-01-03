@@ -318,3 +318,65 @@ float Telemetry::getTemperatureFromRawMeasurement() const {
 	  return temp;
 
 }
+
+#define LSERDY	(1 << 7)
+#define RTCEN	(1 << 6)
+#define MAX_OK	(1 << 5)
+#define SLEEP	(1 << 4)
+#define SPI_ER	(1 << 3)
+#define SPI_OK	(1 << 2)
+
+
+bool Telemetry::getLSERDY() const {
+	if (digital & LSERDY) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+bool Telemetry::getRTCEN() const {
+	if (digital & RTCEN) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+bool Telemetry::getMAXOK() const {
+	if (digital & MAX_OK) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+bool Telemetry::getSLEEP() const {
+	if (digital & SLEEP) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+bool Telemetry::getSPIER() const {
+	if (digital & SPI_ER) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+bool Telemetry::getSPIOK() const {
+	if (digital & SPI_OK) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}

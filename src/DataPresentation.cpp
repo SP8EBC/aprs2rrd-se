@@ -426,15 +426,64 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 		html << "</tbody></table>";
 
 		if (SpecialTelemetry) {
-			html << "  <p></p><table class=sub_heading><tbody><tr><td class=sub_heading>Status sterownika</td></tr></tbody></table>" << std::endl;
+			html << "  <p></p><table class=sub_heading><tbody><tr><td class=sub_heading>Status sterownika stacji</td></tr></tbody></table>" << std::endl;
 			html << "<table class=data><tbody><tr>" << std::endl;
-			html << "<td class=table_value>LSERDY</td>" << std::endl;
-			html << "<td class=table_value>LSERDY</td>" << std::endl;
-			html << "<td class=table_value>MAX_OK</td>" << std::endl;
-			html << "<td class=table_value>SLEEP</td>" << std::endl;
-			html << "<td class=table_value>SPI_ER</td>" << std::endl;
-			html << "<td class=table_value>SPI_OK</td>" << std::endl;
+			////////////////////////////
+			if (telemetry.getLSERDY()) {
+				html << "<td class=table_value_special_ok>LSERDY</td>" << std::endl;
+			}
+			else {
+				html << "<td class=table_value_special_nok>LSERDY</td>" << std::endl;
+			}
+
+			////////////////////////////
+			if (telemetry.getRTCEN()) {
+				html << "<td class=table_value_special_ok>RTCEN</td>" << std::endl;
+			}
+			else {
+				html << "<td class=table_value_special_nok>RTCEN</td>" << std::endl;
+			}
+
+			////////////////////////////
+			if (telemetry.getMAXOK()) {
+				html << "<td class=table_value_special_ok>MAX_OK</td>" << std::endl;
+			}
+			else {
+				html << "<td class=table_value_special_nok>MAX_OK</td>" << std::endl;
+			}
+
+			//////////////////////////
+			if (telemetry.getSLEEP()) {
+				html << "<td class=table_value_special_ok>SLEEP</td>" << std::endl;
+			}
+			else {
+				html << "<td class=table_value_special_nok>SLEEP</td>" << std::endl;
+			}
+
+			//////////////////////////
+			if (telemetry.getSPIER()) {
+				html << "<td class=table_value_special_nok>SPI_ER</td>" << std::endl;
+			}
+			else {
+				html << "<td class=table_value_special_ok>SPI_ER</td>" << std::endl;
+			}
+
+			///////////////////////////
+			if (telemetry.getSPIOK()) {
+				html << "<td class=table_value_special_ok>SPI_OK</td>" << std::endl;
+			}
+			else {
+				html << "<td class=table_value_special_nok>SPI_OK</td>" << std::endl;
+			}
 			html << "</tr></tbody></table>" << std::endl;
+
+			if (telemetry.ch5 == 0) {
+				html << "  <p></p><table class=sub_heading><tbody><tr><td class=sub_heading>Status wzmacniacza PT: OK - BRAK BŁĘDÓW</td></tr></tbody></table>" << std::endl;
+			}
+			else {
+				html << "  <p></p><table class=sub_heading><tbody><tr><td class=sub_heading>Status wzmacniacza PT: NotOK - 0x" << std::hex << (int)telemetry.ch5 << std::dec << "</td></tr></tbody></table>" << std::endl;
+			}
+
 		}
 
 		if (datetimeLocale == NULL) {

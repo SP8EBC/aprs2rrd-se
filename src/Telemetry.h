@@ -31,7 +31,12 @@ public:
 	uint16_t getRawMeasurement() const;
 	float getTemperatureFromRawMeasurement() const;
 
-	//bool get
+	bool getLSERDY() const;
+	bool getRTCEN() const;
+	bool getMAXOK() const;
+	bool getSLEEP() const;
+	bool getSPIER() const;
+	bool getSPIOK() const;
 
 	std::string call;
 
