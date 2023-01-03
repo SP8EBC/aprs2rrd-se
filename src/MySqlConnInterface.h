@@ -80,6 +80,7 @@ public:
 	void CloseDBConnection();
 	void InsertIntoDb(const AprsWXData* const cInput);
 	void InsertIntoDbSchema2(const AprsWXData& cInput, const DataSourceConfig& config, std::string station_name);
+	void InsertIntoDbSchemaTatry(const AprsWXData& wx, const Telemetry& input, std::string station_name);
 	void InsertDiff(const AprsWXData& input, const DiffCalculator& diffCalculator, std::string station_name);
 	void InsertTelmetry(const Telemetry& input, std::string station_name);
 	void Keepalive(void);

@@ -150,7 +150,7 @@ void MySqlConnInterface::InsertDiff(const AprsWXData& input, const DiffCalculato
 		cout << er.what();
 	}
 	catch (...) {
-		cout << "--- MysqlConnInterface::InsertDiff:145 - unknown exception" << endl;
+		cout << "--- MysqlConnInterface::InsertDiff:153 - unknown exception" << endl;
 	}
 
 	cout << this->dbSimpleResult.info();
@@ -212,17 +212,64 @@ void MySqlConnInterface::InsertTelmetry(const Telemetry& input, std::string stat
 		cout << er.what();
 	}
 	catch (...) {
-		cout << "--- MysqlConnInterface::InsertTelmetry:202 - unknown exception" << endl;
+		cout << "--- MysqlConnInterface::InsertTelmetry:215 - unknown exception" << endl;
 	}
 
 	cout << this->dbSimpleResult.info();
 
-	cout << "--- MysqlConnInterface::InsertTelmetry:207 - Data inserted successfully" << endl;
+	cout << "--- MysqlConnInterface::InsertTelmetry:220 - Data inserted successfully" << endl;
 
 	if (this->dbConnection.connected()) {
 		this->CloseDBConnection();
 	}
 
+}
+
+void MySqlConnInterface::InsertIntoDbSchemaTatry(const AprsWXData &wx,
+		const Telemetry &input, std::string station_name) {
+
+	if (!this->schema_v2)
+		return;
+
+	std::stringstream temp;
+	temp.str("");
+
+	boost::posix_time::ptime current_epoch = boost::posix_time::second_clock::universal_time();
+	//boost::date_time::second_clock<boost::posix_time::ptime>::local_time();	// static access should be here??
+
+	boost::posix_time::time_duration epoch_seconds_duration =
+												(current_epoch - boost::posix_time::ptime(boost::gregorian::date(1970, 1, 1)));
+	int64_t epoch_seconds = epoch_seconds_duration.total_seconds();
+
+	cout << "--- MysqlConnInterface::InsertIntoDbSchemaTatry:244 - epoch_seconds: " << epoch_seconds << endl;
+
+	temp << "INSERT INTO `" << this->dbName << "`.`data_tatry`";
+	temp << "(`epoch`, `station`, `wxtemperature`, `rawmeasurement`, `rawmeasurementrecalc`, `voltage`) VALUES (";
+
+	temp << epoch_seconds << ", ";
+	temp << "'" << station_name << "', ";
+	temp << wx.temperature << ", ";
+	temp << input.getRawMeasurement() << ", ";
+	temp << input.getTemperatureFromRawMeasurement() << ", ";
+	temp << input.getBatteryVoltage() << ");" << endl;
+	if (this->Debug == true)
+		cout << temp.str() << endl;
+
+	try {
+		this->dbQuery = this->dbConnection.query(temp.str());
+		this->dbSimpleResult = this->dbQuery.execute();
+	}
+	catch (const BadQuery& er) {
+		cout << er.what();
+	}
+	catch (const Exception& er) {
+		cout << er.what();
+	}
+	catch (...) {
+		cout << "--- MysqlConnInterface::InsertIntoDbSchemaTatry:269 - unknown exception" << endl;
+	}
+
+	cout << this->dbSimpleResult.info();
 }
 
 void MySqlConnInterface::Keepalive(void) {
@@ -240,7 +287,7 @@ void MySqlConnInterface::Keepalive(void) {
 		cout << e.what() << endl;
 	}
 	catch (...) {
-		cout << "--- MysqlConnInterface::Keepalive:226 - Unknown exception has been thrown" << endl;
+		cout << "--- MysqlConnInterface::Keepalive:290 - Unknown exception has been thrown" << endl;
 	}
 
 }
@@ -260,7 +307,7 @@ void MySqlConnInterface::InsertIntoDb(const AprsWXData* cInput) {
 	local = localtime(&currtime);
 
 	if (this->execBeforeInsert == true) {
-		cout << "--- MysqlConnInterface::InsertIntoDb:244 - Executing: " << this->execBeforeInsertPath.c_str();
+		cout << "--- MysqlConnInterface::InsertIntoDb:310 - Executing: " << this->execBeforeInsertPath.c_str();
 		(void)system(this->execBeforeInsertPath.c_str());
 		cout << endl;
 	}
@@ -296,7 +343,7 @@ void MySqlConnInterface::InsertIntoDb(const AprsWXData* cInput) {
 		//delete this->dbQuery;
 	}
 	catch (...) {
-		cout << "--- MysqlConnInterface::InsertIntoDb:280 - unknown exception" << endl;
+		cout << "--- MysqlConnInterface::InsertIntoDb:346 - unknown exception" << endl;
 	}
 
 	cout << this->dbSimpleResult.info();
