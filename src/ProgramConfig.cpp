@@ -515,6 +515,7 @@ WxDataSource ProgramConfig::getTemperatureSource() {
 	case swstring("SERIAL"): out = WxDataSource::SERIAL;  break;
 	case swstring("HOLFUY"): out = WxDataSource::HOLFUY;  break;
 	case swstring("ZYWIEC"): out = WxDataSource::ZYWIEC;  break;
+	case swstring("BOTH"): out = WxDataSource::TELEMETRY_IS_PRIMARY;  break;
 	default: throw AmbigiousDataSourceConfig();
 	}
 
