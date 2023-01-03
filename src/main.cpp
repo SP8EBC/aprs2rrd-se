@@ -393,6 +393,9 @@ int main(int argc, char **argv){
 
 					if (telemetry.valid) {
 						wxTarget.copy(telemetry, sourceConfig);
+
+						// insert battery voltage into RRD
+						dataPresence.FetchBatteryVoltageInRRD(telemetry.getBatteryVoltage());
 					}
 
 					if (wxZywiec.valid) {
@@ -441,9 +444,6 @@ int main(int argc, char **argv){
 
 					// inserting the data inside a RRD file
 					dataPresence.FetchDataInRRD(&wxTarget, false);
-
-					// insert battery voltage into RRD
-					dataPresence.FetchBatteryVoltageInRRD(telemetry.getBatteryVoltage());
 
 					// insertind diff-data inside RRD files
 					dataPresence.FetchDiffInRRD(wxDifference);
