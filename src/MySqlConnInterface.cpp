@@ -249,7 +249,7 @@ void MySqlConnInterface::InsertIntoDbSchemaTatry(const AprsWXData &wx,
 	temp << epoch_seconds << ", ";
 	temp << "'" << station_name << "', ";
 	temp << wx.temperature << ", ";
-	temp << input.getRawMeasurement() << ", ";
+	temp << (int)input.getRawMeasurement() << ", ";
 	temp << input.getTemperatureFromRawMeasurement() << ", ";
 	temp << input.getBatteryVoltage() << ");" << endl;
 	if (this->Debug == true)
