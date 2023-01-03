@@ -418,10 +418,24 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 		if (this->PrintHumidity != PRINT_OFF) {
 			html << "<tr><td class=table_caption>" << locale.humidity << ":</td><td class=table_value id=humidity> " << WX.humidity << " % ";
 		}
-		html << "<tr><td class=table_caption>Napięcie akumulatora:</td><td class=table_value id=vbat> " << std::setprecision(temperaturePrecision) << batteryVoltage << " V ";
-		html << "<tr><td class=table_caption>Surowy odczyt </td><td class=table_value id=raw> 0x" << std::hex << rawMeasurement <<  std::dec << " ";
+		if (SpecialTelemetry) {
+			html << "<tr><td class=table_caption>Napięcie akumulatora:</td><td class=table_value id=vbat> " << std::setprecision(temperaturePrecision) << batteryVoltage << " V ";
+			html << "<tr><td class=table_caption>Surowy odczyt </td><td class=table_value id=raw> 0x" << std::hex << rawMeasurement <<  std::dec << " ";
+		}
 
 		html << "</tbody></table>";
+
+		if (SpecialTelemetry) {
+			html << "  <p></p><table class=sub_heading><tbody><tr><td class=sub_heading>Status sterownika</td></tr></tbody></table>" << std::endl;
+			html << "<table class=data><tbody><tr>" << std::endl;
+			html << "<td class=table_value>LSERDY</td>" << std::endl;
+			html << "<td class=table_value>LSERDY</td>" << std::endl;
+			html << "<td class=table_value>MAX_OK</td>" << std::endl;
+			html << "<td class=table_value>SLEEP</td>" << std::endl;
+			html << "<td class=table_value>SPI_ER</td>" << std::endl;
+			html << "<td class=table_value>SPI_OK</td>" << std::endl;
+			html << "</tr></tbody></table>" << std::endl;
+		}
 
 		if (datetimeLocale == NULL) {
 			html.imbue(std::locale(std::locale::classic(), formatter));

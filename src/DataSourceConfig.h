@@ -20,7 +20,8 @@ enum class WxDataSource {
 	TELEMETRY,
 	HOLFUY,
 	ZYWIEC,
-	UNKNOWN
+	UNKNOWN,
+	TELEMETRY_IS_PRIMARY
 };
 
 constexpr const char* wxDataSourceToStr(WxDataSource in) {
@@ -36,6 +37,8 @@ constexpr const char* wxDataSourceToStr(WxDataSource in) {
 		return "TELEMETRY";
 	else if (in == WxDataSource::ZYWIEC)
 		return "ZYWIEC";
+	else if (in == WxDataSource::TELEMETRY_IS_PRIMARY)
+		return "TELEMETRY_IS_PRIMARY";
 	else
 		return "";
 }

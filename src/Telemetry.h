@@ -31,6 +31,8 @@ public:
 	uint16_t getRawMeasurement() const;
 	float getTemperatureFromRawMeasurement() const;
 
+	//bool get
+
 	std::string call;
 
 	bool valid;

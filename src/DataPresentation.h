@@ -56,6 +56,8 @@ public:
 
 	DataPresentationParametersPrint PrintTemperature, PrintPressure, PrintHumidity, PrintWind;
 
+	bool SpecialTelemetry;
+
 	string WebsiteTitle;
 	string WebsiteHeadingTitle;
 	string WebsiteSubHeading;

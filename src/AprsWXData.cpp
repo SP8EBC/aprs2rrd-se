@@ -532,6 +532,12 @@ void AprsWXData::copy(const AprsWXData & source, const DataSourceConfig & config
 			this->useTemperature = true;
 		}
 
+		if (config.temperature == WxDataSource::TELEMETRY_IS_PRIMARY && true_if_primary) {
+			std::cout << "--- AprsWXData::copy:536 - config.temperature == WxDataSource::TELEMETRY_IS_PRIMARY." << std::endl;
+			this->temperature = source.temperature;
+			this->useTemperature = true;
+		}
+
 		// check if APRSIS should be used as a source of pressure
 		if ((config.pressure == WxDataSource::IS_PRIMARY && true_if_primary) ||
 			(config.pressure == WxDataSource::IS_SECONDARY && !true_if_primary)) {
@@ -682,7 +688,7 @@ void AprsWXData::copy(const AprsWXData & source, const DataSourceConfig & config
 
 void AprsWXData::copy(const Telemetry & source, const DataSourceConfig & config) {
 
-//	if (config.temperature == WxDataSource::TELEMETRY) {
+	if (config.temperature == WxDataSource::TELEMETRY || config.temperature == WxDataSource::TELEMETRY_IS_PRIMARY) {
 		this->temperature = source.getTemperatureFromRawMeasurement();
 		//this->useHumidity = false;
 		//this->usePressure = false;
@@ -690,7 +696,7 @@ void AprsWXData::copy(const Telemetry & source, const DataSourceConfig & config)
 		//this->useWind = false;
 
 		this->valid = true;
-//	}
+	}
 
 }
 

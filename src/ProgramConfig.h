@@ -99,6 +99,8 @@ public:
 		case swstring("SERIAL"): return WxDataSource::SERIAL;
 		case swstring("HOLFUY"): return WxDataSource::HOLFUY;
 		case swstring("ZYWIEC"): return WxDataSource::ZYWIEC;
+		case swstring("TELEMETRYAPRSIS"): return WxDataSource::TELEMETRY_IS_PRIMARY;
+		case swstring("BOTH"): return WxDataSource::TELEMETRY_IS_PRIMARY;
 		}
 
 		return WxDataSource::UNKNOWN;
