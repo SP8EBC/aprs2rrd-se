@@ -244,6 +244,9 @@ void DataPresentation::PlotGraphsFromRRD() {
 	if (this->vPNGFiles[i].ScaleStep > 0 && this->vPNGFiles[i].LabelStep > 0) {
 		scalestep << " --y-grid " << this->vPNGFiles[i].ScaleStep << ":" << this->vPNGFiles[i].LabelStep << " ";
 	}
+	else if (this->vPNGFiles[i].ScaleStep < 0 && this->vPNGFiles[i].LabelStep < 0) {
+		scalestep << " --left-axis-format \"%.1lf\"";
+	}
 	else scalestep << " ";
 
 	if (this->vPNGFiles[i].Exponent != -1)
