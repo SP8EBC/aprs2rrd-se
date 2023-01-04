@@ -26,8 +26,8 @@ public:
 	float getCh4() const;
 	float getCh5() const;
 
-	uint8_t getCh5Raw() const {
-		return ch5;
+	int getCh5Raw() const {
+		return (int)ch5;
 	}
 
 	float getLastTemperature() const;
