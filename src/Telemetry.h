@@ -26,6 +26,10 @@ public:
 	float getCh4() const;
 	float getCh5() const;
 
+	uint8_t getCh5Raw() const {
+		return ch5;
+	}
+
 	float getLastTemperature() const;
 	float getBatteryVoltage() const;
 	uint16_t getRawMeasurement() const;

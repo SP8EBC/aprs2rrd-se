@@ -244,14 +244,21 @@ void MySqlConnInterface::InsertIntoDbSchemaTatry(const AprsWXData &wx,
 	cout << "--- MysqlConnInterface::InsertIntoDbSchemaTatry:244 - epoch_seconds: " << epoch_seconds << endl;
 
 	temp << "INSERT INTO `" << this->dbName << "`.`data_tatry`";
-	temp << "(`epoch`, `station`, `wxtemperature`, `rawmeasurement`, `rawmeasurementrecalc`, `voltage`) VALUES (";
+	temp << "(`epoch`, `station`, `wxtemperature`, `rawmeasurement`, `rawmeasurementrecalc`, `voltage`, `maxstatus`, `lserdy`, `rtcen`, `maxok`, `sleep`, `spier`, `spiok`) VALUES (";
 
 	temp << epoch_seconds << ", ";
 	temp << "'" << station_name << "', ";
 	temp << wx.temperature << ", ";
 	temp << (int)input.getRawMeasurement() << ", ";
 	temp << input.getTemperatureFromRawMeasurement() << ", ";
-	temp << input.getBatteryVoltage() << ");" << endl;
+	temp << input.getBatteryVoltage() << ", ";
+	temp << input.getCh5Raw() << ", ";
+	temp << (input.getLSERDY() ? "TRUE" : "FALSE") << ", ";
+	temp << (input.getRTCEN() ? "TRUE" : "FALSE") << ", ";
+	temp << (input.getMAXOK() ? "TRUE" : "FALSE") << ", ";
+	temp << (input.getSLEEP() ? "TRUE" : "FALSE") << ", ";
+	temp << (input.getSPIER() ? "TRUE" : "FALSE") << ", ";
+	temp << (input.getSPIOK() ? "TRUE" : "FALSE") << ");" << endl;
 	if (this->Debug == true)
 		cout << temp.str() << endl;
 
