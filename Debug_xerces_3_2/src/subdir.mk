@@ -27,6 +27,7 @@ CPP_SRCS += \
 ../src/SerialConfig.cpp \
 ../src/SlewRateLimiter.cpp \
 ../src/Telemetry.cpp \
+../src/WeatherlinkClient.cpp \
 ../src/XMLMemoryHandler.cpp \
 ../src/ZywiecMeteo.cpp \
 ../src/main.cpp 
@@ -55,6 +56,7 @@ OBJS += \
 ./src/SerialConfig.o \
 ./src/SlewRateLimiter.o \
 ./src/Telemetry.o \
+./src/WeatherlinkClient.o \
 ./src/XMLMemoryHandler.o \
 ./src/ZywiecMeteo.o \
 ./src/main.o 
@@ -83,6 +85,7 @@ CPP_DEPS += \
 ./src/SerialConfig.d \
 ./src/SlewRateLimiter.d \
 ./src/Telemetry.d \
+./src/WeatherlinkClient.d \
 ./src/XMLMemoryHandler.d \
 ./src/ZywiecMeteo.d \
 ./src/main.d 

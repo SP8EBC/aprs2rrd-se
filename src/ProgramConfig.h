@@ -26,6 +26,7 @@
 #include "SlewRateLimiter.h"
 #include "Locale.h"
 #include "ZywiecMeteoConfig.h"
+#include "WeatherlinkClient.h"
 
 class ProgramConfig {
 	std::string configFilename;
@@ -77,6 +78,7 @@ public:
 	void getSlewRateLimitConfig(SlewRateLimiter & limiter);
 	void getLocaleStaticString(Locale& l);
 	void getZywiecMeteoConfig(ZywiecMeteoConfig & z);
+	void getWeatherlinkConfig(WeatherlinkClient_Config & _config);
 	bool getDateTimeLocale(char * localeString, basic_string<char>::size_type ln);
 
 	bool configureLogOutput();
@@ -115,7 +117,8 @@ public:
 									DataSourceConfig & source,
 									PressureCalculator& pressureCalc,
 									SlewRateLimiter & limiter,
-									Locale & locale);
+									Locale & locale,
+									WeatherlinkClient_Config &_config);
 
 
 

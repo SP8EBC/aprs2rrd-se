@@ -29,6 +29,7 @@
 #include "PressureCalculator.h"
 #include "ZywiecMeteo.h"
 #include "ZywiecMeteoConfig.h"
+#include "WeatherlinkClient.h"
 
 #include "ConnectionTimeoutEx.h"
 #include "DataPresentation.h"
@@ -110,6 +111,8 @@ int main(int argc, char **argv){
 	DiffCalculator diffCalculator;
 	PressureCalculator pressureCalculator;
 	Locale locale;
+	WeatherlinkClient weatherlinkClient;
+
 	char datetimeLocale[16];
 	char * currrentLocale;
 
@@ -148,16 +151,16 @@ int main(int argc, char **argv){
 
 	try {
 		programConfig.parseFile();
-		cout << "--- main:142 - Opening configuration file" << endl;
+		cout << "--- main:154 - Opening configuration file" << endl;
 	}
 
 	catch(const FileIOException &ex)
 	{
-		printf("--- main:147 - The configuration file cannot be opened.\r\n");
+		printf("--- main:159 - The configuration file cannot be opened.\r\n");
 		return -1;
 	}
 	catch(const ParseException &ex) {
-		printf("--- main:151 - Error during parsing a content of configuration file near line %d \r\n", ex.getLine());
+		printf("--- main:163 - Error during parsing a content of configuration file near line %d \r\n", ex.getLine());
 		return -2;
 	}
 
@@ -180,6 +183,7 @@ int main(int argc, char **argv){
 		programConfig.getLocaleStaticString(locale);
 		programConfig.getZywiecMeteoConfig(zywiecMeteoConfig);
 		programConfig.getDateTimeLocale(datetimeLocale, 16);
+		programConfig.getWeatherlinkConfig(weatherlinkClient.config);
 
 		dataPresence.DebugOutput = Debug;
 		mysqlDb.Debug = Debug;
@@ -195,13 +199,13 @@ int main(int argc, char **argv){
 
 	}
 	catch (const SettingNotFoundException &ex) {
-		cout << "--- main:191 - Unrecoverable error during configuration file loading!" << endl;
+		cout << "--- main:202 - Unrecoverable error during configuration file loading!" << endl;
 		return -3;
 	}
 
 	aprsConfig.RetryServerLookup = true;
 
-	cout << "--- main:197 - Configuration parsed successfully" << endl;
+	cout << "--- main:208 - Configuration parsed successfully" << endl;
 
 	bool result = programConfig.configureLogOutput();
 
@@ -217,9 +221,22 @@ int main(int argc, char **argv){
 	currrentLocale = setlocale(LC_NUMERIC, NULL);
 	cout << "--- Current LC_NUMERIC locale: " << currrentLocale << endl << endl;
 
-	ProgramConfig::printConfigInPl(mysqlDb, aprsConfig, dataPresence, RRDCount, PlotsCount, zywiecMeteoConfig, holfuyConfig, diffCalculator, sourceConfig, pressureCalculator, limiter, locale);
+	ProgramConfig::printConfigInPl(
+			mysqlDb,
+			aprsConfig,
+			dataPresence,
+			RRDCount,
+			PlotsCount,
+			zywiecMeteoConfig,
+			holfuyConfig,
+			diffCalculator,
+			sourceConfig,
+			pressureCalculator,
+			limiter,
+			locale,
+			weatherlinkClient.config);
 
-	cout << "--- main:210 - exitOnException: " << exitOnException << endl;
+	cout << "--- main:239 - exitOnException: " << exitOnException << endl;
 
 	serialThread = new SerialAsioThread(syncCondition, syncLock, serialConfig.serialPort, serialConfig.baudrate);
 
@@ -248,11 +265,11 @@ int main(int argc, char **argv){
 	mainLoopExit = !batchMode;
 
 	if (!batchMode && !aprsConfig.enable && !serialConfig.enable) {
-		std::cout << "--- main:239 - You cannot run continuous mode w/o APRS-IS connection or Serial port enabled" << std::endl;
+		std::cout << "--- main:268 - You cannot run continuous mode w/o APRS-IS connection or Serial port enabled" << std::endl;
 	}
 
 	if (batchMode) {
-		std::cout << "--- main:243 - RUNNING IN BATCH MODE" << std::endl;
+		std::cout << "--- main:272 - RUNNING IN BATCH MODE" << std::endl;
 	}
 
 	// main loop
@@ -346,7 +363,7 @@ int main(int argc, char **argv){
 
 						zywiecMeteo->parseJson(response, wxZywiec);
 
-						std::cout << "--- main:337 - Parsing data from Zywiec county meteo system API" << std::endl;
+						std::cout << "--- main:366 - Parsing data from Zywiec county meteo system API" << std::endl;
 
 						wxZywiec.PrintData();
 					}
@@ -359,9 +376,15 @@ int main(int argc, char **argv){
 
 						holfuyClient->getWxData(wxHolfuy);
 
-						std::cout << "--- main:350 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
+						std::cout << "--- main:379 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
 
 						wxHolfuy.PrintData();
+					}
+
+					if (weatherlinkClient.config.enable) {
+						weatherlinkClient.download();
+
+						weatherlinkClient.parse();
 					}
 
 					// zeroing the usage flags in target object
@@ -405,7 +428,7 @@ int main(int argc, char **argv){
 
 					if (!wxTarget.valid) {
 						if (batchMode) {
-							std::cout << "-- main:396 - No valid data have been received from configured sources!!" << std::endl;
+							std::cout << "-- main:425 - No valid data have been received from configured sources!!" << std::endl;
 
 							throw std::exception();
 						}
@@ -430,7 +453,7 @@ int main(int argc, char **argv){
 					// exit immediately witout performing any changes
 
 					// printing target data
-					std::cout << "--- main:420 - Printing target WX data which will be used for further processing." << std::endl;
+					std::cout << "--- main:450 - Printing target WX data which will be used for further processing." << std::endl;
 					wxTarget.PrintData();
 
 					// limiting slew rates for measurements
@@ -499,7 +522,7 @@ int main(int argc, char **argv){
 				}
 				else {
 					if (Debug) {
-						cout << "--- main.cpp:478 - This is not valid APRS packet" << endl;
+						cout << "--- main.cpp:519 - This is not valid APRS packet" << endl;
 					}
 
 					//if (Debug)
@@ -514,7 +537,7 @@ int main(int argc, char **argv){
 				break;
 			}
 			catch (std::exception &e) {
-				cout << "--- main:492 - std::exception " << e.what() << std::endl;
+				cout << "--- main:534 - std::exception " << e.what() << std::endl;
 
 				if (exitOnException) {
 					std::cout << "--- Exiting application";
@@ -524,7 +547,7 @@ int main(int argc, char **argv){
 				}
 			}
 			catch (...) {
-				cout << "--- main:502 - Unknown exception thrown during processing!" << std::endl;
+				cout << "--- main:544 - Unknown exception thrown during processing!" << std::endl;
 
 				if (exitOnException) {
 					std::cout << "--- Exiting application";
@@ -540,7 +563,7 @@ int main(int argc, char **argv){
 			break;
 		}
 
-		std::cout << "--- main:518 - Connection to APRS server died. Reconnecting.." << std::endl;
+		std::cout << "--- main:560 - Connection to APRS server died. Reconnecting.." << std::endl;
 
 	} while (mainLoopExit);		// end of main loop
 

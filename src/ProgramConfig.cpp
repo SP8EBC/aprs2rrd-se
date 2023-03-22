@@ -819,6 +819,27 @@ bool ProgramConfig::getDateTimeLocale(char *localeString, basic_string<char>::si
 
 }
 
+void ProgramConfig::getWeatherlinkConfig(WeatherlinkClient_Config &_config) {
+	try {
+		libconfig::Setting &root = config.getRoot();
+		libconfig::Setting &weatherlink = root["LocaleStaticStrings"];
+
+		weatherlink.lookupValue("Enable", _config.enable);
+		weatherlink.lookupValue("DID", _config.DID);
+		weatherlink.lookupValue("ApiPassword", _config.apiPassword);
+		weatherlink.lookupValue("ApiToken", _config.apiToken);
+	}
+	catch (libconfig::SettingNotFoundException &ex) {
+		_config.enable = false;
+		std::cout << "--- ProgramConfig::getWeatherlinkConfig:834 - Configuration didn't found, weatherlink client disabled" << std::endl;
+	}
+	catch (libconfig::ParseException &ex) {
+		_config.enable = false;
+		std::cout << "--- ProgramConfig::getWeatherlinkConfig:838 - Error during reading configuration!" << std::endl;
+
+	}
+}
+
 void ProgramConfig::printConfigInPl(
 											MySqlConnInterface& mysqlDb,
 											AprsThreadConfig& aprsConfig,
@@ -831,7 +852,8 @@ void ProgramConfig::printConfigInPl(
 											DataSourceConfig & source,
 											PressureCalculator& pressureCalc,
 											SlewRateLimiter & limiter,
-											Locale & locale
+											Locale & locale,
+											WeatherlinkClient_Config &_config
 
 									) {
 		if (mysqlDb.enable) {
@@ -987,6 +1009,12 @@ void ProgramConfig::printConfigInPl(
 
 		}
 		cout << endl;
+		if (_config.enable) {
+			cout << "--------KLIENT WATHERLINK-----" << endl;
+			cout << "--- Device ID: " << _config.DID << endl;
+			cout << "--- API token: " << _config.apiToken << endl;
+			cout << endl;
+		}
 		cout << "--------ZWROTY UŻYWANE DO GENEROWANIA STRONY WWW (LOKALIZACJA)-----" << endl;
 		cout << "--- " << locale.generatedBy << endl;
 		cout << "--- " << locale.generatedBy2 << endl;
