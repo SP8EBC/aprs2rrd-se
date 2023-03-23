@@ -121,7 +121,7 @@ int main(int argc, char **argv){
 	RRDFileDefinition sVectorRRDTemp;
 	PlotFileDefinition cVectorPNGTemp;
 
-	AprsWXData wxIsTemp, wxSerialTemp, wxTelemetry, wxHolfuy, wxZywiec;
+	AprsWXData wxIsTemp, wxSerialTemp, wxTelemetry, wxHolfuy, wxZywiec, wxDavis;
 	AprsWXData wxTarget; // target wx data to be inserted into RRD DB & printed onto website
 	AprsWXData wxLastTarget;
 	AprsWXData wxDifference;
@@ -385,6 +385,8 @@ int main(int argc, char **argv){
 						weatherlinkClient.download();
 
 						weatherlinkClient.parse();
+
+						weatherlinkClient.getWxData(wxDavis);
 					}
 
 					// zeroing the usage flags in target object
@@ -424,6 +426,10 @@ int main(int argc, char **argv){
 
 					if (wxHolfuy.valid) {
 						wxTarget.copy(wxHolfuy, sourceConfig);
+					}
+
+					if (wxDavis.valid) {
+						wxTarget.copy(wxDavis, sourceConfig);
 					}
 
 					if (!wxTarget.valid) {

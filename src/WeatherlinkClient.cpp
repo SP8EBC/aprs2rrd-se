@@ -203,6 +203,12 @@ bool WeatherlinkClient::getWxData(AprsWXData &out) {
 	out.wind_gusts = this->windgusts * 0.44f;
 
 	out.valid = true;
+	out.useHumidity = true;
+	out.useTemperature = true;
+	out.useWind = true;
+	out.usePressure = true;
+
+	out.dataSource = WXDataSource::DAVIS;
 
 	return true;
 }

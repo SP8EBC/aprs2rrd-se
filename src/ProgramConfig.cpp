@@ -507,6 +507,8 @@ WxDataSource ProgramConfig::getTemperatureSource() {
 	case swstring("SERIAL"): out = WxDataSource::SERIAL;  break;
 	case swstring("HOLFUY"): out = WxDataSource::HOLFUY;  break;
 	case swstring("ZYWIEC"): out = WxDataSource::ZYWIEC;  break;
+	case swstring("DAVIS"): out = WxDataSource::DAVIS;	  break;
+	case swstring("DAVISWEATHERLINK"): out = WxDataSource::DAVIS; break;
 	default: throw AmbigiousDataSourceConfig();
 	}
 
@@ -532,6 +534,8 @@ WxDataSource ProgramConfig::getPressureSource() {
 	case swstring("SERIAL"): out = WxDataSource::SERIAL;  break;
 	case swstring("HOLFUY"): out = WxDataSource::HOLFUY;  break;
 	case swstring("ZYWIEC"): out = WxDataSource::ZYWIEC;  break;
+	case swstring("DAVIS"): out = WxDataSource::DAVIS;	  break;
+	case swstring("DAVISWEATHERLINK"): out = WxDataSource::DAVIS; break;
 	default: throw AmbigiousDataSourceConfig();
 	}
 
@@ -557,6 +561,8 @@ WxDataSource ProgramConfig::getWindSource() {
 	case swstring("SERIAL"): out = WxDataSource::SERIAL;  break;
 	case swstring("HOLFUY"): out = WxDataSource::HOLFUY;  break;
 	case swstring("ZYWIEC"): out = WxDataSource::ZYWIEC;  break;
+	case swstring("DAVIS"): out = WxDataSource::DAVIS;	  break;
+	case swstring("DAVISWEATHERLINK"): out = WxDataSource::DAVIS; break;
 	default: throw AmbigiousDataSourceConfig();
 	}
 
@@ -582,6 +588,8 @@ WxDataSource ProgramConfig::getRainSource() {
 	case swstring("SERIAL"): out = WxDataSource::SERIAL;  break;
 	case swstring("HOLFUY"): out = WxDataSource::HOLFUY;  break;
 	case swstring("ZYWIEC"): out = WxDataSource::ZYWIEC;  break;
+	case swstring("DAVIS"): out = WxDataSource::DAVIS;	  break;
+	case swstring("DAVISWEATHERLINK"): out = WxDataSource::DAVIS; break;
 	default: throw AmbigiousDataSourceConfig();
 	}
 
@@ -607,6 +615,8 @@ WxDataSource ProgramConfig::getHumiditySource() {
 	case swstring("SERIAL"): out = WxDataSource::SERIAL;  break;
 	case swstring("HOLFUY"): out = WxDataSource::HOLFUY;  break;
 	case swstring("ZYWIEC"): out = WxDataSource::ZYWIEC;  break;
+	case swstring("DAVIS"): out = WxDataSource::DAVIS;	  break;
+	case swstring("DAVISWEATHERLINK"): out = WxDataSource::DAVIS; break;
 	default: throw AmbigiousDataSourceConfig();
 	}
 
@@ -632,6 +642,8 @@ WxDataSource ProgramConfig::getGlobalBackup() {
 	case swstring("SERIAL"): out = WxDataSource::SERIAL;  break;
 	case swstring("HOLFUY"): out = WxDataSource::HOLFUY;  break;
 	case swstring("ZYWIEC"): out = WxDataSource::ZYWIEC;  break;
+	case swstring("DAVIS"): out = WxDataSource::DAVIS;	  break;
+	case swstring("DAVISWEATHERLINK"): out = WxDataSource::DAVIS; break;
 	default: throw AmbigiousDataSourceConfig();
 	}
 
@@ -822,7 +834,7 @@ bool ProgramConfig::getDateTimeLocale(char *localeString, basic_string<char>::si
 void ProgramConfig::getWeatherlinkConfig(WeatherlinkClient_Config &_config) {
 	try {
 		libconfig::Setting &root = config.getRoot();
-		libconfig::Setting &weatherlink = root["LocaleStaticStrings"];
+		libconfig::Setting &weatherlink = root["DavisWeatherlink"];
 
 		weatherlink.lookupValue("Enable", _config.enable);
 		weatherlink.lookupValue("DID", _config.DID);
