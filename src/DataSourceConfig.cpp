@@ -113,7 +113,13 @@ std::string DataSourceConfig::get(const WxDataSource& source) const {
 		break;
 	}
 	case WxDataSource::DAVIS: {
-		out = "W_" + davisWeatherlinkNumber; break;
+		if (davisWeatherlinkNumber.length() > 6) {
+			out = "W_" + davisWeatherlinkNumber.substr(0, 6);
+		}
+		else {
+			out = "W_" + davisWeatherlinkNumber;
+		}
+		break;
 	}
 	case WxDataSource::UNKNOWN: break;
 	}

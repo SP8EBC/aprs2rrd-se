@@ -5,10 +5,11 @@
  *      Author: mateusz
  */
 
-#include <string>
-
 #include "ZywiecMeteoConfig.h"
 #include "HolfuyClientConfig.h"
+
+#include <string>
+
 
 #ifndef DATASOURCECONFIG_H_
 #define DATASOURCECONFIG_H_
