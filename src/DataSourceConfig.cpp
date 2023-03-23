@@ -112,6 +112,9 @@ std::string DataSourceConfig::get(const WxDataSource& source) const {
 		out = boost::lexical_cast<std::string>("T_" + this->primaryCall + "-" + ssid);
 		break;
 	}
+	case WxDataSource::DAVIS: {
+		out = "W_" + davisWeatherlinkNumber; break;
+	}
 	case WxDataSource::UNKNOWN: break;
 	}
 

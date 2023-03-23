@@ -68,6 +68,7 @@ public:
 
 	unsigned holfuyNumber;
 	unsigned zywiecNumber;
+	std::string davisWeatherlinkNumber;
 
 	std::string getTemperatureSource() const;
 	std::string getPressureSource() const;

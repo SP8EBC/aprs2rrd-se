@@ -192,6 +192,7 @@ int main(int argc, char **argv){
 
 		sourceConfig.holfuyNumber = holfuyConfig.stationId;
 		sourceConfig.zywiecNumber = zywiecMeteoConfig.stationId;
+		sourceConfig.davisWeatherlinkNumber = weatherlinkClient.config.DID;
 
 		set_locale();
 
@@ -445,7 +446,7 @@ int main(int argc, char **argv){
 
 					// calculating the difference between sources according to user configuration
 					// if this feature is disabled completely the function will do nothing and return immediately
-					diffCalculator.calculate(wxIsTemp, wxSerialTemp, wxHolfuy, wxZywiec, telemetry, wxDifference);
+					diffCalculator.calculate(wxIsTemp, wxSerialTemp, wxHolfuy, wxZywiec, wxDavis, telemetry, wxDifference);
 
 					// recalculating pressure according to user configuration. If recalculation is not enabled
 					// the metod will return the same value as given on input
@@ -466,7 +467,7 @@ int main(int argc, char **argv){
 					limiter.limitFromSingleFrame(wxLastTarget, wxTarget);
 
 					// geting the data for second source
-					dataPresence.GetSecondarySource(wxIsTemp, wxSerialTemp, wxHolfuy, wxZywiec, wxSecondarySrcForPage);
+					dataPresence.GetSecondarySource(wxIsTemp, wxSerialTemp, wxHolfuy, wxZywiec, wxDavis, wxSecondarySrcForPage);
 
 					// inserting the data inside a RRD file
 					dataPresence.FetchDataInRRD(&wxTarget, false);

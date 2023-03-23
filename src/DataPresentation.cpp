@@ -663,7 +663,7 @@ RRAType DataPresentation::SwitchRRAType(string input) {
 }
 
 void DataPresentation::GetSecondarySource(const AprsWXData& aprsIS,
-		const AprsWXData& serial, const AprsWXData& holfuy, const AprsWXData& zywiec, AprsWXData& out)
+		const AprsWXData& serial, const AprsWXData& holfuy, const AprsWXData& zywiec, const AprsWXData& weatherlink, AprsWXData& out)
 {
 	switch(this->SecondarySource) {
 	case WxDataSource::IS_PRIMARY: {
@@ -684,6 +684,7 @@ void DataPresentation::GetSecondarySource(const AprsWXData& aprsIS,
 	case WxDataSource::TELEMETRY: return; break;
 	case WxDataSource::HOLFUY: out = const_cast<AprsWXData&>(holfuy); break;
 	case WxDataSource::ZYWIEC: out = const_cast<AprsWXData&>(zywiec); break;
+	case WxDataSource::DAVIS: out = const_cast<AprsWXData&>(weatherlink); break;
 	case WxDataSource::UNKNOWN: break;
 	}
 }

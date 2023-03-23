@@ -26,6 +26,7 @@ public:
 					const AprsWXData& serial,
 					const AprsWXData& holfuy,
 					const AprsWXData& zywiec,
+					const AprsWXData& weatherlink,
 					const Telemetry& telemetry,
 					AprsWXData& out);
 

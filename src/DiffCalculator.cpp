@@ -24,6 +24,7 @@ void DiffCalculator::calculate(const AprsWXData& aprsIS,
 		const AprsWXData& serial,
 		const AprsWXData& holfuy,
 		const AprsWXData& zywiec,
+		const AprsWXData& weatherlink,
 		const Telemetry& telemetry,
 		AprsWXData& out)
 {
@@ -60,6 +61,7 @@ void DiffCalculator::calculate(const AprsWXData& aprsIS,
 		case WxDataSource::TELEMETRY: temporary->temperature = telemetry.getCh5(); temporary->useTemperature = true; break;
 		case WxDataSource::HOLFUY: temporary->temperature = holfuy.temperature; temporary->useTemperature = true; break;
 		case WxDataSource::ZYWIEC: temporary->temperature = zywiec.temperature; temporary->useTemperature = true; break;
+		case WxDataSource::DAVIS: temporary->temperature = weatherlink.temperature; temporary->useTemperature = true; break;
 		case WxDataSource::UNKNOWN: return;
 	}
 
@@ -88,6 +90,7 @@ void DiffCalculator::calculate(const AprsWXData& aprsIS,
 		case WxDataSource::TELEMETRY: temporary2->temperature = telemetry.getCh5(); temporary2->useTemperature = true; break;
 		case WxDataSource::HOLFUY: temporary2->temperature = holfuy.temperature; temporary2->useTemperature = true; break;
 		case WxDataSource::ZYWIEC: temporary2->temperature = zywiec.temperature; temporary2->useTemperature = true; break;
+		case WxDataSource::DAVIS: temporary2->temperature = weatherlink.temperature; temporary2->useTemperature = true; break;
 		case WxDataSource::UNKNOWN: return;
 	}
 
@@ -138,6 +141,12 @@ void DiffCalculator::calculate(const AprsWXData& aprsIS,
 			temporary->wind_speed = zywiec.wind_speed;
 			break;
 
+		}
+		case WxDataSource::DAVIS: {
+			temporary->wind_direction = weatherlink.wind_direction;
+			temporary->wind_gusts = weatherlink.wind_gusts;
+			temporary->wind_speed = weatherlink.wind_speed;
+			break;
 		}
 		case WxDataSource::UNKNOWN: return;
 	}
@@ -190,6 +199,12 @@ void DiffCalculator::calculate(const AprsWXData& aprsIS,
 		temporary->wind_speed = zywiec.wind_speed;
 		break;
 
+	}
+	case WxDataSource::DAVIS: {
+		temporary2->wind_direction = weatherlink.wind_direction;
+		temporary2->wind_gusts = weatherlink.wind_gusts;
+		temporary2->wind_speed = weatherlink.wind_speed;
+		break;
 	}
 	case WxDataSource::UNKNOWN: return;
 	}
