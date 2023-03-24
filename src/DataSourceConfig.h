@@ -44,6 +44,11 @@ constexpr const char* wxDataSourceToStr(WxDataSource in) {
 		return "";
 }
 
+/**
+ * This class represents a configuration which controls which weather parameter (like
+ * temperature) is get from which data source (like APRS-IS, serial port, weatherlink).
+ * Fields within this class are set by configuration file parser
+ */
 class DataSourceConfig {
 
 private:
@@ -71,6 +76,10 @@ public:
 	unsigned zywiecNumber;
 	std::string davisWeatherlinkNumber;
 
+	/**
+	 * Methods used to generate string which represents data source in MySQL database. For data
+	 * coming from APRS this will be a callsign.
+	 */
 	std::string getTemperatureSource() const;
 	std::string getPressureSource() const;
 	std::string getWindSource() const;
