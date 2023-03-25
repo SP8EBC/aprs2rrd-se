@@ -339,7 +339,7 @@ int main(int argc, char **argv){
 						}
 
 						// setting the source of this wx packet, by default assume that it is primary
-						wxIsTemp.dataSource = WxDataSource::IS_PRIMARY;
+						//wxIsTemp.dataSource = WxDataSource::IS_PRIMARY;
 					}
 					else if (serialThread->isPacketValid()) {
 						serialRxPacket = serialThread->getPacket();

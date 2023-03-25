@@ -497,6 +497,11 @@ void AprsWXData::copy(const AprsWXData & source, const DataSourceConfig & config
 	// this will be set to true if this packet comes from IS and it was send by primary call
 	bool true_if_primary = false;
 
+	// hotfix before this method will be properly refactored
+	if (source.dataSource == WxDataSource::IS_PRIMARY) {
+		true_if_primary = true;
+	}
+
 	// if this packet comes from TCP/IP connection to IS check the source call
 	if (source.dataSource == WxDataSource::IS_PRIMARY ||
 			source.dataSource == WxDataSource::IS_SECONDARY	) {
