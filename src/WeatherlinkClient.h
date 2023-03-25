@@ -31,6 +31,11 @@ struct WeatherlinkClient_Config {
 class WeatherlinkClient {
 
 	/**
+	 * Maximum data age which is still considered as valid, current measurement
+	 */
+	const int maximumGoodObservationAge = 1200;
+
+	/**
 	 * URL to website with an information
 	 */
 	const std::string baseUrl = "https://api.weatherlink.com/v1/NoaaExt.xml";
@@ -55,13 +60,18 @@ class WeatherlinkClient {
 	boost::posix_time::ptime timestamp;
 
 	/**
+	 * Observation age returned by api
+	 */
+	int observationAge;
+
+	/**
 	 * Recursive method which goes through XML tree and check each node and element
 	 * for interesting values
 	 */
 	void parseElement(DOMElement* element);
 
 	/**
-	 * Checker which looks up if given XML tree node has something interesting
+	 * Check if this is parameter consist important measurement and parse it eventually
 	 */
 	void checkAndRetrievieParameter(char* node_name, DOMNode* element);
 
@@ -85,7 +95,7 @@ public:
 	bool parse();
 
 	/**
-	 * copy weather data to universal adapter
+	 * copy weather data to universal adapter class
 	 */
 	bool getWxData(AprsWXData & out);
 

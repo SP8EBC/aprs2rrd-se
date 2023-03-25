@@ -49,6 +49,8 @@ WeatherlinkClient::WeatherlinkClient() {
 	pressure = 0.0f;
 
 	parsed = false;
+
+	observationAge = 0;
 }
 
 void WeatherlinkClient::download() {
@@ -193,6 +195,9 @@ void WeatherlinkClient::writeCallback(char *data, size_t data_size) {
 	this->responseBuffer.append(data, data_size);
 }
 
+/**
+ * copy weather data to universal adapter class
+ */
 bool WeatherlinkClient::getWxData(AprsWXData &out) {
 	out.temperature = this->temperature;
 	out.pressure = this->pressure;
@@ -202,13 +207,24 @@ bool WeatherlinkClient::getWxData(AprsWXData &out) {
 	out.wind_speed = this->windspeed * 0.44f;
 	out.wind_gusts = this->windgusts * 0.44f;
 
-	out.valid = true;
-	out.useHumidity = true;
-	out.useTemperature = true;
-	out.useWind = true;
-	out.usePressure = true;
+	// check if that data has been parsed OK and they are not too old
+	if (this->parsed) {
+		out.valid = true;
+		out.useHumidity = true;
+		out.useTemperature = true;
+		out.useWind = true;
+		out.usePressure = true;
+	}
+	else {
+		out.valid = false;
+		out.useHumidity = false;
+		out.useTemperature = false;
+		out.useWind = false;
+		out.usePressure = false;
+	}
 
-	out.dataSource = WXDataSource::DAVIS;
+
+	out.dataSource = WxDataSource::DAVIS;
 
 	return true;
 }
@@ -217,6 +233,9 @@ WeatherlinkClient::~WeatherlinkClient() {
 	XMLPlatformUtils::Terminate();
 }
 
+/**
+ * Check if this is parameter consist important measurement and parse it eventually
+ */
 void WeatherlinkClient::checkAndRetrievieParameter(char *node_name,
 		DOMNode *element)
 {
@@ -233,9 +252,6 @@ void WeatherlinkClient::checkAndRetrievieParameter(char *node_name,
 
 	else if (strcmp(node_name, "wind_ten_min_avg_mph") == 0) {
 		this->windspeed = boost::lexical_cast<float>(text);
-
-		// set the flag that parsing is successfull
-		parsed = true;
 	}
 
 	else if (strcmp(node_name, "wind_ten_min_gust_mph") == 0) {
@@ -254,6 +270,20 @@ void WeatherlinkClient::checkAndRetrievieParameter(char *node_name,
 		this->humidity = boost::lexical_cast<float>(text);
 	}
 
+	else if (strcmp(node_name, "observation_age") == 0) {
+		observationAge = boost::lexical_cast<float>(text);
+
+		if (observationAge > maximumGoodObservationAge) {
+			parsed = false;
+		}
+		else {
+			parsed = true;
+		}
+
+		std::cout << "--- WeatherlinkClient::checkAndRetrievieParameter:283 - observationAge: " << observationAge << std::endl;
+
+
+	}
 	else if (strcmp(node_name, "observation_time_rfc822") == 0) {
 
 		boost::posix_time::time_facet * timefacet = new boost::posix_time::time_facet();
@@ -267,7 +297,7 @@ void WeatherlinkClient::checkAndRetrievieParameter(char *node_name,
 
 		timestamp = t;
 
-		std::cout << "--- WeatherlinkClient::checkAndRetrievieParameter:252 - timestamp: " << boost::posix_time::to_simple_string(t) << std::endl;
+		std::cout << "--- WeatherlinkClient::checkAndRetrievieParameter:300 - timestamp: " << boost::posix_time::to_simple_string(t) << std::endl;
 
 
 	}

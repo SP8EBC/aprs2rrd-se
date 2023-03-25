@@ -326,7 +326,7 @@ int main(int argc, char **argv){
 						Telemetry::ParseData(isRxPacket, &telemetry);
 
 						// marking if this packet was received from primary or secondary callsign (or none of them)
-						AprsWXData::checkIsPrimaryCall(wxIsTemp, sourceConfig);
+						wxIsTemp.CheckPrimaryOrSecondaryAprsis(sourceConfig);
 
 						// storing the telemetry values in db. This metod checks internally if that function is enabled
 						// and telemetry data are valid.
@@ -338,8 +338,8 @@ int main(int argc, char **argv){
 							continue;
 						}
 
-						// setting the source of this wx packet
-						wxIsTemp.dataSource = WXDataSource::APRSIS;
+						// setting the source of this wx packet, by default assume that it is primary
+						wxIsTemp.dataSource = WxDataSource::IS_PRIMARY;
 					}
 					else if (serialThread->isPacketValid()) {
 						serialRxPacket = serialThread->getPacket();
@@ -354,7 +354,7 @@ int main(int argc, char **argv){
 						AprsWXData::ParseData(serialRxPacket, &wxSerialTemp);
 
 						// setting the source of this wx packet
-						wxSerialTemp.dataSource = WXDataSource::SERIAL;
+						wxSerialTemp.dataSource = WxDataSource::SERIAL;
 					}
 					else;
 

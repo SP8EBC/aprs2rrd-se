@@ -662,6 +662,10 @@ RRAType DataPresentation::SwitchRRAType(string input) {
 	return out;
 }
 
+/**
+ * This method has a practical usage only when displaying two sources are enabled. It select out among few inputs
+ * from different sources, basing on configuration data.
+ */
 void DataPresentation::GetSecondarySource(const AprsWXData& aprsIS,
 		const AprsWXData& serial, const AprsWXData& holfuy, const AprsWXData& zywiec, const AprsWXData& weatherlink, AprsWXData& out)
 {

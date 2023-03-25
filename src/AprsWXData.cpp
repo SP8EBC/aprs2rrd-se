@@ -17,7 +17,7 @@ AprsWXData::AprsWXData() {
 	ssid = 0;
 	call = "";
 
-	dataSource = WXDataSource::UNKNOWN;
+	dataSource = WxDataSource::UNKNOWN;
 
     wind_speed = 0.0;
     wind_gusts = 0.0;
@@ -292,7 +292,7 @@ AprsWXData::AprsWXData(const AprsWXData& in) {
 
 	this->DebugOutput = in.DebugOutput;
 
-	this->dataSource = WXDataSource::UNKNOWN;
+	this->dataSource = WxDataSource::UNKNOWN;
 	this->ssid = 0;
 	this->call = "";
 
@@ -498,32 +498,8 @@ void AprsWXData::copy(const AprsWXData & source, const DataSourceConfig & config
 	bool true_if_primary = false;
 
 	// if this packet comes from TCP/IP connection to IS check the source call
-	if (source.dataSource == WXDataSource::APRSIS) {
-		if (source.call == config.primaryCall &&
-			source.ssid == config.primarySsid) {
-
-			if (this->DebugOutput)
-				std::cout << "--- AprsWXData::copy:473 - This is data from primary APRS-IS call." << std::endl;
-
-			true_if_primary = true;
-		}
-		else if (source.call == config.secondaryCall &&
-				source.ssid == config.secondarySsid) {
-
-			if (this->DebugOutput)
-				std::cout << "--- AprsWXData::copy:473 - This is data from secondary APRS-IS call." << std::endl;
-
-
-			true_if_primary = false;
-		}
-		else return;
-
-		// setting this flags to false will control which data will be inserted into RRD databse
-		// This affects only RRD as webpage and MySQL ignore this
-//		this->useHumidity = false;
-//		this->usePressure = false;
-//		this->useTemperature = false;
-//		this->useWind = false;
+	if (source.dataSource == WxDataSource::IS_PRIMARY ||
+			source.dataSource == WxDataSource::IS_SECONDARY	) {
 
 		// check if APRSIS should be uased as a source for temperature
 		if ((config.temperature == WxDataSource::IS_PRIMARY && true_if_primary) ||
@@ -566,7 +542,7 @@ void AprsWXData::copy(const AprsWXData & source, const DataSourceConfig & config
 		this->valid = true;
 	}
 
-	else if (source.dataSource == WXDataSource::SERIAL) {
+	else if (source.dataSource == WxDataSource::SERIAL) {
 //		this->useHumidity = false;
 //		this->usePressure = false;
 //		this->useTemperature = false;
@@ -605,7 +581,7 @@ void AprsWXData::copy(const AprsWXData & source, const DataSourceConfig & config
 		this->valid = true;
 	}
 
-	else if (source.dataSource == WXDataSource::HOLFUY) {
+	else if (source.dataSource == WxDataSource::HOLFUY) {
 //		this->useHumidity = false;
 //		this->usePressure = false;
 //		this->useTemperature = false;
@@ -644,7 +620,7 @@ void AprsWXData::copy(const AprsWXData & source, const DataSourceConfig & config
 		this->valid = true;
 	}
 
-	else if (source.dataSource == WXDataSource::ZYWIEC) {
+	else if (source.dataSource == WxDataSource::ZYWIEC) {
 
 		// check if APRSIS should be uased as a source for temperature
 		if (config.temperature == WxDataSource::ZYWIEC) {
@@ -679,7 +655,7 @@ void AprsWXData::copy(const AprsWXData & source, const DataSourceConfig & config
 		this->valid = true;
 	}
 
-	else if (source.dataSource == WXDataSource::DAVIS) {
+	else if (source.dataSource == WxDataSource::DAVIS) {
 		// check if APRSIS should be uased as a source for temperature
 		if (config.temperature == WxDataSource::DAVIS) {
 			this->temperature = source.temperature;
@@ -770,16 +746,38 @@ void AprsWXData::NarrowPrecisionOfTemperature() {
 	this->temperature = (float)temp / 10.0f;
 }
 
-void AprsWXData::checkIsPrimaryCall(AprsWXData& packet,
-		const DataSourceConfig& sourceConfig)
-{
-	packet.is_primary = false;
-	packet.is_secondary = false;
+void AprsWXData::CheckPrimaryOrSecondaryAprsis(const DataSourceConfig & config) {
 
-	if (packet.call == sourceConfig.primaryCall && packet.ssid == sourceConfig.primarySsid) {
-		packet.is_primary = true;
+	// fields 'call' and 'ssid' are used only by APRS-IS parser, for any other source they
+	// are kept empty
+	if (this->call == config.primaryCall &&
+		this->ssid == config.primarySsid) {
+
+		if (this->DebugOutput)
+			std::cout << "--- AprsWXData::CheckPrimaryOrSecondaryAprsis:780 - This is data from primary APRS-IS call." << std::endl;
+
+		this->dataSource = WxDataSource::IS_PRIMARY;
+
+		// these flags are used by DataPresentation::GetSecondarySource which needs to be refactored
+		// and removed as retundand check. The second usage is also DiffCalculator which also doesn't
+		// need to look at this
+		this->is_primary = true;
+		this->is_secondary = false;
 	}
-	if (packet.call == sourceConfig.secondaryCall && packet.ssid == sourceConfig.secondarySsid) {
-		packet.is_secondary = true;
+	else if (this->call == config.secondaryCall &&
+			this->ssid == config.secondarySsid) {
+
+		if (this->DebugOutput)
+			std::cout << "--- AprsWXData::CheckPrimaryOrSecondaryAprsis:788 - This is data from secondary APRS-IS call." << std::endl;
+
+
+		this->dataSource = WxDataSource::IS_SECONDARY;
+		this->is_primary = false;
+		this->is_secondary = true;
 	}
+	else {
+
+	}
+
+
 }

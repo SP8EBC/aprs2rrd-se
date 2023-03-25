@@ -306,7 +306,7 @@ bool HolfuyClient::getWxData(AprsWXData& out) {
 	out.useWind = true;
 
 	out.valid = true;
-	out.dataSource = WXDataSource::HOLFUY;
+	out.dataSource = WxDataSource::HOLFUY;
 
 	this->downloadResult = false;
 

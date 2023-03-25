@@ -14,7 +14,9 @@
 using namespace std;
 
 /**
- *
+ * Enum which is used when to control which parameters are printed on the website.
+ * If a table is configured to show two different sources it controls which parameter
+ * from which source is displayed.
  */
 enum DataPresentationParametersPrint {
 	PRINT_OFF,
@@ -29,10 +31,30 @@ public:
 	DataPresentation();
 	~DataPresentation();
 
+	/**
+	 * Stores obtained weather data into RRD file(s)
+	 */
 	void FetchDataInRRD(const AprsWXData* const cInput, bool inhibitLog);
+
+	/**
+	 * Stores calulated differential measurements in RRD file(s)
+	 */
 	void FetchDiffInRRD(AprsWXData & data);
+
+	/**
+	 * Plots all configured graphs from RRD files
+	 */
 	void PlotGraphsFromRRD(void);
+
+	/**
+	 * Generates HTML file
+	 */
 	void GenerateWebiste(const AprsWXData & WX, const AprsWXData & secondaryWX, const Locale & locale, const char * datetimeLocale);
+
+	/**
+	 * This method has a practical usage only when displaying two sources are enabled. It select out among few inputs
+	 * from different sources, basing on configuration data.
+	 */
 	void GetSecondarySource(const AprsWXData& aprsIS,
 			const AprsWXData& serial,
 			const AprsWXData& holfuy,

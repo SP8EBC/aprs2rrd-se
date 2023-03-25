@@ -5,25 +5,17 @@
 #include "NotValidWXDataEx.h"
 #include "DataSourceConfig.h"
 #include "Telemetry.h"
+#include "WxDataSource.h"
 #include <exception>
 #include <queue>
 #include <string>
 
 using namespace std;
 
-enum class WXDataSource {
-	APRSIS,
-	SERIAL,
-	HOLFUY,
-	ZYWIEC,
-	DAVIS,
-	UNKNOWN
-};
-
 class AprsWXData
 {
     public:
-		WXDataSource dataSource;
+		WxDataSource dataSource;
 
 		std::string call;
 		unsigned ssid;
@@ -70,6 +62,7 @@ class AprsWXData
 		float QnhQfeCorrection(float qnh, float alti);
 		void NarrowPrecisionOfWindspeed();
 		void NarrowPrecisionOfTemperature();
+		void CheckPrimaryOrSecondaryAprsis(const DataSourceConfig & config);
 
 		void copy(AprsWXData & source, bool withoutTemperature, bool onlyTemperature);
 		void copy(float temperature, bool onlyTemperature);
@@ -90,8 +83,6 @@ class AprsWXData
 		static int CopyConvert(unsigned num, std::string& input, int& output, int& counter);
 		static short DirectionCorrection(AprsWXData& packet, short direction, short correction);
 		static void DirectionCorrection(AprsWXData& packet, short correction);
-
-		static void checkIsPrimaryCall(AprsWXData& packet, const DataSourceConfig& sourceConfig);
 
 		static bool DebugOutput;
 
