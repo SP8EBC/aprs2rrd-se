@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/lib/nlohman_json_3_7_1/include/",
+                "/usr/include/x86_64-linux-gnu/",
+                "/usr/include/x86_64-linux-gnu/ImageMagick-6/",
+                "/usr/include/ImageMagick-6/",
+                "/usr/include/mysql++",
+                "/usr/include/xercesc",
+                "/usr/include/mysql",
+            ],
+            "defines": ["USE_XERCES_3_2"],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}
