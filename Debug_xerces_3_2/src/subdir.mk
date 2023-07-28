@@ -63,7 +63,7 @@ OBJS += \
 ./src/ZywiecMeteo.o \
 ./src/main.o \
 ./src/BannerCreator.o \
-./src/BannerCreatorConfig.o
+./src/BannerCreatorConfig.o \
 
 CPP_DEPS += \
 ./src/AmbigiousDataSourceConfig.d \
@@ -94,15 +94,16 @@ CPP_DEPS += \
 ./src/ZywiecMeteo.d \
 ./src/main.d \
 ./src/BannerCreator.d \
-./src/BannerCreatorConfig.d
+./src/BannerCreatorConfig.d \
 
 
 # Each subdirectory must supply rules for building sources it contributes
 src/%.o: ../src/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C++ Compiler'
-	g++ -std=c++1y -DUSE_XERCES_3_2 -I/usr/include/mysql++ -I../lib/nlohman_json_3_7_1/include/ -I/usr/include/xercesc -I/usr/include/mysql -I/usr/include/curl -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
+	g++ -std=c++1y -DUSE_XERCES_3_2 -DMAGICKCORE_QUANTUM_DEPTH=16 -I/usr/include/x86_64-linux-gnu/ImageMagick-6/ -I/usr/include/ImageMagick-6/ -I/usr/include/mysql++ -I../lib/nlohman_json_3_7_1/include/ -I/usr/include/xercesc -I/usr/include/mysql -I/usr/include/curl -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
+#	g++ -std=c++1y -DUSE_XERCES_3_2 -DMAGICKCORE_QUANTUM_DEPTH 16 -I/usr/include/mysql++ -I/usr/include/x86_64-linux-gnu/ImageMagick-6/ -I/usr/include/ImageMagick-6/ -I../lib/nlohman_json_3_7_1/include/ -I/usr/include/xercesc -I/usr/include/mysql -I/usr/include/curl -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
 
