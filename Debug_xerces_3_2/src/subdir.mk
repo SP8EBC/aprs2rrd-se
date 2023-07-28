@@ -30,7 +30,9 @@ CPP_SRCS += \
 ../src/WeatherlinkClient.cpp \
 ../src/XMLMemoryHandler.cpp \
 ../src/ZywiecMeteo.cpp \
-../src/main.cpp 
+../src/main.cpp \
+../src/BannerCreator.cpp \
+../src/BannerCreatorConfig.cpp
 
 OBJS += \
 ./src/AmbigiousDataSourceConfig.o \
@@ -59,7 +61,9 @@ OBJS += \
 ./src/WeatherlinkClient.o \
 ./src/XMLMemoryHandler.o \
 ./src/ZywiecMeteo.o \
-./src/main.o 
+./src/main.o \
+./src/BannerCreator.o \
+./src/BannerCreatorConfig.o
 
 CPP_DEPS += \
 ./src/AmbigiousDataSourceConfig.d \
@@ -88,7 +92,9 @@ CPP_DEPS += \
 ./src/WeatherlinkClient.d \
 ./src/XMLMemoryHandler.d \
 ./src/ZywiecMeteo.d \
-./src/main.d 
+./src/main.d \
+./src/BannerCreator.d \
+./src/BannerCreatorConfig.d
 
 
 # Each subdirectory must supply rules for building sources it contributes
