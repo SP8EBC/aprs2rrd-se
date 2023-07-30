@@ -11,6 +11,8 @@ CPP_SRCS += \
 ../src/AprsThreadConfig.cpp \
 ../src/AprsWXData.cpp \
 ../src/Ax25Decoder.cpp \
+../src/BannerCreator.cpp \
+../src/BannerCreatorConfig.cpp \
 ../src/ConnectionTimeoutEx.cpp \
 ../src/DataPresentation.cpp \
 ../src/DataSourceConfig.cpp \
@@ -30,9 +32,7 @@ CPP_SRCS += \
 ../src/WeatherlinkClient.cpp \
 ../src/XMLMemoryHandler.cpp \
 ../src/ZywiecMeteo.cpp \
-../src/main.cpp \
-../src/BannerCreator.cpp \
-../src/BannerCreatorConfig.cpp
+../src/main.cpp 
 
 OBJS += \
 ./src/AmbigiousDataSourceConfig.o \
@@ -42,6 +42,8 @@ OBJS += \
 ./src/AprsThreadConfig.o \
 ./src/AprsWXData.o \
 ./src/Ax25Decoder.o \
+./src/BannerCreator.o \
+./src/BannerCreatorConfig.o \
 ./src/ConnectionTimeoutEx.o \
 ./src/DataPresentation.o \
 ./src/DataSourceConfig.o \
@@ -61,9 +63,7 @@ OBJS += \
 ./src/WeatherlinkClient.o \
 ./src/XMLMemoryHandler.o \
 ./src/ZywiecMeteo.o \
-./src/main.o \
-./src/BannerCreator.o \
-./src/BannerCreatorConfig.o \
+./src/main.o 
 
 CPP_DEPS += \
 ./src/AmbigiousDataSourceConfig.d \
@@ -73,6 +73,8 @@ CPP_DEPS += \
 ./src/AprsThreadConfig.d \
 ./src/AprsWXData.d \
 ./src/Ax25Decoder.d \
+./src/BannerCreator.d \
+./src/BannerCreatorConfig.d \
 ./src/ConnectionTimeoutEx.d \
 ./src/DataPresentation.d \
 ./src/DataSourceConfig.d \
@@ -92,18 +94,15 @@ CPP_DEPS += \
 ./src/WeatherlinkClient.d \
 ./src/XMLMemoryHandler.d \
 ./src/ZywiecMeteo.d \
-./src/main.d \
-./src/BannerCreator.d \
-./src/BannerCreatorConfig.d \
+./src/main.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
 src/%.o: ../src/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C++ Compiler'
-	g++ -std=c++1y -DUSE_XERCES_3_2 -DMAGICKCORE_QUANTUM_DEPTH=16 -I/usr/include/x86_64-linux-gnu/ImageMagick-6/ -I/usr/include/ImageMagick-6/ -I/usr/include/mysql++ -I../lib/nlohman_json_3_7_1/include/ -I/usr/include/xercesc -I/usr/include/mysql -I/usr/include/curl -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
+	g++ -std=c++1y -DUSE_XERCES_3_2 -DMAGICKCORE_QUANTUM_DEPTH=16 -I/usr/include/mysql++ -I/usr/include/x86_64-linux-gnu/ImageMagick-6/ -I/usr/include/ImageMagick-6/ -I../lib/nlohman_json_3_7_1/include/ -I/usr/include/xercesc -I/usr/include/mysql -I/usr/include/curl -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
-#	g++ -std=c++1y -DUSE_XERCES_3_2 -DMAGICKCORE_QUANTUM_DEPTH 16 -I/usr/include/mysql++ -I/usr/include/x86_64-linux-gnu/ImageMagick-6/ -I/usr/include/ImageMagick-6/ -I../lib/nlohman_json_3_7_1/include/ -I/usr/include/xercesc -I/usr/include/mysql -I/usr/include/curl -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
 

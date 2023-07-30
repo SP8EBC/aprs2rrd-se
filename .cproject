@@ -25,6 +25,8 @@
 								<option id="gnu.cpp.compiler.exe.debug.option.debugging.level.300963562" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.compiler.option.include.paths.1764273" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="/usr/include/mysql++"/>
+									<listOptionValue builtIn="false" value="/usr/include/x86_64-linux-gnu/ImageMagick-6/"/>
+									<listOptionValue builtIn="false" value="/usr/include/ImageMagick-6/"/>
 									<listOptionValue builtIn="false" value="../lib/nlohman_json_3_7_1/include/"/>
 									<listOptionValue builtIn="false" value="/usr/include/xercesc"/>
 									<listOptionValue builtIn="false" value="/usr/include/mysql"/>
@@ -33,6 +35,7 @@
 								<option id="gnu.cpp.compiler.option.dialect.std.534908013" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.c++1y" valueType="enumerated"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.compiler.option.preprocessor.def.437599507" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="USE_XERCES_3_2"/>
+									<listOptionValue builtIn="false" value="MAGICKCORE_QUANTUM_DEPTH=16"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.758414841" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -61,6 +64,9 @@
 									<listOptionValue builtIn="false" value="boost_system"/>
 									<listOptionValue builtIn="false" value="boost_unit_test_framework"/>
 									<listOptionValue builtIn="false" value="boost_date_time"/>
+									<listOptionValue builtIn="false" value="Magick++-6.Q16"/>
+									<listOptionValue builtIn="false" value="MagickCore-6.Q16"/>
+									<listOptionValue builtIn="false" value="MagickWand-6.Q16"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.2058787109" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -73,7 +79,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="WeatherlinkClient_test.cpp|ZywiecMeteo_test.cpp|PressureCalculator_test.cpp|DiffCalculator_test.cpp|HolfuyClient_test.cpp|SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+						<entry excluding="BannerCreator_test.cpp|WeatherlinkClient_test.cpp|ZywiecMeteo_test.cpp|PressureCalculator_test.cpp|DiffCalculator_test.cpp|HolfuyClient_test.cpp|SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -104,6 +110,8 @@
 								<option id="gnu.cpp.compiler.option.dialect.std.738974605" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.c++1y" valueType="enumerated"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.compiler.option.include.paths.331124499" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="/usr/include/mysql++"/>
+									<listOptionValue builtIn="false" value="/usr/include/x86_64-linux-gnu/ImageMagick-6/"/>
+									<listOptionValue builtIn="false" value="/usr/include/ImageMagick-6/"/>
 									<listOptionValue builtIn="false" value="../lib/nlohman_json_3_7_1/include/"/>
 									<listOptionValue builtIn="false" value="/usr/include/xercesc"/>
 									<listOptionValue builtIn="false" value="/usr/include/mysql"/>
@@ -111,6 +119,7 @@
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.compiler.option.preprocessor.def.1807667168" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="USE_XERCES_3_2"/>
+									<listOptionValue builtIn="false" value="MAGICKCORE_QUANTUM_DEPTH=16"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1749752202" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -135,6 +144,9 @@
 									<listOptionValue builtIn="false" value="boost_system"/>
 									<listOptionValue builtIn="false" value="boost_unit_test_framework"/>
 									<listOptionValue builtIn="false" value="boost_date_time"/>
+									<listOptionValue builtIn="false" value="Magick++-6.Q16"/>
+									<listOptionValue builtIn="false" value="MagickCore-6.Q16"/>
+									<listOptionValue builtIn="false" value="MagickWand-6.Q16"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.link.option.paths.1482377111" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" useByScannerDiscovery="false" valueType="libPaths">
 									<listOptionValue builtIn="false" value="/lib/x86_64-linux-gnu"/>
@@ -152,7 +164,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="WeatherlinkClient_test.cpp|ZywiecMeteo_test.cpp|PressureCalculator_test.cpp|DiffCalculator_test.cpp|HolfuyClient_test.cpp|SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+						<entry excluding="BannerCreator_test.cpp|WeatherlinkClient_test.cpp|ZywiecMeteo_test.cpp|PressureCalculator_test.cpp|DiffCalculator_test.cpp|HolfuyClient_test.cpp|SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -182,6 +194,8 @@
 								<option id="gnu.cpp.compiler.exe.debug.option.debugging.level.1095160989" name="Debug Level" superClass="gnu.cpp.compiler.exe.debug.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.max" valueType="enumerated"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.compiler.option.include.paths.1604518293" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="/usr/include/mysql++"/>
+									<listOptionValue builtIn="false" value="/usr/include/x86_64-linux-gnu/ImageMagick-6/"/>
+									<listOptionValue builtIn="false" value="/usr/include/ImageMagick-6/"/>
 									<listOptionValue builtIn="false" value="../lib/nlohman_json_3_7_1/include/"/>
 									<listOptionValue builtIn="false" value="/usr/include/xercesc"/>
 									<listOptionValue builtIn="false" value="/usr/include/mysql"/>
@@ -190,6 +204,7 @@
 								<option id="gnu.cpp.compiler.option.dialect.std.16985798" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.c++1y" valueType="enumerated"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.compiler.option.preprocessor.def.1638055866" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="USE_XERCES_3_2"/>
+									<listOptionValue builtIn="false" value="MAGICKCORE_QUANTUM_DEPTH=16"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1743077647" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -218,6 +233,9 @@
 									<listOptionValue builtIn="false" value="boost_system"/>
 									<listOptionValue builtIn="false" value="boost_unit_test_framework"/>
 									<listOptionValue builtIn="false" value="boost_date_time"/>
+									<listOptionValue builtIn="false" value="Magick++-6.Q16"/>
+									<listOptionValue builtIn="false" value="MagickCore-6.Q16"/>
+									<listOptionValue builtIn="false" value="MagickWand-6.Q16"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.990592078" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -230,7 +248,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="WeatherlinkClient_test.cpp|ZywiecMeteo_test.cpp|PressureCalculator_test.cpp|DiffCalculator_test.cpp|HolfuyClient_test.cpp|SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+						<entry excluding="BannerCreator_test.cpp|WeatherlinkClient_test.cpp|ZywiecMeteo_test.cpp|PressureCalculator_test.cpp|DiffCalculator_test.cpp|HolfuyClient_test.cpp|SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -261,6 +279,8 @@
 								<option id="gnu.cpp.compiler.option.dialect.std.1943818886" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.c++1y" valueType="enumerated"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.compiler.option.include.paths.1189304890" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="/usr/include/mysql++"/>
+									<listOptionValue builtIn="false" value="/usr/include/x86_64-linux-gnu/ImageMagick-6/"/>
+									<listOptionValue builtIn="false" value="/usr/include/ImageMagick-6/"/>
 									<listOptionValue builtIn="false" value="../lib/nlohman_json_3_7_1/include/"/>
 									<listOptionValue builtIn="false" value="/usr/include/xercesc"/>
 									<listOptionValue builtIn="false" value="/usr/include/mysql"/>
@@ -268,6 +288,7 @@
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.compiler.option.preprocessor.def.1964931519" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="USE_XERCES_3_2"/>
+									<listOptionValue builtIn="false" value="MAGICKCORE_QUANTUM_DEPTH=16"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1112549395" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
@@ -280,17 +301,21 @@
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.release.1607793221" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.release"/>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.exe.release.137123664" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.release">
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.link.option.libs.1247259447" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" useByScannerDiscovery="false" valueType="libs">
-									<listOptionValue builtIn="false" value="pthread"/>
-									<listOptionValue builtIn="false" value="xerces-c-3.2"/>
 									<listOptionValue builtIn="false" value="mysqlpp"/>
-									<listOptionValue builtIn="false" value="curl"/>
-									<listOptionValue builtIn="false" value="config++"/>
+									<listOptionValue builtIn="false" value="xerces-c-3.2"/>
+									<listOptionValue builtIn="false" value="mysqlclient"/>
 									<listOptionValue builtIn="false" value="config"/>
+									<listOptionValue builtIn="false" value="config++"/>
+									<listOptionValue builtIn="false" value="curl"/>
+									<listOptionValue builtIn="false" value="pthread"/>
 									<listOptionValue builtIn="false" value="boost_regex"/>
 									<listOptionValue builtIn="false" value="boost_thread"/>
 									<listOptionValue builtIn="false" value="boost_system"/>
 									<listOptionValue builtIn="false" value="boost_unit_test_framework"/>
 									<listOptionValue builtIn="false" value="boost_date_time"/>
+									<listOptionValue builtIn="false" value="Magick++-6.Q16"/>
+									<listOptionValue builtIn="false" value="MagickCore-6.Q16"/>
+									<listOptionValue builtIn="false" value="MagickWand-6.Q16"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.link.option.paths.830531230" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" useByScannerDiscovery="false" valueType="libPaths">
 									<listOptionValue builtIn="false" value="/lib/x86_64-linux-gnu"/>
@@ -308,7 +333,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="WeatherlinkClient_test.cpp|ZywiecMeteo_test.cpp|PressureCalculator_test.cpp|DiffCalculator_test.cpp|HolfuyClient_test.cpp|SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+						<entry excluding="BannerCreator_test.cpp|WeatherlinkClient_test.cpp|ZywiecMeteo_test.cpp|PressureCalculator_test.cpp|DiffCalculator_test.cpp|HolfuyClient_test.cpp|SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

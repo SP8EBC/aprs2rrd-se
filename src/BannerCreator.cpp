@@ -15,8 +15,8 @@ void BannerCreator::createBanner(AprsWXData & data) {
 
 	thingsToDraw.push_back(font);
 	thingsToDraw.push_back(Magick::DrawableText(50, 75, "dupa"));
-	thingsToDraw.push_back(Magick::DrawableStrokeColor(Magick::Color("black")));
-	thingsToDraw.push_back(Magick::DrawableFillColor(Magick::Color(0, 0, 0, 255)));
+	thingsToDraw.push_back(Magick::DrawableStrokeColor(Magick::Color("white")));
+	thingsToDraw.push_back(Magick::DrawableFillColor(Magick::Color(0, 0, 0, 0)));
 
 	image.draw(thingsToDraw);
 
@@ -33,7 +33,7 @@ bool BannerCreator::saveToDisk(std::string fn) {
 BannerCreator::BannerCreator(BannerCreatorConfig &config) :
 		cfg(config),
 		image(	Magick::Geometry(config.x, config.y),
-				Magick::Color(0, 0, 0, 255)),
+				Magick::Color(0xFFFFU, 0xFFFFU, 0xFFFFU, 0xFFFFU)),
 		font(config.font){
 }
 
