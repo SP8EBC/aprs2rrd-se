@@ -25,6 +25,13 @@ public:
 
 	std::string font;
 
+	std::string fontTitle;
+
+	/**
+	 * Base path to all assets used for banner generation
+	*/
+	std::string assetsBasePath;
+
 	BannerCreatorConfig();
 	virtual ~BannerCreatorConfig();
 };

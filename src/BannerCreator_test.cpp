@@ -37,6 +37,7 @@ BOOST_AUTO_TEST_CASE(one)
 	BannerCreator creator(config);
 
 	AprsWXData data;
+  data.wind_direction = 0;
 
 	creator.createBanner(data);
 	BOOST_CHECK(creator.saveToDisk("test.png"));

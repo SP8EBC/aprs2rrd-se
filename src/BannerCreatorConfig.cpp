@@ -7,8 +7,10 @@
 
 #include "BannerCreatorConfig.h"
 
-BannerCreatorConfig::BannerCreatorConfig() : x(300), y (100),
-											font("-misc-fixed-medium-r-normal-*-*-120-75-75-*-*-iso8859-1") {
+BannerCreatorConfig::BannerCreatorConfig() : x(550), y (220),
+											font("-misc-fixed-medium-r-normal-*-*-200-*-*-*-*-iso8859-1"),
+											fontTitle("-misc-fixed-medium-r-normal-*-*-300-*-*-*-*-iso8859-1"),
+											assetsBasePath("./test_wdir/") {
 	// TODO Auto-generated constructor stub
 
 }

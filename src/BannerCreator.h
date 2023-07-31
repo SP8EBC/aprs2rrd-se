@@ -18,9 +18,19 @@ class BannerCreator {
 
 	BannerCreatorConfig cfg;
 
+	/**
+	 * loaded image with windrose
+	*/
+	Magick::Image windrose;
+
+	/**
+	 * Loaded image with an arrow
+	*/
+	Magick::Image arrow;
+
 	Magick::Image image;
 
-	Magick::DrawableFont font;
+	Magick::DrawableFont font, fontTitle;
 
 public:
 
