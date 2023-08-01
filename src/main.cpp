@@ -30,6 +30,8 @@
 #include "ZywiecMeteo.h"
 #include "ZywiecMeteoConfig.h"
 #include "WeatherlinkClient.h"
+#include "BannerCreator.h"
+#include "BannerCreatorConfig.h"
 
 #include "ConnectionTimeoutEx.h"
 #include "DataPresentation.h"
@@ -112,6 +114,7 @@ int main(int argc, char **argv){
 	PressureCalculator pressureCalculator;
 	Locale locale;
 	WeatherlinkClient weatherlinkClient;
+	BannerCreatorConfig bannerCreatorConfig;
 
 	char datetimeLocale[16];
 	char * currrentLocale;
@@ -184,6 +187,7 @@ int main(int argc, char **argv){
 		programConfig.getZywiecMeteoConfig(zywiecMeteoConfig);
 		programConfig.getDateTimeLocale(datetimeLocale, 16);
 		programConfig.getWeatherlinkConfig(weatherlinkClient.config);
+		programConfig.getBannerConfig(bannerCreatorConfig);
 
 		dataPresence.DebugOutput = Debug;
 		mysqlDb.Debug = Debug;
@@ -203,6 +207,8 @@ int main(int argc, char **argv){
 		cout << "--- main:202 - Unrecoverable error during configuration file loading!" << endl;
 		return -3;
 	}
+
+	BannerCreator bannerCreator(bannerCreatorConfig);
 
 	aprsConfig.RetryServerLookup = true;
 
@@ -235,7 +241,8 @@ int main(int argc, char **argv){
 			pressureCalculator,
 			limiter,
 			locale,
-			weatherlinkClient.config);
+			weatherlinkClient.config,
+			bannerCreatorConfig);
 
 	cout << "--- main:239 - exitOnException: " << exitOnException << endl;
 
@@ -489,6 +496,12 @@ int main(int argc, char **argv){
 
 					// generating the website
 					dataPresence.GenerateWebiste(wxTarget, wxSecondarySrcForPage, locale, datetimeLocale);
+
+					// generate banner
+					bannerCreator.createBanner(wxTarget);
+
+					// save banner on disk
+					bannerCreator.saveToDisk(bannerCreatorConfig.outputFile);
 
 					// storing values for slew rate corrections
 					wxLastTarget = wxTarget;

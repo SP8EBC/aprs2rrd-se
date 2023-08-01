@@ -10,7 +10,7 @@
 BannerCreatorConfig::BannerCreatorConfig() : x(550), y (220),
 											font("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf"),
 											fontTitle("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf"),
-											assetsBasePath("./test_wdir/") {
+											assetsBasePath(".") {
 	// TODO Auto-generated constructor stub
 
 }

@@ -32,6 +32,8 @@ public:
 	*/
 	std::string assetsBasePath;
 
+	std::string outputFile;
+
 	BannerCreatorConfig();
 	virtual ~BannerCreatorConfig();
 };

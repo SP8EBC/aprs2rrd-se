@@ -95,10 +95,18 @@ void BannerCreator::createBanner(AprsWXData & data) {
 
 bool BannerCreator::saveToDisk(std::string fn) {
 
-	image.magick("png");
-	image.write(fn);
+	if (fn.size() > 1) {
+		image.magick("png");
+		image.write(fn);
 
-	return true;
+		std::cout << "--- BannerCreator::saveToDisk:102 - Banner saved to file: " << fn << std::endl;
+
+		return true;
+	}
+	else {
+		return false;
+	}
+
 }
 
 BannerCreator::BannerCreator(BannerCreatorConfig &config) :

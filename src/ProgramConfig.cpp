@@ -852,6 +852,25 @@ void ProgramConfig::getWeatherlinkConfig(WeatherlinkClient_Config &_config) {
 	}
 }
 
+void ProgramConfig::getBannerConfig(BannerCreatorConfig &bannerCreator)
+{
+	try {
+		libconfig::Setting &root = config.getRoot();
+		libconfig::Setting &banner = root["BannerCreator"];
+
+		banner.lookupValue("outputFile", bannerCreator.outputFile);
+	}
+	catch (libconfig::SettingNotFoundException &ex) {
+		bannerCreator.outputFile = "";
+		std::cout << "--- ProgramConfig::getBannerConfig:862 - Configuration didn't found" << std::endl;
+	}
+	catch (libconfig::ParseException &ex) {
+		bannerCreator.outputFile = "";
+		std::cout << "--- ProgramConfig::getBannerConfig:866 - Error during reading configuration!" << std::endl;
+
+	}
+}
+
 void ProgramConfig::printConfigInPl(
 											MySqlConnInterface& mysqlDb,
 											AprsThreadConfig& aprsConfig,
@@ -865,7 +884,8 @@ void ProgramConfig::printConfigInPl(
 											PressureCalculator& pressureCalc,
 											SlewRateLimiter & limiter,
 											Locale & locale,
-											WeatherlinkClient_Config &_config
+											WeatherlinkClient_Config &_config,
+											BannerCreatorConfig &bannerCreator
 
 									) {
 		if (mysqlDb.enable) {
@@ -993,6 +1013,9 @@ void ProgramConfig::printConfigInPl(
 
         	}
         }
+		cout << endl;
+		cout << "--------KONFIGURACJA BANERA-----" << endl;
+		cout << "-- Plik wyjściowy: " << bannerCreator.outputFile << endl;
 		cout << endl;
 		cout << "--------KONFIGURACJA WYKRESÓW-----" << endl;
 		cout << "--- Ilość wykresów do wygenerowania: " << dataPresence.vPNGFiles.size() << endl;
