@@ -32,6 +32,12 @@ class BannerCreator {
 
 	Magick::DrawableFont font, fontTitle;
 
+	void putText(std::string text, Magick::DrawableFont font, std::string color, float fontSize, float x, float y);
+
+	static std::string floatToStringWithPrecision(float number, int precision);
+
+	static std::string currentTimeToString();
+
 public:
 
 	void createBanner(AprsWXData & data);

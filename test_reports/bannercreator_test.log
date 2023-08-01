@@ -1,6 +1,6 @@
 Running 1 test case...
 Entering test module "BANNER_CREATOR"
 ../src/BannerCreator_test.cpp(34): Entering test case "one"
-../src/BannerCreator_test.cpp(43): info: check creator.saveToDisk("test.png") has passed
-../src/BannerCreator_test.cpp(34): Leaving test case "one"; testing time: 116728us
-Leaving test module "BANNER_CREATOR"; testing time: 116742us
+../src/BannerCreator_test.cpp(46): info: check creator.saveToDisk("test.png") has passed
+../src/BannerCreator_test.cpp(34): Leaving test case "one"; testing time: 208348us
+Leaving test module "BANNER_CREATOR"; testing time: 208362us

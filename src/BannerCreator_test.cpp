@@ -38,6 +38,9 @@ BOOST_AUTO_TEST_CASE(one)
 
 	AprsWXData data;
   data.wind_direction = 0;
+  data.wind_speed = 1.2;
+  data.wind_gusts = 2.4;
+  data.temperature = 10.3;
 
 	creator.createBanner(data);
 	BOOST_CHECK(creator.saveToDisk("test.png"));
