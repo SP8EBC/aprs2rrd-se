@@ -208,7 +208,7 @@ int main(int argc, char **argv){
 		return -3;
 	}
 
-	BannerCreator bannerCreator(bannerCreatorConfig);
+	std::unique_ptr<BannerCreator> bannerCreator = std::make_unique<BannerCreator>(bannerCreatorConfig);
 
 	aprsConfig.RetryServerLookup = true;
 
@@ -320,6 +320,9 @@ int main(int argc, char **argv){
 
 				// checkig if correct data has been received
 				if (tcpOrSerialPacketGood || batchMode) {
+
+                    // reinitialize banner generator
+					bannerCreator = std::make_unique<BannerCreator>(bannerCreatorConfig);
 
 					// checking from what input data has been received
 					if (asioThread->isPacketValid()) {
@@ -498,10 +501,10 @@ int main(int argc, char **argv){
 					dataPresence.GenerateWebiste(wxTarget, wxSecondarySrcForPage, locale, datetimeLocale);
 
 					// generate banner
-					bannerCreator.createBanner(wxTarget);
+					bannerCreator->createBanner(wxTarget);
 
 					// save banner on disk
-					bannerCreator.saveToDisk(bannerCreatorConfig.outputFile);
+					bannerCreator->saveToDisk(bannerCreatorConfig.outputFile);
 
 					// storing values for slew rate corrections
 					wxLastTarget = wxTarget;

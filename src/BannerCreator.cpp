@@ -101,8 +101,6 @@ bool BannerCreator::saveToDisk(std::string fn) {
 
 		std::cout << "--- BannerCreator::saveToDisk:102 - Banner saved to file: " << fn << std::endl;
 
-		image = Magick::Image(	Magick::Geometry(cfg.x, cfg.y), Magick::Color(0xFFFFU, 0xFFFFU, 0xFFFFU, 0xFFFFU));
-
 		return true;
 	}
 	else {
