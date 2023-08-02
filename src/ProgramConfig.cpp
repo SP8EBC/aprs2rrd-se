@@ -858,7 +858,8 @@ void ProgramConfig::getBannerConfig(BannerCreatorConfig &bannerCreator)
 		libconfig::Setting &root = config.getRoot();
 		libconfig::Setting &banner = root["BannerCreator"];
 
-		banner.lookupValue("outputFile", bannerCreator.outputFile);
+		banner.lookupValue("AssetsDirectory", bannerCreator.assetsBasePath);
+		banner.lookupValue("OutputFile", bannerCreator.outputFile);
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
 		bannerCreator.outputFile = "";
