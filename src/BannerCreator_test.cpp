@@ -31,9 +31,11 @@ struct MyConfig
 
 BOOST_GLOBAL_FIXTURE (MyConfig);
 
-BOOST_AUTO_TEST_CASE(one)
+BOOST_AUTO_TEST_CASE(north)
 {
 	BannerCreatorConfig config;
+  config.assetsBasePath = "./test_wdir/";
+
 	BannerCreator creator(config);
 
 	AprsWXData data;
@@ -43,5 +45,90 @@ BOOST_AUTO_TEST_CASE(one)
   data.temperature = 10.3;
 
 	creator.createBanner(data);
-	BOOST_CHECK(creator.saveToDisk("test.png"));
+	BOOST_CHECK(creator.saveToDisk("north.png"));
+}
+
+BOOST_AUTO_TEST_CASE(ne)
+{
+	BannerCreatorConfig config;
+  config.assetsBasePath = "./test_wdir/";
+
+	BannerCreator creator(config);
+
+	AprsWXData data;
+  data.wind_direction = 35;
+  data.wind_speed = 1.2;
+  data.wind_gusts = 2.4;
+  data.temperature = 10.3;
+
+	creator.createBanner(data);
+	BOOST_CHECK(creator.saveToDisk("northeeast.png"));
+}
+
+BOOST_AUTO_TEST_CASE(northeast)
+{
+	BannerCreatorConfig config;
+  config.assetsBasePath = "./test_wdir/";
+
+	BannerCreator creator(config);
+
+	AprsWXData data;
+  data.wind_direction = 45;
+  data.wind_speed = 1.2;
+  data.wind_gusts = 2.4;
+  data.temperature = 10.3;
+
+	creator.createBanner(data);
+	BOOST_CHECK(creator.saveToDisk("northeast.png"));
+}
+
+BOOST_AUTO_TEST_CASE(east)
+{
+	BannerCreatorConfig config;
+  config.assetsBasePath = "./test_wdir/";
+
+	BannerCreator creator(config);
+
+	AprsWXData data;
+  data.wind_direction = 90;
+  data.wind_speed = 1.2;
+  data.wind_gusts = 2.4;
+  data.temperature = 10.3;
+
+	creator.createBanner(data);
+	BOOST_CHECK(creator.saveToDisk("east.png"));
+}
+
+BOOST_AUTO_TEST_CASE(south)
+{
+	BannerCreatorConfig config;
+  config.assetsBasePath = "./test_wdir/";
+
+	BannerCreator creator(config);
+
+	AprsWXData data;
+  data.wind_direction = 180;
+  data.wind_speed = 1.2;
+  data.wind_gusts = 2.4;
+  data.temperature = 10.3;
+
+	creator.createBanner(data);
+	BOOST_CHECK(creator.saveToDisk("south.png"));
+}
+
+BOOST_AUTO_TEST_CASE(west)
+{
+	BannerCreatorConfig config;
+  config.assetsBasePath = "./test_wdir/";
+
+	BannerCreator creator(config);
+
+	AprsWXData data;
+  data.wind_direction = 270;
+  data.wind_speed = 1.2;
+  data.wind_gusts = 2.4;
+  data.temperature = 10.3;
+
+	creator.createBanner(data);
+	BOOST_CHECK(creator.saveToDisk("west.png"));
 }

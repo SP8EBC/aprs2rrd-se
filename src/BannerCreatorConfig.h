@@ -16,12 +16,12 @@ public:
 	/**
 	 * Vertical banner size
 	 */
-	int x;
+	const int x;
 
 	/**
 	 * Horizontal banner size
 	 */
-	int y;
+	const int y;
 
 	std::string font;
 
@@ -33,6 +33,8 @@ public:
 	std::string assetsBasePath;
 
 	std::string outputFile;
+
+	bool transparent;
 
 	BannerCreatorConfig();
 	virtual ~BannerCreatorConfig();

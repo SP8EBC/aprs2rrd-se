@@ -7,10 +7,11 @@
 
 #include "BannerCreatorConfig.h"
 
-BannerCreatorConfig::BannerCreatorConfig() : x(550), y (220),
+BannerCreatorConfig::BannerCreatorConfig() : x(1024), y (1024),
 											font("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf"),
 											fontTitle("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf"),
-											assetsBasePath("") {
+											assetsBasePath(""),
+											transparent(true) {
 	// TODO Auto-generated constructor stub
 
 }
