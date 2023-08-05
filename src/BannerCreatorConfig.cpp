@@ -7,7 +7,7 @@
 
 #include "BannerCreatorConfig.h"
 
-BannerCreatorConfig::BannerCreatorConfig() : x(1024), y (1024),
+BannerCreatorConfig::BannerCreatorConfig() : x(890), y (890),
 											font("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf"),
 											fontTitle("/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf"),
 											assetsBasePath(""),

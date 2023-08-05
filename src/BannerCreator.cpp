@@ -63,9 +63,9 @@ std::tuple<float, float> BannerCreator::calculateArrowPosition(int windDirection
 	 * 
 	*/
 
-	float x = (cfg.x * ARROW_CENTER_SCALE_X) + ROSE_INT_SIZ_X * sin(((windDirection) * M_PI / 180.0));
+	float x = sin(((windDirection) * M_PI / 180.0)) * cfg.x - cfg.x;
 
-	float y = (cfg.y * ARROW_CENTER_SCALE_Y) - ROSE_INT_SIZ_Y * cos(((windDirection) * M_PI / 180.0));
+	float y = cos(((windDirection) * M_PI / 180.0)) * cfg.y - cfg.y;
 
 	std::cout << "--- BannerCreator::calculateArrowPosition:70 - x: " << x << ", y: " << y << std::endl;
 
@@ -133,10 +133,10 @@ void BannerCreator::createBanner(AprsWXData &data)
 */
 
 	// prepare arrow to be drawn
-	arrow.resize("45%");
+	//arrow.resize("45%");
 	arrow.rotate(data.wind_direction);
-	arrow.backgroundColor(Magick::Color(0, 0, 0, 0));
-	arrow.transparent(Magick::Color("black"));
+	//arrow.backgroundColor(Magick::Color(0, 0, 0, 0));
+	arrow.transparent(Magick::Color("white"));
 
 	// calculate point to place arrow on
 	const std::tuple<float, float> angles = calculateArrowPosition(data.wind_direction);
@@ -145,8 +145,10 @@ void BannerCreator::createBanner(AprsWXData &data)
 	image.composite(windrose, 0, 0, Magick::OverlayCompositeOp);
 
 	// put arrow
-	image.composite(arrow, std::get<0>(angles), std::get<1>(angles), Magick::OverlayCompositeOp);
-}
+	//image.composite(arrow, std::get<0>(angles), std::get<1>(angles), Magick::OverlayCompositeOp);
+	image.composite(arrow, Magick::GravityType::CenterGravity, Magick::OverlayCompositeOp);
+
+	}
 
 bool BannerCreator::saveToDisk(std::string fn) {
 
@@ -165,10 +167,10 @@ bool BannerCreator::saveToDisk(std::string fn) {
 }
 
 BannerCreator::BannerCreator(BannerCreatorConfig &config): 
-		ARROW_CENTER_SCALE_X(0.45f), 
-		ARROW_CENTER_SCALE_Y(0.45f),
-		ROSE_INT_SIZ_X(330),
-		ROSE_INT_SIZ_Y(330),
+		ARROW_CENTER_SCALE_X(1.0f), 
+		ARROW_CENTER_SCALE_Y(1.0f),
+		ROSE_INT_SIZ_X(445),
+		ROSE_INT_SIZ_Y(445),
 		cfg(config),
 		image(	Magick::Geometry(config.x, config.y),
 				Magick::Color(0xFFFFU, 0xFFFFU, 0xFFFFU, 0xFFFFU)),
