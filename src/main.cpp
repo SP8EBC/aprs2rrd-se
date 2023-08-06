@@ -115,6 +115,7 @@ int main(int argc, char **argv){
 	Locale locale;
 	WeatherlinkClient weatherlinkClient;
 	BannerCreatorConfig bannerCreatorConfig;
+	std::unique_ptr<BannerCreator> bannerCreator; // = std::make_unique<BannerCreator>(bannerCreatorConfig);
 
 	char datetimeLocale[16];
 	char * currrentLocale;
@@ -207,8 +208,6 @@ int main(int argc, char **argv){
 		cout << "--- main:202 - Unrecoverable error during configuration file loading!" << endl;
 		return -3;
 	}
-
-	std::unique_ptr<BannerCreator> bannerCreator = std::make_unique<BannerCreator>(bannerCreatorConfig);
 
 	aprsConfig.RetryServerLookup = true;
 
@@ -320,9 +319,6 @@ int main(int argc, char **argv){
 
 				// checkig if correct data has been received
 				if (tcpOrSerialPacketGood || batchMode) {
-
-                    // reinitialize banner generator
-					bannerCreator = std::make_unique<BannerCreator>(bannerCreatorConfig);
 
 					// checking from what input data has been received
 					if (asioThread->isPacketValid()) {
@@ -499,6 +495,9 @@ int main(int argc, char **argv){
 
 					// generating the website
 					dataPresence.GenerateWebiste(wxTarget, wxSecondarySrcForPage, locale, datetimeLocale);
+
+                    // reinitialize banner generator
+					bannerCreator = std::make_unique<BannerCreator>(bannerCreatorConfig);
 
 					// generate banner
 					bannerCreator->createBanner(wxTarget);

@@ -14,7 +14,7 @@
 #include <iomanip>
 
 
-void BannerCreator::putCenteredText(std::string text, Magick::DrawableFont font, std::string color, float fontSize, float x, float y)
+void BannerCreator::putCenteredText(const std::string text, Magick::DrawableFont & font, std::string color, float fontSize, float x, float y)
 {
 	std::list<Magick::Drawable> list;
 	list.push_back(font);
@@ -77,61 +77,6 @@ void BannerCreator::createBanner(AprsWXData &data)
 {
 
     // https://stackoverflow.com/questions/54071601/graphicsmagick-ttf-font-performance
-/*
-	const std::string direction = "Kierunek wiatru [stopnie]: " + std::string(to_string(data.wind_direction));
-	const std::string windspeed = "Prędkość wiatru [m/s]: " + BannerCreator::floatToStringWithPrecision(data.wind_speed, 2);
-	const std::string windgusts = "Maksymalne porywy [m/s]: " + BannerCreator::floatToStringWithPrecision(data.wind_gusts, 2);
-	const std::string temperatu = "Temperatura [C]: " + BannerCreator::floatToStringWithPrecision(data.temperature, 2);
-
-	std::list<Magick::Drawable> title_list;
-	title_list.push_back(fontTitle);
-	title_list.push_back(Magick::DrawableText(250, 25, "Dane pogodowe"));
-	title_list.push_back(Magick::DrawableStrokeColor(Magick::Color("black")));
-	title_list.push_back(Magick::DrawableFillColor(Magick::Color(0, 0, 0, 0)));
-
-
-	arrow.resize("50%");
-	arrow.rotate(-45.0 + data.wind_direction);
-	arrow.backgroundColor(Magick::Color(0, 0, 0, 0));
-	arrow.transparent(Magick::Color("black"));
-
-	windrose.resize("50%");
-
-	image.composite(arrow, 7, 3, Magick::OverlayCompositeOp);
-	image.transparent(Magick::Color("black"));
-	image.composite(windrose, 15, 7, Magick::OverlayCompositeOp);
-	image.fontPointsize(24.0);
-	image.draw(title_list);
-	putText(direction, font, "black", 16.0, 230, 55);
-	putText(windspeed, font, "black", 16.0, 230, 75);
-	putText(windgusts, font, "black", 16.0, 230, 95);
-	putText(temperatu, font, "black", 16.0, 230, 115);
-
-	std::list<Magick::Drawable> lastUpdateList;
-	lastUpdateList.push_back(font);
-	lastUpdateList.push_back(Magick::DrawableText(230, 170, "Ostatnia aktualizacja: " + BannerCreator::currentTimeToString()));
-	lastUpdateList.push_back(Magick::DrawableStrokeColor(Magick::Color("black")));
-	lastUpdateList.push_back(Magick::DrawableFillColor(Magick::Color("black")));
-		image.fontPointsize(12.0);
-	image.draw(lastUpdateList);
-*/
-
-/*** 10%
- * 		ARROW_CENTER_SCALE_X(0.47f), 
-		ARROW_CENTER_SCALE_Y(0.47f),
-		ROSE_INT_SIZ_X(261),
-		ROSE_INT_SIZ_Y(261),
- * 
-*/
-
-/***
- * 	20%
- * 		ARROW_CENTER_SCALE_X(0.44f), 
-		ARROW_CENTER_SCALE_Y(0.44f),
-		ROSE_INT_SIZ_X(261),
-		ROSE_INT_SIZ_Y(261),
- * 
-*/
 
 	const std::string windspeed = BannerCreator::floatToStringWithPrecision(data.wind_speed, 2);
 
@@ -170,12 +115,12 @@ bool BannerCreator::saveToDisk(std::string fn) {
 
 }
 
-BannerCreator::BannerCreator(BannerCreatorConfig &config): 
+BannerCreator::BannerCreator(BannerCreatorConfig &config):
+		cfg(config), 
 		ARROW_CENTER_SCALE_X(1.0f), 
 		ARROW_CENTER_SCALE_Y(1.0f),
 		ROSE_INT_SIZ_X(445),
 		ROSE_INT_SIZ_Y(445),
-		cfg(config),
 		image(	Magick::Geometry(config.x, config.y),
 				Magick::Color(0xFFFFU, 0xFFFFU, 0xFFFFU, 0xFFFFU)),
 		fontBig(config.fontBig),

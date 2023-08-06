@@ -28,12 +28,6 @@ class BannerCreator {
 	const int ROSE_INT_SIZ_Y;
 
 	/// @brief 
-	Magick::Image windrose;
-
-	/// @brief 
-	Magick::Image arrow;
-
-	/// @brief 
 	Magick::Image image;
 
 	/// @brief 
@@ -43,13 +37,19 @@ class BannerCreator {
 	Magick::DrawableFont fontNormalCaption;
 
 	/// @brief 
+	Magick::Image windrose;
+
+	/// @brief 
+	Magick::Image arrow;
+
+	/// @brief 
 	/// @param text 
 	/// @param font 
 	/// @param color 
 	/// @param fontSize 
 	/// @param x 
 	/// @param y 
-	void putCenteredText(std::string text, Magick::DrawableFont font, std::string color, float fontSize, float x, float y);
+	void putCenteredText(std::string text, Magick::DrawableFont & font, std::string color, float fontSize, float x, float y);
 
 	/// @brief 
 	/// @param runwayDirection 
