@@ -14,16 +14,39 @@
 #include <iomanip>
 
 
-void BannerCreator::putText(std::string text, Magick::DrawableFont font, std::string color, float fontSize, float x, float y)
+void BannerCreator::putCenteredText(std::string text, Magick::DrawableFont font, std::string color, float fontSize, float x, float y)
 {
 	std::list<Magick::Drawable> list;
 	list.push_back(font);
 	list.push_back(Magick::DrawableText(x, y, text));
 	list.push_back(Magick::DrawableStrokeColor(Magick::Color("black")));
 	list.push_back(Magick::DrawableFillColor(Magick::Color("black")));
+	list.push_back(Magick::DrawableGravity(Magick::GravityType::CenterGravity));
 
 	image.fontPointsize(fontSize);
 	image.draw(list);
+}
+
+void BannerCreator::drawRunwayRect(int runwayDirection)
+{
+	std::list<Magick::Drawable> list;
+
+	Magick::Image temporary(Magick::Geometry(50, 600), Magick::Color(0, 0, 0, 0xFFFFU));
+
+    list.push_back(Magick::DrawableStrokeColor("red")); // Outline color 
+    list.push_back(Magick::DrawableStrokeWidth(1)); // Stroke width 
+    list.push_back(Magick::DrawableFillColor("green")); // Fill color
+
+	// Add a Rectangle to drawing list 
+    list.push_back(Magick::DrawableRectangle(0,600, 50,0));
+
+	temporary.draw(list);
+
+	temporary.rotate(cfg.runwayDirection);
+
+	temporary.transparent(Magick::Color("white"));
+
+	image.composite(temporary, Magick::GravityType::CenterGravity, Magick::OverlayCompositeOp);
 }
 
 std::string BannerCreator::floatToStringWithPrecision(float number, int precision)
@@ -48,28 +71,6 @@ std::string BannerCreator::currentTimeToString()
 	ss << localtime;
 
     return ss.str();
-}
-
-std::tuple<float, float> BannerCreator::calculateArrowPosition(int windDirection)
-{
-
-	// division wide 36 pixels, half 18 pixels
-
-	/**
-	 * North, x:355, y:89	(x:  355 ,  y1: 71 )
-	 * West:  x:616, y:350	(x1: 634 ,  y:  350)
-	 * South: x:355, y:611	(x:  355 ,  y1: 629)
-	 * East:  x:94,  y:350	(x1: 112 ,  y:  350)
-	 * 
-	*/
-
-	float x = sin(((windDirection) * M_PI / 180.0)) * cfg.x - cfg.x;
-
-	float y = cos(((windDirection) * M_PI / 180.0)) * cfg.y - cfg.y;
-
-	std::cout << "--- BannerCreator::calculateArrowPosition:70 - x: " << x << ", y: " << y << std::endl;
-
-    return std::tuple<float, float>(x, y);
 }
 
 void BannerCreator::createBanner(AprsWXData &data)
@@ -132,21 +133,24 @@ void BannerCreator::createBanner(AprsWXData &data)
  * 
 */
 
-	// prepare arrow to be drawn
-	//arrow.resize("45%");
-	arrow.rotate(data.wind_direction);
-	//arrow.backgroundColor(Magick::Color(0, 0, 0, 0));
-	arrow.transparent(Magick::Color("white"));
+	const std::string windspeed = BannerCreator::floatToStringWithPrecision(data.wind_speed, 2);
 
-	// calculate point to place arrow on
-	const std::tuple<float, float> angles = calculateArrowPosition(data.wind_direction);
+	if (cfg.drawRunway) {
+		drawRunwayRect(cfg.runwayDirection);
+	}
+
+	// prepare arrow to be drawn
+	arrow.rotate(data.wind_direction);
+	arrow.transparent(Magick::Color("white"));
 
 	// put windrose first
 	image.composite(windrose, 0, 0, Magick::OverlayCompositeOp);
 
 	// put arrow
-	//image.composite(arrow, std::get<0>(angles), std::get<1>(angles), Magick::OverlayCompositeOp);
 	image.composite(arrow, Magick::GravityType::CenterGravity, Magick::OverlayCompositeOp);
+
+	putCenteredText(windspeed, fontBig, "black", 256.0, 0, 0);
+	putCenteredText(std::string("Avg Windspeed [m/s]"), fontNormalCaption, "black", 32, 0.0f, -96.0f);
 
 	}
 
@@ -174,8 +178,8 @@ BannerCreator::BannerCreator(BannerCreatorConfig &config):
 		cfg(config),
 		image(	Magick::Geometry(config.x, config.y),
 				Magick::Color(0xFFFFU, 0xFFFFU, 0xFFFFU, 0xFFFFU)),
-		font(config.font),
-		fontTitle(config.fontTitle),
+		fontBig(config.fontBig),
+		fontNormalCaption(config.fontTitle),
 		windrose(config.assetsBasePath + "windrose.png"),
 		arrow(config.assetsBasePath + "arrow.png"){
 }

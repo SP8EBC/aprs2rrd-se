@@ -860,6 +860,10 @@ void ProgramConfig::getBannerConfig(BannerCreatorConfig &bannerCreator)
 
 		banner.lookupValue("AssetsDirectory", bannerCreator.assetsBasePath);
 		banner.lookupValue("OutputFile", bannerCreator.outputFile);
+		banner.lookupValue("TransparentBackground", bannerCreator.transparent);
+		banner.lookupValue("BlackOrWhiteBackground", bannerCreator.blackOrWhiteBackground);
+		banner.lookupValue("DrawRunway", bannerCreator.drawRunway);
+		banner.lookupValue("RunwayDirection", bannerCreator.runwayDirection);
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
 		bannerCreator.outputFile = "";

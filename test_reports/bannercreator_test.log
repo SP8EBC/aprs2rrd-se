@@ -1,21 +1,24 @@
-Running 6 test cases...
+Running 7 test cases...
 Entering test module "BANNER_CREATOR"
 ../src/BannerCreator_test.cpp(34): Entering test case "north"
-../src/BannerCreator_test.cpp(48): info: check creator.saveToDisk("north.png") has passed
-../src/BannerCreator_test.cpp(34): Leaving test case "north"; testing time: 139240us
+../src/BannerCreator_test.cpp(48): info: check creator.saveToDisk("./test_reports/north.png") has passed
+../src/BannerCreator_test.cpp(34): Leaving test case "north"; testing time: 144068us
 ../src/BannerCreator_test.cpp(51): Entering test case "ne"
-../src/BannerCreator_test.cpp(65): info: check creator.saveToDisk("northeeast.png") has passed
-../src/BannerCreator_test.cpp(51): Leaving test case "ne"; testing time: 389634us
+../src/BannerCreator_test.cpp(65): info: check creator.saveToDisk("./test_reports/northeeast.png") has passed
+../src/BannerCreator_test.cpp(51): Leaving test case "ne"; testing time: 391218us
 ../src/BannerCreator_test.cpp(68): Entering test case "northeast"
-../src/BannerCreator_test.cpp(82): info: check creator.saveToDisk("northeast.png") has passed
-../src/BannerCreator_test.cpp(68): Leaving test case "northeast"; testing time: 399209us
-../src/BannerCreator_test.cpp(85): Entering test case "east"
-../src/BannerCreator_test.cpp(99): info: check creator.saveToDisk("east.png") has passed
-../src/BannerCreator_test.cpp(85): Leaving test case "east"; testing time: 134831us
-../src/BannerCreator_test.cpp(102): Entering test case "south"
-../src/BannerCreator_test.cpp(116): info: check creator.saveToDisk("south.png") has passed
-../src/BannerCreator_test.cpp(102): Leaving test case "south"; testing time: 136094us
-../src/BannerCreator_test.cpp(119): Entering test case "west"
-../src/BannerCreator_test.cpp(133): info: check creator.saveToDisk("west.png") has passed
-../src/BannerCreator_test.cpp(119): Leaving test case "west"; testing time: 139146us
-Leaving test module "BANNER_CREATOR"; testing time: 1338269us
+../src/BannerCreator_test.cpp(82): info: check creator.saveToDisk("./test_reports/northeast.png") has passed
+../src/BannerCreator_test.cpp(68): Leaving test case "northeast"; testing time: 387224us
+../src/BannerCreator_test.cpp(85): Entering test case "northeast_rwy"
+../src/BannerCreator_test.cpp(101): info: check creator.saveToDisk("./test_reports/northeast_rwy.png") has passed
+../src/BannerCreator_test.cpp(85): Leaving test case "northeast_rwy"; testing time: 432346us
+../src/BannerCreator_test.cpp(104): Entering test case "east"
+../src/BannerCreator_test.cpp(118): info: check creator.saveToDisk("./test_reports/east.png") has passed
+../src/BannerCreator_test.cpp(104): Leaving test case "east"; testing time: 141247us
+../src/BannerCreator_test.cpp(121): Entering test case "south"
+../src/BannerCreator_test.cpp(135): info: check creator.saveToDisk("./test_reports/south.png") has passed
+../src/BannerCreator_test.cpp(121): Leaving test case "south"; testing time: 140706us
+../src/BannerCreator_test.cpp(138): Entering test case "west"
+../src/BannerCreator_test.cpp(152): info: check creator.saveToDisk("./test_reports/west.png") has passed
+../src/BannerCreator_test.cpp(138): Leaving test case "west"; testing time: 135043us
+Leaving test module "BANNER_CREATOR"; testing time: 1771951us

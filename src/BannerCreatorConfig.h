@@ -18,23 +18,30 @@ public:
 	 */
 	const int x;
 
-	/**
-	 * Horizontal banner size
-	 */
+	/// @brief Horizontal banner size
 	const int y;
 
-	std::string font;
+	/// @brief 
+	std::string fontBig;
 
+	/// @brief 
 	std::string fontTitle;
 
-	/**
-	 * Base path to all assets used for banner generation
-	*/
+	/// @brief Base path to all assets used for banner generation
 	std::string assetsBasePath;
 
 	std::string outputFile;
 
 	bool transparent;
+
+	/// @brief Controls background color if transparency is disabled
+	bool blackOrWhiteBackground;
+
+	/// @brief If output banner should contains a minick of runway direction
+	bool drawRunway;
+
+	/// @brief 
+	int runwayDirection;
 
 	BannerCreatorConfig();
 	virtual ~BannerCreatorConfig();

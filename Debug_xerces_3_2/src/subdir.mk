@@ -32,7 +32,7 @@ CPP_SRCS += \
 ../src/WeatherlinkClient.cpp \
 ../src/XMLMemoryHandler.cpp \
 ../src/ZywiecMeteo.cpp \
-../src/BannerCreator_test.cpp
+../src/main.cpp
 
 OBJS += \
 ./src/AmbigiousDataSourceConfig.o \
@@ -63,7 +63,7 @@ OBJS += \
 ./src/WeatherlinkClient.o \
 ./src/XMLMemoryHandler.o \
 ./src/ZywiecMeteo.o \
-./src/BannerCreator_test.o
+./src/main.o
 
 CPP_DEPS += \
 ./src/AmbigiousDataSourceConfig.d \
@@ -94,6 +94,6 @@ CPP_DEPS += \
 ./src/WeatherlinkClient.d \
 ./src/XMLMemoryHandler.d \
 ./src/ZywiecMeteo.d \
-./src/BannerCreator_test.d
+./src/main.d
 
 

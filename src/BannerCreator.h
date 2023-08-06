@@ -37,10 +37,10 @@ class BannerCreator {
 	Magick::Image image;
 
 	/// @brief 
-	Magick::DrawableFont font;
+	Magick::DrawableFont fontBig;
 	
 	/// @brief 
-	Magick::DrawableFont fontTitle;
+	Magick::DrawableFont fontNormalCaption;
 
 	/// @brief 
 	/// @param text 
@@ -49,7 +49,11 @@ class BannerCreator {
 	/// @param fontSize 
 	/// @param x 
 	/// @param y 
-	void putText(std::string text, Magick::DrawableFont font, std::string color, float fontSize, float x, float y);
+	void putCenteredText(std::string text, Magick::DrawableFont font, std::string color, float fontSize, float x, float y);
+
+	/// @brief 
+	/// @param runwayDirection 
+	void drawRunwayRect(int runwayDirection);
 
 	/// @brief 
 	/// @param number 
@@ -60,12 +64,6 @@ class BannerCreator {
 	/// @brief 
 	/// @return 
 	static std::string currentTimeToString();
-
-
-	/// @brief 
-	/// @param windDirection 
-	/// @return 
-	std::tuple<float, float> calculateArrowPosition(int windDirection);
 
 public:
 
