@@ -16,7 +16,7 @@ BannerCreatorConfig::BannerCreatorConfig() : x(890), y (890),
 											drawRunway(false),
 											runwayDirection(180) {
 	// TODO Auto-generated constructor stub
-
+	enable = false;
 }
 
 BannerCreatorConfig::~BannerCreatorConfig() {

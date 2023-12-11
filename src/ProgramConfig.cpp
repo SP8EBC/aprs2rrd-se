@@ -398,8 +398,9 @@ bool ProgramConfig::configureLogOutput() {
 			cout << "--- Wyjście z konsoli przekierownane do pliku: " << this->DebugLogFn;
 			//fDebug.open(LogFile.c_str());
 			//cout.rdbuf(fDebug.rdbuf());
+			const std::string errorLog = this->DebugLogFn + ".err";
 			FILE* result_out = freopen(this->DebugLogFn.c_str(), "w", stdout);
-			FILE* result_err = freopen(this->DebugLogFn.c_str(), "w", stderr);
+			FILE* result_err = freopen(errorLog.c_str(), "w", stderr);
 
 			if (result_out == NULL || result_err == NULL) {
 				return false;
@@ -858,6 +859,7 @@ void ProgramConfig::getBannerConfig(BannerCreatorConfig &bannerCreator)
 		libconfig::Setting &root = config.getRoot();
 		libconfig::Setting &banner = root["BannerCreator"];
 
+		banner.lookupValue("Enable", bannerCreator.enable);
 		banner.lookupValue("AssetsDirectory", bannerCreator.assetsBasePath);
 		banner.lookupValue("OutputFile", bannerCreator.outputFile);
 		banner.lookupValue("TransparentBackground", bannerCreator.transparent);
@@ -867,10 +869,12 @@ void ProgramConfig::getBannerConfig(BannerCreatorConfig &bannerCreator)
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
 		bannerCreator.outputFile = "";
+		bannerCreator.enable = false;
 		std::cout << "--- ProgramConfig::getBannerConfig:862 - Configuration didn't found" << std::endl;
 	}
 	catch (libconfig::ParseException &ex) {
 		bannerCreator.outputFile = "";
+		bannerCreator.enable = false;
 		std::cout << "--- ProgramConfig::getBannerConfig:866 - Error during reading configuration!" << std::endl;
 
 	}

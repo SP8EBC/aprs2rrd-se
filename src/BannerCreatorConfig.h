@@ -13,6 +13,9 @@
 class BannerCreatorConfig {
 public:
 
+	/// @brief if banner creator should be enabled
+	bool enable;
+
 	/**
 	 * Vertical banner size
 	 */

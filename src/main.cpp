@@ -544,7 +544,7 @@ int main(int argc, char **argv){
 				}
 				else {
 					if (Debug) {
-						cout << "--- main.cpp:519 - This is not valid APRS packet" << endl;
+						cout << "--- main.cpp:547 - This is not valid APRS packet" << endl;
 					}
 
 					//if (Debug)
@@ -559,7 +559,7 @@ int main(int argc, char **argv){
 				break;
 			}
 			catch (std::exception &e) {
-				cout << "--- main:534 - std::exception " << e.what() << std::endl;
+				cout << "--- main:562 - std::exception " << e.what() << std::endl;
 
 				if (exitOnException) {
 					std::cout << "--- Exiting application";

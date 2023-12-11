@@ -6,6 +6,7 @@
  */
 
 #include <boost/date_time/local_time/local_time.hpp>
+#include <boost/filesystem/operations.hpp> // includes boost/filesystem/path.hpp
 #include "BannerCreator.h"
 
 #include <cmath>
@@ -76,6 +77,10 @@ std::string BannerCreator::currentTimeToString()
 void BannerCreator::createBanner(AprsWXData &data)
 {
 
+	if (!cfg.enable) {
+		return;
+	}
+
     // https://stackoverflow.com/questions/54071601/graphicsmagick-ttf-font-performance
 
 	const std::string windspeed = BannerCreator::floatToStringWithPrecision(data.wind_speed, 2);
@@ -100,6 +105,10 @@ void BannerCreator::createBanner(AprsWXData &data)
 	}
 
 bool BannerCreator::saveToDisk(std::string fn) {
+
+	if (!cfg.enable) {
+		return false;
+	}
 
 	if (fn.size() > 1) {
 		image.magick("png");
@@ -127,6 +136,24 @@ BannerCreator::BannerCreator(BannerCreatorConfig &config):
 		fontNormalCaption(config.fontTitle),
 		windrose(config.assetsBasePath + "windrose.png"),
 		arrow(config.assetsBasePath + "arrow.png"){
+
+	boost::filesystem::path _windrose(config.assetsBasePath + "windrose.png");
+	boost::filesystem::path _arrow(config.assetsBasePath + "arrow.png");
+
+	if (boost::filesystem::exists(_windrose)) {
+		if (boost::filesystem::exists(_arrow)) {
+			;
+		}
+		else {
+			std::cout << "--- BannerCreator::BannerCreator:148 - Cannot open asset file with arrow" << std::endl;
+			cfg.enable = false;
+		}
+	} 
+	else {
+		std::cout << "--- BannerCreator::BannerCreator:153 - Cannot open asset file with windrose" << std::endl;
+		cfg.enable = false;
+	}
+
 }
 
 BannerCreator::~BannerCreator() {
