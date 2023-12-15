@@ -135,24 +135,9 @@ BannerCreator::BannerCreator(BannerCreatorConfig &config):
 		fontBig(config.fontBig),
 		fontNormalCaption(config.fontTitle),
 		windrose(config.assetsBasePath + "windrose.png"),
-		arrow(config.assetsBasePath + "arrow.png"){
+		arrow(config.assetsBasePath + "arrow.png")
+{
 
-	boost::filesystem::path _windrose(config.assetsBasePath + "windrose.png");
-	boost::filesystem::path _arrow(config.assetsBasePath + "arrow.png");
-
-	if (boost::filesystem::exists(_windrose)) {
-		if (boost::filesystem::exists(_arrow)) {
-			;
-		}
-		else {
-			std::cout << "--- BannerCreator::BannerCreator:148 - Cannot open asset file with arrow" << std::endl;
-			cfg.enable = false;
-		}
-	} 
-	else {
-		std::cout << "--- BannerCreator::BannerCreator:153 - Cannot open asset file with windrose" << std::endl;
-		cfg.enable = false;
-	}
 
 }
 

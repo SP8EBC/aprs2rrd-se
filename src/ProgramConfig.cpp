@@ -10,6 +10,7 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/filesystem/operations.hpp> // includes boost/filesystem/path.hpp
 
 #include "ZywiecMeteo.h"
 
@@ -866,11 +867,28 @@ void ProgramConfig::getBannerConfig(BannerCreatorConfig &bannerCreator)
 		banner.lookupValue("BlackOrWhiteBackground", bannerCreator.blackOrWhiteBackground);
 		banner.lookupValue("DrawRunway", bannerCreator.drawRunway);
 		banner.lookupValue("RunwayDirection", bannerCreator.runwayDirection);
+
+		boost::filesystem::path _windrose(bannerCreator.assetsBasePath + "windrose.png");
+		boost::filesystem::path _arrow(bannerCreator.assetsBasePath + "arrow.png");
+
+		if (boost::filesystem::exists(_windrose)) {
+			if (boost::filesystem::exists(_arrow)) {
+				;
+			}
+			else {
+				std::cout << "--- ProgramConfig::getBannerConfig:879 - Cannot open asset file with arrow" << std::endl;
+				bannerCreator.enable = false;
+			}
+		} 
+		else {
+			std::cout << "--- ProgramConfig::getBannerConfig:884 - Cannot open asset file with windrose" << std::endl;
+			bannerCreator.enable = false;
+		}
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
 		bannerCreator.outputFile = "";
 		bannerCreator.enable = false;
-		std::cout << "--- ProgramConfig::getBannerConfig:862 - Configuration didn't found" << std::endl;
+		std::cout << "--- ProgramConfig::getBannerConfig:891 - Configuration didn't found" << std::endl;
 	}
 	catch (libconfig::ParseException &ex) {
 		bannerCreator.outputFile = "";
