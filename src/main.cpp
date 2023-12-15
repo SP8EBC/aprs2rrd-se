@@ -496,14 +496,16 @@ int main(int argc, char **argv){
 					// generating the website
 					dataPresence.GenerateWebiste(wxTarget, wxSecondarySrcForPage, locale, datetimeLocale);
 
-                    // reinitialize banner generator
-					bannerCreator = std::make_unique<BannerCreator>(bannerCreatorConfig);
+					if (bannerCreatorConfig.enable) {
+						// reinitialize banner generator
+						bannerCreator = std::make_unique<BannerCreator>(bannerCreatorConfig);
 
-					// generate banner
-					bannerCreator->createBanner(wxTarget);
+						// generate banner
+						bannerCreator->createBanner(wxTarget);
 
-					// save banner on disk
-					bannerCreator->saveToDisk(bannerCreatorConfig.outputFile);
+						// save banner on disk
+						bannerCreator->saveToDisk(bannerCreatorConfig.outputFile);
+					}
 
 					// storing values for slew rate corrections
 					wxLastTarget = wxTarget;
