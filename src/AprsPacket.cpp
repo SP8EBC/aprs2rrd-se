@@ -116,7 +116,7 @@ void AprsPacket::PrintPacketData() {
 }
 
 
-int AprsPacket::ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cTarget) {
+int AprsPacket::ParseAPRSISData(const char* tInputBuffer, int buff_len, AprsPacket* cTarget) {
 
 	// simple regex to match most of callsign systems
 	boost::regex callsignPattern("^[A-Z0-9]{3}[A-Z]{1,3}", boost::regex::icase);

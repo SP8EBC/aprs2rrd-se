@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 
+#include <boost/date_time.hpp>
 
 class NotValidAprsPacket: public std::exception {
     virtual const char* what() const throw() {
@@ -43,7 +44,7 @@ class AprsPacket
         uint8_t ui;
         uint8_t protocol;
 
-		static int ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cTarget);
+		static int ParseAPRSISData(const char* tInputBuffer, int buff_len, AprsPacket* cTarget);
 		static bool SeparateCallSsid(const std::string& input, std::string& call, uint8_t& ssid, bool exception);
 		static bool SeparateCallSsid(const std::string& input, char (&call)[7], uint8_t& ssid, bool exception);
 

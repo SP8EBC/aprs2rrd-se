@@ -40,7 +40,12 @@ class AprsWXData
         bool usePressure;
         bool useHumidity;
 
-	bool convertPressure;
+        boost::posix_time::ptime packetTimestmp;
+
+        int packetAgeInSecondsUtc;
+        int packetAgeInSecondsLocal;
+
+	    bool convertPressure;
     public:
         bool valid;
 
