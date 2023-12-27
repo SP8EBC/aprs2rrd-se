@@ -45,6 +45,7 @@ class AprsPacket
         uint8_t protocol;
 
 		static int ParseAPRSISData(const char* tInputBuffer, int buff_len, AprsPacket* cTarget);
+        static int ParseAprxRfLogData(const char* tInputBuffer, int buff_len, AprsPacket* cTarget);
 		static bool SeparateCallSsid(const std::string& input, std::string& call, uint8_t& ssid, bool exception);
 		static bool SeparateCallSsid(const std::string& input, char (&call)[7], uint8_t& ssid, bool exception);
 

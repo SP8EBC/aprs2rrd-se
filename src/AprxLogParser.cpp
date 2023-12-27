@@ -78,7 +78,7 @@ std::vector<AprsWXData> AprxLogParser::getAllWeatherPacketsInTimerange(
 
 		this->openFile();
 
-		this->rewindFile();
+		//this->rewindFile();
 	//}
 
 	if (file.is_open()) {

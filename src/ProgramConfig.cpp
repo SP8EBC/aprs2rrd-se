@@ -407,6 +407,9 @@ bool ProgramConfig::configureLogOutput() {
 				return false;
 			}
 	}
+	else {
+		FILE* result_err = freopen("/dev/null", "w", stderr);	
+	}
 
 	return true;
 }

@@ -1,37 +1,23 @@
-# EN: 	APRS2RRD operates internally in metric (SI) units! Data downloaded from APRS-IS are recalulated from imperial to metric and then these meters per seconds
-#	degrees celsius etc. are used to store data in RRD files, MySQL database and on generated HTML
+# EN: If enabled APRS2RRD will put more information on console output
+Debug = false;
 
-
-# EN: This option will make an console output much more verbose.
-# PL: Włączenie tej opcji spowoduje zwiększenie "gadatliwości" programu na konsolę
-Debug = true;
-
-# EN: Enabling this option will redirect all output from a console to a file
-# PL: Włączenie opcji spowoduje przekierowanie całego wyjścia z konsoli to pliku
+# EN: If enabled APRS2RRD will print everything to text log file instead of cout
 DebugToFile = true;
+
+# EN: 	The path to output log file. Application will also create second one with .err extension
+#	where stderr will be put
 DebugLogFile = "/home/aprs/skrzyczne/bin/debug.log"
 
+# EN: 	Station name must be always set, although it is used mainly for MySQL client to put data there.
+#	The idea is that APRS2RRD can mix data from different sources and then use that result as sometinhg,
+#	which is stored in RRD, MySQL, presented to a user etc. Addmitedly single callsing cannot be used  
+#	as an identifier in such case.
 StationName = "skrzyczne";
 
-# EN: 	This is mandatory option which names the weather station from application perspective. This name is used
-#	during inserting data info the MySQL database in V2 Schema (all station in one table). It will be also used in future
-#	functionalities 
-# PL:	Obowiązkowy parametr nazywający tą stację z punktu widzenia aplikacji APRS2RRD. Nazwa ta jest używana podczas zapisu danych
-#	pogodowych do bazy danych MySQL ze strukturą ze schematu V2 (wszystkie stacje zapisywane do jednej tabeli. Nazwa ta będzie
-#	też używana w przyszłych funkcjonalnościach.
-StationName = "skrzyczne";
-
-BatchMode = false;
-ExitOnCriticalException = true;
-
-# EN: This is locale used to set LC_TIME
+# EN: Locale which will be used to print any dates and times on generated RRD plots and HTML website
 DatetimeLocale = "pl_PL.UTF-8";
 
-# EN:	MySQL database configuration. As for now the database might have two different schemas. V1 which stores each weather station in different table 
-#	(what is not recommended but it is held to provide backward compatibility) and V2 where all data are stored in 'data_station' table.
-# PL:	Konfiguracja bazy danych MySQL. Obecnie dane mogą być zapisywane w niej dwojako, tj. według dwóch różnych schematów. W wersji pierwszej każda
-#	stacja ma swoją osobną tabelę - jest to rozwiązanie niepolecane ale jest pozostawione dla zachowania kompatybilności wstecznej. W wersji drugiej (V2)
-#	wszystkie dane lądują w jednej i tej samej tabeli 'data_station'. Stacje mogą być rozróżnione między sobą na podstawie parametru 'StationName'
+# EN: MySQL client configuration. Only non-trivial parameters are described
 MySQL = {
 	Enable = true;
 	Port = 3306;
@@ -39,127 +25,64 @@ MySQL = {
 	DbName = "aprs2rrd";
 	DbUser = "aprs2rrd";
 	DbPassword = "qwertyuiop";
-
-	# EN: Table name for V1 schema (structure is in schema_v1.sql file)
-	# PL: Nazwa tabeli dla schematu w wersji 1 (jej struktura jest w pliku schema_v1.sql)
-	DbTable = "skrzyczne";
-
-	# EN: APRS2RRD can execute any external script or application before inserting data to the MySQL. These two option controls this function
-	# PL: APRS2RRD może wywołać dowolny zewnętrzny skrypt bądź aplikację przed umieszczaniem danych w MySQL. Te dwie opcje kontrolują działanie tej funkcji.
-	ExecBeforeInsert = true;
+	DbTable = "skrzyczne";		// This is a name for a table created from 'schema_v1.sql' template
+	ExecBeforeInsert = true;	// APRS2RRD can execute external shell script before put data into MySQL
 	ExecBeforeInsertPath = "/home/aprs/skrzyczne/rc.preinsert"
-
-	# EN: Enables or disables V1 schema.
-	# PL: Włącza bądź wyłącza zapis danych zgodnie ze schematem (strukturą) V1 -> każda stacja do osobnej tabeli
-        SchemaV1 = true;
-
-	# EN: Enabled or disables V2 schema.
-	# PL : Włącza bądź wyłącza zapis danych zgodnie ze schematem (strukturą) V2 -> wszystkie stacje to tabeli 'data_station'
-	#
-	# WARNING! If MySQL is enabled either V1 or V2 (or both of them) has to be enabled
-	# UWAGA! Jeżeli baza danych jest włączona conajmniej jeden z jej schematów (V1, V2 albo obydwa) również musi zostać włączony.
-        SchemaV2 = true;
-
-	# Currently unsupported. Must be set to false / Niewspierane, musi pozostać wyłączone
-        DumpHolfuy = false;
-
-	# EN: Dumping differential measurements if this configuration has them enabled (see below)
-	# PL: Zrzucanie wyników pomiarów różnicowych jeżeli takowe są włączone (patrz niżej)
-        DumpDiff = false;
-
-	# EN: Dumping telemetry packed in separate 'station_telemetry' table.
-	# PL: Zapis ramek telemetrycznych w osobnej tabeli 'station_telemetry'.
-        DumpTelemetry = true;
+        SchemaV1 = true;		// If data should be put into table pointed by DbTable option
+        SchemaV2 = true;		// If data should be put into one, global for all station table, which
+					// must be named 'data_station' and be created from template 'schema_v2.sql'
+        DumpHolfuy = false;	// Dump data from Holfuy API into separate table (not yet implemeted - TODO)
+        DumpDiff = true;	// Dump differential measurements into separate table 'data_diff' from 'schema_v2.sql'
+        DumpTelemetry = true;	// Dump telemetry intro separate table 'data_telemetry' from 'schema_v2.sql'
 
 };
 
-# EN: 	AprsIS client configuration. The AprsIS client is disabled by default. To enable it whole section below must be present in the settings file and the 
-#	'Enable' parameter must be set to true. The client can monitor two different Callsigns.
-# PL:	Konfiguracja klienta APRS IS. Klient jest domyślnie wyłączony. Aby go włączyć cała poniższa sekcja musi być obecna w pliku konfiguracyjnym a parametr 'Enable'
-#	musi być ustawiony na true.	
+# EN: APRS-IS text protocol client configuration
 AprsIS = {
-	Enable = true;
+	Enable = true;			// If APRS-IS client (or serial port) is enabled APRS2RRD works in
+					// so called 'interactive mode'. It starts, then connects to the server
+					// and then reveive every incoming packet in the loop. Connection is 
+					// automatically reconnected if it stalls. Application exits only on
+					// user request or as a result of hard crash. 
+					//
+					// If only Weatherlink or Holfuy client is enabled, w/o APRS-IS client 
+					// APRS2RRD works in batch mode. It gets data from configured APIs, do the
+					// rest and exits at the end.
 	StationCall = "SR9NSK";
 	StationSSID = 1;
-	ServerAddr = "austria.aprs2.net";
+	ServerAddr = "euro.aprs2.net";
 	ServerPort = 14580;
-	MyCALL = "NOCALL";
-	MyPasswd = 12345;	
-	SecondaryCall = "SR9NSK";
-	SecondarySSID = 2;
+	MyCALL = "SR8WXO";	// How APRS2RRD presents itself to the server
+	MyPasswd = 12345;	// password doesn't need to be valid and the app doesn't sent anything to the server
+	SecondaryCall = "SR9NSK";	// APRS2RRD can monitor one or two weather stations. At least one must be configured
+	SecondarySSID = 2;		// Secondary one is optional
 };
 
-# EN:	Serial KISS modem host configuration. It is disabled by default. 
-# PL:	Konfiguracja klienta protokołu KISS do komunikacji z podłączonym modemem TNC. JEst domyślnie wyłączona.
 Serial = {
 	Enable = false;
 	Port = "/dev/ttyUSB0";
 	Baudrate = 9600;
-
-	# EN: 	The software can capture all weather packets coming via KISS TNC and ignore source callsigns completely. This can
-	#	be used if the WX controller are connected on it's own w/o any APRS radio communication and the only thing its sends are
-	#	weather packets. If this option is disabled the software will look only for Callsign and SSID configured below.
-	# PL:	Oprogramowanie może przechwytywać wszystkie przychodzące pakiety pogodowe i traktować je jako źródło danych z pominięciem
-	#	źródłowego znaku i SSID. Funkcja ta może być przydatna jeżeli do portu szeregowego podłączony jest modem / kontroler stacji pogodowej
-	#	wysyłający po protokole KISS swoje własne dane i wyłącznie je, tj. nie posiadający żadnej komunikacji z radiową siecią APRS.
 	CaptureAll = true;
 	StationCall = "SP8EBC";
 	StationSSID = 1;
 };
 
-# EN:	Holfuy weather stations client (https://holfuy.com/en), which download XML weather data from holfuy cloud API every time new APRS-IS packet is 
-#	received. Because of that Holfuy can't work on it's own and it is always a compation to APRS-IS (or serial port) clients.
-# PL:	Klient przeznaczony do ściągania danych ze stacji pogodowych produkowanych przez madziarską firmę Holfuy (https://holfuy.com/en). Komunikuje się
-#	z chmurowym API producenta i ściąga dane XML za każdym razem gdy odbierana jest nowa ramka z APRS-IS. W związku z tym klient ten nie może działać
-#	'sam sobie' a jest zawsze dodatkiem do klienta APRS-IS.
 Holfuy = {
 	Enable = true;
 	StationId = 1161;
-
-	# EN: API key, to be requested individually from holfuy
-	# PL: Klucz dostępowy do API. Przydzielony indywidualnie przez Holfuy po kontakcie mailowym
-	ApiPassword = "asdffgh";
-
-	# EN: Isn't implemented. Must be set to false
+	ApiPassword = "J00DjmU5wouaUKf";
 	DumpIntoMysql = false;
 };
 
-# EN:	Main configuration sections. It controls which sources are used for which weather parameters. Each setting can have values:
-#		AprsIS - Callsign & SSID configured in 'AprsIS'.'StationCall' and 'AprsIS'.'StationSSID'
-#		SecondaryAprsIS -  Callsign & SSID configured in 'AprsIS'.'SecondaryCall' and 'AprsIS'.'SecondarySSID'
-#		Holfuy - Holfuy weather station
-#		Serial - KISS TNC connected to serial port
-#		Telemetry - 5th channel of telemetry packets (with scalling applied)
-#
-# PL:	Główna sekcja konfiguracyjna, określa ona które źródła danych mają być używane dla których parametrów pogodowych. Każda z 
-#	nastaw może przyjmować takie wartości jak:
-#		AprsIS - Podstawowa stacja APRS-IS, której znak i SSID ustawiony jest w 'AprsIS'.'StationCall' oraz 'AprsIS'.'StationSSID'
-#		SecondaryAprsIS -  Drugorzędna stacja APRS-IS wg konfiguracji 'AprsIS'.'SecondaryCall' and 'AprsIS'.'SecondarySSID'
-#		Holfuy - Stacja pogodowa Holfuy
-#		Serial - Dane pogodowe odebrane KISS TNC
-#		Telemetry - 5 kanał telemetrii po uwzględnieniu współczynników skalujących
 Sources = {
-	Temperature = "SecondaryAprsIS";
+	Temperature = "AprsIS";
 	Wind = "Holfuy";
-	Pressure = "SecondaryAprsIS";
+	Pressure = "AprsIS";
 	Humidity = "AprsIS";
 	Rain = "AprsIS";
 	BackupForEverything = "AprsIS";
 };
 
-# EN:	APRS2RRD has a slew rate limiter build in. If any value like temperature or wind speed will change too fast between two consecutive 
-#	frames, the software will limit the ascending or descending change (difference) to values configured in this section.
-# 		default values are:
-# 		MAX_TEMP_SLEW 3.0f
-# 		MAX_PRESSURE_SLEW 5.0f
-# 		MAX_SPEED_SLEW 5.0f
-# 		MAX_GUSTS_SLEW 12.0f
-#
-#	The slew limiter itself cannot be turned off completely
-#
-# PL:	APRS2RRD posiada ogranicznik stromości narastania wartości pomiarowych. Jeżeli którykolwiek parametr taki jak temperatura, czy prędkość
-#	wiatru będzie zmieniał się zbyt gwałtownie pomiędzy dwoma kolejnymi odczytami, to różnica ta zostanie ograniczona do wartości ustawionych
-#	w tej sekcji, lub domyślnych jeżeli zostanie ona pominięta. Ogranicznik jest zawsze włączony i nie można go wyłączyć.  
 SlewLimit = {
 	Temperature = 0.4;
 	Pressure = 5.0;
@@ -167,52 +90,26 @@ SlewLimit = {
 	WindGusts = 12.0;
 };
 
-# EN:	Pressure recalculator. Depends on what pressure is measured by the station apparatus and what one is required by an user, the APRS2RRD can
-#	perform required calculation. QFE is a real, physical pressure measured on place (at altitude) where station is installed. QNH is pressure
-#	recalculated to the sea level. In most cases the QNH is preffered parameter
-# PL:	Kalkulator ciśnienie atmosferycznego. W zależności od tego jakie ciśnienie jest raportowane przez stację oraz jakie jest wymagane przez użytkownika
-#	program APRS2RRD może dokonać stosownego przeliczenia. QFE jest to realne ciśnienie mierzone faktycznie przez stację w miejscu (na wysokości) jej
-#	instalacji. QNH jest to ciśnienie sprowadzone do poziomu morza. W większości przypadków QNH jest to wartość oczekiwana
 Pressure = {
         StationMeasures = "QFE";
         ConvertTo = "QNH";
-        Altitude = 1240;
+        Altitude = 1250;
 };
 
-# EN:	Differential measuremenets configuration. APRS2RRD can monitor differences between two sources of WX data and stores the results in both RRD and MySQL.
-#	As for now it can only measure difference for temperature and wind parameters (average wind speed, maximum wind speed and wind direction). Wind direction
-#	difference is measured as a vector subtraction with correct zero-crossing handling.
-# PL:	Konfiguracja pomiarów różnicowych. APRS2RRD może obliczać różnicę pomiędzy dwoma wybranymi źródłami danych a następnie zapisywać tą różnicę do plików RRD
-#	oraz do bazy danych MySQL. Obecnie możliwe jest obliczanie różnicy pomiędzy temperaturą oraz parametrami wiatru. Różnica w kierunku wiatru jest obliczana
-#	wektorowo z poprawną obsługą przejścia przez zero.
+
 Diffs = {
 	Enable = true;
-	TemperatureFrom = "SecondaryAprsIS";
+	TemperatureFrom = "AprsIS";
 	TemperatureSubtract = "Holfuy";
-	WindFrom = "SecondaryAprsIS";
+	WindFrom = "AprsIS";
 	WindSubtract = "Holfuy";
 };
 
-# EN:	Location of RRD files used to store the data. Each parameter (like temperature) can be stored in more than one RRD file. Allowed types are:
-#		TEMPERATURE
-#		QNH 		- pressure
-#		WIND_SPD
-#		WIND_GST
-#		WIND_DIR
-#		DIFF_WIND_SPD	- difference in wind speed
-#		DIFF_WIND_GST	- difference in wind gusts
-#		DIFF_WIND_DIR	- difference in wind direction
-#		DIFF_TEMPERATURE
-#	RRD files can be created by using a command like below
-#		rrdtool create kierunek.rrd --start N --step 500 DS:kierunek:GAUGE:400:U:U RRA:AVERAGE:0.5:1:6000
-#	where 'kierunek.rrd' is desired output filename. '--step 500' controls the time resolution of created RRD database. In practice this shall
-#	be set to the time interval between two weather packets transmitted by the station. 'kierunek' is a name of RRD internal dataset. It must
-#	correspond with the values set in 'Plots' section - 'DS0Name' or 'DS1Name'. The number at the end of the command is the amount of datapoints
-#	stored in dataset. 
-# PL:	Konfiguracja lokalizacji plików RRD używanych do zapisywania danych. Każdy parametr może być zapisywany w więcej niż jednym pliku na raz. Dopuszczalne
-#	wartości parametry 'Type' są wymienione powyżej. Pliki RRD można tworzyć przy użyciu wymienionego powyżej polecenia linii komend. 
-# 
 RRD = (
+#	{
+#		Type = "TEMPERATURE";
+#		Path = "/home/aprs/skrzyczne/rrd/temperatura.rrd";
+#	},
 	{
 		Type = "TEMPERATURE";
 		Path = "/home/aprs/skrzyczne/rrd/temperatura2.rrd";
@@ -225,26 +122,26 @@ RRD = (
 		Type = "WIND_SPD";
 		Path = "/home/aprs/skrzyczne/rrd/predkosc.rrd";
 	},
-	{
-		Type = "WIND_SPD";
-		Path = "/home/aprs/skrzyczne/rrd/predkosc2.rrd";
-	},
+#	{
+#		Type = "WIND_SPD";
+#		Path = "/home/aprs/skrzyczne/rrd/predkosc2.rrd";
+#	},
 	{
 		Type = "WIND_GST";
 		Path = "/home/aprs/skrzyczne/rrd/szkwaly.rrd";
 	},
-	{
-		Type = "WIND_GST";
-		Path = "/home/aprs/skrzyczne/rrd/szkwaly2.rrd";
-	},
+#	{
+#		Type = "WIND_GST";
+#		Path = "/home/aprs/skrzyczne/rrd/szkwaly2.rrd";
+#	},
 	{
 		Type = "WIND_DIR";	
 		Path = "/home/aprs/skrzyczne/rrd/kierunek.rrd";
 	},
-	{
-		Type = "WIND_DIR";	
-		Path = "/home/aprs/skrzyczne/rrd/kierunek2.rrd";
-	},
+#	{
+#		Type = "WIND_DIR";	
+#		Path = "/home/aprs/skrzyczne/rrd/kierunek2.rrd";
+#	},
 	{
 		Type = "DIFF_WIND_SPD";
 		Path = "/home/aprs/skrzyczne/rrd/diff_predkosc.rrd";
@@ -260,46 +157,55 @@ RRD = (
 	{
 		Type = "DIFF_TEMPERATURE";
 		Path = "/home/aprs/skrzyczne/rrd/diff_temperatura.rrd";		
+	},
+	{
+		Type = "HUMIDITY";
+		Path = "/home/aprs/skrzyczne/rrd/wilgotnosc.rrd";		
 	}
+
 );
 
 Plots = (
 	{
-		# EN: A type of the plot doesn't entirely must be related to type of data. WIND_SPD_GST value will select a plot with
-		# one or two sources of data, which need to fit in the same Y axis scale. WIND_DIR will allow only one source
-		#
-		# PL: Typ wykresu określający pewne predefinowane opcje rrdtool. Pomimo nazwy typ nie jest w żaden sposób związany z rodzajem
-		# danych które mają być wyświetlane. Ustawienie WIND_SPD_GST pozwoli wyświetlić jedno lub dwa źródła danych na jednym wykresie.
-		# ważne jest jednak, że wartości obudwu źródeł muszą mieścić się w tym samym zakresie wartości. rrdtool niestety nie potrafi
-		# wyświetlać dwóch całkowicie niezależnych osi Y  
 		Type = "WIND_SPD_GST";
-
-		# EN: A path and a filename of generated PNG with the plot.
 		Path = "/home/www-server/skrzyczne/temperaturaqnh.png";
-
-		# EN: A path to RRD file used as a first datasource for the plot
 		DS0 = "/home/aprs/skrzyczne/rrd/temperatura2.rrd";
-
-		# EN: Datasource name, which has to match with value provided to rrdtool during creating a RRD file
-		# PL: Nazwa "datasource" która musi zgadzać się z wartością podaną jako parametr programu "rrdtool" podczas tworzenia RRD
                 DS0Name = "temperatura";
                 DS0RRAType = "AVERAGE";
-
-		# EN: Controls how the first datasource will be ploted on the chart. It could be set to AREA or LINE2
-		# PL: Kontroluje jak pierwsze źródło danych będzie kreślone na wykresie. Może być ustawione jako AREA albo LINE2
                 DS0PlotType = "AREA";
                 DS0PlotColor = 0xFF9900;
 		DS0Label = "Temperatura";
+//		DS1 = "/home/aprs/skrzyczne/rrd/cisnienie.rrd";
+//		DS1Name = "cisnienie";
+//		DS1RRAType = "AVERAGE";
+//		DS1PlotType = "LINE2";
+//		DS1PlotColor = 0x00FFFF;
+//		DS1Label = "Cisnienie";
 		Title = "Temperatura na szczycie";
-		Width = 900;
+		Width = 1100;
 		Height = 450;
 		Axis = "Stopnie C";
 		MinScale = -20.0;
 		MaxScale = 35.0;
-
-		# EN: Time scale measured in minutes
-		# PL: Skala czasu na wykresie mierzona w minutach
-		TimeScaleLen = 4320 // trzy dni
+#		TimeScaleLen = 5400; // 90 godzin - trzy dni 18 godzin
+		TimeScaleLen = 6000; // cztery dni 4 godziny
+	},
+	{
+		Type = "WIND_SPD_GST";
+		Path = "/home/www-server/skrzyczne/wilgotnosc.png";
+		DS0 = "/home/aprs/skrzyczne/rrd/wilgotnosc.rrd";
+                DS0Name = "wilgotnosc";
+                DS0RRAType = "AVERAGE";
+                DS0PlotType = "LINE2";
+                DS0PlotColor = 0x007580;
+		DS0Label = "Wilgotnosc";
+		Title = "Wilgotnosc na szczycie";
+		Width = 1100;
+		Height = 450;
+		Axis = "Procent";
+		MinScale = 1.0;
+		MaxScale = 100.0;
+		TimeScaleLen = 6000; // cztery dni 4 godziny
 	},
 	{
 		Type = "WIND_SPD_GST";
@@ -317,12 +223,12 @@ Plots = (
 		DS1PlotColor = 0x0000FF;
 		DS1Label = "Porywy";
 		Title = "Prędkość wiatru na szczycie";
-		Width = 900;
+		Width = 1100;
 		Height = 600;	
 		Axis = "m/s";
 		MinScale = 0.1;
 		MaxScale = 25.0;
-		TimeScaleLen = 900;
+		TimeScaleLen = 1320;	# 1000
 	},
 	{
 		Type = "WIND_DIR";
@@ -333,31 +239,36 @@ Plots = (
 		DS0PlotType = "AREA";
 		DS0PlotColor = 0x7298D4;
 		DS0Label = "Roznica w sredniej predkosci wiatru";
+#		DS1 = "/home/aprs/skrzyczne/rrd/diff_szkwaly.rrd";
+#		DS1Name = "szkwaly";
+#		DS1RRAType = "AVERAGE";
+#		DS1PlotType = "LINE2";
+#		DS1PlotColor = 0x0000FF;
+#		DS1Label = "Porywy";
 		Title = "Różnica średniej prędkości wiatru szczyt - startowisko (plus oznacza wiatr mocniejszy na szczycie)";
-		Width = 900;
+		Width = 1100;
 		Height = 600;	
 		Axis = "m/s";
 		MinScale = -10.0;
 		MaxScale = 10.0;
-		TimeScaleLen = 900;
+		TimeScaleLen = 1320;
 	},
 	{
 		Type = "WIND_DIR";
 		Path = "/home/www-server/skrzyczne/diff_kierunek.png";
 		DS0 = "/home/aprs/skrzyczne/rrd/diff_kierunek.rrd";
-        DS0Name = "kierunek";
+                DS0Name = "kierunek";
 		DS0RRAType = "AVERAGE";
-        DS0PlotType = "AREA";
-        DS0PlotColor = 0x7298D4;
+                DS0PlotType = "AREA";
+                DS0PlotColor = 0x7298D4;
 		DS0Label = "Roznica Kierunku";
-        Title = "Roznica kierunku wiatru szczyt - startowisko (plus oznacza kierunek 'bardziej w prawo' czyli 'wiecej stopni' na szczycie)";
-        Width = 900;
-        StationName = "skrzyczne";
-        Height = 400;
+                Title = "Roznica kierunku wiatru szczyt - startowisko (plus oznacza kierunek 'bardziej w prawo' czyli 'wiecej stopni' na szczycie)";
+                Width = 1100;
+                Height = 400;
 		Axis = "stopnie"
 		MinScale = -180.0;
 		MaxScale = 180.0;
-		TimeScaleLen = 900;
+		TimeScaleLen = 1320;
 	},
 	{
 		Type = "WIND_DIR";
@@ -369,12 +280,12 @@ Plots = (
                 DS0PlotColor = 0xFF0000;
 		DS0Label = "Kierunek";
                 Title = "Kierunek wiatru na szczycie";
-                Width = 900;
+                Width = 1100;
                 Height = 400;
 		Axis = "stopnie"
 		MinScale = 1.0;
 		MaxScale = 360.0;
-		TimeScaleLen = 900;
+		TimeScaleLen = 1320;
 	}
 
 );
@@ -385,34 +296,18 @@ Website = {
 	Plot1 = "predkosc.png";
 	Plot2 = "kierunek.png";
 	Plot3 = "diff_wiatr.png";
-	Plot4 = "diff_kierunek.png";
+	Plot4 = "wilgotnosc.png";
 	Title = "Warunki na Skrzycznem";
+	colorfulResultTable = true;
 	HeadingTitle = "Stacja pogodowa SR9NSK -- Góra Skrzyczne";
-	SubHeading = "Stacja na szczycie zamontowana na platformie widokowej COS-OPO. Stacja na startowisku zamontowana na słupie z rękawem znajdującym się na startowisku E.";
-	LinkToMoreInfo = true;
-	Footer = "Stopka pod wykresami";
-	PrintPressure = true;
-	PrintTemperature = true;
-
-	# EN: APRS2RRD can display two source at the HTML website (and only there). The first, primary source is always the data chosen in 'Sources' section.
-	# If 'PrintTwoSourcesInTable' is set to false that data is printed above all plots. If 'PrintTwoSourcesInTable' is set to true that data is printed
-	# in the left column in the table above plots. The right column, which shows the secondary source could be set to any source, even if some data will
-	# be the same in both Primary and Secondary source.
-	#
-	# PL: APRS2RRD może wyświetlać dwa źródła danych w generowanym pliku HTML. Pierwszym i głównym źródłem danych do wyświetlenia w HTML jest zawsze to co zostało
-	# ustawione w sekcji 'Sources'. Wartości są wyświetlane nad wykresem samodzielnie jeżeli 'PrintTwoSourcesInTable' jest wyłączone lub w lewej kolumne tabeli nad wykresami
-	# jeżeli 'PrintTwoSourcesInTable' jest włączone (ustawione na true). Oprócz tego w prawej kolumne tej tabeli można przedstawić dowolne inne z dostępnych źródeł, nawet jeżeli
-	# część parametrów takich jak np. temperatura będzie się pokrywała
+	SubHeading = "<a href=\"http://jaworzyna.pogoda.cc/\">Odczyty ze stacji pogodowej na Jaworzynie Skryczeńskiej</a> (pośrednia stacja wyciągu kanapowego)<br><a href=\"http://magurka.pogoda.cc/\">Odczyty ze stacji pogodowej na Magurce Wilkowickiej</a><br>Odczyty dostępne również w aplikacji mobilnej <a href=\"https://play.google.com/store/apps/details?id=cc.pogoda.mobile.meteosystem\">Meteo System</a>";
+	LinkToMoreInfo = false;
+	Footer = "Wykonawca: Mateusz Lubecki & Beskidzkie Stowarzyszenie Paralotniowe - tel: +48 660 43 44 46<br>Warunki na Skrzycznym / Stacja podowa Skrzyczne / Pogoda na Skrzynym / Pogoda Szczyrk";
+	PrintPressure = "left";
+	PrintTemperature = "both";
+	PrintHumidity = "left";
 	PrintTwoSourcesInTable = true;	
 	SecondarySource = "Holfuy";
-	SecondaryLabel = "Startowisko";
+	SecondaryLabel = "Startowisko E";
 	PrimaryLabel = "Szczyt";
-
-	# EN: This parameter is located in wrong place and ambigious place. It applies the wind direction correction GLOBALLY, for RRD files, MySQL database and HTML file. It might
-	# be useful if anemometer (wind sensor) is not correctly aligned and the wind direction measuremenets are given with a known fixed offset. 
-	#
-	# PL: Ten parametr znajduje się w złym i nieco mylącym miejscu. Kontroluję on korekcję kierunku wiatru, która jest stosowana GLOBALNIE, czyli zarówno dla plików RRD, bazy danych
-	# czy też generowanego pliku HTML. Funkcja tak jest pomocna jeżeli czujnik kierunku wiatru na stacji nie jest właściwie ustawiony w stosunku do stron świata i zwraca pomiary ze znanym
-	# i stałym przesunięciem. 
-	DirectionCorrection = 0;	
 };

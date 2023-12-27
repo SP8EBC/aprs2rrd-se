@@ -11,6 +11,7 @@ CPP_SRCS += \
 ../src/AprsThreadConfig.cpp \
 ../src/AprsWXData.cpp \
 ../src/AprxLogParser.cpp \
+../src/AprxLogParserConfig.cpp \
 ../src/AprxLogParserStaticStuff.cpp \
 ../src/Ax25Decoder.cpp \
 ../src/BannerCreator.cpp \
@@ -45,6 +46,7 @@ OBJS += \
 ./src/AprsThreadConfig.o \
 ./src/AprsWXData.o \
 ./src/AprxLogParser.o \
+./src/AprxLogParserConfig.o \
 ./src/AprxLogParserStaticStuff.o \
 ./src/Ax25Decoder.o \
 ./src/BannerCreator.o \
@@ -79,6 +81,7 @@ CPP_DEPS += \
 ./src/AprsThreadConfig.d \
 ./src/AprsWXData.d \
 ./src/AprxLogParser.d \
+./src/AprxLogParserConfig.d \
 ./src/AprxLogParserStaticStuff.d \
 ./src/Ax25Decoder.d \
 ./src/BannerCreator.d \

@@ -210,12 +210,10 @@ int AprsWXData::CopyConvert(char sign, std::string& input, int& output, int& cou
     	output = boost::lexical_cast<int>(valueToConv);
     }
     catch (const boost::bad_lexical_cast& ex) {
-    	std::cout << ex.what() << std::endl;
     	output = 0;
     	//return -1;
     }
     catch (const std::bad_cast& ex) {
-    	std::cout << ex.what() << std::endl;
     	output = 0;
     	//return -1;
     }
@@ -257,11 +255,9 @@ int AprsWXData::CopyConvert(unsigned num, std::string& input, int& output, int& 
     	output = boost::lexical_cast<int>(valueToConv);
     }
     catch (const boost::bad_lexical_cast& ex) {
-    	std::cout << ex.what() << std::endl;
     	output = 0;
     }
     catch (const std::bad_cast& ex) {
-    	std::cout << ex.what() << std::endl;
     	output = 0;
     }
 
@@ -292,12 +288,12 @@ AprsWXData::AprsWXData(const AprsWXData& in) {
 
 	this->DebugOutput = in.DebugOutput;
 
-	this->dataSource = WxDataSource::UNKNOWN;
-	this->ssid = 0;
-	this->call = "";
+	this->dataSource = WxDataSource::UNKNOWN;		// ???
+	this->ssid = in.ssid;
+	this->call = in.call;
 
-	this->is_primary = false;
-	this->is_secondary = false;
+	this->is_primary = false;			// ???
+	this->is_secondary = false;			// ???
 
 	this->convertPressure = false;
 }

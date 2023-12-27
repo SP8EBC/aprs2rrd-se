@@ -98,7 +98,7 @@ std::optional<AprsWXData>  AprxLogParser_StaticStuff::parseFrame(std::vector<std
 	lastLine = std::move(separatedLines.at(separatedLines.size() - 1));
 
 	// try convert this do APRSpacket
-	const int result = AprsPacket::ParseAPRSISData(aprsFrame.c_str(), aprsFrame.size(), &out);
+	const int result = AprsPacket::ParseAprxRfLogData(aprsFrame.c_str(), aprsFrame.size(), &out);
 
 	if (result == OK) {
 		// get frame timestamp
