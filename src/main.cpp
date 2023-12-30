@@ -152,12 +152,14 @@ int main(int argc, char **argv){
 	 * FIXME: test
 	*/
 	// aprxLogParserConfig.enabled = true;
-	// aprxLogParserConfig.batchLoad = true;
-	// aprxLogParserConfig.logFile = "./test_wdir/aprx-rf.log";
+	// aprxLogParserConfig.batchLoad = false;
+	// aprxLogParserConfig.logFile = "./test_wdir/aprx-rf-2.log";
 	// aprxLogParserConfig.batchLoadFrom = 1703415792ULL;
 	// aprxLogParserConfig.batchLoadTo = 1703484192ULL;
 	// aprxLogParserConfig.sourceCallsign = "SR9NSK";
 	// aprxLogParserConfig.sourceSsid = 1;
+	// aprxLogParserConfig.maximumPacketAge = 120;
+	// aprxLogParserConfig.logTimeInLocal = true;
 
 	syncCondition.reset(new std::condition_variable());
 	syncLock.reset(new std::mutex());
@@ -212,6 +214,7 @@ int main(int argc, char **argv){
 		programConfig.getDateTimeLocale(datetimeLocale, 16);
 		programConfig.getWeatherlinkConfig(weatherlinkClient.config);
 		programConfig.getBannerConfig(bannerCreatorConfig);
+		programConfig.getAprxLogParserConfig(aprxLogParserConfig);
 
 		dataPresence.DebugOutput = Debug;
 		mysqlDb.Debug = Debug;
@@ -354,7 +357,7 @@ int main(int argc, char **argv){
 			}
 			else {
 				// if not, get all packets for last X minutes
-				unfilteredPackets = aprxLogParser.getAllWeatherPacketsInTimerange(aprxLogParserConfig.maximumPacketAge, 0, false);
+				unfilteredPackets = aprxLogParser.getAllWeatherPacketsInTimerange(aprxLogParserConfig.maximumPacketAge, 0, true);
 			}
 
 			//  check if any packets have been found
