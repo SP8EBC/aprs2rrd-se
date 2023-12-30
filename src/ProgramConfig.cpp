@@ -919,6 +919,7 @@ void ProgramConfig::getAprxLogParserConfig(AprxLogParserConfig & aprxLogConfig) 
 	logparser.lookupValue("BatchLoadFromTimestamp", aprxLogConfig.batchLoadFrom);
 	logparser.lookupValue("BatchLoadToTimestamp", aprxLogConfig.batchLoadTo);
 	logparser.lookupValue("MaximumPacketAge", aprxLogConfig.maximumPacketAge);
+	logparser.lookupValue("BatchLoadMode", aprxLogConfig.batchLoad);
 	logparser.lookupValue("Ssid", _ssid);
 	aprxLogConfig.sourceSsid = _ssid;
 
