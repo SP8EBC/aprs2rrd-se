@@ -10,6 +10,9 @@ CPP_SRCS += \
 ../src/AprsPacket.cpp \
 ../src/AprsThreadConfig.cpp \
 ../src/AprsWXData.cpp \
+../src/AprxLogParser.cpp \
+../src/AprxLogParserConfig.cpp \
+../src/AprxLogParserStaticStuff.cpp \
 ../src/Ax25Decoder.cpp \
 ../src/BannerCreator.cpp \
 ../src/BannerCreatorConfig.cpp \
@@ -29,6 +32,7 @@ CPP_SRCS += \
 ../src/SerialConfig.cpp \
 ../src/SlewRateLimiter.cpp \
 ../src/Telemetry.cpp \
+../src/TimeTools.cpp \
 ../src/WeatherlinkClient.cpp \
 ../src/XMLMemoryHandler.cpp \
 ../src/ZywiecMeteo.cpp \
@@ -41,6 +45,9 @@ OBJS += \
 ./src/AprsPacket.o \
 ./src/AprsThreadConfig.o \
 ./src/AprsWXData.o \
+./src/AprxLogParser.o \
+./src/AprxLogParserConfig.o \
+./src/AprxLogParserStaticStuff.o \
 ./src/Ax25Decoder.o \
 ./src/BannerCreator.o \
 ./src/BannerCreatorConfig.o \
@@ -60,6 +67,7 @@ OBJS += \
 ./src/SerialConfig.o \
 ./src/SlewRateLimiter.o \
 ./src/Telemetry.o \
+./src/TimeTools.o \
 ./src/WeatherlinkClient.o \
 ./src/XMLMemoryHandler.o \
 ./src/ZywiecMeteo.o \
@@ -72,6 +80,9 @@ CPP_DEPS += \
 ./src/AprsPacket.d \
 ./src/AprsThreadConfig.d \
 ./src/AprsWXData.d \
+./src/AprxLogParser.d \
+./src/AprxLogParserConfig.d \
+./src/AprxLogParserStaticStuff.d \
 ./src/Ax25Decoder.d \
 ./src/BannerCreator.d \
 ./src/BannerCreatorConfig.d \
@@ -91,6 +102,7 @@ CPP_DEPS += \
 ./src/SerialConfig.d \
 ./src/SlewRateLimiter.d \
 ./src/Telemetry.d \
+./src/TimeTools.d \
 ./src/WeatherlinkClient.d \
 ./src/XMLMemoryHandler.d \
 ./src/ZywiecMeteo.d \

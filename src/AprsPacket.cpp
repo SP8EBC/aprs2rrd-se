@@ -116,7 +116,7 @@ void AprsPacket::PrintPacketData() {
 }
 
 
-int AprsPacket::ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cTarget) {
+int AprsPacket::ParseAPRSISData(const char* tInputBuffer, int buff_len, AprsPacket* cTarget) {
 
 	// simple regex to match most of callsign systems
 	boost::regex callsignPattern("^[A-Z0-9]{3}[A-Z]{1,3}", boost::regex::icase);
@@ -272,6 +272,134 @@ int AprsPacket::ParseAPRSISData(char* tInputBuffer, int buff_len, AprsPacket* cT
 	std::copy(payload.begin(), payload.end(), cTarget->Data);
 
 	cTarget->DataAsStr = std::string(cTarget->Data);
+
+	boost::trim(cTarget->DataAsStr);
+
+	return OK;
+}
+
+int AprsPacket::ParseAprxRfLogData(const char* tInputBuffer, int buff_len, AprsPacket* cTarget) {
+
+	// simple regex to match most of callsign systems
+	boost::regex callsignPattern("^[A-Z0-9]{3}[A-Z]{1,3}", boost::regex::icase);
+
+	// q-construct regex
+	boost::regex qc("q[A-Z]{2}");
+
+	// frame payload
+	std::string payload = "";
+
+	// a flag set to true when q-construct is detected in path, to signalize
+	// that the next element will consist originator callsign
+	bool parseOrginator = false;
+
+	// a value returned from call separating method
+	bool separatingReturn = true;
+
+	// checkig if input buffer is valid
+	if (tInputBuffer == nullptr)
+		return NOT_VALID_APRS_PACKET;
+
+	// check if input buffer is valid
+    if (*tInputBuffer == '#' || *tInputBuffer == 0x00 || buff_len > 1000 || buff_len < 5)
+		return NOT_VALID_APRS_PACKET;
+
+    // converting to string
+	std::string input(tInputBuffer, buff_len);
+
+	// vector which will hold source call separated from the rest of frame
+	std::vector<std::string> sepratedBySource;
+
+	// vector to keep path elements separated from data (frame payload)
+	std::vector<std::string> pathAndData;
+
+	// vector to keep separated path elements
+	std::vector<std::string> pathElements;
+
+	// spltting input frame basing on '>' character
+	boost::split(sepratedBySource, input, boost::is_any_of(">"));
+
+	// there must be at least one '>' character which will separate soruce from
+	// the rest of frame
+	if (sepratedBySource.size() < 2)
+		return NOT_VALID_APRS_PACKET;
+
+	// separating a callsign from the SSID
+	separatingReturn = AprsPacket::SeparateCallSsid(sepratedBySource.at(0), cTarget->SrcAddr, cTarget->SrcSSID, false);
+
+	if (!separatingReturn)
+		return NOT_VALID_APRS_PACKET;
+
+	// checking if the callsign match with regex
+	if (!boost::regex_match(cTarget->SrcAddr, callsignPattern))
+		return NOT_VALID_APRS_PACKET;
+
+	// the 'sepratedBySource' vector may consist more than 2 elements if received frame consist
+	// status message which is identified by '>' character before it. All in all the APRS2RRD
+	// is focused to work on wx frames, so we can just ignore everything after second element.
+	std::string path = sepratedBySource.at(1);
+
+	// split path and data, assuming that data doesn't contain any ':'
+	boost::split(pathAndData, path, boost::is_any_of(":"));
+
+	// splitting path elements and the frame payload
+	boost::split(pathElements, pathAndData.at(0), boost::is_any_of(","));
+
+	// checking if after splitting there are enough elements to thread this as valid frame
+	if (pathElements.size() == 0)
+		return NOT_VALID_APRS_PACKET;
+
+	// checking if source identifier is valid
+	if (pathElements.at(0).size() > 6)
+		return NOT_VALID_APRS_PACKET;
+
+	AprsPacket::SeparateCallSsid(pathElements.at(0), cTarget->DestAddr, cTarget->DstSSID, false);
+
+	// removing the first element which which consist target address
+	pathElements.erase(pathElements.begin());
+
+	// splitting
+	for (size_t i = 0; i < pathElements.size(); i++) {
+
+		std::string e = pathElements.at(i);
+
+		try {
+			// object to store path element
+			PathElement pelem;
+
+			// separating callsign from the ssid or WIDEx from 'remaining hops' value
+			AprsPacket::SeparateCallSsid(e, pelem.Call, pelem.SSID, true);
+
+			// storing element in Path vector
+			cTarget->Path.push_back(pelem);
+		}
+		catch (const boost::bad_lexical_cast& ex) {
+			return NOT_VALID_APRS_PACKET;
+		}
+		catch (const std::bad_cast& ex) {
+			return NOT_VALID_APRS_PACKET;
+		}
+
+	}
+
+//	// if there is any additional part of frame, any remainder after separating source callsign
+//	// by '>' just append this to payload.
+//	if (sepratedBySource.size() > 2) {
+//		for (auto it = sepratedBySource.begin() + 2; it != sepratedBySource.end(); it++) {
+//			payload.append(">");
+//
+//			payload.append(*it);
+//		}
+//	}
+
+	// copying the payload to the output object. There is no need to check the lenght of
+	// payload due to 'buff_len > 1000' check done just at the begining of this method
+	cTarget->DataAsStr = std::move(pathAndData.at(1));
+
+	//cTarget->DataAsStr = std::string(cTarget->Data);
+
+	//cTarget->Data = cTarget->DataAsStr.c_str();
+	strncpy(cTarget->Data, cTarget->DataAsStr.c_str(), 1024);
 
 	boost::trim(cTarget->DataAsStr);
 

@@ -17,6 +17,8 @@
 #include "AprsPacket.h"
 #include "AprsThreadConfig.h"
 #include "AprsWXData.h"
+#include "AprxLogParser.h"
+#include "AprxLogParserConfig.h"
 #include "Telemetry.h"
 #include "AprsAsioThread.h"
 #include "SlewRateLimiter.h"
@@ -35,6 +37,8 @@
 
 #include "ConnectionTimeoutEx.h"
 #include "DataPresentation.h"
+
+#include "TimeTools.h"
 
 #include "SOFTWARE_VERSION.h"
 
@@ -93,13 +97,15 @@ int main(int argc, char **argv){
 		configFn = "config.conf";
 	}
 
-	std::cout << "--- main:86 - Using configuration from file: " << configFn << std::endl;
+	std::cout << "--- main:100 - Using configuration from file: " << configFn << std::endl;
 
 	Config config;
 	ProgramConfig programConfig(configFn);
 
 	SerialAsioThread * serialThread;
 	AprsThreadConfig aprsConfig;
+	AprxLogParser aprxLogParser;
+	AprxLogParserConfig aprxLogParserConfig;
 	MySqlConnInterface mysqlDb;
 	DataPresentation dataPresence;
 	AprsAsioThread * asioThread;
@@ -136,6 +142,25 @@ int main(int argc, char **argv){
 	queue <AprsPacket> qPackets;
 	queue <AprsWXData> qMeteo;
 
+	// data parsed from APRX rf-log file. used only if this is enabled
+	std::vector<AprsWXData> wxDataFromAprx;
+
+	// iterator 
+	std::vector<AprsWXData>::const_iterator wxDataFromAprxIterator;
+
+	/**
+	 * FIXME: test
+	*/
+	// aprxLogParserConfig.enabled = true;
+	// aprxLogParserConfig.batchLoad = false;
+	// aprxLogParserConfig.logFile = "./test_wdir/aprx-rf-2.log";
+	// aprxLogParserConfig.batchLoadFrom = 1703415792ULL;
+	// aprxLogParserConfig.batchLoadTo = 1703484192ULL;
+	// aprxLogParserConfig.sourceCallsign = "SR9NSK";
+	// aprxLogParserConfig.sourceSsid = 1;
+	// aprxLogParserConfig.maximumPacketAge = 120;
+	// aprxLogParserConfig.logTimeInLocal = true;
+
 	syncCondition.reset(new std::condition_variable());
 	syncLock.reset(new std::mutex());
 
@@ -155,16 +180,16 @@ int main(int argc, char **argv){
 
 	try {
 		programConfig.parseFile();
-		cout << "--- main:154 - Opening configuration file" << endl;
+		cout << "--- main:162 - Opening configuration file" << endl;
 	}
 
 	catch(const FileIOException &ex)
 	{
-		printf("--- main:159 - The configuration file cannot be opened.\r\n");
+		printf("--- main:172 - The configuration file cannot be opened.\r\n");
 		return -1;
 	}
 	catch(const ParseException &ex) {
-		printf("--- main:163 - Error during parsing a content of configuration file near line %d \r\n", ex.getLine());
+		printf("--- main:176 - Error during parsing a content of configuration file near line %d \r\n", ex.getLine());
 		return -2;
 	}
 
@@ -189,6 +214,7 @@ int main(int argc, char **argv){
 		programConfig.getDateTimeLocale(datetimeLocale, 16);
 		programConfig.getWeatherlinkConfig(weatherlinkClient.config);
 		programConfig.getBannerConfig(bannerCreatorConfig);
+		programConfig.getAprxLogParserConfig(aprxLogParserConfig);
 
 		dataPresence.DebugOutput = Debug;
 		mysqlDb.Debug = Debug;
@@ -205,13 +231,13 @@ int main(int argc, char **argv){
 
 	}
 	catch (const SettingNotFoundException &ex) {
-		cout << "--- main:202 - Unrecoverable error during configuration file loading!" << endl;
+		cout << "--- main:226 - Unrecoverable error during configuration file loading!" << endl;
 		return -3;
 	}
 
 	aprsConfig.RetryServerLookup = true;
 
-	cout << "--- main:208 - Configuration parsed successfully" << endl;
+	cout << "--- main:232 - Configuration parsed successfully" << endl;
 
 	bool result = programConfig.configureLogOutput();
 
@@ -243,7 +269,7 @@ int main(int argc, char **argv){
 			weatherlinkClient.config,
 			bannerCreatorConfig);
 
-	cout << "--- main:239 - exitOnException: " << exitOnException << endl;
+	cout << "--- main:264 - exitOnException: " << exitOnException << endl;
 
 	serialThread = new SerialAsioThread(syncCondition, syncLock, serialConfig.serialPort, serialConfig.baudrate);
 
@@ -271,12 +297,29 @@ int main(int argc, char **argv){
 	batchMode = programConfig.getBatchMode();
 	mainLoopExit = !batchMode;
 
+	if ((aprxLogParserConfig.enabled && aprsConfig.enable) || (aprxLogParserConfig.enabled && serialConfig.enable)) {
+		std::cout << "--- main:289 - You cannot use APRX rf-log file parser and aprs-is client at the same time" << std::endl;
+		return -7;
+	}
+	else if (aprxLogParserConfig.enabled) {
+		batchMode = true;
+		mainLoopExit = false;
+		TimeTools::initBoostTimezones("date_time_zonespec.csv");
+
+		sourceConfig.primaryCall = aprxLogParserConfig.sourceCallsign;
+		sourceConfig.primarySsid = aprxLogParserConfig.sourceSsid;
+
+		sourceConfig.secondaryCall = aprxLogParserConfig.sourceCallsign;
+		sourceConfig.secondarySsid = aprxLogParserConfig.sourceSsid;
+	}
+
 	if (!batchMode && !aprsConfig.enable && !serialConfig.enable) {
-		std::cout << "--- main:268 - You cannot run continuous mode w/o APRS-IS connection or Serial port enabled" << std::endl;
+		std::cout << "--- main:284 - You cannot run continuous mode w/o APRS-IS connection or Serial port enabled" << std::endl;
+		return -6;
 	}
 
 	if (batchMode) {
-		std::cout << "--- main:272 - RUNNING IN BATCH MODE" << std::endl;
+		std::cout << "--- main:298 - RUNNING IN BATCH MODE" << std::endl;
 	}
 
 	// main loop
@@ -297,6 +340,45 @@ int main(int argc, char **argv){
 		else {
 			// if aprs-is is not enabled set the flag to true to proceed further
 			isConnectionAlive = true;
+		}
+
+		// if APRX rf-log file parser is enabled
+		if (aprxLogParserConfig.enabled) {
+
+			// create an instance of aprx rf-log parser
+			AprxLogParser aprxLogParser(aprxLogParserConfig.logFile, aprxLogParserConfig.logTimeInLocal);
+			
+			std::vector<AprsWXData> unfilteredPackets;
+
+			// check if batch load is selected 
+			if (aprxLogParserConfig.batchLoad) {
+				// get all packets in configured timerange
+				unfilteredPackets = aprxLogParser.getAllWeatherPacketsInTimerange(aprxLogParserConfig.batchLoadFrom, aprxLogParserConfig.batchLoadTo);
+			}
+			else {
+				// if not, get all packets for last X minutes
+				unfilteredPackets = aprxLogParser.getAllWeatherPacketsInTimerange(aprxLogParserConfig.maximumPacketAge, 0, true);
+			}
+
+			//  check if any packets have been found
+			if (unfilteredPackets.size() == 0) {
+				std::cout << "--- main:339 - No weather packets have been found in rf-log" << std::endl;
+				// no sense in continuing execution
+				isConnectionAlive = false;
+			}
+			else {
+				// filter parsed data to keep only packets sent by station with selected callsign and ssid
+				wxDataFromAprx = AprxLogParser::filterPacketsPerCallsign(aprxLogParserConfig.sourceCallsign, aprxLogParserConfig.sourceSsid, unfilteredPackets);
+			}
+
+			if (wxDataFromAprx.size() == 0) {
+				std::cout << "--- main:351 - No weather packets from rf-log left after filtering" << std::endl;
+				// no sense in continuing execution
+				isConnectionAlive = false;			
+			}
+			else {
+				wxDataFromAprxIterator = wxDataFromAprx.begin();
+			}
 		}
 
 		while (isConnectionAlive) {
@@ -370,7 +452,7 @@ int main(int argc, char **argv){
 
 						zywiecMeteo->parseJson(response, wxZywiec);
 
-						std::cout << "--- main:366 - Parsing data from Zywiec county meteo system API" << std::endl;
+						std::cout << "--- main:415 - Parsing data from Zywiec county meteo system API" << std::endl;
 
 						wxZywiec.PrintData();
 					}
@@ -383,7 +465,7 @@ int main(int argc, char **argv){
 
 						holfuyClient->getWxData(wxHolfuy);
 
-						std::cout << "--- main:379 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
+						std::cout << "--- main:428 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
 
 						wxHolfuy.PrintData();
 					}
@@ -439,9 +521,23 @@ int main(int argc, char **argv){
 						wxTarget.copy(wxDavis, sourceConfig);
 					}
 
+					if (aprxLogParserConfig.enabled) {
+						// get packet from current iterator position
+						AprsWXData currentPacket = *wxDataFromAprxIterator;
+
+						// set the source of this packet to allow further processing
+						currentPacket.dataSource = WxDataSource::IS_PRIMARY;
+
+						wxTarget.copy(currentPacket, sourceConfig);
+
+						// copy timestamps
+						wxTarget.packetUtcTimestamp = currentPacket.packetUtcTimestamp;
+						wxTarget.packetLocalTimestmp = currentPacket.packetLocalTimestmp;
+					}
+
 					if (!wxTarget.valid) {
 						if (batchMode) {
-							std::cout << "-- main:425 - No valid data have been received from configured sources!!" << std::endl;
+							std::cout << "-- main:515 - No valid data have been received from configured sources!!" << std::endl;
 
 							throw std::exception();
 						}
@@ -466,7 +562,7 @@ int main(int argc, char **argv){
 					// exit immediately witout performing any changes
 
 					// printing target data
-					std::cout << "--- main:450 - Printing target WX data which will be used for further processing." << std::endl;
+					std::cout << "--- main:540 - Printing target WX data which will be used for further processing." << std::endl;
 					wxTarget.PrintData();
 
 					// limiting slew rates for measurements
@@ -478,23 +574,26 @@ int main(int argc, char **argv){
 					// inserting the data inside a RRD file
 					dataPresence.FetchDataInRRD(&wxTarget, false);
 
-					// insertind diff-data inside RRD files
-					dataPresence.FetchDiffInRRD(wxDifference);
-
-					// configuring locale before plotting graphs
-					set_locale();
-
-					// replotting the graphs set
-					dataPresence.PlotGraphsFromRRD();
-
 					// limit precision of the wind speed
 					wxTarget.NarrowPrecisionOfWindspeed();
 
 					// and temperature also
 					wxTarget.NarrowPrecisionOfTemperature();
 
-					// generating the website
-					dataPresence.GenerateWebiste(wxTarget, wxSecondarySrcForPage, locale, datetimeLocale);
+					// insertind diff-data inside RRD files
+					dataPresence.FetchDiffInRRD(wxDifference);
+
+					// configuring locale before plotting graphs
+					set_locale();
+
+					// do not generate HTML and RRD plots if there is no sense to do so
+					if (!aprxLogParserConfig.batchLoad) {
+						// replotting the graphs set
+						dataPresence.PlotGraphsFromRRD();
+
+						// generating the website
+						dataPresence.GenerateWebiste(wxTarget, wxSecondarySrcForPage, locale, datetimeLocale);
+					}
 
 					if (bannerCreatorConfig.enable) {
 						// reinitialize banner generator
@@ -539,14 +638,29 @@ int main(int argc, char **argv){
 						}
 					}
 
-					if (batchMode && ( !aprsConfig.enable || tcpOrSerialPacketGood)) {
-						break;
+
+					if (aprxLogParserConfig.enabled) {
+						
+						// move iterator forward
+						wxDataFromAprxIterator++;
+
+						// check if the and of data has been reached
+						if (wxDataFromAprxIterator == wxDataFromAprx.end()) {
+							isConnectionAlive = false;
+
+							break;
+						}
+					}
+					else {
+						if (batchMode && ( !aprsConfig.enable || tcpOrSerialPacketGood)) {
+							break;
+						}
 					}
 
 				}
 				else {
 					if (Debug) {
-						cout << "--- main.cpp:547 - This is not valid APRS packet" << endl;
+						cout << "--- main.cpp:635 - This is not valid APRS packet" << endl;
 					}
 
 					//if (Debug)
@@ -561,7 +675,7 @@ int main(int argc, char **argv){
 				break;
 			}
 			catch (std::exception &e) {
-				cout << "--- main:562 - std::exception " << e.what() << std::endl;
+				cout << "--- main:650 - std::exception " << e.what() << std::endl;
 
 				if (exitOnException) {
 					std::cout << "--- Exiting application";
@@ -571,7 +685,7 @@ int main(int argc, char **argv){
 				}
 			}
 			catch (...) {
-				cout << "--- main:544 - Unknown exception thrown during processing!" << std::endl;
+				cout << "--- main:660 - Unknown exception thrown during processing!" << std::endl;
 
 				if (exitOnException) {
 					std::cout << "--- Exiting application";
@@ -587,7 +701,7 @@ int main(int argc, char **argv){
 			break;
 		}
 
-		std::cout << "--- main:560 - Connection to APRS server died. Reconnecting.." << std::endl;
+		std::cout << "--- main:676 - Connection to APRS server died. Reconnecting.." << std::endl;
 
 	} while (mainLoopExit);		// end of main loop
 

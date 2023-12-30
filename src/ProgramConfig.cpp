@@ -113,7 +113,7 @@ void ProgramConfig::getDbConfig(MySqlConnInterface& db) {
 			db.dumpTelemetry = false;
 		}
 	}
-	std::cout << "---ProgramConfig::getDbConfig:86 - Configuration loaded successfully" << std::endl;
+	std::cout << "---ProgramConfig::getDbConfig:116 - Configuration loaded successfully" << std::endl;
 }
 
 void ProgramConfig::getAprsThreadConfig(AprsThreadConfig& aprs) {
@@ -137,7 +137,7 @@ void ProgramConfig::getAprsThreadConfig(AprsThreadConfig& aprs) {
 		aprs.SecondaryCall = "";
 		aprs.SecondarySSID = 0xFF;
 	}
-	std::cout << "---ProgramConfig::getAprsThreadConfig:110 - Configuration loaded successfully" << std::endl;
+	std::cout << "---ProgramConfig::getAprsThreadConfig:140 - Configuration loaded successfully" << std::endl;
 }
 
 void ProgramConfig::getSerialConfig(SerialConfig& serial) {
@@ -158,7 +158,7 @@ void ProgramConfig::getSerialConfig(SerialConfig& serial) {
 		serial.captureAll = false;
 	}
 
-	std::cout << "---ProgramConfig::getSerialConfig:130 - Configuration loaded successfully" << std::endl;
+	std::cout << "---ProgramConfig::getSerialConfig:161 - Configuration loaded successfully" << std::endl;
 }
 
 void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCount, int& plotCount) {
@@ -254,7 +254,7 @@ void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCo
 	libconfig::Setting &rPlots = rRoot["Plots"];
 	plotCount = rPlots.getLength();
 
-	std::cout << "---ProgramConfig::getDataPresentationConfig:211 - plotCount: " << plotCount << std::endl;
+	std::cout << "---ProgramConfig::getDataPresentationConfig:257 - plotCount: " << plotCount << std::endl;
 
 	for (int ii = 0; ii < plotCount; ii++) {
 		string temp;
@@ -315,7 +315,7 @@ void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCo
 		data.vPNGFiles.push_back(cVectorPNGTemp);
 	}
 
-	std::cout << "---ProgramConfig::getDataPresentationConfig:263 - Configuration loaded successfully" << std::endl;
+	std::cout << "---ProgramConfig::getDataPresentationConfig:318 - Configuration loaded successfully" << std::endl;
 }
 
 //void ProgramConfig::getTelemetryConfig(Telemetry& data, bool& useAsTemperature) {
@@ -407,6 +407,9 @@ bool ProgramConfig::configureLogOutput() {
 				return false;
 			}
 	}
+	else {
+		FILE* result_err = freopen("/dev/null", "w", stderr);	
+	}
 
 	return true;
 }
@@ -431,7 +434,7 @@ void ProgramConfig::getDataSourceConfig(DataSourceConfig& config_out) {
 		config_out.wind = this->getWindSource();
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
-		std::cout << "--- ProgramConfig::getDataSourceConfig:370 - Error in data sources configuration. Using defaul values!" << std::endl;
+		std::cout << "--- ProgramConfig::getDataSourceConfig:437 - Error in data sources configuration. Using defaul values!" << std::endl;
 
 		config_out.globalBackup = WxDataSource::IS_PRIMARY;
 		config_out.humidity = WxDataSource::IS_PRIMARY;
@@ -441,7 +444,7 @@ void ProgramConfig::getDataSourceConfig(DataSourceConfig& config_out) {
 		config_out.wind = WxDataSource::IS_PRIMARY;
 	}
 	catch (AmbigiousDataSourceConfig & ex) {
-		std::cout << "--- ProgramConfig::getDataSourceConfig:380 - Error in data sources configuration. Using defaul values!" << std::endl;
+		std::cout << "--- ProgramConfig::getDataSourceConfig:447 - Error in data sources configuration. Using defaul values!" << std::endl;
 
 		config_out.globalBackup = WxDataSource::IS_PRIMARY;
 		config_out.humidity = WxDataSource::IS_PRIMARY;
@@ -460,7 +463,7 @@ void ProgramConfig::getDataSourceConfig(DataSourceConfig& config_out) {
 
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
-		std::cout << "--- ProgramConfig::getDataSourceConfig:399 - No Serial KISS communcation is configured." << std::endl;
+		std::cout << "--- ProgramConfig::getDataSourceConfig:466 - No Serial KISS communcation is configured." << std::endl;
 
 	}
 
@@ -719,19 +722,19 @@ void ProgramConfig::getSlewRateLimitConfig(SlewRateLimiter& limiter) {
 		libconfig::Setting &slew = root["SlewLimit"];
 
 		lookupSucceded = slew.lookupValue("Temperature", temperatureSlew);
-		std::cout << "--- ProgramConfig::getSlewRateLimitConfig:654 - lookupSucceded: " << lookupSucceded << ", temperatureSlew: " << temperatureSlew << std::endl;
+		std::cout << "--- ProgramConfig::getSlewRateLimitConfig:725 - lookupSucceded: " << lookupSucceded << ", temperatureSlew: " << temperatureSlew << std::endl;
 
 		lookupSucceded = (slew.lookupValue("Pressure", pressureSlew) ? lookupSucceded : false);
-		std::cout << "--- ProgramConfig::getSlewRateLimitConfig:657 - lookupSucceded: " << lookupSucceded << ", pressureSlew: " << pressureSlew << std::endl;
+		std::cout << "--- ProgramConfig::getSlewRateLimitConfig:728 - lookupSucceded: " << lookupSucceded << ", pressureSlew: " << pressureSlew << std::endl;
 
 		lookupSucceded = (slew.lookupValue("WindSpeed", speedSlew) ? lookupSucceded : false);
-		std::cout << "--- ProgramConfig::getSlewRateLimitConfig:660 - lookupSucceded: " << lookupSucceded << ", speedSlew: " << speedSlew << std::endl;
+		std::cout << "--- ProgramConfig::getSlewRateLimitConfig:731 - lookupSucceded: " << lookupSucceded << ", speedSlew: " << speedSlew << std::endl;
 
 		lookupSucceded = (slew.lookupValue("WindGusts", gustsSlew) ? lookupSucceded : false);
-		std::cout << "--- ProgramConfig::getSlewRateLimitConfig:663 - lookupSucceded: " << lookupSucceded << ", gustsSlew: " << gustsSlew << std::endl;
+		std::cout << "--- ProgramConfig::getSlewRateLimitConfig:734 - lookupSucceded: " << lookupSucceded << ", gustsSlew: " << gustsSlew << std::endl;
 
 		lookupSucceded = (slew.lookupValue("Humidity", humiditySlew) ? lookupSucceded : false);
-		std::cout << "--- ProgramConfig::getSlewRateLimitConfig:666 - lookupSucceded: " << lookupSucceded << ", humidiySlew: " << humiditySlew << std::endl;
+		std::cout << "--- ProgramConfig::getSlewRateLimitConfig:737 - lookupSucceded: " << lookupSucceded << ", humidiySlew: " << humiditySlew << std::endl;
 
 
 		//if (lookupSucceded) {
@@ -777,10 +780,10 @@ void ProgramConfig::getLocaleStaticString(Locale &l) {
 		locale.lookupValue("windGusts", l.windGusts);
 		locale.lookupValue("windSpeed", l.windSpeed);
 
-		std::cout << "--- ProgramConfig::getLocaleStaticString:695 - Locale text data loaded successfully." << std::endl;
+		std::cout << "--- ProgramConfig::getLocaleStaticString:783 - Locale text data loaded successfully." << std::endl;
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
-		std::cout << "--- ProgramConfig::getLocaleStaticString:698 - Error during loading locale! Default values will be used" << std::endl;
+		std::cout << "--- ProgramConfig::getLocaleStaticString:786 - Error during loading locale! Default values will be used" << std::endl;
 	}
 
 }
@@ -845,11 +848,11 @@ void ProgramConfig::getWeatherlinkConfig(WeatherlinkClient_Config &_config) {
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
 		_config.enable = false;
-		std::cout << "--- ProgramConfig::getWeatherlinkConfig:834 - Configuration didn't found, weatherlink client disabled" << std::endl;
+		std::cout << "--- ProgramConfig::getWeatherlinkConfig:851 - Configuration didn't found, weatherlink client disabled" << std::endl;
 	}
 	catch (libconfig::ParseException &ex) {
 		_config.enable = false;
-		std::cout << "--- ProgramConfig::getWeatherlinkConfig:838 - Error during reading configuration!" << std::endl;
+		std::cout << "--- ProgramConfig::getWeatherlinkConfig:855 - Error during reading configuration!" << std::endl;
 
 	}
 }
@@ -876,26 +879,58 @@ void ProgramConfig::getBannerConfig(BannerCreatorConfig &bannerCreator)
 				;
 			}
 			else {
-				std::cout << "--- ProgramConfig::getBannerConfig:879 - Cannot open asset file with arrow" << std::endl;
+				std::cout << "--- ProgramConfig::getBannerConfig:882 - Cannot open asset file with arrow" << std::endl;
 				bannerCreator.enable = false;
 			}
 		} 
 		else {
-			std::cout << "--- ProgramConfig::getBannerConfig:884 - Cannot open asset file with windrose" << std::endl;
+			std::cout << "--- ProgramConfig::getBannerConfig:887 - Cannot open asset file with windrose" << std::endl;
 			bannerCreator.enable = false;
 		}
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
 		bannerCreator.outputFile = "";
 		bannerCreator.enable = false;
-		std::cout << "--- ProgramConfig::getBannerConfig:891 - Configuration didn't found" << std::endl;
+		std::cout << "--- ProgramConfig::getBannerConfig:894 - Configuration didn't found" << std::endl;
 	}
 	catch (libconfig::ParseException &ex) {
 		bannerCreator.outputFile = "";
 		bannerCreator.enable = false;
-		std::cout << "--- ProgramConfig::getBannerConfig:866 - Error during reading configuration!" << std::endl;
+		std::cout << "--- ProgramConfig::getBannerConfig:899 - Error during reading configuration!" << std::endl;
 
 	}
+}
+
+void ProgramConfig::getAprxLogParserConfig(AprxLogParserConfig & aprxLogConfig) {
+	libconfig::Setting &root = config.getRoot();
+	libconfig::Setting &logparser = root["AprxLogParser"];
+	int _ssid = 0;
+
+	logparser.lookupValue("Enable", aprxLogConfig.enabled);
+
+	if (!logparser.lookupValue("LogFile", aprxLogConfig.logFile)) {
+		aprxLogConfig.enabled = false;
+		std::cout << "--- ProgramConfig::getAprxLogParserConfig:913 - Path to APRX rf-log file hasn't been provided! Log parser is disabled" << std::endl;
+		return;
+	}
+
+	logparser.lookupValue("LogTimeInLocal", aprxLogConfig.logTimeInLocal);
+	logparser.lookupValue("Callsign", aprxLogConfig.sourceCallsign);
+	logparser.lookupValue("BatchLoadFromTimestamp", aprxLogConfig.batchLoadFrom);
+	logparser.lookupValue("BatchLoadToTimestamp", aprxLogConfig.batchLoadTo);
+	logparser.lookupValue("MaximumPacketAge", aprxLogConfig.maximumPacketAge);
+	logparser.lookupValue("Ssid", _ssid);
+	aprxLogConfig.sourceSsid = _ssid;
+
+	if (aprxLogConfig.batchLoad) {
+		// check if 'from' and 'to' timestamps were provided
+		if (aprxLogConfig.batchLoadFrom < 1260000000LL && aprxLogConfig.batchLoadTo < 1260000000LL) {
+			aprxLogConfig.enabled = false;
+			std::cout << "--- ProgramConfig::getAprxLogParserConfig:929 - APRX rf-log parsing in batch mode cannot be used w/o" << std::endl;
+			return;
+		}
+	}
+
 }
 
 void ProgramConfig::printConfigInPl(
