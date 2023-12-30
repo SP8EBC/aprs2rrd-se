@@ -105,6 +105,8 @@ std::vector<AprsWXData> AprxLogParser::getAllWeatherPacketsInTimerange(
 
 						// check if a weather data has been found in this line
 						if (weatherFrame.has_value()) {
+							weatherFrame->packetUtcTimestamp = epochFromLine;
+
 							// if yes add this to output vector
 							out.push_back(weatherFrame.value());
 
@@ -201,6 +203,12 @@ std::optional<AprsWXData> AprxLogParser::getLastPacketForStation(std::string cal
 
 		if (seprated.size() > 4) {
 
+			// get frame timestamp
+			boost::posix_time::ptime timestamp = AprxLogParser_StaticStuff::convertToFrameTimestamp(seprated.at(0), seprated.at(1));
+
+			// convert into epoch
+			const long epochFromLine = TimeTools::getEpochFromPtime(timestamp, timestampsAreInLocal);
+
 			try {
 				// parse line read from aprx rf log
 				std::optional<AprsWXData> parsedFrame = AprxLogParser_StaticStuff::parseFrame(seprated, packet);
@@ -209,6 +217,9 @@ std::optional<AprsWXData> AprxLogParser::getLastPacketForStation(std::string cal
 				if (parsedFrame.has_value()) {
 					// if yes return it
 					out = parsedFrame.value();
+
+					// store UTC timestamp inside output packet
+					out->packetUtcTimestamp = epochFromLine;
 				}
 				else {
 					// if not maybe this isn't
@@ -434,6 +445,9 @@ std::vector<AprsPacket> AprxLogParser::getAllPacketsInTimerange(
 						AprsPacket aprsPacket;
 
 						std::optional<AprsWXData> weatherFrame = AprxLogParser_StaticStuff::parseFrame(separated, aprsPacket);
+
+						// store epoch timestamp
+						aprsPacket.packetUtcTimestamp = epochFromLine;
 
 						// if yes add this to output vector
 						out.push_back(aprsPacket);

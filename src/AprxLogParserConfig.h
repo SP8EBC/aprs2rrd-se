@@ -28,7 +28,7 @@ public:
      * @brief How old in minutes rf-log entry can be to be used as valid 
      * 
     */
-    uint8_t maximumPacketAge;
+    int maximumPacketAge;
 
     /**
      * @brief Set to true to load all weather packets from given timestamp, not just the last one. 
@@ -37,10 +37,19 @@ public:
     */
     bool batchLoad;
 
+    long long batchLoadFrom;
 
-    uint64_t batchLoadFrom;
+    long long batchLoadTo;
 
-    uint64_t batchLoadTo;
+    AprxLogParserConfig() {
+        enabled = false;
+        logTimeInLocal = true;
+        sourceSsid = 0;
+        maximumPacketAge = 0;
+        batchLoad = false;
+        batchLoadFrom = 0;
+        batchLoadTo = 0;
+    }
 };
 
 #endif

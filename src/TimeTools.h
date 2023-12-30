@@ -204,6 +204,57 @@ public:
 		return out;
 	}
 
+	/**
+	 * @brief 	Converts a UNIX timestamp stored in unspecifed timezone into unit tm struct.
+	 * 			Simply ignores the TZ and threat this as a UTC timestamp. It is up to caler
+	 * 			to know what it passes and understood if return value is a UTC time or
+	 * 			local time.
+	*/
+	static tm getTmStructFromUndefinedTzEpoch(uint64_t undefinedTzEpoch) {
+
+		tm out = {0u};
+
+		// get intermediate ptime struct
+		const boost::posix_time::ptime ptime = TimeTools::getPtimeFromEpoch(undefinedTzEpoch);
+
+		// get current date
+		const boost::date_time::date date = ptime.date();
+
+		// get current time
+		const boost::date_time::time_duration time = ptime.time_of_day();
+
+		out.tm_hour = time.hours();
+		out.tm_sec = time.seconds();
+		out.tm_min = time.minutes();
+		out.tm_year = date.year() - 1900;
+		out.tm_mon = date.month() - 1;
+		out.tm_mday = date.day();
+
+		return out;
+	}
+
+	/**
+	 * 
+	*/
+	static tm getTmStructFromUndefinedTzPtime(boost::posix_time::ptime ptime) {
+		tm out = {0u};
+
+		// get current date
+		const boost::date_time::date date = ptime.date();
+
+		// get current time
+		const boost::date_time::time_duration time = ptime.time_of_day();
+
+		out.tm_hour = time.hours();
+		out.tm_sec = time.seconds();
+		out.tm_min = time.minutes();
+		out.tm_year = date.year() - 1900;
+		out.tm_mon = date.month() - 1;
+		out.tm_mday = date.day();
+
+		return out;	
+	}
+
 	TimeTools();
 	virtual ~TimeTools();
 };

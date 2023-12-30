@@ -151,13 +151,13 @@ int main(int argc, char **argv){
 	/**
 	 * FIXME: test
 	*/
-	aprxLogParserConfig.enabled = true;
-	aprxLogParserConfig.batchLoad = true;
-	aprxLogParserConfig.logFile = "./test_wdir/aprx-rf.log";
-	aprxLogParserConfig.batchLoadFrom = 1703415792ULL;
-	aprxLogParserConfig.batchLoadTo = 1703484192ULL;
-	aprxLogParserConfig.sourceCallsign = "SR9NSK";
-	aprxLogParserConfig.sourceSsid = 1;
+	// aprxLogParserConfig.enabled = true;
+	// aprxLogParserConfig.batchLoad = true;
+	// aprxLogParserConfig.logFile = "./test_wdir/aprx-rf.log";
+	// aprxLogParserConfig.batchLoadFrom = 1703415792ULL;
+	// aprxLogParserConfig.batchLoadTo = 1703484192ULL;
+	// aprxLogParserConfig.sourceCallsign = "SR9NSK";
+	// aprxLogParserConfig.sourceSsid = 1;
 
 	syncCondition.reset(new std::condition_variable());
 	syncLock.reset(new std::mutex());
@@ -526,6 +526,10 @@ int main(int argc, char **argv){
 						currentPacket.dataSource = WxDataSource::IS_PRIMARY;
 
 						wxTarget.copy(currentPacket, sourceConfig);
+
+						// copy timestamps
+						wxTarget.packetUtcTimestamp = currentPacket.packetUtcTimestamp;
+						wxTarget.packetLocalTimestmp = currentPacket.packetLocalTimestmp;
 					}
 
 					if (!wxTarget.valid) {

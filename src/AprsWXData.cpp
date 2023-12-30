@@ -40,7 +40,7 @@ AprsWXData::AprsWXData() {
     is_secondary = false;
     is_primary = false;
 
-    //DebugOutput = false;
+    packetUtcTimestamp = 0;
 }
 
 AprsWXData::~AprsWXData() {
@@ -292,6 +292,9 @@ AprsWXData::AprsWXData(const AprsWXData& in) {
 	this->ssid = in.ssid;
 	this->call = in.call;
 
+	this->packetUtcTimestamp = in.packetUtcTimestamp;
+	memcpy(&this->packetLocalTimestmp, &in.packetLocalTimestmp, sizeof(boost::posix_time::ptime));
+
 	this->is_primary = false;			// ???
 	this->is_secondary = false;			// ???
 
@@ -322,6 +325,9 @@ AprsWXData& AprsWXData::operator =(AprsWXData& _in) {
 
 	this->call = _in.call;
 	this->ssid = _in.ssid;
+
+	this->packetUtcTimestamp = _in.packetUtcTimestamp;
+	memcpy(&this->packetLocalTimestmp, &_in.packetLocalTimestmp, sizeof(boost::posix_time::ptime));
 
 	this->DebugOutput = _in.DebugOutput;
 

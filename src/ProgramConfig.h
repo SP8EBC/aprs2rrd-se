@@ -28,6 +28,7 @@
 #include "ZywiecMeteoConfig.h"
 #include "WeatherlinkClient.h"
 #include "BannerCreatorConfig.h"
+#include "AprxLogParserConfig.h"
 
 class ProgramConfig {
 	std::string configFilename;
@@ -81,6 +82,7 @@ public:
 	void getZywiecMeteoConfig(ZywiecMeteoConfig & z);
 	void getWeatherlinkConfig(WeatherlinkClient_Config & _config);
 	void getBannerConfig(BannerCreatorConfig & bannerCreator);
+	void getAprxLogParserConfig(AprxLogParserConfig & aprxLogConfig);
 	bool getDateTimeLocale(char * localeString, basic_string<char>::size_type ln);
 
 	bool configureLogOutput();

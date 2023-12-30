@@ -40,7 +40,23 @@ class AprsWXData
         bool usePressure;
         bool useHumidity;
 
-        boost::posix_time::ptime packetTimestmp;
+		/**
+		 * @brief 	Used by aprx-rf log parser only. Packet timestamp in timezone used by APRX, but 
+		 * 			this timezone is NOT stored in this structure
+		 * 
+		*/
+        boost::posix_time::ptime packetLocalTimestmp;
+
+		/**
+		 * @brief 	This is UTC timestamp of the frame, calculated by a call to @link{TimeTools::getEpochFromPtime} made 
+		 * 			from @link{AprxLogParser::getLastPacketForStation}
+		 * 
+		 * @attention 	There is an assumption made here that APRS2RRD is run on an account with the same timezone as 
+		 * 				what APRX uses. There is no information about TZ stored in aprx-rf.log file, it is just local
+		 * 				time. Whatever the local time means.
+		*/
+		uint64_t packetUtcTimestamp;
+
 
         int packetAgeInSecondsUtc;
         int packetAgeInSecondsLocal;

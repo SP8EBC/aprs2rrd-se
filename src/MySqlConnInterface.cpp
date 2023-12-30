@@ -1,5 +1,7 @@
 #include "MySqlConnInterface.h"
 #include "main.h"
+#include "TimeTools.h"
+
 #include <ctime>
 #include <iostream>
 #include <iomanip>
@@ -54,6 +56,8 @@ void MySqlConnInterface::InsertIntoDbSchema2(const AprsWXData& cInput, const Dat
 	if (!this->schema_v2)
 		return;
 
+	const bool hasTimestamp = (cInput.packetUtcTimestamp != 0);
+
 	std::stringstream temp;
 	temp.str("");
 
@@ -64,23 +68,54 @@ void MySqlConnInterface::InsertIntoDbSchema2(const AprsWXData& cInput, const Dat
 												(current_epoch - boost::posix_time::ptime(boost::gregorian::date(1970, 1, 1)));
 	int64_t epoch_seconds = epoch_seconds_duration.total_seconds();
 
-	temp << "INSERT INTO `" << this->dbName << "`.`data_station`";
-	temp << "(`epoch`, `datetime`, `station`, `temperature`, `humidity`, `pressure`, `winddir`, `windspeed`, `windgusts`, " <<
-								"`tsource`, `wsource`, `psource`, `hsource`, `rsource`) VALUES (";
-	temp << epoch_seconds << ", ";
-	temp << "CURRENT_TIMESTAMP, ";
-	temp << "'" << station_name << "', ";
-	temp << cInput.temperature << ", ";
-	temp << cInput.humidity << ", ";
-	temp << cInput.pressure << ", ";
-	temp << cInput.wind_direction << ", ";
-	temp << cInput.wind_speed << ", ";
-	temp << cInput.wind_gusts << ", ";
-	temp << "'" << config.getTemperatureSource() << "', ";
-	temp << "'" << config.getWindSource() << "', ";
-	temp << "'" << config.getPressureSource() << "', ";
-	temp << "'" << config.getHumiditySource() << "', ";
-	temp << "'" << config.getRainSource() << "');" << endl;
+	if (hasTimestamp) {
+		epoch_seconds = cInput.packetUtcTimestamp;
+		struct tm time = TimeTools::getTmStructFromUndefinedTzPtime(cInput.packetLocalTimestmp);
+
+		temp << "INSERT INTO `" << this->dbName << "`.`data_station`";
+		temp << "(`epoch`, `datetime`, `station`, `temperature`, `humidity`, `pressure`, `winddir`, `windspeed`, `windgusts`, " <<
+									"`tsource`, `wsource`, `psource`, `hsource`, `rsource`) VALUES (";
+		temp << epoch_seconds << ", ";
+		temp << "'" << \
+		time.tm_year + 1900 << "-" << setw(2) <<  setfill('0') << \
+		(time.tm_mon) + 1 << "-" << setw(2) << setfill('0') << \
+		time.tm_mday << " " << setw(2) << setfill('0') << \
+		time.tm_hour << ":" << setw(2) << setfill('0') << \
+		time.tm_min << ":" << setw(2) << setfill('0') << \
+		time.tm_sec << 
+		"',";
+		temp << "'" << station_name << "', ";
+		temp << cInput.temperature << ", ";
+		temp << cInput.humidity << ", ";
+		temp << cInput.pressure << ", ";
+		temp << cInput.wind_direction << ", ";
+		temp << cInput.wind_speed << ", ";
+		temp << cInput.wind_gusts << ", ";
+		temp << "'" << config.getTemperatureSource() << "', ";
+		temp << "'" << config.getWindSource() << "', ";
+		temp << "'" << config.getPressureSource() << "', ";
+		temp << "'" << config.getHumiditySource() << "', ";
+		temp << "'" << config.getRainSource() << "');" << endl;
+	}
+	else {
+		temp << "INSERT INTO `" << this->dbName << "`.`data_station`";
+		temp << "(`epoch`, `datetime`, `station`, `temperature`, `humidity`, `pressure`, `winddir`, `windspeed`, `windgusts`, " <<
+									"`tsource`, `wsource`, `psource`, `hsource`, `rsource`) VALUES (";
+		temp << epoch_seconds << ", ";
+		temp << "CURRENT_TIMESTAMP, ";
+		temp << "'" << station_name << "', ";
+		temp << cInput.temperature << ", ";
+		temp << cInput.humidity << ", ";
+		temp << cInput.pressure << ", ";
+		temp << cInput.wind_direction << ", ";
+		temp << cInput.wind_speed << ", ";
+		temp << cInput.wind_gusts << ", ";
+		temp << "'" << config.getTemperatureSource() << "', ";
+		temp << "'" << config.getWindSource() << "', ";
+		temp << "'" << config.getPressureSource() << "', ";
+		temp << "'" << config.getHumiditySource() << "', ";
+		temp << "'" << config.getRainSource() << "');" << endl;
+	}
 
 	if (this->Debug == true)
 		cout << temp.str() << endl;
@@ -250,14 +285,15 @@ void MySqlConnInterface::InsertIntoDb(const AprsWXData* cInput) {
 	if (!this->schema_v1)
 		return;
 
+	const bool hasTimestamp = (cInput->packetUtcTimestamp != 0);
+
 	stringstream temp;
 	time_t currtime;
 	struct tm* local;
 
 	temp.str("");
 
-	currtime = time(NULL);
-	local = localtime(&currtime);
+
 
 	if (this->execBeforeInsert == true) {
 		cout << "--- MysqlConnInterface::InsertIntoDb:244 - Executing: " << this->execBeforeInsertPath.c_str();
@@ -265,19 +301,65 @@ void MySqlConnInterface::InsertIntoDb(const AprsWXData* cInput) {
 		cout << endl;
 	}
 
-	temp << "INSERT INTO `" << this->dbName << "`.`" << this->tableName << "` (`Id`, `TimestampEpoch`, `TimestampDate`, `Temp`, `WindSpeed`, `WindGusts`, `WindDir`, `QNH`, `Humidity`) VALUES (NULL, CURRENT_TIMESTAMP, '" << \
-		local->tm_year + 1900 << "-" << setw(2) <<  setfill('0') << \
-		(local->tm_mon) + 1 << "-" << setw(2) << setfill('0') << \
-		local->tm_mday << " " << setw(2) << setfill('0') << \
-		local->tm_hour << ":" << setw(2) << setfill('0') << \
-		local->tm_min << ":" << setw(2) << setfill('0') << \
-		local->tm_sec << "', " << \
-		cInput->temperature << ", " << \
-		cInput->wind_speed << ", " <<  \
-		cInput->wind_gusts << ", " << \
-		cInput->wind_direction << ", " << \
-		cInput->pressure << ", " << \
-		cInput->humidity << ");" << endl;
+	if (hasTimestamp) {
+		// get tm struct from datetime parsed from APRX rf-log record 
+		struct tm time = TimeTools::getTmStructFromUndefinedTzPtime(cInput->packetLocalTimestmp);
+
+		temp << "INSERT INTO `" << this->dbName << "`.`" << this->tableName << "` (`Id`, `TimestampEpoch`, `TimestampDate`, `Temp`, `WindSpeed`, `WindGusts`, `WindDir`, `QNH`, `Humidity`) VALUES (NULL, " <<
+			"'" << \
+			time.tm_year + 1900 << "-" << setw(2) <<  setfill('0') << \
+			(time.tm_mon) + 1 << "-" << setw(2) << setfill('0') << \
+			time.tm_mday << " " << setw(2) << setfill('0') << \
+			time.tm_hour << ":" << setw(2) << setfill('0') << \
+			time.tm_min << ":" << setw(2) << setfill('0') << \
+			time.tm_sec << 
+			"', '" << \
+			time.tm_year + 1900 << "-" << setw(2) <<  setfill('0') << \
+			(time.tm_mon) + 1 << "-" << setw(2) << setfill('0') << \
+			time.tm_mday << " " << setw(2) << setfill('0') << \
+			time.tm_hour << ":" << setw(2) << setfill('0') << \
+			time.tm_min << ":" << setw(2) << setfill('0') << \
+			time.tm_sec << 
+			"', " << \
+			cInput->temperature << ", " << \
+			cInput->wind_speed << ", " <<  \
+			cInput->wind_gusts << ", " << \
+			cInput->wind_direction << ", " << \
+			cInput->pressure << ", " << \
+			cInput->humidity << ");" << endl;
+
+		// temp << "INSERT INTO `" << this->dbName << "`.`" << this->tableName << "` (`Id`, `TimestampEpoch`, `TimestampDate`, `Temp`, `WindSpeed`, `WindGusts`, `WindDir`, `QNH`, `Humidity`) VALUES (NULL, CURRENT_TIMESTAMP, '" << \
+		// 	time.tm_year + 1900 << "-" << setw(2) <<  setfill('0') << \
+		// 	(time.tm_mon) + 1 << "-" << setw(2) << setfill('0') << \
+		// 	time.tm_mday << " " << setw(2) << setfill('0') << \
+		// 	time.tm_hour << ":" << setw(2) << setfill('0') << \
+		// 	time.tm_min << ":" << setw(2) << setfill('0') << \
+		// 	time.tm_sec << "', " << \
+		// 	cInput->temperature << ", " << \
+		// 	cInput->wind_speed << ", " <<  \
+		// 	cInput->wind_gusts << ", " << \
+		// 	cInput->wind_direction << ", " << \
+		// 	cInput->pressure << ", " << \
+		// 	cInput->humidity << ");" << endl;
+	}
+	else {
+		currtime = time(NULL);
+		local = localtime(&currtime);
+
+		temp << "INSERT INTO `" << this->dbName << "`.`" << this->tableName << "` (`Id`, `TimestampEpoch`, `TimestampDate`, `Temp`, `WindSpeed`, `WindGusts`, `WindDir`, `QNH`, `Humidity`) VALUES (NULL, CURRENT_TIMESTAMP, '" << \
+			local->tm_year + 1900 << "-" << setw(2) <<  setfill('0') << \
+			(local->tm_mon) + 1 << "-" << setw(2) << setfill('0') << \
+			local->tm_mday << " " << setw(2) << setfill('0') << \
+			local->tm_hour << ":" << setw(2) << setfill('0') << \
+			local->tm_min << ":" << setw(2) << setfill('0') << \
+			local->tm_sec << "', " << \
+			cInput->temperature << ", " << \
+			cInput->wind_speed << ", " <<  \
+			cInput->wind_gusts << ", " << \
+			cInput->wind_direction << ", " << \
+			cInput->pressure << ", " << \
+			cInput->humidity << ");" << endl;
+	}
 
 	if (this->Debug == true)
 		cout << temp.str() << endl;
