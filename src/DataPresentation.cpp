@@ -99,60 +99,59 @@ void DataPresentation::FetchDataInRRD(const AprsWXData* const cInput, bool inhib
 	int currtimeint;
 	time_t currtime;
 
+	const bool hasTimestamp = (cInput->packetUtcTimestamp != 0);
+
+	if (hasTimestamp) {
+		currtime = (int)cInput->packetUtcTimestamp;
+		currtimeint = (int)cInput->packetUtcTimestamp;
+	}
+	else {
+		currtime =time(NULL);
+		currtimeint = (int)currtime;
+	}
+
 	int sys_retval = 0;
 
 	if (cInput == nullptr)
 		return;
 
 	if (!cInput->valid) {
-		cout << "--- DataPresentation::FetchDataInRRD:108 - Input data is invalid and cannot be used" << endl;
+		cout << "--- DataPresentation::FetchDataInRRD:119 - Input data is invalid and cannot be used" << endl;
 		return;
 	}
 
 	for (unsigned i = 0; i < this->vRRDFiles.size(); i++) {
 		if (this->vRRDFiles[i].eType == PlotType::TEMPERATURE && cInput->useTemperature == true) {
-			currtime =time(NULL);
-			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
 			sprintf(command, "rrdtool update %s %d:%f", this->vRRDFiles[i].sPath.c_str(), currtimeint, cInput->temperature);
 			if (this->DebugOutput == true && inhibitLog == false)
 				cout << command << endl;
 		}
 		else if (this->vRRDFiles[i].eType == PlotType::QNH && cInput->usePressure == true) {
-			currtime =time(NULL);
-			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
 			sprintf(command, "rrdtool update %s %d:%d", this->vRRDFiles[i].sPath.c_str(), currtimeint, cInput->pressure);
 			if (this->DebugOutput == true && inhibitLog == false)
 				cout << command << endl;
 		}
 		else if (this->vRRDFiles[i].eType == PlotType::WIND_DIR && cInput->useWind == true) {
-			currtime =time(NULL);
-			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
 			sprintf(command, "rrdtool update %s %d:%d", this->vRRDFiles[i].sPath.c_str(), currtimeint, cInput->wind_direction);
 			if (this->DebugOutput == true && inhibitLog == false)
 				cout << command << endl;
 		}
 		else if (this->vRRDFiles[i].eType == PlotType::WIND_SPD && cInput->useWind == true) {
-			currtime =time(NULL);
-			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
 			sprintf(command, "rrdtool update %s %d:%f", this->vRRDFiles[i].sPath.c_str(), currtimeint, cInput->wind_speed);
 			if (this->DebugOutput == true && inhibitLog == false)
 				cout << command << endl;
 		}
 		else if (this->vRRDFiles[i].eType == PlotType::WIND_GST && cInput->useWind == true) {
-			currtime =time(NULL);
-			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
 			sprintf(command, "rrdtool update %s %d:%f", this->vRRDFiles[i].sPath.c_str(), currtimeint, cInput->wind_gusts);
 			if (this->DebugOutput == true && inhibitLog == false)
 				cout << command << endl;
 		}
 		else if (this->vRRDFiles[i].eType == PlotType::HUMIDITY && cInput->useHumidity == true) {
-			currtime =time(NULL);
-			currtimeint = (int)currtime;
 			memset(command, 0x00, sizeof(command));
 			sprintf(command, "rrdtool update %s %d:%f", this->vRRDFiles[i].sPath.c_str(), currtimeint, (float)cInput->humidity);
 			if (this->DebugOutput == true && inhibitLog == false)
@@ -198,7 +197,7 @@ void DataPresentation::PlotGraphsFromRRD() {
 	std::string graph2Type;
 
 	if (this->DebugOutput == true) {
-		cout << "--- DataPresentation::PlotGraphsFromRRD:201 -  Count of plots to be generated: " <<  this->vPNGFiles.size() << endl;
+		cout << "--- DataPresentation::PlotGraphsFromRRD:200 -  Count of plots to be generated: " <<  this->vPNGFiles.size() << endl;
 	}
 
 	for (i = 0; i < this->vPNGFiles.size(); i++) {
@@ -289,12 +288,12 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 	html.open(this->WebsitePath.c_str(), ios::out | ios::trunc);
 
 	if (!html.is_open()) {
-		std::cout << "--- DataPresentation::GenerateWebiste:295 - Html file cannot by opened because of unknown reason" << std::endl;
+		std::cout << "--- DataPresentation::GenerateWebiste:291 - Html file cannot by opened because of unknown reason" << std::endl;
 		return;
 	}
 
 	if (!html.good()) {
-		std::cout << "--- DataPresentation::GenerateWebiste:300 - Something is wrong with the html file!" << std::endl;
+		std::cout << "--- DataPresentation::GenerateWebiste:296 - Something is wrong with the html file!" << std::endl;
 		return;
 	}
 
@@ -306,7 +305,7 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 
 	//html.precision(3);
 
-	std::cout << "--- DataPresentation::GenerateWebiste:312 - Html file opened" << std::endl;
+	std::cout << "--- DataPresentation::GenerateWebiste:308 - Html file opened" << std::endl;
 
 	try {
 		html << " <!DOCTYPE html>" << std::endl;
