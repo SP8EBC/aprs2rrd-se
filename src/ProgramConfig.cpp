@@ -925,9 +925,12 @@ void ProgramConfig::getAprxLogParserConfig(AprxLogParserConfig & aprxLogConfig) 
 
 	if (aprxLogConfig.batchLoad) {
 		// check if 'from' and 'to' timestamps were provided
-		if (aprxLogConfig.batchLoadFrom < 1260000000LL && aprxLogConfig.batchLoadTo < 1260000000LL) {
+		if (aprxLogConfig.batchLoadFrom < 1260000000LL || aprxLogConfig.batchLoadTo < 1260000000LL) {
 			aprxLogConfig.enabled = false;
-			std::cout << "--- ProgramConfig::getAprxLogParserConfig:929 - APRX rf-log parsing in batch mode cannot be used w/o" << std::endl;
+			std::cout << "--- ProgramConfig::getAprxLogParserConfig:930 - APRX rf-log parsing in batch mode cannot be used w/o a timerange" << std::endl;
+			std::cout << "--- ProgramConfig::getAprxLogParserConfig:931 - BatchLoadFromTimestamp: " << aprxLogConfig.batchLoadFrom << std::endl;
+			std::cout << "--- ProgramConfig::getAprxLogParserConfig:932 - BatchLoadToTimestamp: " << aprxLogConfig.batchLoadTo << std::endl;
+			std::cout << "--- ProgramConfig::getAprxLogParserConfig:933 - Please remember that You have to add 'LL' postfix to the integer in config file" << std::endl;
 			return;
 		}
 	}
