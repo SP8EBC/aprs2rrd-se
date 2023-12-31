@@ -231,13 +231,13 @@ int main(int argc, char **argv){
 
 	}
 	catch (const SettingNotFoundException &ex) {
-		cout << "--- main:226 - Unrecoverable error during configuration file loading!" << endl;
+		cout << "--- main:234 - Unrecoverable error during configuration file loading!" << endl;
 		return -3;
 	}
 
 	aprsConfig.RetryServerLookup = true;
 
-	cout << "--- main:232 - Configuration parsed successfully" << endl;
+	cout << "--- main:240 - Configuration parsed successfully" << endl;
 
 	bool result = programConfig.configureLogOutput();
 

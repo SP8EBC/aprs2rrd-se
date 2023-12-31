@@ -903,36 +903,47 @@ void ProgramConfig::getBannerConfig(BannerCreatorConfig &bannerCreator)
 
 void ProgramConfig::getAprxLogParserConfig(AprxLogParserConfig & aprxLogConfig) {
 	libconfig::Setting &root = config.getRoot();
-	libconfig::Setting &logparser = root["AprxLogParser"];
-	int _ssid = 0;
+	try {
+		libconfig::Setting &logparser = root["AprxLogParser"];
+		int _ssid = 0;
 
-	logparser.lookupValue("Enable", aprxLogConfig.enabled);
+		logparser.lookupValue("Enable", aprxLogConfig.enabled);
 
-	if (!logparser.lookupValue("LogFile", aprxLogConfig.logFile)) {
-		aprxLogConfig.enabled = false;
-		std::cout << "--- ProgramConfig::getAprxLogParserConfig:913 - Path to APRX rf-log file hasn't been provided! Log parser is disabled" << std::endl;
-		return;
-	}
-
-	logparser.lookupValue("LogTimeInLocal", aprxLogConfig.logTimeInLocal);
-	logparser.lookupValue("Callsign", aprxLogConfig.sourceCallsign);
-	logparser.lookupValue("BatchLoadFromTimestamp", aprxLogConfig.batchLoadFrom);
-	logparser.lookupValue("BatchLoadToTimestamp", aprxLogConfig.batchLoadTo);
-	logparser.lookupValue("MaximumPacketAge", aprxLogConfig.maximumPacketAge);
-	logparser.lookupValue("BatchLoadMode", aprxLogConfig.batchLoad);
-	logparser.lookupValue("Ssid", _ssid);
-	aprxLogConfig.sourceSsid = _ssid;
-
-	if (aprxLogConfig.batchLoad) {
-		// check if 'from' and 'to' timestamps were provided
-		if (aprxLogConfig.batchLoadFrom < 1260000000LL || aprxLogConfig.batchLoadTo < 1260000000LL) {
+		if (!logparser.lookupValue("LogFile", aprxLogConfig.logFile)) {
 			aprxLogConfig.enabled = false;
-			std::cout << "--- ProgramConfig::getAprxLogParserConfig:930 - APRX rf-log parsing in batch mode cannot be used w/o a timerange" << std::endl;
-			std::cout << "--- ProgramConfig::getAprxLogParserConfig:931 - BatchLoadFromTimestamp: " << aprxLogConfig.batchLoadFrom << std::endl;
-			std::cout << "--- ProgramConfig::getAprxLogParserConfig:932 - BatchLoadToTimestamp: " << aprxLogConfig.batchLoadTo << std::endl;
-			std::cout << "--- ProgramConfig::getAprxLogParserConfig:933 - Please remember that You have to add 'LL' postfix to the integer in config file" << std::endl;
+			std::cout << "--- ProgramConfig::getAprxLogParserConfig:913 - Path to APRX rf-log file hasn't been provided! Log parser is disabled" << std::endl;
 			return;
 		}
+
+		logparser.lookupValue("LogTimeInLocal", aprxLogConfig.logTimeInLocal);
+		logparser.lookupValue("Callsign", aprxLogConfig.sourceCallsign);
+		logparser.lookupValue("BatchLoadFromTimestamp", aprxLogConfig.batchLoadFrom);
+		logparser.lookupValue("BatchLoadToTimestamp", aprxLogConfig.batchLoadTo);
+		logparser.lookupValue("MaximumPacketAge", aprxLogConfig.maximumPacketAge);
+		logparser.lookupValue("BatchLoadMode", aprxLogConfig.batchLoad);
+		logparser.lookupValue("Ssid", _ssid);
+		aprxLogConfig.sourceSsid = _ssid;
+
+		if (aprxLogConfig.batchLoad) {
+			// check if 'from' and 'to' timestamps were provided
+			if (aprxLogConfig.batchLoadFrom < 1260000000LL || aprxLogConfig.batchLoadTo < 1260000000LL) {
+				aprxLogConfig.enabled = false;
+				std::cout << "--- ProgramConfig::getAprxLogParserConfig:931 - APRX rf-log parsing in batch mode cannot be used w/o a timerange" << std::endl;
+				std::cout << "--- ProgramConfig::getAprxLogParserConfig:932 - BatchLoadFromTimestamp: " << aprxLogConfig.batchLoadFrom << std::endl;
+				std::cout << "--- ProgramConfig::getAprxLogParserConfig:933 - BatchLoadToTimestamp: " << aprxLogConfig.batchLoadTo << std::endl;
+				std::cout << "--- ProgramConfig::getAprxLogParserConfig:934 - Please remember that You have to add 'LL' postfix to the integer in config file" << std::endl;
+				return;
+			}
+		}
+	}
+	catch (const libconfig::SettingNotFoundException &ex) {
+		std::cout << "--- ProgramConfig::getAprxLogParserConfig:940 - Configuration didn't found, aprx rf-log file parser disabled" << std::endl;
+		aprxLogConfig.enabled = false;
+	}
+	catch (libconfig::ParseException &ex) {
+		aprxLogConfig.enabled = false;
+		std::cout << "--- ProgramConfig::getAprxLogParserConfig:945 - Configuration is damaged, aprx rf-log file parser disabled" << std::endl;
+
 	}
 
 }

@@ -1,0 +1,5 @@
+#!/bin/bash
+screen -S aprs2rrd_chelm -X quit
+screen -dmS aprs2rrd_chelm /home/aprs/chelm/bin/aprs2rrd
+echo "done...\r\n"
+uptime
