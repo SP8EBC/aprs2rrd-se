@@ -12,7 +12,7 @@
 #include <optional>
 #include "TimeTools.h"
 #include "AprsWXData.h"
-#include "nlohmann/json.hpp"
+#include "../lib/nlohman_json_3_7_1/include/nlohmann/json.hpp"
 
 /// @brief 
 struct Thingspeak_Config {
