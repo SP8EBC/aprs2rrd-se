@@ -64,7 +64,7 @@ void Thingspeak::write_callback(char* data, size_t data_size) {
 	}
 }
 
-Thingspeak::Thingspeak(Thingspeak_Config &thingspeakConfig) : config(thingspeakConfig), lastDataTimestamp(0LL)
+Thingspeak::Thingspeak(Thingspeak_Config &thingspeakConfig) : config(thingspeakConfig), lastDataTimestamp(0LL), downloadResult(false)
 {
     std::stringstream urlBuilder;
 
@@ -278,6 +278,8 @@ bool Thingspeak::download()
         }
 	}
 
+	downloadResult = out;
+
 	return out;
 }
 
@@ -285,10 +287,16 @@ void Thingspeak::getWeatherData(AprsWXData &out)
 {
 	const long howOldAreYou = TimeTools::getEpoch() - this->lastDataTimestamp;
 
-	if (howOldAreYou > this->config.runInterval) {
+	if (!downloadResult ) {
+		std::cout << "--- Thingspeak::getWeatherData:184 - WARNING - nothing has been downloaded from the API yet!" << std::endl;
+	}
+	else if (howOldAreYou > this->config.runInterval) {
 		std::cout << "--- Thingspeak::getWeatherData:184 - WARNING - data seems to be very old. Maybe station is not sending new data?" << std::endl;
 	}
 	else {
+		out.valid = true;
+		out.dataSource = WxDataSource::THINGSPEAK;
+
 		// temperature
 		std::string temperatureValStr = getKeyValueFromFeeds(temperatureKey).value();
 		out.temperature = std::atof(temperatureValStr.c_str());
@@ -311,7 +319,7 @@ void Thingspeak::getWeatherData(AprsWXData &out)
 
 		// pressure
 		std::string pressureValStr = getKeyValueFromFeeds(pressureKey).value();
-		out.pressure = std::atof(winddirValStr.c_str());
+		out.pressure = std::atof(pressureValStr.c_str());
 		out.usePressure = true;
 
 		// humidity

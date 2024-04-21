@@ -16,6 +16,8 @@
 
 /// @brief 
 struct Thingspeak_Config {
+	bool enable;
+
 	int channelId;
 
 	/// @brief 
@@ -118,6 +120,8 @@ class Thingspeak {
 
 	/// @brief API response parsed by JSON library
 	nlohmann::json parsedResponse;
+
+	bool downloadResult;
 
 	/// @brief 
 	/// @param name 

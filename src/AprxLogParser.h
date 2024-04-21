@@ -15,6 +15,7 @@
 #include <string>
 #include <cstdint>
 #include <fstream>
+#include <optional>
 
 #include "AprsWXData.h"
 

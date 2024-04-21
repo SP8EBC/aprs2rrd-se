@@ -32,6 +32,7 @@ CPP_SRCS += \
 ../src/SerialConfig.cpp \
 ../src/SlewRateLimiter.cpp \
 ../src/Telemetry.cpp \
+../src/Thingspeak.cpp \
 ../src/TimeTools.cpp \
 ../src/WeatherlinkClient.cpp \
 ../src/XMLMemoryHandler.cpp \
@@ -67,6 +68,7 @@ OBJS += \
 ./src/SerialConfig.o \
 ./src/SlewRateLimiter.o \
 ./src/Telemetry.o \
+./src/Thingspeak.o \
 ./src/TimeTools.o \
 ./src/WeatherlinkClient.o \
 ./src/XMLMemoryHandler.o \
@@ -102,6 +104,7 @@ CPP_DEPS += \
 ./src/SerialConfig.d \
 ./src/SlewRateLimiter.d \
 ./src/Telemetry.d \
+./src/Thingspeak.d \
 ./src/TimeTools.d \
 ./src/WeatherlinkClient.d \
 ./src/XMLMemoryHandler.d \

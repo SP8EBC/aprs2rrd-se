@@ -119,25 +119,33 @@ void ProgramConfig::getDbConfig(MySqlConnInterface& db) {
 void ProgramConfig::getAprsThreadConfig(AprsThreadConfig& aprs) {
 	libconfig::Setting &rRoot = config.getRoot();
 
-	libconfig::Setting &rAprsIS = rRoot["AprsIS"];
+	if (rRoot.exists("AprsIS")) {
+		libconfig::Setting &rAprsIS = rRoot["AprsIS"];
 
-	rAprsIS.lookupValue("Enable", aprs.enable);
-	rAprsIS.lookupValue("StationCall", aprs.StationCall);
-	rAprsIS.lookupValue("StationSSID", aprs.StationSSID);
-	rAprsIS.lookupValue("ServerAddr", aprs.ServerURL);
-	rAprsIS.lookupValue("ServerPort", aprs.ServerPort);
-	rAprsIS.lookupValue("MyCALL", aprs.Call);
-	rAprsIS.lookupValue("MyPasswd", aprs.Passwd);
+		rAprsIS.lookupValue("Enable", aprs.enable);
+		rAprsIS.lookupValue("StationCall", aprs.StationCall);
+		rAprsIS.lookupValue("StationSSID", aprs.StationSSID);
+		rAprsIS.lookupValue("ServerAddr", aprs.ServerURL);
+		rAprsIS.lookupValue("ServerPort", aprs.ServerPort);
+		rAprsIS.lookupValue("MyCALL", aprs.Call);
+		rAprsIS.lookupValue("MyPasswd", aprs.Passwd);
 
-	try {
-		rAprsIS.lookupValue("SecondaryCall", aprs.SecondaryCall);
-		rAprsIS.lookupValue("SecondarySSID", aprs.SecondarySSID);
+		try {
+			rAprsIS.lookupValue("SecondaryCall", aprs.SecondaryCall);
+			rAprsIS.lookupValue("SecondarySSID", aprs.SecondarySSID);
+		}
+		catch (libconfig::SettingNotFoundException &ex) {
+			aprs.SecondaryCall = "";
+			aprs.SecondarySSID = 0xFF;
+		}
+		std::cout << "---ProgramConfig::getAprsThreadConfig:141 - Configuration loaded successfully, enable: " << aprs.enable << std::endl;
+
 	}
-	catch (libconfig::SettingNotFoundException &ex) {
-		aprs.SecondaryCall = "";
-		aprs.SecondarySSID = 0xFF;
+	else {
+		std::cout << "---ProgramConfig::getAprsThreadConfig:145 - Config file doesn't contain APRS-IS configuration." << std::endl;
+		aprs.enable = false;
 	}
-	std::cout << "---ProgramConfig::getAprsThreadConfig:140 - Configuration loaded successfully" << std::endl;
+
 }
 
 void ProgramConfig::getSerialConfig(SerialConfig& serial) {
@@ -152,13 +160,16 @@ void ProgramConfig::getSerialConfig(SerialConfig& serial) {
 		rAprsIS.lookupValue("Baudrate", serial.baudrate);
 		rAprsIS.lookupValue("Port", serial.serialPort);
 		rAprsIS.lookupValue("CaptureAll", serial.captureAll);
+
+		std::cout << "---ProgramConfig::getSerialConfig:164 - Configuration loaded successfully, enable: " << serial.enable << std::endl;
 	}
 	catch (libconfig::SettingNotFoundException &ex) {
 		serial.enable = false;
 		serial.captureAll = false;
+		std::cout << "---ProgramConfig::getSerialConfig:164 - Config file doesn't contain serial port KISS client configuration." << std::endl;
 	}
 
-	std::cout << "---ProgramConfig::getSerialConfig:161 - Configuration loaded successfully" << std::endl;
+
 }
 
 void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCount, int& plotCount) {
@@ -418,13 +429,19 @@ void ProgramConfig::getDataSourceConfig(DataSourceConfig& config_out) {
 	libconfig::Setting &root = config.getRoot();
 
 	try {
-		libconfig::Setting &aprsIS = root["AprsIS"];
+		if (root.exists("AprsIS")) {
+			libconfig::Setting &aprsIS = root["AprsIS"];
 
-		aprsIS.lookupValue("StationCall", config_out.primaryCall);
-		aprsIS.lookupValue("StationSSID", config_out.primarySsid);
+			aprsIS.lookupValue("StationCall", config_out.primaryCall);
+			aprsIS.lookupValue("StationSSID", config_out.primarySsid);
 
-		aprsIS.lookupValue("SecondaryCall", config_out.secondaryCall);
-		aprsIS.lookupValue("SecondarySSID", config_out.secondarySsid);
+			aprsIS.lookupValue("SecondaryCall", config_out.secondaryCall);
+			aprsIS.lookupValue("SecondarySSID", config_out.secondarySsid);
+		}
+		else {
+			config_out.primaryCall = "";
+			config_out.secondaryCall = "";
+		}
 
 		config_out.globalBackup = this->getGlobalBackup();
 		config_out.humidity = this->getHumiditySource();
@@ -514,6 +531,7 @@ WxDataSource ProgramConfig::getTemperatureSource() {
 	case swstring("ZYWIEC"): out = WxDataSource::ZYWIEC;  break;
 	case swstring("DAVIS"): out = WxDataSource::DAVIS;	  break;
 	case swstring("DAVISWEATHERLINK"): out = WxDataSource::DAVIS; break;
+	case swstring("THINGSPEAK"): out = WxDataSource::THINGSPEAK; break;
 	default: throw AmbigiousDataSourceConfig();
 	}
 
@@ -541,6 +559,7 @@ WxDataSource ProgramConfig::getPressureSource() {
 	case swstring("ZYWIEC"): out = WxDataSource::ZYWIEC;  break;
 	case swstring("DAVIS"): out = WxDataSource::DAVIS;	  break;
 	case swstring("DAVISWEATHERLINK"): out = WxDataSource::DAVIS; break;
+	case swstring("THINGSPEAK"): out = WxDataSource::THINGSPEAK; break;
 	default: throw AmbigiousDataSourceConfig();
 	}
 
@@ -568,6 +587,7 @@ WxDataSource ProgramConfig::getWindSource() {
 	case swstring("ZYWIEC"): out = WxDataSource::ZYWIEC;  break;
 	case swstring("DAVIS"): out = WxDataSource::DAVIS;	  break;
 	case swstring("DAVISWEATHERLINK"): out = WxDataSource::DAVIS; break;
+	case swstring("THINGSPEAK"): out = WxDataSource::THINGSPEAK; break;
 	default: throw AmbigiousDataSourceConfig();
 	}
 
@@ -595,6 +615,7 @@ WxDataSource ProgramConfig::getRainSource() {
 	case swstring("ZYWIEC"): out = WxDataSource::ZYWIEC;  break;
 	case swstring("DAVIS"): out = WxDataSource::DAVIS;	  break;
 	case swstring("DAVISWEATHERLINK"): out = WxDataSource::DAVIS; break;
+	case swstring("THINGSPEAK"): out = WxDataSource::THINGSPEAK; break;
 	default: throw AmbigiousDataSourceConfig();
 	}
 
@@ -622,6 +643,7 @@ WxDataSource ProgramConfig::getHumiditySource() {
 	case swstring("ZYWIEC"): out = WxDataSource::ZYWIEC;  break;
 	case swstring("DAVIS"): out = WxDataSource::DAVIS;	  break;
 	case swstring("DAVISWEATHERLINK"): out = WxDataSource::DAVIS; break;
+	case swstring("THINGSPEAK"): out = WxDataSource::THINGSPEAK; break;
 	default: throw AmbigiousDataSourceConfig();
 	}
 
@@ -649,6 +671,7 @@ WxDataSource ProgramConfig::getGlobalBackup() {
 	case swstring("ZYWIEC"): out = WxDataSource::ZYWIEC;  break;
 	case swstring("DAVIS"): out = WxDataSource::DAVIS;	  break;
 	case swstring("DAVISWEATHERLINK"): out = WxDataSource::DAVIS; break;
+	case swstring("THINGSPEAK"): out = WxDataSource::THINGSPEAK; break;
 	default: throw AmbigiousDataSourceConfig();
 	}
 
@@ -946,6 +969,49 @@ void ProgramConfig::getAprxLogParserConfig(AprxLogParserConfig & aprxLogConfig) 
 
 	}
 
+	if (!aprxLogConfig.enabled) {
+		std::cout << "--- ProgramConfig::getAprxLogParserConfig:950 - APRX rf-log file parser disabled" << std::endl;
+	}
+
+}
+
+void ProgramConfig::getThingspeakConfig(Thingspeak_Config &_config)
+{
+	// set some default values
+	_config.enable = false;
+	_config.channelId = 0;
+	_config.temperatureFieldName = "Temperature";
+	_config.averageWindspeedFieldName = "Speed Avg";
+	_config.humidityFieldName = "Humidity";
+	_config.maximumWindspeedFieldName = "Speed Max";
+	_config.pressureFieldName = "Pressure";
+	_config.winddirectionFieldName = "Direction";
+	_config.runInterval = 300;
+
+	try {
+		libconfig::Setting &root = config.getRoot();
+		libconfig::Setting &weatherlink = root["Thingspeak"];
+
+		weatherlink.lookupValue("Enable", _config.enable);
+		weatherlink.lookupValue("ChannelId", _config.channelId);
+		weatherlink.lookupValue("AverageWindspeedFieldName", _config.averageWindspeedFieldName);
+		weatherlink.lookupValue("HumidityFieldName", _config.humidityFieldName);
+		weatherlink.lookupValue("MaximumWindspeedFieldName", _config.maximumWindspeedFieldName);
+		weatherlink.lookupValue("PressureFieldName", _config.pressureFieldName);
+		weatherlink.lookupValue("TemperatureFieldName", _config.temperatureFieldName);
+		weatherlink.lookupValue("WinddirectionFieldName", _config.winddirectionFieldName);
+		weatherlink.lookupValue("RunInterval", _config.runInterval);
+
+	}
+	catch (libconfig::SettingNotFoundException &ex) {
+		_config.enable = false;
+		std::cout << "--- ProgramConfig::getThingspeakConfig:974 - Configuration didn't found, thingspeak client disabled" << std::endl;
+	}
+	catch (libconfig::ParseException &ex) {
+		_config.enable = false;
+		std::cout << "--- ProgramConfig::getThingspeakConfig:978 - Error during reading configuration!" << std::endl;
+
+	}
 }
 
 void ProgramConfig::printConfigInPl(
@@ -962,8 +1028,8 @@ void ProgramConfig::printConfigInPl(
 											SlewRateLimiter & limiter,
 											Locale & locale,
 											WeatherlinkClient_Config &_config,
-											BannerCreatorConfig &bannerCreator
-
+											BannerCreatorConfig &bannerCreator,
+											Thingspeak_Config &thingspeak
 									) {
 		if (mysqlDb.enable) {
 			cout << "--------KONFIGURACJA BAZY DANYCH-----" << endl;
@@ -1126,6 +1192,18 @@ void ProgramConfig::printConfigInPl(
 			cout << "--- Device ID: " << _config.DID << endl;
 			cout << "--- API token: " << _config.apiToken << endl;
 			cout << endl;
+		}
+		if (thingspeak.enable) {
+			cout << "--------KLIENT THINGSPEAK-----" << endl;
+			cout << "--- Channel ID: " << thingspeak.channelId << endl;
+			cout << "--- Run Interval: " << thingspeak.runInterval << endl;
+			cout << "----- Nazwy kluczy w obiekcie JSON, z których będa wyciągane parametry pogodowe" << endl;
+			cout << "--- Temperatura: " << thingspeak.temperatureFieldName << endl;
+			cout << "--- Ciśnienie: " << thingspeak.pressureFieldName << endl;
+			cout << "--- Średnia prędkość wiatru: " << thingspeak.averageWindspeedFieldName << endl;
+			cout << "--- Porywy: " << thingspeak.maximumWindspeedFieldName << endl;
+			cout << "--- Kierunek wiatru: " << thingspeak.winddirectionFieldName << endl;
+			cout << endl;			
 		}
 		cout << "--------ZWROTY UŻYWANE DO GENEROWANIA STRONY WWW (LOKALIZACJA)-----" << endl;
 		cout << "--- " << locale.generatedBy << endl;

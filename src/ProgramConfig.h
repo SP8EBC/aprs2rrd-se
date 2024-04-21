@@ -29,6 +29,7 @@
 #include "WeatherlinkClient.h"
 #include "BannerCreatorConfig.h"
 #include "AprxLogParserConfig.h"
+#include "Thingspeak.h"
 
 class ProgramConfig {
 	std::string configFilename;
@@ -84,6 +85,7 @@ public:
 	void getBannerConfig(BannerCreatorConfig & bannerCreator);
 	void getAprxLogParserConfig(AprxLogParserConfig & aprxLogConfig);
 	bool getDateTimeLocale(char * localeString, basic_string<char>::size_type ln);
+	void getThingspeakConfig(Thingspeak_Config & config);
 
 	bool configureLogOutput();
 
@@ -99,12 +101,14 @@ public:
 	static WxDataSource wxDataSourceFromStr(std::string in) {
 		boost::algorithm::to_upper(in);
 		switch(swstring(in.c_str())) {
-		case swstring("APRSIS"): return WxDataSource::IS_PRIMARY;
-		case swstring("SECONDARYAPRSIS"): return WxDataSource::IS_SECONDARY;
-		case swstring("TELEMETRY"): return WxDataSource::TELEMETRY;
-		case swstring("SERIAL"): return WxDataSource::SERIAL;
-		case swstring("HOLFUY"): return WxDataSource::HOLFUY;
-		case swstring("ZYWIEC"): return WxDataSource::ZYWIEC;
+			case swstring("APRSIS"): return WxDataSource::IS_PRIMARY;
+			case swstring("SECONDARYAPRSIS"): return WxDataSource::IS_SECONDARY;
+			case swstring("TELEMETRY"): return WxDataSource::TELEMETRY;
+			case swstring("SERIAL"): return WxDataSource::SERIAL;
+			case swstring("HOLFUY"): return WxDataSource::HOLFUY;
+			case swstring("ZYWIEC"): return WxDataSource::ZYWIEC;
+			case swstring("THINGSPEAK"): return WxDataSource::THINGSPEAK;
+			case swstring("DAVIS"): return WxDataSource::DAVIS;
 		}
 
 		return WxDataSource::UNKNOWN;
@@ -123,7 +127,8 @@ public:
 									SlewRateLimiter & limiter,
 									Locale & locale,
 									WeatherlinkClient_Config &_config,
-									BannerCreatorConfig &bannerCreator);
+									BannerCreatorConfig &bannerCreator,
+									Thingspeak_Config &thingspeak);
 
 
 

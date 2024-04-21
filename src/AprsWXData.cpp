@@ -695,6 +695,40 @@ void AprsWXData::copy(const AprsWXData & source, const DataSourceConfig & config
 
 		this->valid = true;
 	}
+
+		else if (source.dataSource == WxDataSource::THINGSPEAK) {
+		// check if APRSIS should be uased as a source for temperature
+		if (config.temperature == WxDataSource::THINGSPEAK) {
+			this->temperature = source.temperature;
+			this->useTemperature = true;
+		}
+
+		if (config.pressure == WxDataSource::THINGSPEAK) {
+			this->pressure = source.pressure;
+			this->usePressure = true;
+			this->convertPressure = true;
+		}
+
+		if (config.humidity ==  WxDataSource::THINGSPEAK) {
+			this->humidity = source.humidity;
+			this->useHumidity = true;
+		}
+
+		if (config.wind ==  WxDataSource::THINGSPEAK) {
+			this->wind_direction = source.wind_direction;
+			this->wind_gusts = source.wind_gusts;
+			this->wind_speed = source.wind_speed;
+			this->useWind = true;
+		}
+
+		if (config.rain ==  WxDataSource::THINGSPEAK) {
+			this->rain24 = source.rain24;
+			this->rain60 = source.rain60;
+			this->rain_day = source.rain_day;
+		}
+
+		this->valid = true;
+	}
 }
 
 void AprsWXData::copy(const Telemetry & source, const DataSourceConfig & config) {
