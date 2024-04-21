@@ -110,12 +110,12 @@ std::optional<std::string> Thingspeak::getKeyValueFromFeeds(std::string keyName)
 			return std::optional(value);
 		}
 		catch (nlohmann::json::type_error & ex) {
-			std::cout << "--- Thingspeak::getKeyValueFromFeeds:166 - type_error : " << ex.what() << std::endl;
+			std::cout << "--- Thingspeak::getKeyValueFromFeeds:113 - type_error : " << ex.what() << std::endl;
 			return std::nullopt;
 
 		}
 		catch (nlohmann::json::out_of_range & ex) {
-			std::cout << "--- Thingspeak::getKeyValueFromFeeds:166 - out_of_range : " << ex.what() << std::endl;
+			std::cout << "--- Thingspeak::getKeyValueFromFeeds:118 - out_of_range : " << ex.what() << std::endl;
 			return std::nullopt;
 		}
 	}
@@ -136,11 +136,11 @@ bool Thingspeak::getLastDataTimestamp()
 		std::string createdAt = zero["created_at"];
 
 		if (createdAt.length() > 0) {
-			std::cout << "--- Thingspeak::getLastDataTimestamp:95 - value of 'created_at' field, read as string : " << createdAt << std::endl;
+			std::cout << "--- Thingspeak::getLastDataTimestamp:139 - value of 'created_at' field, read as string : " << createdAt << std::endl;
 
 			uint64_t ts = decodeTimestampFromSubject(createdAt);
 
-			std::cout << "--- Thingspeak::getLastDataTimestamp:99 - parsed date/time from 'created_at' field : " << boost::posix_time::to_simple_string(TimeTools::getPtimeFromEpoch(ts)) << std::endl;
+			std::cout << "--- Thingspeak::getLastDataTimestamp:143 - parsed date/time from 'created_at' field : " << boost::posix_time::to_simple_string(TimeTools::getPtimeFromEpoch(ts)) << std::endl;
 
 			if (ts != 0) {
 				result = true;
@@ -162,7 +162,7 @@ bool Thingspeak::findAllFieldsNames()
 		temperatureKey = temperatureField.value();
 	}
 	else {
-		std::cout << "--- Thingspeak::download:134 - WARNING - temperature field name cannot be found in 'channel' JSON object" << std::endl;
+		std::cout << "--- Thingspeak::download:165 - WARNING - temperature field name cannot be found in 'channel' JSON object" << std::endl;
 	}
 
 	std::optional<std::string> averageWindspeedField = getKeyNameFromChannelObjByValue(config.averageWindspeedFieldName);
@@ -171,7 +171,7 @@ bool Thingspeak::findAllFieldsNames()
 	}
 	else {
 		result = false;
-		std::cout << "--- Thingspeak::download:134 - WARNING - average windspeed field name cannot be found in 'channel' JSON object" << std::endl;
+		std::cout << "--- Thingspeak::download:174 - WARNING - average windspeed field name cannot be found in 'channel' JSON object" << std::endl;
 	}
 
 	std::optional<std::string> humidityField = getKeyNameFromChannelObjByValue(config.humidityFieldName);
@@ -180,7 +180,7 @@ bool Thingspeak::findAllFieldsNames()
 	}
 	else {
 		result = false;
-		std::cout << "--- Thingspeak::download:134 - WARNING - humidity field name cannot be found in 'channel' JSON object" << std::endl;
+		std::cout << "--- Thingspeak::download:183 - WARNING - humidity field name cannot be found in 'channel' JSON object" << std::endl;
 	}
 
 	std::optional<std::string> maximumWindspeedField = getKeyNameFromChannelObjByValue(config.maximumWindspeedFieldName);
@@ -189,7 +189,7 @@ bool Thingspeak::findAllFieldsNames()
 	}
 	else {
 		result = false;
-		std::cout << "--- Thingspeak::download:134 - WARNING - maximum windspeed field name cannot be found in 'channel' JSON object" << std::endl;
+		std::cout << "--- Thingspeak::download:192 - WARNING - maximum windspeed field name cannot be found in 'channel' JSON object" << std::endl;
 	}
 
 	std::optional<std::string> pressureField = getKeyNameFromChannelObjByValue(config.pressureFieldName);
@@ -198,7 +198,7 @@ bool Thingspeak::findAllFieldsNames()
 	}
 	else {
 		result = false;
-		std::cout << "--- Thingspeak::download:134 - WARNING - pressure field name cannot be found in 'channel' JSON object" << std::endl;
+		std::cout << "--- Thingspeak::download:201 - WARNING - pressure field name cannot be found in 'channel' JSON object" << std::endl;
 	}
 
 	std::optional<std::string> winddirectionField = getKeyNameFromChannelObjByValue(config.winddirectionFieldName);
@@ -207,7 +207,7 @@ bool Thingspeak::findAllFieldsNames()
 	}
 	else {
 		result = false;
-		std::cout << "--- Thingspeak::download:134 - WARNING - wind direction field name cannot be found in 'channel' JSON object" << std::endl;
+		std::cout << "--- Thingspeak::download:210 - WARNING - wind direction field name cannot be found in 'channel' JSON object" << std::endl;
 	}
 
 }
@@ -222,7 +222,7 @@ bool Thingspeak::download()
 
 	auto curl = curl_easy_init();
     if (curl) {
-    	std::cout << "--- Thingspeak::download:91 - Downloading data from " << this->uri << std::endl;
+    	std::cout << "--- Thingspeak::download:225 - Downloading data from " << this->uri << std::endl;
 
 
         curl_easy_setopt(curl, CURLOPT_URL, this->uri.c_str());
@@ -247,9 +247,9 @@ bool Thingspeak::download()
         curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME, &elapsed);
         curl_easy_getinfo(curl, CURLINFO_EFFECTIVE_URL, &url);
 
-        std::cout << "--- Thingspeak::download:147 - response_code : " << boost::lexical_cast<std::string>(response_code) << std::endl;
-        std::cout << "--- Thingspeak::download:148 - elapsed : " << boost::lexical_cast<std::string>(elapsed) << std::endl;
-        std::cout << "--- Thingspeak::download:149 - result : " << curlCodeToStr(result) << std::endl;
+        std::cout << "--- Thingspeak::download:250 - response_code : " << boost::lexical_cast<std::string>(response_code) << std::endl;
+        std::cout << "--- Thingspeak::download:251 - elapsed : " << boost::lexical_cast<std::string>(elapsed) << std::endl;
+        std::cout << "--- Thingspeak::download:252 - result : " << curlCodeToStr(result) << std::endl;
 
         curl_easy_cleanup(curl);
         curl = NULL;
@@ -268,7 +268,7 @@ bool Thingspeak::download()
 				out = findAllFieldsNames() ? out : false;
 			}
 			catch (nlohmann::json::parse_error & ex) {
-				std::cout << "--- Thingspeak::download:166 - parse_error : " << ex.what() << std::endl;
+				std::cout << "--- Thingspeak::download:271 - parse_error : " << ex.what() << std::endl;
 
 				out = false;
 			}
@@ -288,10 +288,10 @@ void Thingspeak::getWeatherData(AprsWXData &out)
 	const long howOldAreYou = TimeTools::getEpoch() - this->lastDataTimestamp;
 
 	if (!downloadResult ) {
-		std::cout << "--- Thingspeak::getWeatherData:184 - WARNING - nothing has been downloaded from the API yet!" << std::endl;
+		std::cout << "--- Thingspeak::getWeatherData:291 - WARNING - nothing has been downloaded from the API yet!" << std::endl;
 	}
 	else if (howOldAreYou > this->config.runInterval) {
-		std::cout << "--- Thingspeak::getWeatherData:184 - WARNING - data seems to be very old. Maybe station is not sending new data?" << std::endl;
+		std::cout << "--- Thingspeak::getWeatherData:294 - WARNING - data seems to be very old. Maybe station is not sending new data?" << std::endl;
 	}
 	else {
 		out.valid = true;
@@ -325,9 +325,18 @@ void Thingspeak::getWeatherData(AprsWXData &out)
 		// humidity
 		std::string humidityValStr = getKeyValueFromFeeds(humidityKey).value();
 		out.humidity = std::atof(humidityValStr.c_str());
-		out.useHumidity = true;
+		
+		// validate humidity value
+		if (out.humidity <= 100) {
+			out.useHumidity = true;
+		}
+		else {
+			out.humidity = 0;
+			out.useHumidity = false;
+		}
 
-		std::cout << std::setprecision(3) <<  "--- Thingspeak::getWeatherData:184 - " <<
+
+		std::cout << std::setprecision(3) <<  "--- Thingspeak::getWeatherData:339 - " <<
 													"temperature: " << out.temperature << ", " <<
 													"windspeed: " << out.wind_speed << ", " <<
 													"windgusts: " << out.wind_gusts << ", " <<
