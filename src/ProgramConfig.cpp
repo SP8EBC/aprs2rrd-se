@@ -1194,7 +1194,7 @@ void ProgramConfig::printConfigInPl(
 			cout << endl;
 		}
 		if (thingspeak.enable) {
-			cout << "--------KLIENT THINGSPEAK-----" << endl;
+			cout << "--------KLIENT THINGSPEAK-----" << std::dec << endl;
 			cout << "--- Channel ID: " << thingspeak.channelId << endl;
 			cout << "--- Run Interval: " << thingspeak.runInterval << endl;
 			cout << "----- Nazwy kluczy w obiekcie JSON, z których będa wyciągane parametry pogodowe" << endl;

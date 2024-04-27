@@ -170,7 +170,7 @@ bool Thingspeak::findAllFieldsNames()
 		averageWindspeedKey = averageWindspeedField.value();
 	}
 	else {
-		result = false;
+		averageWindspeedKey = "";
 		std::cout << "--- Thingspeak::download:174 - WARNING - average windspeed field name cannot be found in 'channel' JSON object" << std::endl;
 	}
 
@@ -188,7 +188,7 @@ bool Thingspeak::findAllFieldsNames()
 		maximumWindspeedKey = maximumWindspeedField.value();
 	}
 	else {
-		result = false;
+		maximumWindspeedKey = "";
 		std::cout << "--- Thingspeak::download:192 - WARNING - maximum windspeed field name cannot be found in 'channel' JSON object" << std::endl;
 	}
 
@@ -206,7 +206,7 @@ bool Thingspeak::findAllFieldsNames()
 		winddirectionKey = winddirectionField.value();
 	}
 	else {
-		result = false;
+		winddirectionKey = "";
 		std::cout << "--- Thingspeak::download:210 - WARNING - wind direction field name cannot be found in 'channel' JSON object" << std::endl;
 	}
 
@@ -297,37 +297,37 @@ void Thingspeak::getWeatherData(AprsWXData &out)
 		out.valid = true;
 		out.dataSource = WxDataSource::THINGSPEAK;
 
-		// temperature
-		std::string temperatureValStr = getKeyValueFromFeeds(temperatureKey).value();
-		out.temperature = std::atof(temperatureValStr.c_str());
-		out.useTemperature = true;
-
 		// windspeed
-		std::string windspeedValStr = getKeyValueFromFeeds(averageWindspeedKey).value();
-		out.wind_speed = std::atof(windspeedValStr.c_str());
-		out.useWind = true;
+		std::optional<std::string> windspeedValStr = getKeyValueFromFeeds(averageWindspeedKey).value();
+		out.wind_speed = std::atof(windspeedValStr.value_or("0.0").c_str());
+		out.useWind = windspeedValStr.has_value();
 
 		// windgusts
-		std::string windgustsValStr = getKeyValueFromFeeds(maximumWindspeedKey).value();
-		out.wind_gusts = std::atof(windgustsValStr.c_str());
-		out.useWind = true;
+		std::optional<std::string> windgustsValStr = getKeyValueFromFeeds(maximumWindspeedKey).value();
+		out.wind_gusts = std::atof(windgustsValStr.value_or("0.0").c_str());
+		out.useWind = (windgustsValStr.has_value() ? out.useWind : false);
 
 		// winddirection
-		std::string winddirValStr = getKeyValueFromFeeds(winddirectionKey).value();
-		out.wind_direction = (int)std::atof(winddirValStr.c_str());
-		out.useWind = true;
+		std::optional<std::string> winddirValStr = getKeyValueFromFeeds(winddirectionKey).value();
+		out.wind_direction = (int)std::atof(winddirValStr.value_or("0.0").c_str());
+		out.useWind = (winddirValStr.has_value() ? out.useWind : false);
+
+		// temperature
+		std::optional<std::string> temperatureValStr = getKeyValueFromFeeds(temperatureKey).value();
+		out.temperature = std::atof(temperatureValStr.value_or("0.0").c_str());
+		out.useTemperature = temperatureValStr.has_value();
 
 		// pressure
-		std::string pressureValStr = getKeyValueFromFeeds(pressureKey).value();
-		out.pressure = std::atof(pressureValStr.c_str());
-		out.usePressure = true;
+		std::optional<std::string> pressureValStr = getKeyValueFromFeeds(pressureKey).value();
+		out.pressure = std::atof(pressureValStr.value_or("0.0").c_str());
+		out.usePressure = pressureValStr.has_value();
 
 		// humidity
-		std::string humidityValStr = getKeyValueFromFeeds(humidityKey).value();
-		out.humidity = std::atof(humidityValStr.c_str());
+		std::optional<std::string> humidityValStr = getKeyValueFromFeeds(humidityKey).value();
+		out.humidity = std::atof(humidityValStr.value_or("0.0").c_str());
 		
 		// validate humidity value
-		if (out.humidity <= 100) {
+		if (out.humidity <= 100 && humidityValStr.has_value()) {
 			out.useHumidity = true;
 		}
 		else {
