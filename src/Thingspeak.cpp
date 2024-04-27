@@ -298,32 +298,32 @@ void Thingspeak::getWeatherData(AprsWXData &out)
 		out.dataSource = WxDataSource::THINGSPEAK;
 
 		// windspeed
-		std::optional<std::string> windspeedValStr = getKeyValueFromFeeds(averageWindspeedKey).value();
+		std::optional<std::string> windspeedValStr = getKeyValueFromFeeds(averageWindspeedKey);
 		out.wind_speed = std::atof(windspeedValStr.value_or("0.0").c_str());
 		out.useWind = windspeedValStr.has_value();
 
 		// windgusts
-		std::optional<std::string> windgustsValStr = getKeyValueFromFeeds(maximumWindspeedKey).value();
+		std::optional<std::string> windgustsValStr = getKeyValueFromFeeds(maximumWindspeedKey);
 		out.wind_gusts = std::atof(windgustsValStr.value_or("0.0").c_str());
 		out.useWind = (windgustsValStr.has_value() ? out.useWind : false);
 
 		// winddirection
-		std::optional<std::string> winddirValStr = getKeyValueFromFeeds(winddirectionKey).value();
+		std::optional<std::string> winddirValStr = getKeyValueFromFeeds(winddirectionKey);
 		out.wind_direction = (int)std::atof(winddirValStr.value_or("0.0").c_str());
 		out.useWind = (winddirValStr.has_value() ? out.useWind : false);
 
 		// temperature
-		std::optional<std::string> temperatureValStr = getKeyValueFromFeeds(temperatureKey).value();
+		std::optional<std::string> temperatureValStr = getKeyValueFromFeeds(temperatureKey);
 		out.temperature = std::atof(temperatureValStr.value_or("0.0").c_str());
 		out.useTemperature = temperatureValStr.has_value();
 
 		// pressure
-		std::optional<std::string> pressureValStr = getKeyValueFromFeeds(pressureKey).value();
+		std::optional<std::string> pressureValStr = getKeyValueFromFeeds(pressureKey);
 		out.pressure = std::atof(pressureValStr.value_or("0.0").c_str());
 		out.usePressure = pressureValStr.has_value();
 
 		// humidity
-		std::optional<std::string> humidityValStr = getKeyValueFromFeeds(humidityKey).value();
+		std::optional<std::string> humidityValStr = getKeyValueFromFeeds(humidityKey);
 		out.humidity = std::atof(humidityValStr.value_or("0.0").c_str());
 		
 		// validate humidity value
