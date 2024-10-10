@@ -11,12 +11,12 @@
                 ""
             ],
             "options": {
-				"cwd": "${workspaceFolder}/Debug_xerces_3_2"
-			},
+                "cwd": "${workspaceFolder}/Debug_xerces_3_2"
+            },
             "problemMatcher": [
                 "$gcc"
             ]
-        } ,
+        },
         {
             "label": "clean Debug_xerces_3_2",
             "type": "shell",
@@ -25,11 +25,11 @@
                 "clean"
             ],
             "options": {
-				"cwd": "${workspaceFolder}/Debug_xerces_3_2"
-			},
+                "cwd": "${workspaceFolder}/Debug_xerces_3_2"
+            },
             "problemMatcher": [
                 "$gcc"
             ]
-        } ,
+        }
     ]
     }

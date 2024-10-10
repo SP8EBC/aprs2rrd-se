@@ -9,6 +9,7 @@
 #include <exception>
 #include <queue>
 #include <string>
+#include <utility>
 
 using namespace std;
 
@@ -62,6 +63,11 @@ class AprsWXData
         int packetAgeInSecondsLocal;
 
 	    bool convertPressure;
+
+		/**
+		 * @brief additional historic temperature send in custom & optional section like [0_1258_277][1_629_270][2_0_265][3_2516_274]
+		 */
+		std::vector<std::pair<uint64_t, float>> additionalTemperature;
     public:
         bool valid;
 

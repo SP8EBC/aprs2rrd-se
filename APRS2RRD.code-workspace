@@ -82,7 +82,10 @@
 			"typeinfo": "cpp",
 			"valarray": "cpp",
 			"variant": "cpp",
-			"*.h++": "cpp"
+			"*.h++": "cpp",
+			"unordered_set": "cpp",
+			"ranges": "cpp",
+			"span": "cpp"
 		}
 	}
 }

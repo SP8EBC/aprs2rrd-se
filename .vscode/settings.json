@@ -76,6 +76,9 @@
         "typeinfo": "cpp",
         "valarray": "cpp",
         "variant": "cpp",
-        "*.h++": "cpp"
+        "*.h++": "cpp",
+        "unordered_set": "cpp",
+        "regex": "cpp",
+        "cfenv": "cpp"
     }
 }

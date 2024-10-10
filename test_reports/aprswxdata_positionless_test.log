@@ -1,0 +1,3 @@
+Running 1 test case...
+Entering test module "APRS_WX_DATA_POSITIONLESS"
+../src/AprsWXDataPositionless_test.cpp(27): Entering test case "first"

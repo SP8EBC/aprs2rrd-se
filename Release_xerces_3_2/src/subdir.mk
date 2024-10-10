@@ -37,6 +37,7 @@ CPP_SRCS += \
 ../src/WeatherlinkClient.cpp \
 ../src/XMLMemoryHandler.cpp \
 ../src/ZywiecMeteo.cpp \
+../src/AprsWXDataPositionless.cpp \
 ../src/main.cpp
 
 OBJS += \
@@ -73,6 +74,7 @@ OBJS += \
 ./src/WeatherlinkClient.o \
 ./src/XMLMemoryHandler.o \
 ./src/ZywiecMeteo.o \
+./src/AprsWXDataPositionless.o \
 ./src/main.o
 
 CPP_DEPS += \
@@ -109,6 +111,7 @@ CPP_DEPS += \
 ./src/WeatherlinkClient.d \
 ./src/XMLMemoryHandler.d \
 ./src/ZywiecMeteo.d \
+./src/AprsWXDataPositionless.d \
 ./src/main.d
 
 
