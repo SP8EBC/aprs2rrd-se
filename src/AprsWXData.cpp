@@ -1,4 +1,5 @@
 #include "AprsWXData.h"
+#include "AprsWXDataPositionless.h"
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
@@ -59,7 +60,9 @@ int AprsWXData::ParseData(AprsPacket input, AprsWXData* output) {
         output->valid = false;
         return -1;     // to nie sa dane pogodowe
     }
-    //src = input.Data;
+    else if (*(input.Data) != '_') {
+		return AprsWXDataPositionless::ParseData(input.DataAsStr, output);
+	}
 
     // converting char array to copy of string class for convinence
     std::string source(input.Data);
@@ -502,6 +505,10 @@ void AprsWXData::copy(const AprsWXData & source, const DataSourceConfig & config
 	// hotfix before this method will be properly refactored
 	if (source.dataSource == WxDataSource::IS_PRIMARY) {
 		true_if_primary = true;
+	}
+
+	if (source.additionalTemperature.size() > 0) {
+		this->additionalTemperature = source.additionalTemperature;
 	}
 
 	// if this packet comes from TCP/IP connection to IS check the source call

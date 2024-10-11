@@ -6,7 +6,7 @@
 
 #include "TimeTools.h"
 
-int AprsWXDataPositionless::ParseData(const std::string & in, AprsWXData & output) {
+int AprsWXDataPositionless::ParseData(const std::string & in, AprsWXData * output) {
 
     // _10101355c...s...g...t079[0_1258_277][1_629_270][2_0_265][3_2516_274]
     
@@ -56,41 +56,43 @@ int AprsWXDataPositionless::ParseData(const std::string & in, AprsWXData & outpu
     tm_timestamp.tm_min = minutes;    
 
     // store conversion output in 
-    output.packetLocalTimestmp = boost::posix_time::ptime_from_tm(tm_timestamp);
-    output.packetUtcTimestamp = TimeTools::getEpochFromPtime(output.packetLocalTimestmp, true);
+    output->packetLocalTimestmp = boost::posix_time::ptime_from_tm(tm_timestamp);
+    output->packetUtcTimestamp = TimeTools::getEpochFromPtime(output->packetLocalTimestmp, true);
 
     try {
         // convert winddirection to output structure
-        output.wind_direction = boost::lexical_cast<int>(windspd_str);
+        output->wind_direction = boost::lexical_cast<int>(windspd_str);
     }
     catch (const boost::bad_lexical_cast& ex) {
-        output.wind_direction = 0;
+        output->wind_direction = 0;
         std::cout << ex.what();
     }
     catch (const std::bad_cast& ex) {
-        output.wind_direction = 0;
+        output->wind_direction = 0;
         std::cout << ex.what();
     }
 
     try {
         // convert windspeed and windgusts to output structure
-        output.wind_speed = (float)boost::lexical_cast<int>(windspd_str) * 0.44f;
-        output.wind_gusts = (float)boost::lexical_cast<int>(windgust_str) * 0.44f;
+        output->wind_speed = (float)boost::lexical_cast<int>(windspd_str) * 0.44f;
+        output->wind_gusts = (float)boost::lexical_cast<int>(windgust_str) * 0.44f;
     }
     catch (const boost::bad_lexical_cast& ex) {
-        output.wind_speed = 0.0f;
-        output.wind_gusts = 0.0f;
+        output->wind_speed = 0.0f;
+        output->wind_gusts = 0.0f;
     }
     catch (const std::bad_cast& ex) {
-        output.wind_direction = 0;
+        output->wind_direction = 0;
         std::cout << ex.what();
     }
 
     // convert temperature to output structure
-    output.temperature = ((float)boost::lexical_cast<int>(temperature_str) - 32.0f) / 9.0f * 5.0f;
+    output->temperature = ((float)boost::lexical_cast<int>(temperature_str) - 32.0f) / 9.0f * 5.0f;
 
     // if positionless packet contains optional, custom historic data
     if (history_pos != std::string::npos) {
+        std::cout << "AprsWXDataPositionless::ParseData - historical data detected" << std::endl;
+
         std::vector<std::string> splitPerSqBracket;
 
         // create a substring with custom historic entries
@@ -111,14 +113,18 @@ int AprsWXDataPositionless::ParseData(const std::string & in, AprsWXData & outpu
                 // 0 - index
                 // 1 - age in seconds
                 // 2 - value
+                if (splitUnderscore.at(1).find_first_not_of("0123456789") == std::string::npos) {
+                    if (splitUnderscore.at(2).find_first_not_of("0123456789") == std::string::npos) {
+                        // calculate epoch timestamp
+                        const uint64_t entryEpoch = TimeTools::getEpoch() - boost::lexical_cast<int>(splitUnderscore.at(1));
+                        const float temperature = boost::lexical_cast<float>(splitUnderscore.at(2)) / 10.0f;
 
-                // calculate epoch timestamp
-                const uint64_t entryEpoch = TimeTools::getEpoch() - boost::lexical_cast<int>(splitUnderscore.at(1));
-                const float temperature = boost::lexical_cast<float>(splitUnderscore.at(2)) / 10.0f;
-
-                output.additionalTemperature.emplace_back(entryEpoch, temperature);
+                        output->additionalTemperature.emplace_back(entryEpoch, temperature);
+                    }
+                }
             }
         }
     }
+    return 0;
 
 }

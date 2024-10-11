@@ -117,8 +117,9 @@ void MySqlConnInterface::InsertIntoDbSchema2(const AprsWXData& cInput, const Dat
 		temp << "'" << config.getRainSource() << "');" << endl;
 	}
 
-	if (this->Debug == true)
+	if (this->Debug == true) {
 		cout << temp.str() << endl;
+	}
 
 	try {
 		this->dbQuery = this->dbConnection.query(temp.str());
@@ -131,7 +132,63 @@ void MySqlConnInterface::InsertIntoDbSchema2(const AprsWXData& cInput, const Dat
 		cout << er.what();
 	}
 	catch (...) {
-		cout << "--- MysqlConnInterface::InsertIntoDbSchema2:91 - unknown exception" << endl;
+		cout << "--- MysqlConnInterface::InsertIntoDbSchema2:135 - unknown exception" << endl;
+	}
+
+	if (cInput.additionalTemperature.size() > 0) {
+		for (std::pair<uint64_t, float> elem : cInput.additionalTemperature) {
+			const uint64_t elemTimestamp = elem.first; 
+			const struct tm elemTime = TimeTools::getTmStructFromUndefinedTzEpoch(elemTimestamp);
+
+			const float elemTemperature = elem.second;
+
+			std::stringstream query;
+
+			query << "INSERT INTO `" << this->dbName << "`.`data_station`";
+			query << "(`epoch`, `datetime`, `station`, `temperature`, `humidity`, `pressure`, `winddir`, `windspeed`, `windgusts`, " <<
+										"`tsource`, `wsource`, `psource`, `hsource`, `rsource`) VALUES (";
+			query << elemTimestamp << ", ";
+			query << "'" << \
+			elemTime.tm_year + 1900 << "-" << setw(2) <<  setfill('0') << \
+			(elemTime.tm_mon) + 1 << "-" << setw(2) << setfill('0') << \
+			elemTime.tm_mday << " " << setw(2) << setfill('0') << \
+			elemTime.tm_hour << ":" << setw(2) << setfill('0') << \
+			elemTime.tm_min << ":" << setw(2) << setfill('0') << \
+			elemTime.tm_sec << 
+			"',";
+			query << "'" << station_name << "', ";
+			query << elemTemperature << ", ";
+			query << 0.0f << ", ";
+			query << 0 << ", ";
+			query << 0 << ", ";
+			query << 0.0f << ", ";
+			query << 0.0f << ", ";
+			query << "'" << config.getTemperatureSource() << "', ";
+			query << "'" << config.getWindSource() << "', ";
+			query << "'" << config.getPressureSource() << "', ";
+			query << "'" << config.getHumiditySource() << "', ";
+			query << "'" << config.getRainSource() << "');" << endl;
+
+			if (this->Debug == true) {
+				cout << "--- MysqlConnInterface::InsertIntoDbSchema2 - Inserting historical data from positionless weather frame" << endl;
+				cout << temp.str() << endl;
+			}
+		}
+
+		try {
+			this->dbQuery = this->dbConnection.query(temp.str());
+			this->dbSimpleResult = this->dbQuery.execute();
+		}
+		catch (const BadQuery& er) {
+			cout << er.what();
+		}
+		catch (const Exception& er) {
+			cout << er.what();
+		}
+		catch (...) {
+			cout << "--- MysqlConnInterface::InsertIntoDbSchema2:189 - unknown exception" << endl;
+		}
+
 	}
 
 	cout << this->dbSimpleResult.info();
@@ -185,7 +242,7 @@ void MySqlConnInterface::InsertDiff(const AprsWXData& input, const DiffCalculato
 		cout << er.what();
 	}
 	catch (...) {
-		cout << "--- MysqlConnInterface::InsertDiff:145 - unknown exception" << endl;
+		cout << "--- MysqlConnInterface::InsertDiff:245 - unknown exception" << endl;
 	}
 
 	cout << this->dbSimpleResult.info();
@@ -247,12 +304,12 @@ void MySqlConnInterface::InsertTelmetry(const Telemetry& input, std::string stat
 		cout << er.what();
 	}
 	catch (...) {
-		cout << "--- MysqlConnInterface::InsertTelmetry:202 - unknown exception" << endl;
+		cout << "--- MysqlConnInterface::InsertTelmetry:307 - unknown exception" << endl;
 	}
 
 	cout << this->dbSimpleResult.info();
 
-	cout << "--- MysqlConnInterface::InsertTelmetry:207 - Data inserted successfully" << endl;
+	cout << "--- MysqlConnInterface::InsertTelmetry:312 - Data inserted successfully" << endl;
 
 	if (this->dbConnection.connected()) {
 		this->CloseDBConnection();
@@ -275,7 +332,7 @@ void MySqlConnInterface::Keepalive(void) {
 		cout << e.what() << endl;
 	}
 	catch (...) {
-		cout << "--- MysqlConnInterface::Keepalive:226 - Unknown exception has been thrown" << endl;
+		cout << "--- MysqlConnInterface::Keepalive:335 - Unknown exception has been thrown" << endl;
 	}
 
 }
@@ -296,7 +353,7 @@ void MySqlConnInterface::InsertIntoDb(const AprsWXData* cInput) {
 
 
 	if (this->execBeforeInsert == true) {
-		cout << "--- MysqlConnInterface::InsertIntoDb:244 - Executing: " << this->execBeforeInsertPath.c_str();
+		cout << "--- MysqlConnInterface::InsertIntoDb:356 - Executing: " << this->execBeforeInsertPath.c_str();
 		(void)system(this->execBeforeInsertPath.c_str());
 		cout << endl;
 	}
@@ -378,7 +435,7 @@ void MySqlConnInterface::InsertIntoDb(const AprsWXData* cInput) {
 		//delete this->dbQuery;
 	}
 	catch (...) {
-		cout << "--- MysqlConnInterface::InsertIntoDb:280 - unknown exception" << endl;
+		cout << "--- MysqlConnInterface::InsertIntoDb:438 - unknown exception" << endl;
 	}
 
 	cout << this->dbSimpleResult.info();

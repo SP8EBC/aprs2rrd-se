@@ -7,7 +7,7 @@
 class AprsWXDataPositionless {
 
 public:
-	static int ParseData(const std::string & in, AprsWXData & output);
+	static int ParseData(const std::string & in, AprsWXData * output);
 
 
 };

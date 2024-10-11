@@ -38,7 +38,7 @@ CPP_SRCS += \
 ../src/XMLMemoryHandler.cpp \
 ../src/ZywiecMeteo.cpp \
 ../src/AprsWXDataPositionless.cpp \
-../src/AprsWXDataPositionless_test.cpp
+../src/main.cpp
 
 OBJS += \
 ./src/AmbigiousDataSourceConfig.o \
@@ -75,7 +75,7 @@ OBJS += \
 ./src/XMLMemoryHandler.o \
 ./src/ZywiecMeteo.o \
 ./src/AprsWXDataPositionless.o \
-./src/AprsWXDataPositionless_test.o
+./src/main.o
 
 CPP_DEPS += \
 ./src/AmbigiousDataSourceConfig.d \
@@ -112,6 +112,6 @@ CPP_DEPS += \
 ./src/XMLMemoryHandler.d \
 ./src/ZywiecMeteo.d \
 ./src/AprsWXDataPositionless.d \
-./src/AprsWXDataPositionless_test.d
+./src/main.d
 
 

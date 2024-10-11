@@ -1,3 +1,10 @@
 Running 1 test case...
 Entering test module "APRS_WX_DATA_POSITIONLESS"
 ../src/AprsWXDataPositionless_test.cpp(27): Entering test case "first"
+../src/AprsWXDataPositionless_test.cpp(34): info: difference{} between output.temperature{26.1111107} and 26.1{26.100000000000001} doesn't exceed 1%
+../src/AprsWXDataPositionless_test.cpp(36): info: difference{} between output.additionalTemperature.at(0).second{27.7000008} and 27.7{27.699999999999999} doesn't exceed 1%
+../src/AprsWXDataPositionless_test.cpp(37): info: difference{} between output.additionalTemperature.at(1).second{22} and 22.0{22} doesn't exceed 1%
+../src/AprsWXDataPositionless_test.cpp(38): info: difference{} between output.additionalTemperature.at(2).second{29.5} and 29.5{29.5} doesn't exceed 1%
+../src/AprsWXDataPositionless_test.cpp(39): info: difference{} between output.additionalTemperature.at(3).second{26.3999996} and 26.4{26.399999999999999} doesn't exceed 1%
+../src/AprsWXDataPositionless_test.cpp(27): Leaving test case "first"; testing time: 946us
+Leaving test module "APRS_WX_DATA_POSITIONLESS"; testing time: 999us
