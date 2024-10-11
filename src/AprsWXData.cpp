@@ -60,7 +60,7 @@ int AprsWXData::ParseData(AprsPacket input, AprsWXData* output) {
         output->valid = false;
         return -1;     // to nie sa dane pogodowe
     }
-    else if (*(input.Data) != '_') {
+    else if (*(input.Data) == '_') {
 		return AprsWXDataPositionless::ParseData(input.DataAsStr, output);
 	}
 

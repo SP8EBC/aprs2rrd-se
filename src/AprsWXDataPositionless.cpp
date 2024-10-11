@@ -16,10 +16,12 @@ int AprsWXDataPositionless::ParseData(const std::string & in, AprsWXData * outpu
 
     // if string doesn't contain correct prefix or it is too short
     if (in.length() < 25) {
+        std::cout << "AprsWXDataPositionless::ParseData - positionless frame seems to be too short" << std::endl;
         return -1;
     }
 
     if (in.at(0) != '_' || in.at(9) != 'c' || in.at(13) != 's' || in.at(17) != 'g' || in.at(21) != 't') {
+        std::cout << "AprsWXDataPositionless::ParseData - this doesn't look like positionless weather packet" << std::endl;
         return -2;
     }
 
@@ -88,6 +90,8 @@ int AprsWXDataPositionless::ParseData(const std::string & in, AprsWXData * outpu
 
     // convert temperature to output structure
     output->temperature = ((float)boost::lexical_cast<int>(temperature_str) - 32.0f) / 9.0f * 5.0f;
+
+    std::cout << "AprsWXDataPositionless::ParseData - temperature in degrees celsius " << output->temperature << std::endl;
 
     // if positionless packet contains optional, custom historic data
     if (history_pos != std::string::npos) {
