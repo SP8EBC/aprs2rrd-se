@@ -244,6 +244,15 @@ void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCo
 	}
 
 	try {
+		rWWW.lookupValue("SpecialTelemetry", data.SpecialTelemetry);
+
+	}
+	catch (libconfig::SettingNotFoundException &ex) {
+		data.SpecialTelemetry = false;
+	}
+
+
+	try {
 		rWWW.lookupValue("AdditionalImageBetweenTableAndPlots", data.WebsiteAdditionalImage);
 		rWWW.lookupValue("AdditionalImageUrl", data.WebsiteAdditionalImgeUrl);
 	}
@@ -1134,6 +1143,9 @@ void ProgramConfig::printConfigInPl(
 		}
 		if (dataPresence.WebsiteLinkToMoreInfo == true) {
 			cout << "--- Link do dodatkowych info zostanie wygenerowany" << endl;
+		}
+		if (dataPresence.SpecialTelemetry == true) {
+			cout << "--- Specialna telemetria włączona" << endl;
 		}
 		cout << "--- Wyświetlanie wiatru: " << DataPresentation::ParametersPrintEnumToStr(dataPresence.PrintWind) << endl;
 		cout << "--- Wyświetlanie ciśnienia: " << DataPresentation::ParametersPrintEnumToStr(dataPresence.PrintPressure) << endl;

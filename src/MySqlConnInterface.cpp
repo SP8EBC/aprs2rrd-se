@@ -136,6 +136,8 @@ void MySqlConnInterface::InsertIntoDbSchema2(AprsWXData& cInput, const DataSourc
 	}
 
 	if (cInput.additionalTemperature.size() > 0) {
+		cout << "--- MysqlConnInterface::InsertIntoDbSchema2:139 - cInput.additionalTemperature.size() : " << cInput.additionalTemperature.size() << endl;
+
 		for (std::pair<uint64_t, float> elem : cInput.additionalTemperature) {
 			const uint64_t elemTimestamp = elem.first; 
 			const struct tm elemTime = TimeTools::getTmStructFromUndefinedTzEpoch(elemTimestamp);
@@ -177,8 +179,6 @@ void MySqlConnInterface::InsertIntoDbSchema2(AprsWXData& cInput, const DataSourc
 			try {
 				this->dbQuery = this->dbConnection.query(queryStr.str());
 				this->dbSimpleResult = this->dbQuery.execute();
-
-				cInput.additionalTemperature.clear();
 			}
 			catch (const BadQuery& er) {
 				cout << er.what();
@@ -191,6 +191,7 @@ void MySqlConnInterface::InsertIntoDbSchema2(AprsWXData& cInput, const DataSourc
 			}
 		}
 
+		cInput.additionalTemperature.clear();
 	}
 
 	cout << this->dbSimpleResult.info();
