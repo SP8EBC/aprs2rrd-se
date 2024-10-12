@@ -319,6 +319,60 @@ void MySqlConnInterface::InsertTelmetry(const Telemetry& input, std::string stat
 
 }
 
+void MySqlConnInterface::InsertIntoDbSchemaTatry(const AprsWXData &wx,
+		const Telemetry &input, std::string station_name) {
+
+	if (!this->schema_v2)
+		return;
+
+	std::stringstream temp;
+	temp.str("");
+
+	boost::posix_time::ptime current_epoch = boost::posix_time::second_clock::universal_time();
+	//boost::date_time::second_clock<boost::posix_time::ptime>::local_time();	// static access should be here??
+
+	boost::posix_time::time_duration epoch_seconds_duration =
+												(current_epoch - boost::posix_time::ptime(boost::gregorian::date(1970, 1, 1)));
+	int64_t epoch_seconds = epoch_seconds_duration.total_seconds();
+
+	cout << "--- MysqlConnInterface::InsertIntoDbSchemaTatry:244 - epoch_seconds: " << epoch_seconds << endl;
+
+	temp << "INSERT INTO `" << this->dbName << "`.`data_tatry`";
+	temp << "(`epoch`, `station`, `wxtemperature`, `rawmeasurement`, `rawmeasurementrecalc`, `voltage`, `maxstatus`, `lserdy`, `rtcen`, `maxok`, `sleep`, `spier`, `spiok`) VALUES (";
+
+	temp << epoch_seconds << ", ";
+	temp << "'" << station_name << "', ";
+	temp << wx.temperature << ", ";
+	temp << (int)input.getRawMeasurement() << ", ";
+	temp << input.getTemperatureFromRawMeasurement() << ", ";
+	temp << input.getBatteryVoltage() << ", ";
+	temp << input.getCh5Raw() << ", ";
+	temp << (input.getLSERDY() ? "TRUE" : "FALSE") << ", ";
+	temp << (input.getRTCEN() ? "TRUE" : "FALSE") << ", ";
+	temp << (input.getMAXOK() ? "TRUE" : "FALSE") << ", ";
+	temp << (input.getSLEEP() ? "TRUE" : "FALSE") << ", ";
+	temp << (input.getSPIER() ? "TRUE" : "FALSE") << ", ";
+	temp << (input.getSPIOK() ? "TRUE" : "FALSE") << ");" << endl;
+	if (this->Debug == true)
+		cout << temp.str() << endl;
+
+	try {
+		this->dbQuery = this->dbConnection.query(temp.str());
+		this->dbSimpleResult = this->dbQuery.execute();
+	}
+	catch (const BadQuery& er) {
+		cout << er.what();
+	}
+	catch (const Exception& er) {
+		cout << er.what();
+	}
+	catch (...) {
+		cout << "--- MysqlConnInterface::InsertIntoDbSchemaTatry:269 - unknown exception" << endl;
+	}
+
+	cout << this->dbSimpleResult.info();
+}
+
 void MySqlConnInterface::Keepalive(void) {
 	stringstream temp;
 	Query dbQuery(&this->dbConnection, true);

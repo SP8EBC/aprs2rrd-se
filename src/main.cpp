@@ -522,6 +522,9 @@ int main(int argc, char **argv){
 
 					if (telemetry.valid) {
 						wxTarget.copy(telemetry, sourceConfig);
+
+						// insert battery voltage into RRD
+						dataPresence.FetchBatteryVoltageInRRD(telemetry.getBatteryVoltage());
 					}
 
 					if (wxZywiec.valid) {
@@ -611,7 +614,7 @@ int main(int argc, char **argv){
 						dataPresence.PlotGraphsFromRRD();
 
 						// generating the website
-						dataPresence.GenerateWebiste(wxTarget, wxSecondarySrcForPage, locale, datetimeLocale);
+						dataPresence.GenerateWebiste(wxTarget, wxSecondarySrcForPage, locale, datetimeLocale, telemetry);
 					}
 
 					if (bannerCreatorConfig.enable) {
@@ -637,6 +640,10 @@ int main(int argc, char **argv){
 							mysqlDb.InsertIntoDb(&wxTarget);
 
 							mysqlDb.InsertIntoDbSchema2(wxTarget, sourceConfig, programConfig.getStationName());
+
+							if (dataPresence.SpecialTelemetry && telemetry.valid) {
+								mysqlDb.InsertIntoDbSchemaTatry(wxIsTemp, telemetry, programConfig.getStationName());
+							}
 
 							mysqlDb.CloseDBConnection();
 						}

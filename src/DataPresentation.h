@@ -40,6 +40,7 @@ public:
 	 * Stores calulated differential measurements in RRD file(s)
 	 */
 	void FetchDiffInRRD(AprsWXData & data);
+	void FetchBatteryVoltageInRRD(float voltage);
 
 	/**
 	 * Plots all configured graphs from RRD files
@@ -49,7 +50,7 @@ public:
 	/**
 	 * Generates HTML file
 	 */
-	void GenerateWebiste(const AprsWXData & WX, const AprsWXData & secondaryWX, const Locale & locale, const char * datetimeLocale);
+	void GenerateWebiste(const AprsWXData & WX, const AprsWXData & secondaryWX, const Locale & locale, const char * datetimeLocale, const Telemetry & telemetry);
 
 	/**
 	 * This method has a practical usage only when displaying two sources are enabled. It select out among few inputs
@@ -76,6 +77,8 @@ public:
 	string Plot0Path, Plot1Path, Plot2Path, Plot3Path, Plot4Path;
 
 	DataPresentationParametersPrint PrintTemperature, PrintPressure, PrintHumidity, PrintWind;
+
+	bool SpecialTelemetry;
 
 	string WebsiteTitle;
 	string WebsiteHeadingTitle;

@@ -175,6 +175,32 @@ void DataPresentation::FetchDataInRRD(const AprsWXData* const cInput, bool inhib
 	}
 }
 
+void DataPresentation::FetchBatteryVoltageInRRD(float voltage) {
+	char command[512];
+	int currtimeint;
+	time_t currtime;
+
+	int sys_retval = 0;
+
+	cout << "--- DataPresentation::FetchBatteryVoltageInRRD:186 - voltage: " << voltage << endl;
+	for (unsigned i = 0; i < this->vRRDFiles.size(); i++) {
+		if (this->vRRDFiles[i].eType == PlotType::VOLTAGE) {
+			currtime =time(NULL);
+			currtimeint = (int)currtime;
+			memset(command, 0x00, sizeof(command));
+			sprintf(command, "rrdtool update %s %d:%f", this->vRRDFiles[i].sPath.c_str(), currtimeint, voltage);
+			if (this->DebugOutput == true)
+				cout << command << endl;
+
+			sys_retval = system(command);
+
+			if (sys_retval != 0) {
+				;
+			}
+		}
+	}
+}
+
 void DataPresentation::PlotGraphsFromRRD() {
 	char command[1024];
 	int currtimeint;
@@ -216,6 +242,9 @@ void DataPresentation::PlotGraphsFromRRD() {
 
 	if (this->vPNGFiles[i].ScaleStep > 0 && this->vPNGFiles[i].LabelStep > 0) {
 		scalestep << " --y-grid " << this->vPNGFiles[i].ScaleStep << ":" << this->vPNGFiles[i].LabelStep << " ";
+	}
+	else if (this->vPNGFiles[i].ScaleStep < 0 && this->vPNGFiles[i].LabelStep < 0) {
+		scalestep << " --left-axis-format \"%.1lf\"";
 	}
 	else scalestep << " ";
 
@@ -273,7 +302,7 @@ void DataPresentation::PlotGraphsFromRRD() {
 	}
 }
 
-void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData & secondaryWX, const Locale & locale, const char * datetimeLocale) {
+void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData & secondaryWX, const Locale & locale, const char * datetimeLocale, const Telemetry & telemetry) {
 
 	uint8_t temperaturePrecision = 3;
 
@@ -284,6 +313,9 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 
 	//boost::filesystem::path html{this->WebsitePath.c_str()};
 	std::ofstream html;
+
+	float batteryVoltage = telemetry.getBatteryVoltage();
+	int rawMeasurement = (int)telemetry.getRawMeasurement();
 
 	html.open(this->WebsitePath.c_str(), ios::out | ios::trunc);
 
@@ -305,7 +337,9 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 
 	//html.precision(3);
 
-	std::cout << "--- DataPresentation::GenerateWebiste:308 - Html file opened" << std::endl;
+	std::cout << "--- DataPresentation::GenerateWebiste:338 - Html file opened" << std::endl;
+
+	std::cout << "--- DataPresentation::GenerateWebiste:340 - batteryVoltage: " << batteryVoltage << ", rawMeasurement: " << rawMeasurement << std::endl;
 
 	try {
 		html << " <!DOCTYPE html>" << std::endl;
@@ -557,6 +591,67 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 
 		html << "</tbody></table><br>\r\n";
 
+		if (SpecialTelemetry) {
+			html << "  <p></p><table class=sub_heading><tbody><tr><td class=sub_heading>Status sterownika stacji</td></tr></tbody></table>" << std::endl;
+			html << "<table class=data><tbody><tr>" << std::endl;
+			////////////////////////////
+			if (telemetry.getLSERDY()) {
+				html << "<td class=table_value_special_ok>LSERDY</td>" << std::endl;
+			}
+			else {
+				html << "<td class=table_value_special_nok>LSERDY</td>" << std::endl;
+			}
+
+			////////////////////////////
+			if (telemetry.getRTCEN()) {
+				html << "<td class=table_value_special_ok>RTCEN</td>" << std::endl;
+			}
+			else {
+				html << "<td class=table_value_special_nok>RTCEN</td>" << std::endl;
+			}
+
+			////////////////////////////
+			if (telemetry.getMAXOK()) {
+				html << "<td class=table_value_special_ok>MAX_OK</td>" << std::endl;
+			}
+			else {
+				html << "<td class=table_value_special_nok>MAX_OK</td>" << std::endl;
+			}
+
+			//////////////////////////
+			if (telemetry.getSLEEP()) {
+				html << "<td class=table_value_special_ok>SLEEP</td>" << std::endl;
+			}
+			else {
+				html << "<td class=table_value_special_nok>SLEEP</td>" << std::endl;
+			}
+
+			//////////////////////////
+			if (telemetry.getSPIER()) {
+				html << "<td class=table_value_special_nok>SPI_ER</td>" << std::endl;
+			}
+			else {
+				html << "<td class=table_value_special_ok>SPI_ER</td>" << std::endl;
+			}
+
+			///////////////////////////
+			if (telemetry.getSPIOK()) {
+				html << "<td class=table_value_special_ok>SPI_OK</td>" << std::endl;
+			}
+			else {
+				html << "<td class=table_value_special_nok>SPI_OK</td>" << std::endl;
+			}
+			html << "</tr></tbody></table>" << std::endl;
+
+			if (telemetry.ch5 == 0) {
+				html << "  <p></p><table class=sub_heading><tbody><tr><td class=sub_heading>Status wzmacniacza PT: OK - BRAK BŁĘDÓW</td></tr></tbody></table>" << std::endl;
+			}
+			else {
+				html << "  <p></p><table class=sub_heading><tbody><tr><td class=sub_heading>Status wzmacniacza PT: NotOK - 0x" << std::hex << (int)telemetry.ch5 << std::dec << "</td></tr></tbody></table>" << std::endl;
+			}
+
+		}
+
 		if(this->WebsiteLinkToMoreInfo == true)
 			html << "<table class=sub_heading><td class=sub_heading><a href=\"info.html\">Informacje o stacji i startowisku</a></td></table>\r\n";
 		if(this->Plot0Path.size() >= 4)
@@ -606,6 +701,8 @@ PlotType DataPresentation::SwitchPlotType(string input) {
 		out = PlotType::DIFF_WIND_DIR;
 	else if (input == "HUMIDITY")
 		out = PlotType::HUMIDITY;
+	else if (input == "VOLTAGE")
+		out = PlotType::VOLTAGE;
 	return out;
 
 }
@@ -636,6 +733,8 @@ const std::string DataPresentation::RevSwitchPlotType(PlotType in) {
 		return "WIND_GST";
 	else if (in == PlotType::WIND_SPD)
 		return "WIND_SPD";
+	else if (in == PlotType::VOLTAGE)
+		return "VOLTAGE";
 	else if (in == PlotType::N)
 		return "N";
 	return "unknown";

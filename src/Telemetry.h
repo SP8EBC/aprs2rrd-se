@@ -26,6 +26,22 @@ public:
 	float getCh4() const;
 	float getCh5() const;
 
+	int getCh5Raw() const {
+		return (int)ch5;
+	}
+
+	float getLastTemperature() const;
+	float getBatteryVoltage() const;
+	uint16_t getRawMeasurement() const;
+	float getTemperatureFromRawMeasurement() const;
+
+	bool getLSERDY() const;
+	bool getRTCEN() const;
+	bool getMAXOK() const;
+	bool getSLEEP() const;
+	bool getSPIER() const;
+	bool getSPIOK() const;
+
 	std::string call;
 
 	bool valid;

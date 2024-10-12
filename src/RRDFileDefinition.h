@@ -22,6 +22,7 @@ enum class PlotType {
 	DIFF_WIND_SPD,
 	DIFF_WIND_GST,
 	DIFF_WIND_DIR,
+	VOLTAGE,
 	N
 };
 
