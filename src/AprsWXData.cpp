@@ -56,13 +56,22 @@ int AprsWXData::ParseData(AprsPacket input, AprsWXData* output) {
 
     output->valid = false;
 
-    if (*(input.Data) != '!' && *(input.Data) != '@') {
-        output->valid = false;
-        return -1;     // to nie sa dane pogodowe
-    }
-    else if (*(input.Data) == '_') {
+	if (AprsWXData::DebugOutput == true) {
+		std::cout << "AprsWXData::ParseData:60 - input data: " << input.Data << endl;
+	}
+
+    if (*(input.Data) == '_') {
+		if (AprsWXData::DebugOutput == true) {
+			std::cout << "AprsWXData::ParseData:65 - this is positionless weather frame" << endl;
+		}
 		return AprsWXDataPositionless::ParseData(input.DataAsStr, output);
 	}
+    
+	if (*(input.Data) != '!' && *(input.Data) != '@') {
+        output->valid = false;
+        return -1;     // to nie sa dane pogodowe
+		
+    }
 
     // converting char array to copy of string class for convinence
     std::string source(input.Data);
@@ -162,22 +171,22 @@ void AprsWXData::ZeroCorrection(queue <AprsWXData> & qMeteo) {
 		if (this->temperature == 0 || this->humidity == 0 || this->pressure == 0) {
 			temp = qMeteo.back();
 			if (this->DebugOutput == true)
-				cout << "--- AprsWXData::ZeroCorrection:148 - doing zero correction ";
+				cout << "--- AprsWXData::ZeroCorrection:172 - doing zero correction ";
 		}
 		else;
 		if (this->temperature == 0) {
 			if (this->DebugOutput == true)
-				cout << "--- AprsWXData::ZeroCorrection:153 - t: " << this->temperature << " -> " << temp.temperature << "; ";
+				cout << "--- AprsWXData::ZeroCorrection:177 - t: " << this->temperature << " -> " << temp.temperature << "; ";
 			this->temperature = temp.temperature;
 		}
 		if (this->humidity == 0) {
 			if (this->DebugOutput == true)
-				cout << "--- AprsWXData::ZeroCorrection:158 - h: " << this->humidity << " -> " << temp.humidity << "; ";
+				cout << "--- AprsWXData::ZeroCorrection:182 - h: " << this->humidity << " -> " << temp.humidity << "; ";
 			this->humidity = temp.humidity;
 		}
 		if (this->pressure == 0) {
 			if (this->DebugOutput == true)
-				cout << "--- AprsWXData::ZeroCorrection:164 - p: " << this->humidity << " -> " << temp.humidity << "; ";
+				cout << "--- AprsWXData::ZeroCorrection:187 - p: " << this->humidity << " -> " << temp.humidity << "; ";
 			this->pressure = temp.pressure;
 		}
 	}
@@ -344,7 +353,7 @@ AprsWXData& AprsWXData::operator -(AprsWXData& _in) {
 	// scalar values are subtracted directly
 	if (_in.humidity && this->humidity) {
 		if (AprsWXData::DebugOutput) {
-			std::cout << "--- AprsWXData::operator -:342 - subtracting humidity parameters" << std::endl;
+			std::cout << "--- AprsWXData::operator -:354 - subtracting humidity parameters" << std::endl;
 		}
 
 		this->humidity = ::abs(this->humidity - _in.humidity);
@@ -352,7 +361,7 @@ AprsWXData& AprsWXData::operator -(AprsWXData& _in) {
 
 	if (_in.useTemperature && this->useTemperature) {
 		if (AprsWXData::DebugOutput) {
-			std::cout << "--- AprsWXData::operator -:350 - subtracting temperature parameters" << std::endl;
+			std::cout << "--- AprsWXData::operator -:362 - subtracting temperature parameters" << std::endl;
 		}
 
 		this->temperature -= _in.temperature;
@@ -360,7 +369,7 @@ AprsWXData& AprsWXData::operator -(AprsWXData& _in) {
 
 	if (_in.usePressure && this->usePressure) {
 		if (AprsWXData::DebugOutput) {
-			std::cout << "--- AprsWXData::operator -:358 - subtracting pressure parameters" << std::endl;
+			std::cout << "--- AprsWXData::operator -:370 - subtracting pressure parameters" << std::endl;
 		}
 
 		this->pressure = ::abs(this->pressure - _in.pressure);
@@ -369,7 +378,7 @@ AprsWXData& AprsWXData::operator -(AprsWXData& _in) {
 
 	if (_in.useWind && this->useWind) {
 		if (AprsWXData::DebugOutput) {
-			std::cout << "--- AprsWXData::operator -:367 - subtracting wind parameters" << std::endl;
+			std::cout << "--- AprsWXData::operator -:379 - subtracting wind parameters" << std::endl;
 		}
 
 		// wind direction is a vector value so there are always two
@@ -802,7 +811,7 @@ void AprsWXData::CheckPrimaryOrSecondaryAprsis(const DataSourceConfig & config) 
 		this->ssid == config.primarySsid) {
 
 		if (this->DebugOutput)
-			std::cout << "--- AprsWXData::CheckPrimaryOrSecondaryAprsis:780 - This is data from primary APRS-IS call." << std::endl;
+			std::cout << "--- AprsWXData::CheckPrimaryOrSecondaryAprsis:812 - This is data from primary APRS-IS call." << std::endl;
 
 		this->dataSource = WxDataSource::IS_PRIMARY;
 
@@ -816,7 +825,7 @@ void AprsWXData::CheckPrimaryOrSecondaryAprsis(const DataSourceConfig & config) 
 			this->ssid == config.secondarySsid) {
 
 		if (this->DebugOutput)
-			std::cout << "--- AprsWXData::CheckPrimaryOrSecondaryAprsis:788 - This is data from secondary APRS-IS call." << std::endl;
+			std::cout << "--- AprsWXData::CheckPrimaryOrSecondaryAprsis:826 - This is data from secondary APRS-IS call." << std::endl;
 
 
 		this->dataSource = WxDataSource::IS_SECONDARY;
