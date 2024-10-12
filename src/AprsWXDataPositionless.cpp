@@ -91,6 +91,9 @@ int AprsWXDataPositionless::ParseData(const std::string & in, AprsWXData * outpu
     // convert temperature to output structure
     output->temperature = ((float)boost::lexical_cast<int>(temperature_str) - 32.0f) / 9.0f * 5.0f;
 
+    output->useTemperature = true;
+    output->valid = true;
+
     std::cout << "AprsWXDataPositionless::ParseData - temperature in degrees celsius " << output->temperature << std::endl;
 
     // if positionless packet contains optional, custom historic data

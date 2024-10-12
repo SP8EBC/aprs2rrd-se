@@ -56,10 +56,6 @@ int AprsWXData::ParseData(AprsPacket input, AprsWXData* output) {
 
     output->valid = false;
 
-	if (AprsWXData::DebugOutput == true) {
-		std::cout << "AprsWXData::ParseData:60 - input data: " << input.Data << endl;
-	}
-
     if (*(input.Data) == '_') {
 		if (AprsWXData::DebugOutput == true) {
 			std::cout << "AprsWXData::ParseData:65 - this is positionless weather frame" << endl;
@@ -70,7 +66,7 @@ int AprsWXData::ParseData(AprsPacket input, AprsWXData* output) {
 	if (*(input.Data) != '!' && *(input.Data) != '@') {
         output->valid = false;
         return -1;     // to nie sa dane pogodowe
-		
+
     }
 
     // converting char array to copy of string class for convinence
