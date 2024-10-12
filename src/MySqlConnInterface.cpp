@@ -51,7 +51,7 @@ void MySqlConnInterface::CloseDBConnection() {
 	else throw AlreadyDisconnected();
 }
 
-void MySqlConnInterface::InsertIntoDbSchema2(const AprsWXData& cInput, const DataSourceConfig& config, std::string station_name) {
+void MySqlConnInterface::InsertIntoDbSchema2(AprsWXData& cInput, const DataSourceConfig& config, std::string station_name) {
 
 	if (!this->schema_v2)
 		return;
@@ -142,13 +142,13 @@ void MySqlConnInterface::InsertIntoDbSchema2(const AprsWXData& cInput, const Dat
 
 			const float elemTemperature = elem.second;
 
-			std::stringstream query;
+			std::stringstream queryStr;
 
-			query << "INSERT INTO `" << this->dbName << "`.`data_station`";
-			query << "(`epoch`, `datetime`, `station`, `temperature`, `humidity`, `pressure`, `winddir`, `windspeed`, `windgusts`, " <<
+			queryStr << "INSERT INTO `" << this->dbName << "`.`data_station`";
+			queryStr << "(`epoch`, `datetime`, `station`, `temperature`, `humidity`, `pressure`, `winddir`, `windspeed`, `windgusts`, " <<
 										"`tsource`, `wsource`, `psource`, `hsource`, `rsource`) VALUES (";
-			query << elemTimestamp << ", ";
-			query << "'" << \
+			queryStr << elemTimestamp << ", ";
+			queryStr << "'" << \
 			elemTime.tm_year + 1900 << "-" << setw(2) <<  setfill('0') << \
 			(elemTime.tm_mon) + 1 << "-" << setw(2) << setfill('0') << \
 			elemTime.tm_mday << " " << setw(2) << setfill('0') << \
@@ -156,37 +156,39 @@ void MySqlConnInterface::InsertIntoDbSchema2(const AprsWXData& cInput, const Dat
 			elemTime.tm_min << ":" << setw(2) << setfill('0') << \
 			elemTime.tm_sec << 
 			"',";
-			query << "'" << station_name << "', ";
-			query << elemTemperature << ", ";
-			query << 0.0f << ", ";
-			query << 0 << ", ";
-			query << 0 << ", ";
-			query << 0.0f << ", ";
-			query << 0.0f << ", ";
-			query << "'" << config.getTemperatureSource() << "', ";
-			query << "'" << config.getWindSource() << "', ";
-			query << "'" << config.getPressureSource() << "', ";
-			query << "'" << config.getHumiditySource() << "', ";
-			query << "'" << config.getRainSource() << "');" << endl;
+			queryStr << "'" << station_name << "', ";
+			queryStr << elemTemperature << ", ";
+			queryStr << 0.0f << ", ";
+			queryStr << 0 << ", ";
+			queryStr << 0 << ", ";
+			queryStr << 0.0f << ", ";
+			queryStr << 0.0f << ", ";
+			queryStr << "'" << config.getTemperatureSource() << "', ";
+			queryStr << "'" << config.getWindSource() << "', ";
+			queryStr << "'" << config.getPressureSource() << "', ";
+			queryStr << "'" << config.getHumiditySource() << "', ";
+			queryStr << "'" << config.getRainSource() << "');" << endl;
 
 			if (this->Debug == true) {
 				cout << "--- MysqlConnInterface::InsertIntoDbSchema2 - Inserting historical data from positionless weather frame" << endl;
 				cout << temp.str() << endl;
 			}
-		}
 
-		try {
-			this->dbQuery = this->dbConnection.query(temp.str());
-			this->dbSimpleResult = this->dbQuery.execute();
-		}
-		catch (const BadQuery& er) {
-			cout << er.what();
-		}
-		catch (const Exception& er) {
-			cout << er.what();
-		}
-		catch (...) {
-			cout << "--- MysqlConnInterface::InsertIntoDbSchema2:189 - unknown exception" << endl;
+			try {
+				this->dbQuery = this->dbConnection.query(queryStr.str());
+				this->dbSimpleResult = this->dbQuery.execute();
+
+				cInput.additionalTemperature.clear();
+			}
+			catch (const BadQuery& er) {
+				cout << er.what();
+			}
+			catch (const Exception& er) {
+				cout << er.what();
+			}
+			catch (...) {
+				cout << "--- MysqlConnInterface::InsertIntoDbSchema2:189 - unknown exception" << endl;
+			}
 		}
 
 	}
@@ -385,19 +387,6 @@ void MySqlConnInterface::InsertIntoDb(const AprsWXData* cInput) {
 			cInput->pressure << ", " << \
 			cInput->humidity << ");" << endl;
 
-		// temp << "INSERT INTO `" << this->dbName << "`.`" << this->tableName << "` (`Id`, `TimestampEpoch`, `TimestampDate`, `Temp`, `WindSpeed`, `WindGusts`, `WindDir`, `QNH`, `Humidity`) VALUES (NULL, CURRENT_TIMESTAMP, '" << \
-		// 	time.tm_year + 1900 << "-" << setw(2) <<  setfill('0') << \
-		// 	(time.tm_mon) + 1 << "-" << setw(2) << setfill('0') << \
-		// 	time.tm_mday << " " << setw(2) << setfill('0') << \
-		// 	time.tm_hour << ":" << setw(2) << setfill('0') << \
-		// 	time.tm_min << ":" << setw(2) << setfill('0') << \
-		// 	time.tm_sec << "', " << \
-		// 	cInput->temperature << ", " << \
-		// 	cInput->wind_speed << ", " <<  \
-		// 	cInput->wind_gusts << ", " << \
-		// 	cInput->wind_direction << ", " << \
-		// 	cInput->pressure << ", " << \
-		// 	cInput->humidity << ");" << endl;
 	}
 	else {
 		currtime = time(NULL);
