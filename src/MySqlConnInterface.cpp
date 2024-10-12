@@ -171,7 +171,7 @@ void MySqlConnInterface::InsertIntoDbSchema2(AprsWXData& cInput, const DataSourc
 
 			if (this->Debug == true) {
 				cout << "--- MysqlConnInterface::InsertIntoDbSchema2 - Inserting historical data from positionless weather frame" << endl;
-				cout << temp.str() << endl;
+				cout << queryStr.str() << endl;
 			}
 
 			try {
