@@ -584,7 +584,7 @@ int main(int argc, char **argv){
 					// exit immediately witout performing any changes
 
 					// printing target data
-					std::cout << "--- main:584 - Printing target WX data which will be used for further processing." << std::endl;
+					std::cout << "--- main:587 - Printing target WX data which will be used for further processing." << std::endl;
 					wxTarget.PrintData();
 
 					// limiting slew rates for measurements

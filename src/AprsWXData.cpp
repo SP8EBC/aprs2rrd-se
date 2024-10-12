@@ -55,18 +55,20 @@ int AprsWXData::ParseData(AprsPacket input, AprsWXData* output) {
     std::vector<std::string> extractedWx;	// this vector will be used as an output from boost::split method
 
     output->valid = false;
-
     if (*(input.Data) == '_') {
 		if (AprsWXData::DebugOutput == true) {
 			std::cout << "AprsWXData::ParseData:65 - this is positionless weather frame" << endl;
 		}
+		output->ssid = input.SrcSSID;
+		output->call = input.SrcAddr;
+
 		return AprsWXDataPositionless::ParseData(input.DataAsStr, output);
 	}
     
 	if (*(input.Data) != '!' && *(input.Data) != '@') {
         output->valid = false;
         return -1;     // to nie sa dane pogodowe
-
+		
     }
 
     // converting char array to copy of string class for convinence

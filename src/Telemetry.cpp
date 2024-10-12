@@ -67,7 +67,7 @@ int Telemetry::Telemetry::ParseData(AprsPacket input, Telemetry* output) {
     output->ch5 = 0;
 
     if (*(input.Data) != 'T') {
-    	std::cout << "--- Telemetry::ParseData:70 - This is not valid APRS telemetry packet ";
+    	std::cout << "--- Telemetry::ParseData:70 - This is not valid APRS telemetry packet " << std::endl;
         output->valid = false;
         return -1;
     }
