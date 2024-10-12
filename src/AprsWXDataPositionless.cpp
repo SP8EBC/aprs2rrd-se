@@ -25,6 +25,8 @@ int AprsWXDataPositionless::ParseData(const std::string & in, AprsWXData * outpu
         return -2;
     }
 
+    output->additionalTemperature.clear();
+
     time(&utc_raw_time);
     tm_current_utc = gmtime(&utc_raw_time);
 
