@@ -429,6 +429,11 @@ int main(int argc, char **argv){
 						// and telemetry data are valid.
 						mysqlDb.InsertTelmetry(telemetry, programConfig.getStationName());
 
+						if (telemetry.valid) {
+							// insert battery voltage into RRD
+							dataPresence.FetchBatteryVoltageInRRD(telemetry.getBatteryVoltage());
+						}
+
 						// wait for another packet if not WX data has been received. Protect against
 						// flooding with a lot of data from Holfuy after each heartbeat message from APRS-IS
 						if (!wxIsTemp.valid) {
@@ -522,9 +527,6 @@ int main(int argc, char **argv){
 
 					if (telemetry.valid) {
 						wxTarget.copy(telemetry, sourceConfig);
-
-						// insert battery voltage into RRD
-						dataPresence.FetchBatteryVoltageInRRD(telemetry.getBatteryVoltage());
 					}
 
 					if (wxZywiec.valid) {

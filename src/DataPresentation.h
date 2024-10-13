@@ -10,6 +10,7 @@
 #include "PlotFileDefinition.h"
 #include "DataSourceConfig.h"
 #include "Locale.h"
+#include "Telemetry.h"
 
 using namespace std;
 

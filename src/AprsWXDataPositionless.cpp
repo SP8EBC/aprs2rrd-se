@@ -132,9 +132,10 @@ int AprsWXDataPositionless::ParseData(const std::string & in, AprsWXData * outpu
                         output->additionalTemperature.emplace_back(entryEpoch, temperature);
 
 						std::cout << "--- AprsWXDataPositionless::ParseData - data from "
-								  << boost::posix_time::to_iso_string (
+								  << boost::posix_time::to_iso_extended_string (
 										 TimeTools::getPtimeFromEpoch (entryEpoch))
-								  << ", temperature: " << temperature << std::endl;
+								  << ", " << secondOld
+								  << "seconds old, temperature: " << temperature << std::endl;
 					}
 				}
             }
