@@ -16,12 +16,12 @@ int AprsWXDataPositionless::ParseData(const std::string & in, AprsWXData * outpu
 
     // if string doesn't contain correct prefix or it is too short
     if (in.length() < 25) {
-        std::cout << "AprsWXDataPositionless::ParseData - positionless frame seems to be too short" << std::endl;
+        std::cout << "--- AprsWXDataPositionless::ParseData - positionless frame seems to be too short" << std::endl;
         return -1;
     }
 
     if (in.at(0) != '_' || in.at(9) != 'c' || in.at(13) != 's' || in.at(17) != 'g' || in.at(21) != 't') {
-        std::cout << "AprsWXDataPositionless::ParseData - this doesn't look like positionless weather packet" << std::endl;
+        std::cout << "--- AprsWXDataPositionless::ParseData - this doesn't look like positionless weather packet" << std::endl;
         return -2;
     }
 
@@ -69,11 +69,11 @@ int AprsWXDataPositionless::ParseData(const std::string & in, AprsWXData * outpu
     }
     catch (const boost::bad_lexical_cast& ex) {
         output->wind_direction = 0;
-        std::cout << ex.what();
+        std::cout << ex.what() << std::endl;
     }
     catch (const std::bad_cast& ex) {
         output->wind_direction = 0;
-        std::cout << ex.what();
+        std::cout << ex.what() << std::endl;
     }
 
     try {
@@ -87,7 +87,7 @@ int AprsWXDataPositionless::ParseData(const std::string & in, AprsWXData * outpu
     }
     catch (const std::bad_cast& ex) {
         output->wind_direction = 0;
-        std::cout << ex.what();
+        std::cout << ex.what() << std::endl;
     }
 
     // convert temperature to output structure
@@ -96,11 +96,11 @@ int AprsWXDataPositionless::ParseData(const std::string & in, AprsWXData * outpu
     output->useTemperature = true;
     output->valid = true;
 
-    std::cout << "AprsWXDataPositionless::ParseData - temperature in degrees celsius " << output->temperature << std::endl;
+    std::cout << "--- AprsWXDataPositionless::ParseData - temperature in degrees celsius " << output->temperature << std::endl;
 
     // if positionless packet contains optional, custom historic data
     if (history_pos != std::string::npos) {
-        std::cout << "AprsWXDataPositionless::ParseData - historical data detected" << std::endl;
+        std::cout << "--- AprsWXDataPositionless::ParseData - historical data detected" << std::endl;
 
         std::vector<std::string> splitPerSqBracket;
 
@@ -125,12 +125,18 @@ int AprsWXDataPositionless::ParseData(const std::string & in, AprsWXData * outpu
                 if (splitUnderscore.at(1).find_first_not_of("0123456789") == std::string::npos) {
                     if (splitUnderscore.at(2).find_first_not_of("0123456789") == std::string::npos) {
                         // calculate epoch timestamp
-                        const uint64_t entryEpoch = TimeTools::getEpoch() - boost::lexical_cast<int>(splitUnderscore.at(1));
+                        const uint32_t secondOld = boost::lexical_cast<int>(splitUnderscore.at(1));
+                        const uint64_t entryEpoch = TimeTools::getEpoch() - secondOld;
                         const float temperature = boost::lexical_cast<float>(splitUnderscore.at(2)) / 10.0f;
 
                         output->additionalTemperature.emplace_back(entryEpoch, temperature);
-                    }
-                }
+
+						std::cout << "--- AprsWXDataPositionless::ParseData - data from "
+								  << boost::posix_time::to_iso_string (
+										 TimeTools::getPtimeFromEpoch (entryEpoch))
+								  << ", temperature: " << temperature << std::endl;
+					}
+				}
             }
         }
     }
