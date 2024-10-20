@@ -274,7 +274,9 @@ int main(int argc, char **argv){
 			bannerCreatorConfig, 
 			thingspeakConfig);
 
-	cout << "--- main:277 - exitOnException: " << exitOnException << endl;
+	cout << "--- main:277 - float epsilon: " << std::numeric_limits<float>::epsilon() << endl;
+
+	cout << "--- main:279 - exitOnException: " << exitOnException << endl;
 
 	serialThread = new SerialAsioThread(syncCondition, syncLock, serialConfig.serialPort, serialConfig.baudrate);
 
@@ -307,7 +309,7 @@ int main(int argc, char **argv){
 	mainLoopExit = !batchMode;
 
 	if ((aprxLogParserConfig.enabled && aprsConfig.enable) || (aprxLogParserConfig.enabled && serialConfig.enable)) {
-		std::cout << "--- main:310 - You cannot use APRX rf-log file parser and aprs-is client at the same time" << std::endl;
+		std::cout << "--- main:312 - You cannot use APRX rf-log file parser and aprs-is client at the same time" << std::endl;
 		return -7;
 	}
 	else if (aprxLogParserConfig.enabled) {
@@ -323,12 +325,12 @@ int main(int argc, char **argv){
 	}
 
 	if (!batchMode && !aprsConfig.enable && !serialConfig.enable) {
-		std::cout << "--- main:326 - You cannot run continuous mode w/o APRS-IS connection or Serial port enabled" << std::endl;
+		std::cout << "--- main:328 - You cannot run continuous mode w/o APRS-IS connection or Serial port enabled" << std::endl;
 		return -6;
 	}
 
 	if (batchMode) {
-		std::cout << "--- main:331 - RUNNING IN BATCH MODE" << std::endl;
+		std::cout << "--- main:333 - RUNNING IN BATCH MODE" << std::endl;
 	}
 
 	// main loop
@@ -371,7 +373,7 @@ int main(int argc, char **argv){
 
 			//  check if any packets have been found
 			if (unfilteredPackets.size() == 0) {
-				std::cout << "--- main:374 - No weather packets have been found in rf-log" << std::endl;
+				std::cout << "--- main:376 - No weather packets have been found in rf-log" << std::endl;
 				// no sense in continuing execution
 				isConnectionAlive = false;
 			}
@@ -381,7 +383,7 @@ int main(int argc, char **argv){
 			}
 
 			if (wxDataFromAprx.size() == 0) {
-				std::cout << "--- main:384 - No weather packets from rf-log left after filtering" << std::endl;
+				std::cout << "--- main:386 - No weather packets from rf-log left after filtering" << std::endl;
 				// no sense in continuing execution
 				isConnectionAlive = false;			
 			}
@@ -432,6 +434,27 @@ int main(int argc, char **argv){
 						if (telemetry.valid) {
 							// insert battery voltage into RRD
 							dataPresence.FetchBatteryVoltageInRRD(telemetry.getBatteryVoltage());
+
+							try {
+								mysqlDb.OpenDBConnection();
+
+								mysqlDb.InsertIntoDbSchemaTatry(wxIsTemp, telemetry, programConfig.getStationName());
+
+								mysqlDb.CloseDBConnection();
+							}
+							catch(UnsufficientConfig &e) {
+								cout << e.what();
+							}
+							catch(BadSrvAddr &e) {
+								cout << e.what();
+							}
+							catch(ConnError &e) {
+								cout << e.what();
+							}
+							catch (AlreadyDisconnected &e) {
+								cout << e.what();
+							}
+
 						}
 
 						// wait for another packet if not WX data has been received. Protect against
@@ -466,7 +489,7 @@ int main(int argc, char **argv){
 
 						zywiecMeteo->parseJson(response, wxZywiec);
 
-						std::cout << "--- main:464 - Parsing data from Zywiec county meteo system API" << std::endl;
+						std::cout << "--- main:492 - Parsing data from Zywiec county meteo system API" << std::endl;
 
 						wxZywiec.PrintData();
 					}
@@ -479,7 +502,7 @@ int main(int argc, char **argv){
 
 						holfuyClient->getWxData(wxHolfuy);
 
-						std::cout << "--- main:477 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
+						std::cout << "--- main:505 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
 
 						wxHolfuy.PrintData();
 					}
@@ -561,7 +584,7 @@ int main(int argc, char **argv){
 
 					if (!wxTarget.valid) {
 						if (batchMode) {
-							std::cout << "-- main:559 - No valid data have been received from configured sources!!" << std::endl;
+							std::cout << "-- main:587 - No valid data have been received from configured sources!!" << std::endl;
 
 							throw std::exception();
 						}
@@ -586,7 +609,7 @@ int main(int argc, char **argv){
 					// exit immediately witout performing any changes
 
 					// printing target data
-					std::cout << "--- main:587 - Printing target WX data which will be used for further processing." << std::endl;
+					std::cout << "--- main:612 - Printing target WX data which will be used for further processing." << std::endl;
 					wxTarget.PrintData();
 
 					// limiting slew rates for measurements
@@ -643,10 +666,6 @@ int main(int argc, char **argv){
 
 							mysqlDb.InsertIntoDbSchema2(wxTarget, sourceConfig, programConfig.getStationName());
 
-							if (dataPresence.SpecialTelemetry && telemetry.valid) {
-								mysqlDb.InsertIntoDbSchemaTatry(wxIsTemp, telemetry, programConfig.getStationName());
-							}
-
 							mysqlDb.CloseDBConnection();
 						}
 						catch(UnsufficientConfig &e) {
@@ -688,7 +707,7 @@ int main(int argc, char **argv){
 				}
 				else {
 					if (Debug) {
-						cout << "--- main.cpp:682 - This is not valid APRS packet" << endl;
+						cout << "--- main.cpp:710 - This is not valid APRS packet" << endl;
 					}
 
 					//if (Debug)

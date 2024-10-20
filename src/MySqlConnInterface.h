@@ -51,6 +51,9 @@ private:
 	StoreQueryResult dbResult;
 	SimpleResult dbSimpleResult;
 	int dbQueryCounter;
+
+	void InsertIntoDbSchemaTatry(uint64_t timestamp, float temperature, std::string station_name);
+
 public:
 
 	bool enable;
