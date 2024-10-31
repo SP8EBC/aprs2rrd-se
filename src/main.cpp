@@ -666,6 +666,10 @@ int main(int argc, char **argv){
 
 							mysqlDb.InsertIntoDbSchema2(wxTarget, sourceConfig, programConfig.getStationName());
 
+							if (dataPresence.SpecialTelemetry && telemetry.valid) {
+								mysqlDb.InsertIntoDbSchemaTatry(wxIsTemp, telemetry, programConfig.getStationName());
+							}
+
 							mysqlDb.CloseDBConnection();
 						}
 						catch(UnsufficientConfig &e) {

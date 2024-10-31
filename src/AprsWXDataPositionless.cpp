@@ -53,7 +53,7 @@ int AprsWXDataPositionless::ParseData(const std::string & in, AprsWXData * outpu
 
     // set a tm structure with decoded month, day, hour, minute & current year
     tm_timestamp.tm_year = tm_current_utc->tm_year;
-    tm_timestamp.tm_mon = month;
+    tm_timestamp.tm_mon = month - 1;
     tm_timestamp.tm_mday = day;
 
     tm_timestamp.tm_hour = hour;
@@ -62,6 +62,8 @@ int AprsWXDataPositionless::ParseData(const std::string & in, AprsWXData * outpu
     // store conversion output in 
     output->packetLocalTimestmp = boost::posix_time::ptime_from_tm(tm_timestamp);
     output->packetUtcTimestamp = TimeTools::getEpochFromPtime(output->packetLocalTimestmp, true);
+
+    std::cout << "--- AprsWXDataPositionless::ParseData - packetLocalTimestmp " << boost::posix_time::to_simple_string(output->packetLocalTimestmp) << std::endl;
 
     try {
         // convert winddirection to output structure
