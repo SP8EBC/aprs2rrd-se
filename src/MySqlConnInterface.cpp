@@ -340,7 +340,9 @@ void MySqlConnInterface::InsertIntoDbSchemaTatry(AprsPacket& packet, uint64_t ti
 	cout << "--- MysqlConnInterface::InsertIntoDbSchemaTatry:340 - historical data, timestamp: " << timestamp << ", temperature: " << temperature << endl;
 
 	temp << "INSERT INTO `" << this->dbName << "`.`data_tatry`";
-	temp << "(`epoch`, `station`, `wxtemperature`, `rawmeasurement`, `rawmeasurementrecalc`, `voltage`, `maxstatus`, `lserdy`, `rtcen`, `maxok`, `sleep`, `spier`, `spiok`, `source`, `frame`) VALUES (";
+	temp << "(`epoch`, `station`, `wxtemperature`, `rawmeasurement`, `rawmeasurementrecalc`, " <<
+			"`voltage`, `maxstatus`, `lserdy`, `rtcen`, `maxok`, `sleep`, `spier`, `spiok`, " <<
+			"`source`, `frame`, `originatorcall`, `originatorssid`, `insertepoch`) VALUES (";
 
 	temp << timestamp << ", ";
 	temp << "'" << station_name << "', ";
@@ -356,7 +358,10 @@ void MySqlConnInterface::InsertIntoDbSchemaTatry(AprsPacket& packet, uint64_t ti
 	temp << (false ? "TRUE" : "FALSE") << ", ";
 	temp << (false ? "TRUE" : "FALSE") << ", ";
 	temp << "'" << source << "', ";
-	temp << "'" << packet.DataAsStr << "' ";
+	temp << "'" << packet.DataAsStr << "', ";
+	temp << "'" << packet.ToISOriginator.Call << "', ";
+	temp << packet.ToISOriginator.SSID << ", ";
+	temp << TimeTools::getEpoch() << " ";
 	temp << ");" << endl;	if (this->Debug == true)
 		cout << temp.str() << endl;
 
@@ -408,7 +413,9 @@ void MySqlConnInterface::InsertIntoDbSchemaTatry(AprsPacket& packet, const AprsW
 	cout << "--- MysqlConnInterface::InsertIntoDbSchemaTatry:392 - epoch_seconds: " << epoch_seconds << endl;
 
 	temp << "INSERT INTO `" << this->dbName << "`.`data_tatry`";
-	temp << "(`epoch`, `station`, `wxtemperature`, `rawmeasurement`, `rawmeasurementrecalc`, `voltage`, `maxstatus`, `lserdy`, `rtcen`, `maxok`, `sleep`, `spier`, `spiok`, `source`, `frame`) VALUES (";
+	temp << "(`epoch`, `station`, `wxtemperature`, `rawmeasurement`, `rawmeasurementrecalc`, " <<
+			"`voltage`, `maxstatus`, `lserdy`, `rtcen`, `maxok`, `sleep`, `spier`, `spiok`, " <<
+			"`source`, `frame`, `originatorcall`, `originatorssid`, `insertepoch`) VALUES (";
 
 	temp << epoch_seconds << ", ";
 	temp << "'" << station_name << "', ";
@@ -424,7 +431,10 @@ void MySqlConnInterface::InsertIntoDbSchemaTatry(AprsPacket& packet, const AprsW
 	temp << (input.getSPIER() ? "TRUE" : "FALSE") << ", ";
 	temp << (input.getSPIOK() ? "TRUE" : "FALSE") << ", ";
 	temp << "'" << source << "', ";
-	temp << "'" << packet.DataAsStr << "' ";
+	temp << "'" << packet.DataAsStr << "', ";
+	temp << "'" << packet.ToISOriginator.Call << "', ";
+	temp << packet.ToISOriginator.SSID << ", ";
+	temp << TimeTools::getEpoch() << " ";
 	temp << ");" << endl;
 
 	if (this->Debug == true)
