@@ -360,7 +360,7 @@ void MySqlConnInterface::InsertIntoDbSchemaTatry(AprsPacket& packet, uint64_t ti
 	temp << "'" << source << "', ";
 	temp << "'" << packet.DataAsStr << "', ";
 	temp << "'" << packet.ToISOriginator.Call << "', ";
-	temp << packet.ToISOriginator.SSID << ", ";
+	temp << (int)packet.ToISOriginator.SSID << ", ";
 	temp << TimeTools::getEpoch() << " ";
 	temp << ");" << endl;	if (this->Debug == true)
 		cout << temp.str() << endl;
@@ -433,7 +433,7 @@ void MySqlConnInterface::InsertIntoDbSchemaTatry(AprsPacket& packet, const AprsW
 	temp << "'" << source << "', ";
 	temp << "'" << packet.DataAsStr << "', ";
 	temp << "'" << packet.ToISOriginator.Call << "', ";
-	temp << packet.ToISOriginator.SSID << ", ";
+	temp << (int)packet.ToISOriginator.SSID << ", ";
 	temp << TimeTools::getEpoch() << " ";
 	temp << ");" << endl;
 
