@@ -58,6 +58,9 @@ bool batchMode = false;
 
 bool exitOnException = true;
 
+bool telemetryParsed = false;
+bool weatherParsed = false;
+
 std::shared_ptr<std::condition_variable> syncCondition;
 std::shared_ptr<std::mutex> syncLock;
 
@@ -419,10 +422,10 @@ int main(int argc, char **argv){
 
 						// Parsing weather data. If this is not correct APRS wx packet the method will set
 						// the internal validity flag to false
-						AprsWXData::ParseData(isRxPacket, &wxIsTemp);
+						weatherParsed = AprsWXData::ParseData(isRxPacket, &wxIsTemp);
 
 						// Parsing telemetry data
-						Telemetry::ParseData(isRxPacket, &telemetry);
+						telemetryParsed = Telemetry::ParseData(isRxPacket, &telemetry);
 
 						// marking if this packet was received from primary or secondary callsign (or none of them)
 						wxIsTemp.CheckPrimaryOrSecondaryAprsis(sourceConfig);
@@ -438,7 +441,7 @@ int main(int argc, char **argv){
 							try {
 								mysqlDb.OpenDBConnection();
 
-								mysqlDb.InsertIntoDbSchemaTatry(wxIsTemp, telemetry, programConfig.getStationName());
+								mysqlDb.InsertIntoDbSchemaTatry(isRxPacket, wxIsTemp, telemetry, programConfig.getStationName(), weatherParsed, telemetryParsed);
 
 								mysqlDb.CloseDBConnection();
 							}
@@ -664,10 +667,10 @@ int main(int argc, char **argv){
 
 							mysqlDb.InsertIntoDb(&wxTarget);
 
-							mysqlDb.InsertIntoDbSchema2(wxTarget, sourceConfig, programConfig.getStationName());
+							mysqlDb.InsertIntoDbSchema2(isRxPacket, wxTarget, sourceConfig, programConfig.getStationName());
 
 							if (dataPresence.SpecialTelemetry && telemetry.valid) {
-								mysqlDb.InsertIntoDbSchemaTatry(wxIsTemp, telemetry, programConfig.getStationName());
+								mysqlDb.InsertIntoDbSchemaTatry(isRxPacket, wxIsTemp, telemetry, programConfig.getStationName(), weatherParsed, telemetryParsed);
 							}
 
 							mysqlDb.CloseDBConnection();

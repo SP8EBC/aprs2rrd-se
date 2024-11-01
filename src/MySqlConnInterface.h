@@ -52,7 +52,7 @@ private:
 	SimpleResult dbSimpleResult;
 	int dbQueryCounter;
 
-	void InsertIntoDbSchemaTatry(uint64_t timestamp, float temperature, std::string station_name);
+	void InsertIntoDbSchemaTatry(AprsPacket& packet, uint64_t timestamp, float temperature, std::string station_name);
 
 public:
 
@@ -82,10 +82,10 @@ public:
 	void OpenDBConnection();
 	void CloseDBConnection();
 	void InsertIntoDb(const AprsWXData* const cInput);
-	void InsertIntoDbSchema2(AprsWXData& cInput, const DataSourceConfig& config, std::string station_name);
+	void InsertIntoDbSchema2(AprsPacket& packet, AprsWXData& cInput, const DataSourceConfig& config, std::string station_name);
 	void InsertDiff(const AprsWXData& input, const DiffCalculator& diffCalculator, std::string station_name);
 	void InsertTelmetry(const Telemetry& input, std::string station_name);
-	void InsertIntoDbSchemaTatry(const AprsWXData& wx, const Telemetry& input, std::string station_name);
+	void InsertIntoDbSchemaTatry(AprsPacket& packet, const AprsWXData& wx, const Telemetry& input, std::string station_name, bool wxParsed, bool telemetryParsed);
 	void Keepalive(void);
 	
 	bool execBeforeInsert;

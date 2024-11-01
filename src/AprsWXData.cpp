@@ -47,7 +47,7 @@ AprsWXData::AprsWXData() {
 AprsWXData::~AprsWXData() {
 }
 
-int AprsWXData::ParseData(AprsPacket input, AprsWXData* output) {
+int AprsWXData::ParseData(AprsPacket& input, AprsWXData* output) {
 
     int i = 0;
     int conv_temp;

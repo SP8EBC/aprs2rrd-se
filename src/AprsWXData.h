@@ -105,7 +105,7 @@ class AprsWXData
 			source.useWind = false;
 		}
 
-		static int ParseData(AprsPacket input, AprsWXData* output);
+		static int ParseData(AprsPacket& input, AprsWXData* output);
         static int CopyConvert(char sign, std::string& input, int& output, int& counter);
 		static int CopyConvert(unsigned num, std::string& input, int& output, int& counter);
 		static short DirectionCorrection(AprsWXData& packet, short direction, short correction);

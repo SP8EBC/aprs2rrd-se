@@ -51,7 +51,7 @@ void MySqlConnInterface::CloseDBConnection() {
 	else throw AlreadyDisconnected();
 }
 
-void MySqlConnInterface::InsertIntoDbSchema2(AprsWXData& cInput, const DataSourceConfig& config, std::string station_name) {
+void MySqlConnInterface::InsertIntoDbSchema2(AprsPacket& packet, AprsWXData& cInput, const DataSourceConfig& config, std::string station_name) {
 
 	if (!this->schema_v2)
 		return;
@@ -148,7 +148,7 @@ void MySqlConnInterface::InsertIntoDbSchema2(AprsWXData& cInput, const DataSourc
 				continue;
 			}
 			
-			InsertIntoDbSchemaTatry(elemTimestamp, elemTemperature, station_name);
+			InsertIntoDbSchemaTatry(packet, elemTimestamp, elemTemperature, station_name);
 
 			std::stringstream queryStr;
 
@@ -330,15 +330,17 @@ void MySqlConnInterface::InsertTelmetry(const Telemetry& input, std::string stat
 
 }
 
-void MySqlConnInterface::InsertIntoDbSchemaTatry(uint64_t timestamp, float temperature, std::string station_name) {
+void MySqlConnInterface::InsertIntoDbSchemaTatry(AprsPacket& packet, uint64_t timestamp, float temperature, std::string station_name) {
+
+	std::string source = "HISTORIC";
 
 	std::stringstream temp;
 	temp.str("");
 
-	cout << "--- MysqlConnInterface::InsertIntoDbSchemaTatry:338 - historical data, timestamp: " << timestamp << ", temperature" << temperature << endl;
+	cout << "--- MysqlConnInterface::InsertIntoDbSchemaTatry:340 - historical data, timestamp: " << timestamp << ", temperature: " << temperature << endl;
 
 	temp << "INSERT INTO `" << this->dbName << "`.`data_tatry`";
-	temp << "(`epoch`, `station`, `wxtemperature`, `rawmeasurement`, `rawmeasurementrecalc`, `voltage`, `maxstatus`, `lserdy`, `rtcen`, `maxok`, `sleep`, `spier`, `spiok`) VALUES (";
+	temp << "(`epoch`, `station`, `wxtemperature`, `rawmeasurement`, `rawmeasurementrecalc`, `voltage`, `maxstatus`, `lserdy`, `rtcen`, `maxok`, `sleep`, `spier`, `spiok`, `source`, `frame`) VALUES (";
 
 	temp << timestamp << ", ";
 	temp << "'" << station_name << "', ";
@@ -352,8 +354,10 @@ void MySqlConnInterface::InsertIntoDbSchemaTatry(uint64_t timestamp, float tempe
 	temp << (false ? "TRUE" : "FALSE") << ", ";
 	temp << (false ? "TRUE" : "FALSE") << ", ";
 	temp << (false ? "TRUE" : "FALSE") << ", ";
-	temp << (false ? "TRUE" : "FALSE") << ");" << endl;
-	if (this->Debug == true)
+	temp << (false ? "TRUE" : "FALSE") << ", ";
+	temp << "'" << source << "', ";
+	temp << "'" << packet.DataAsStr << "' ";
+	temp << ");" << endl;	if (this->Debug == true)
 		cout << temp.str() << endl;
 
 	try {
@@ -373,14 +377,26 @@ void MySqlConnInterface::InsertIntoDbSchemaTatry(uint64_t timestamp, float tempe
 	cout << this->dbSimpleResult.info();
 }
 
-void MySqlConnInterface::InsertIntoDbSchemaTatry(const AprsWXData &wx,
-		const Telemetry &input, std::string station_name) {
+void MySqlConnInterface::InsertIntoDbSchemaTatry(AprsPacket& packet, const AprsWXData &wx,
+		const Telemetry &input, std::string station_name, bool wxParsed, bool telemetryParsed) {
 
 	if (!this->schema_v2)
 		return;
 
 	std::stringstream temp;
 	temp.str("");
+
+	std::string source;
+
+	if (wxParsed) {
+		source = "WX";
+	}
+	else if (telemetryParsed) {
+		source = "TELEMETRY";
+	}
+	else {
+		source = "?";
+	}
 
 	boost::posix_time::ptime current_epoch = boost::posix_time::second_clock::universal_time();
 	//boost::date_time::second_clock<boost::posix_time::ptime>::local_time();	// static access should be here??
@@ -392,7 +408,7 @@ void MySqlConnInterface::InsertIntoDbSchemaTatry(const AprsWXData &wx,
 	cout << "--- MysqlConnInterface::InsertIntoDbSchemaTatry:392 - epoch_seconds: " << epoch_seconds << endl;
 
 	temp << "INSERT INTO `" << this->dbName << "`.`data_tatry`";
-	temp << "(`epoch`, `station`, `wxtemperature`, `rawmeasurement`, `rawmeasurementrecalc`, `voltage`, `maxstatus`, `lserdy`, `rtcen`, `maxok`, `sleep`, `spier`, `spiok`) VALUES (";
+	temp << "(`epoch`, `station`, `wxtemperature`, `rawmeasurement`, `rawmeasurementrecalc`, `voltage`, `maxstatus`, `lserdy`, `rtcen`, `maxok`, `sleep`, `spier`, `spiok`, `source`, `frame`) VALUES (";
 
 	temp << epoch_seconds << ", ";
 	temp << "'" << station_name << "', ";
@@ -406,7 +422,11 @@ void MySqlConnInterface::InsertIntoDbSchemaTatry(const AprsWXData &wx,
 	temp << (input.getMAXOK() ? "TRUE" : "FALSE") << ", ";
 	temp << (input.getSLEEP() ? "TRUE" : "FALSE") << ", ";
 	temp << (input.getSPIER() ? "TRUE" : "FALSE") << ", ";
-	temp << (input.getSPIOK() ? "TRUE" : "FALSE") << ");" << endl;
+	temp << (input.getSPIOK() ? "TRUE" : "FALSE") << ", ";
+	temp << "'" << source << "', ";
+	temp << "'" << packet.DataAsStr << "' ";
+	temp << ");" << endl;
+
 	if (this->Debug == true)
 		cout << temp.str() << endl;
 
