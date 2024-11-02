@@ -58,8 +58,8 @@ bool batchMode = false;
 
 bool exitOnException = true;
 
-bool telemetryParsed = false;
-bool weatherParsed = false;
+int telemetryParsed = 0;
+int weatherParsed = 0;
 
 std::shared_ptr<std::condition_variable> syncCondition;
 std::shared_ptr<std::mutex> syncLock;
@@ -435,13 +435,32 @@ int main(int argc, char **argv){
 						mysqlDb.InsertTelmetry(telemetry, programConfig.getStationName());
 
 						if (telemetry.valid) {
+							AprsWXData wxTatry;
+
+							wxTatry.temperature = telemetry.getTemperatureFromRawMeasurement();
+							wxTatry.useTemperature = true;
+							wxTatry.is_primary = true;
+
+							// inserting the data inside a RRD file
+							dataPresence.FetchDataInRRD(&wxTatry, false);
+
 							// insert battery voltage into RRD
 							dataPresence.FetchBatteryVoltageInRRD(telemetry.getBatteryVoltage());
+
+							// replotting the graphs set
+							dataPresence.PlotGraphsFromRRD();
+
+							// generating the website
+							dataPresence.GenerateWebiste(wxTatry, wxSecondarySrcForPage, locale, datetimeLocale, telemetry);
 
 							try {
 								mysqlDb.OpenDBConnection();
 
-								mysqlDb.InsertIntoDbSchemaTatry(isRxPacket, wxIsTemp, telemetry, programConfig.getStationName(), weatherParsed, telemetryParsed);
+								mysqlDb.InsertIntoDbSchemaTatry (
+									isRxPacket, wxIsTemp, telemetry,
+									programConfig.getStationName (),
+									(weatherParsed == 0) ? true : false,
+									(telemetryParsed == 0) ? true : false);
 
 								mysqlDb.CloseDBConnection();
 							}
@@ -669,9 +688,11 @@ int main(int argc, char **argv){
 
 							mysqlDb.InsertIntoDbSchema2(isRxPacket, wxTarget, sourceConfig, programConfig.getStationName());
 
-							if (dataPresence.SpecialTelemetry && telemetry.valid) {
-								mysqlDb.InsertIntoDbSchemaTatry(isRxPacket, wxIsTemp, telemetry, programConfig.getStationName(), weatherParsed, telemetryParsed);
-							}
+							mysqlDb.InsertIntoDbSchemaTatry (
+								isRxPacket, wxIsTemp, telemetry,
+								programConfig.getStationName (),
+								(weatherParsed == 0) ? true : false,
+								(telemetryParsed == 0) ? true : false);
 
 							mysqlDb.CloseDBConnection();
 						}
