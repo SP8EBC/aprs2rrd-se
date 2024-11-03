@@ -60,6 +60,7 @@ int AprsWXDataPositionless::ParseData(const std::string & in, AprsWXData * outpu
     tm_timestamp.tm_min = minutes;    
 
     if (ignoreTimestampFromFrame) {
+        std::cout << "--- AprsWXDataPositionless::ParseData - ignoreTimestampFromFrame set to true" << std::endl;
         output->packetLocalTimestmp = boost::posix_time::second_clock::local_time();
         output->packetUtcTimestamp = TimeTools::getEpoch();
     }
