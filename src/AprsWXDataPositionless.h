@@ -4,10 +4,12 @@
 #include "AprsPacket.h"
 #include "AprsWXData.h"
 
+#define APRS_WX_DATA_POSITIONLESS_IGNORE_TS_FROM_FRAME		(true)
+
 class AprsWXDataPositionless {
 
 public:
-	static int ParseData(const std::string & in, AprsWXData * output);
+	static int ParseData(const std::string & in, AprsWXData * output, bool ignoreTimestampFromFrame);
 
 
 };

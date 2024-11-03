@@ -62,7 +62,7 @@ int AprsWXData::ParseData(AprsPacket& input, AprsWXData* output) {
 		output->ssid = input.SrcSSID;
 		output->call = input.SrcAddr;
 
-		return AprsWXDataPositionless::ParseData(input.DataAsStr, output);
+		return AprsWXDataPositionless::ParseData(input.DataAsStr, output, APRS_WX_DATA_POSITIONLESS_IGNORE_TS_FROM_FRAME);
 	}
     
 	if (*(input.Data) != '!' && *(input.Data) != '@') {

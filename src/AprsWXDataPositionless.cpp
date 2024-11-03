@@ -6,7 +6,7 @@
 
 #include "TimeTools.h"
 
-int AprsWXDataPositionless::ParseData(const std::string & in, AprsWXData * output) {
+int AprsWXDataPositionless::ParseData(const std::string & in, AprsWXData * output, bool ignoreTimestampFromFrame) {
 
     // _10101355c...s...g...t079[0_1258_277][1_629_270][2_0_265][3_2516_274]
     
@@ -59,9 +59,15 @@ int AprsWXDataPositionless::ParseData(const std::string & in, AprsWXData * outpu
     tm_timestamp.tm_hour = hour;
     tm_timestamp.tm_min = minutes;    
 
-    // store conversion output in 
-    output->packetLocalTimestmp = boost::posix_time::ptime_from_tm(tm_timestamp);
-    output->packetUtcTimestamp = TimeTools::getEpochFromPtime(output->packetLocalTimestmp, true);
+    if (ignoreTimestampFromFrame) {
+        output->packetLocalTimestmp = boost::posix_time::second_clock::local_time();
+        output->packetUtcTimestamp = TimeTools::getEpoch();
+    }
+    else {
+        // store conversion output in 
+        output->packetLocalTimestmp = boost::posix_time::ptime_from_tm(tm_timestamp);
+        output->packetUtcTimestamp = TimeTools::getEpochFromPtime(output->packetLocalTimestmp, true);
+    }
 
     std::cout << "--- AprsWXDataPositionless::ParseData - packetLocalTimestmp " << boost::posix_time::to_simple_string(output->packetLocalTimestmp) << std::endl;
 
