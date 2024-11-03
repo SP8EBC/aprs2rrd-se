@@ -403,6 +403,15 @@ void MySqlConnInterface::InsertIntoDbSchemaTatry(AprsPacket& packet, const AprsW
 		source = "?";
 	}
 
+	float temperatureFromRawMeasurement;
+
+	if (telemetryParsed) {
+		temperatureFromRawMeasurement = input.getTemperatureFromRawMeasurement();
+	}
+	else {
+		temperatureFromRawMeasurement = wx.temperature;
+	}
+
 	boost::posix_time::ptime current_epoch = boost::posix_time::second_clock::universal_time();
 	//boost::date_time::second_clock<boost::posix_time::ptime>::local_time();	// static access should be here??
 
@@ -421,7 +430,7 @@ void MySqlConnInterface::InsertIntoDbSchemaTatry(AprsPacket& packet, const AprsW
 	temp << "'" << station_name << "', ";
 	temp << wx.temperature << ", ";
 	temp << (int)input.getRawMeasurement() << ", ";
-	temp << input.getTemperatureFromRawMeasurement() << ", ";
+	temp << temperatureFromRawMeasurement << ", ";
 	temp << input.getBatteryVoltage() << ", ";
 	temp << input.getCh5Raw() << ", ";
 	temp << (input.getLSERDY() ? "TRUE" : "FALSE") << ", ";
