@@ -9,6 +9,8 @@
 #define TIMETOOLS_H_
 
 #include <boost/date_time.hpp>
+#include <boost/date_time/date.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/date_time/local_time_adjustor.hpp>
 #include <boost/date_time/c_local_time_adjustor.hpp>
 
@@ -218,10 +220,10 @@ public:
 		const boost::posix_time::ptime ptime = TimeTools::getPtimeFromEpoch(undefinedTzEpoch);
 
 		// get current date
-		const boost::date_time::date date = ptime.date();
+		const auto date = ptime.date();
 
 		// get current time
-		const boost::date_time::time_duration time = ptime.time_of_day();
+		const auto time = ptime.time_of_day();
 
 		out.tm_hour = time.hours();
 		out.tm_sec = time.seconds();
@@ -240,10 +242,10 @@ public:
 		tm out = {0u};
 
 		// get current date
-		const boost::date_time::date date = ptime.date();
+		const auto date = ptime.date();
 
 		// get current time
-		const boost::date_time::time_duration time = ptime.time_of_day();
+		const auto time = ptime.time_of_day();
 
 		out.tm_hour = time.hours();
 		out.tm_sec = time.seconds();

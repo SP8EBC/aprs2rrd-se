@@ -1,19 +1,19 @@
 #include "DataPresentation.h"
 
 #include "SOFTWARE_VERSION.h"
+#include <algorithm>
+#include <cstring>
+#include <iostream>
+#include <sstream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <cstring>
 #include <string>
-#include <sstream>
-#include <iostream>
-#include <algorithm>
 
 #include <boost/date_time/local_time/local_time.hpp>
 
 #include <fstream>
-//#include "main.h"
-
+// #include "main.h"
+// clang-format off
 DataPresentation::DataPresentation() : 	WebsitePath(""),
 										PrintTemperature(PRINT_OFF),
 										PrintPressure (PRINT_OFF),
@@ -29,7 +29,8 @@ DataPresentation::DataPresentation() : 	WebsitePath(""),
 										PrimaryLabel (""),
 										directionCorrection (0),
 										colorfulResultTable(false),
-										DebugOutput(false)
+										DebugOutput(false),
+										kmh(false)
 {
 	this->Plot0Path.clear();
 	this->Plot1Path.clear();
@@ -174,8 +175,9 @@ void DataPresentation::FetchDataInRRD(const AprsWXData* const cInput, bool inhib
 		}
 	}
 }
-
-void DataPresentation::PlotGraphsFromRRD() {
+// clang-format on
+void DataPresentation::PlotGraphsFromRRD ()
+{
 	char command[1024];
 	int currtimeint;
 	unsigned i;
@@ -183,7 +185,7 @@ void DataPresentation::PlotGraphsFromRRD() {
 
 	int sys_retval = 0;
 
-	currtime =time(NULL);
+	currtime = time (NULL);
 	currtimeint = (int)currtime;
 
 	stringstream xgrid;
@@ -197,82 +199,123 @@ void DataPresentation::PlotGraphsFromRRD() {
 	std::string graph2Type;
 
 	if (this->DebugOutput == true) {
-		cout << "--- DataPresentation::PlotGraphsFromRRD:200 -  Count of plots to be generated: " <<  this->vPNGFiles.size() << endl;
+		cout << "--- DataPresentation::PlotGraphsFromRRD:200 -  Count of plots to be generated: "
+			 << this->vPNGFiles.size () << endl;
 	}
 
-	for (i = 0; i < this->vPNGFiles.size(); i++) {
-        xgrid.str("");
-	scalestep.str("");
-	exp.str("");
+	for (i = 0; i < this->vPNGFiles.size (); i++) {
+		xgrid.str ("");
+		scalestep.str ("");
+		exp.str ("");
 
-        if (this->vPNGFiles[i].timeScaleLn <= 840 /* 14 godzin */)
-            xgrid << "MINUTE:10:HOUR:1:HOUR:1:0:%H:00";
-        else if (this->vPNGFiles[i].timeScaleLn > 840 && this->vPNGFiles[i].timeScaleLn <= 1680 /* 28 godziny*/)
-            xgrid << "MINUTE:20:HOUR:2:HOUR:2:0:%H:00";
-        else if (this->vPNGFiles[i].timeScaleLn > 1680 && this->vPNGFiles[i].timeScaleLn <= 2520 /* 42 godziny*/)
-             xgrid << "MINUTE:30:HOUR:4:HOUR:4:0:" << this->vPNGFiles[i].LongTimescaleFormat;
-        else
-             xgrid << "MINUTE:60:HOUR:6:HOUR:6:0:"  << this->vPNGFiles[i].LongTimescaleFormat;
+		if (this->vPNGFiles[i].timeScaleLn <= 840 /* 14 godzin */)
+			xgrid << "MINUTE:10:HOUR:1:HOUR:1:0:%H:00";
+		else if (this->vPNGFiles[i].timeScaleLn > 840 &&
+				 this->vPNGFiles[i].timeScaleLn <= 1680 /* 28 godziny*/)
+			xgrid << "MINUTE:20:HOUR:2:HOUR:2:0:%H:00";
+		else if (this->vPNGFiles[i].timeScaleLn > 1680 &&
+				 this->vPNGFiles[i].timeScaleLn <= 2520 /* 42 godziny*/)
+			xgrid << "MINUTE:30:HOUR:4:HOUR:4:0:" << this->vPNGFiles[i].LongTimescaleFormat;
+		else
+			xgrid << "MINUTE:60:HOUR:6:HOUR:6:0:" << this->vPNGFiles[i].LongTimescaleFormat;
 
-	if (this->vPNGFiles[i].ScaleStep > 0 && this->vPNGFiles[i].LabelStep > 0) {
-		scalestep << " --y-grid " << this->vPNGFiles[i].ScaleStep << ":" << this->vPNGFiles[i].LabelStep << " ";
-	}
-	else scalestep << " ";
+		if (this->vPNGFiles[i].ScaleStep > 0 && this->vPNGFiles[i].LabelStep > 0) {
+			scalestep << " --y-grid " << this->vPNGFiles[i].ScaleStep << ":"
+					  << this->vPNGFiles[i].LabelStep << " ";
+		}
+		else
+			scalestep << " ";
 
-	if (this->vPNGFiles[i].Exponent != -1)
-		exp << " -X " << this->vPNGFiles[i].Exponent;
-	else {
-		exp << " ";
-	}
+		if (this->vPNGFiles[i].Exponent != -1)
+			exp << " -X " << this->vPNGFiles[i].Exponent;
+		else {
+			exp << " ";
+		}
 
-		memset(command, 0x00, sizeof(command));
+		memset (command, 0x00, sizeof (command));
 		if (this->vPNGFiles[i].DoubleDS == false) {
-			rraType = this->RevSwitchRRAType(this->vPNGFiles[i].eDS0RRAType);
-			graphType = this->RevSwitchPlotGraphType(this->vPNGFiles[i].eDS0PlotType);
+			rraType = this->RevSwitchRRAType (this->vPNGFiles[i].eDS0RRAType);
+			graphType = this->RevSwitchPlotGraphType (this->vPNGFiles[i].eDS0PlotType);
 
-			sprintf(command, "rrdtool graph %s -w %d -h %d -t \"%s\" -v \"%s\" -l %.4e -u %.4e -r %s %s --right-axis 1:0 --right-axis-label \"%s\" --x-grid %s --start %d --end %d DEF:%s=%s:%s:%s %s:%s#%.6x", \
-					this->vPNGFiles[i].sPath.c_str(), this->vPNGFiles[i].Width, this->vPNGFiles[i].Height, \
-					this->vPNGFiles[i].Title.c_str(), this->vPNGFiles[i].Axis.c_str() , this->vPNGFiles[i].MinScale, \
-					this->vPNGFiles[i].MaxScale, scalestep.str().c_str(), exp.str().c_str(), 
-					this->vPNGFiles[i].Axis.c_str(), xgrid.str().c_str(), currtimeint- (this->vPNGFiles[i].timeScaleLn * 60), currtimeint, \
-					this->vPNGFiles[i].sDS0Name.c_str(), this->vPNGFiles[i].sDS0Path.c_str(), this->vPNGFiles[i].sDS0Name.c_str(), \
-					rraType.c_str(), \
-					graphType.c_str(), \
-					this->vPNGFiles[i].sDS0Name.c_str(), this->vPNGFiles[i].DS0PlotColor);
+			sprintf (command,
+					 "rrdtool graph %s --width %d --height %d --title \"%s\" --vertical-label "
+					 "\"%s\" --lower-limit %.4e --upper-limit %.4e --rigid %s %s --right-axis 1:0 "
+					 "--right-axis-label \"%s\" --x-grid %s --start %d --end %d DEF:%s=%s:%s:%s "
+					 "%s:%s#%.6x",
+					 this->vPNGFiles[i].sPath.c_str (),		//!< rrdtool graph %s
+					 this->vPNGFiles[i].Width,				//!< --width %d
+					 this->vPNGFiles[i].Height,				//!< --height %d
+					 this->vPNGFiles[i].Title.c_str (),		//!< --title \"%s\"
+					 this->vPNGFiles[i].Axis.c_str (),		//!< --vertical-label
+					 this->vPNGFiles[i].MinScale,			//!< --lower-limit %.4e
+					 this->vPNGFiles[i].MaxScale,			//!< --upper-limit %.4e
+					 scalestep.str ().c_str (),				//!< --rigid %s
+					 exp.str ().c_str (),					//!< %s
+					 this->vPNGFiles[i].Axis.c_str (),		//!< --right-axis-label \"%s\"
+					 xgrid.str ().c_str (),					//!< --x-grid %s
+					 currtimeint - (this->vPNGFiles[i].timeScaleLn * 60),		//!< --start %d
+					 currtimeint,												//!< --end %d
+					 this->vPNGFiles[i].sDS0Name.c_str (),
+					 this->vPNGFiles[i].sDS0Path.c_str (),
+					 this->vPNGFiles[i].sDS0Name.c_str (),
+					 rraType.c_str (),
+					 graphType.c_str (),
+					 this->vPNGFiles[i].sDS0Name.c_str (),
+					 this->vPNGFiles[i].DS0PlotColor);
 		}
 		else {
-			rraType = this->RevSwitchRRAType(this->vPNGFiles[i].eDS0RRAType);
-			graphType = this->RevSwitchPlotGraphType(this->vPNGFiles[i].eDS0PlotType);
+			rraType = this->RevSwitchRRAType (this->vPNGFiles[i].eDS0RRAType);
+			graphType = this->RevSwitchPlotGraphType (this->vPNGFiles[i].eDS0PlotType);
 
-			rra2Type = this->RevSwitchRRAType(this->vPNGFiles[i].eDS1RRAType);
-			graph2Type = this->RevSwitchPlotGraphType(this->vPNGFiles[i].eDS1PlotType);
+			rra2Type = this->RevSwitchRRAType (this->vPNGFiles[i].eDS1RRAType);
+			graph2Type = this->RevSwitchPlotGraphType (this->vPNGFiles[i].eDS1PlotType);
 
-			sprintf(command, "rrdtool graph %s -w %d -h %d -t \"%s\" -v \"%s\" -l %.4e -u %.4e -r %s %s --right-axis 1:0 --right-axis-label \"%s\" --x-grid %s --start %d --end %d DEF:%s=%s:%s:%s DEF:%s=%s:%s:%s %s:%s#%.6x:%s %s:%s#%.6x:%s", \
-					this->vPNGFiles[i].sPath.c_str(), this->vPNGFiles[i].Width, this->vPNGFiles[i].Height, \
-					this->vPNGFiles[i].Title.c_str(), this->vPNGFiles[i].Axis.c_str() , this->vPNGFiles[i].MinScale, \
-					this->vPNGFiles[i].MaxScale, scalestep.str().c_str(), exp.str().c_str(), 
-					this->vPNGFiles[i].Axis.c_str(), xgrid.str().c_str(), currtimeint- (this->vPNGFiles[i].timeScaleLn * 60), currtimeint, \
-					this->vPNGFiles[i].sDS0Name.c_str(), this->vPNGFiles[i].sDS0Path.c_str(), this->vPNGFiles[i].sDS0Name.c_str(), \
-										rraType.c_str(), \
-					this->vPNGFiles[i].sDS1Name.c_str(), this->vPNGFiles[i].sDS1Path.c_str(), this->vPNGFiles[i].sDS1Name.c_str(), \
-										rra2Type.c_str(), \
-					graphType.c_str(), this->vPNGFiles[i].sDS0Name.c_str(), \
-					this->vPNGFiles[i].DS0PlotColor, this->vPNGFiles[i].sDS0Label.c_str(), \
-					graph2Type.c_str(), this->vPNGFiles[i].sDS1Name.c_str(), \
-					this->vPNGFiles[i].DS1PlotColor, this->vPNGFiles[i].sDS1Label.c_str());
+			sprintf (command,
+					 "rrdtool graph %s --width %d --height %d --title \"%s\" --vertical-label "
+					 "\"%s\" --lower-limit %.4e --upper-limit %.4e --rigid %s %s --right-axis 1:0 "
+					 "--right-axis-label \"%s\" --x-grid %s --start %d --end %d DEF:%s=%s:%s:%s "
+					 "DEF:%s=%s:%s:%s %s:%s#%.6x:%s %s:%s#%.6x:%s",
+					 this->vPNGFiles[i].sPath.c_str (),		//!< rrdtool graph %s
+					 this->vPNGFiles[i].Width,				//!< --width %d
+					 this->vPNGFiles[i].Height,				//!< --height %d
+					 this->vPNGFiles[i].Title.c_str (),		//!< --title \"%s\"
+					 this->vPNGFiles[i].Axis.c_str (),		//!< --vertical-label
+					 this->vPNGFiles[i].MinScale,			//!< --lower-limit %.4e
+					 this->vPNGFiles[i].MaxScale,			//!< --upper-limit %.4e
+					 scalestep.str ().c_str (),				//!< --rigid %s
+					 exp.str ().c_str (),					//!< %s
+					 this->vPNGFiles[i].Axis.c_str (),		//!< --right-axis-label \"%s\"
+					 xgrid.str ().c_str (),					//!< --x-grid %s
+					 currtimeint - (this->vPNGFiles[i].timeScaleLn * 60),	//!< --start %d
+					 currtimeint,											//!< --end %d
+					 this->vPNGFiles[i].sDS0Name.c_str (),
+					 this->vPNGFiles[i].sDS0Path.c_str (),
+					 this->vPNGFiles[i].sDS0Name.c_str (),
+					 rraType.c_str (),
+					 this->vPNGFiles[i].sDS1Name.c_str (),
+					 this->vPNGFiles[i].sDS1Path.c_str (),
+					 this->vPNGFiles[i].sDS1Name.c_str (),
+					 rra2Type.c_str (),
+					 graphType.c_str (),
+					 this->vPNGFiles[i].sDS0Name.c_str (),
+					 this->vPNGFiles[i].DS0PlotColor,
+					 this->vPNGFiles[i].sDS0Label.c_str (),
+					 graph2Type.c_str (),
+					 this->vPNGFiles[i].sDS1Name.c_str (),
+					 this->vPNGFiles[i].DS1PlotColor,
+					 this->vPNGFiles[i].sDS1Label.c_str ());
 		}
-
 
 		if (this->DebugOutput == true)
 			cout << command << endl;
-		sys_retval = system(command);
+		sys_retval = system (command);
 
 		if (sys_retval != 0) {
 			;
 		}
 	}
 }
-
+// clang-format off
 void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData & secondaryWX, const Locale & locale, const char * datetimeLocale) {
 
 	uint8_t temperaturePrecision = 3;
@@ -334,7 +377,12 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 			html << "</tr>" << std::endl;
 			html << "<tr>" << std::endl;
 			html << "<td class=table_caption>" << locale.windSpeed << ":</td>" << std::endl;
-			html << "<td class=table_value> "<< WX.wind_speed << " m/s </td>" << std::endl;
+			if (kmh) {
+				html << "<td class=table_value> "<< WX.wind_speed << " m/s  [ " << (int)(WX.wind_speed * 3.6f) << " km/h ]</td>" << std::endl;
+			}
+			else {
+				html << "<td class=table_value> "<< WX.wind_speed << " m/s </td>" << std::endl;
+			}
 			html << "<td class=table_value> "<< secondaryWX.wind_speed << " m/s </td>" << std::endl;
 			html << "</tr>" << std::endl;
 			html << "<tr>" << std::endl;
@@ -481,7 +529,12 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 			if (this->PrintWind != PRINT_OFF) {
 				html << "<tr>" << std::endl;
 				html << "<td class=table_caption>" << locale.windSpeed << ":</td>" << std::endl;
-				html << "<td class=table_value id=average> "<< WX.wind_speed << " m/s </td>" << std::endl;
+				if (kmh) {
+					html << "<td class=table_value> "<< WX.wind_speed << " m/s  [ " << (int)(WX.wind_speed * 3.6f) << " km/h ]</td>" << std::endl;
+				}
+				else {
+					html << "<td class=table_value> "<< WX.wind_speed << " m/s </td>" << std::endl;
+				}
 				html << "</tr>" << std::endl;
 				html << "<tr>" << std::endl;
 				html << "<td class=table_caption>" << locale.windGusts << ":</td>" << std::endl;
@@ -691,8 +744,9 @@ void DataPresentation::GetSecondarySource(const AprsWXData& aprsIS,
 	case WxDataSource::UNKNOWN: break;
 	}
 }
-
-const std::string DataPresentation::RevSwitchRRAType(RRAType in) {
+// clang-format on
+const std::string DataPresentation::RevSwitchRRAType (RRAType in)
+{
 
 	if (in == RRAType::AVERAGE)
 		return "AVERAGE";
@@ -701,7 +755,8 @@ const std::string DataPresentation::RevSwitchRRAType(RRAType in) {
 	return "unknown";
 }
 
-const std::string DataPresentation::RevSwitchPlotGraphType(PlotGraphType in) {
+const std::string DataPresentation::RevSwitchPlotGraphType (PlotGraphType in)
+{
 
 	if (in == PlotGraphType::AREA)
 		return "AREA";

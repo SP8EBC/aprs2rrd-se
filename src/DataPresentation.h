@@ -95,6 +95,8 @@ public:
 
 	bool colorfulResultTable;
 
+	bool kmh;	//!< plot kilometers per second
+
 	bool DebugOutput;
 
 	static std::string ParametersPrintEnumToStr(DataPresentationParametersPrint e) {

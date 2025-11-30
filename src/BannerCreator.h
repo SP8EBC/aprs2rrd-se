@@ -13,7 +13,7 @@
 
 #include <string>
 #include <tuple>
-#include <ImageMagick-6/Magick++.h>
+#include <Magick++.h>
 
 class BannerCreator {
 
