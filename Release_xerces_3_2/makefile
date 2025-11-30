@@ -55,7 +55,7 @@ main-build: APRS2RRD
 APRS2RRD: $(OBJS) $(USER_OBJS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C++ Linker'
-	g++ -L/lib/x86_64-linux-gnu -L/lib/i386-linux-gnu -L/usr/lib -o "APRS2RRD" $(OBJS) $(USER_OBJS) $(LIBS) -lmysqlpp -lxerces-c-3.2 -lmysqlclient -lconfig -lconfig++ -lcurl -lpthread -lboost_regex -lboost_thread -lboost_system -lboost_unit_test_framework -lboost_date_time -lMagick++-6.Q16 -lMagickCore-6.Q16 -lMagickWand-6.Q16
+	g++ -L/lib/x86_64-linux-gnu -L/lib/i386-linux-gnu -L/usr/lib -o "APRS2RRD" $(OBJS) $(USER_OBJS) $(LIBS) -lmysqlpp -lfmt -lxerces-c-3.2 -lmysqlclient -lconfig -lconfig++ -lcurl -lpthread -lboost_regex -lboost_thread -lboost_system -lboost_unit_test_framework -lboost_date_time -lMagick++-6.Q16 -lMagickCore-6.Q16 -lMagickWand-6.Q16
 	@echo 'Finished building target: $@'
 	@echo ' '
 

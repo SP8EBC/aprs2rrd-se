@@ -57,6 +57,7 @@
 									<listOptionValue builtIn="false" value="mysqlclient"/>
 									<listOptionValue builtIn="false" value="config"/>
 									<listOptionValue builtIn="false" value="config++"/>
+									<listOptionValue builtIn="false" value="fmt"/>
 									<listOptionValue builtIn="false" value="curl"/>
 									<listOptionValue builtIn="false" value="pthread"/>
 									<listOptionValue builtIn="false" value="boost_regex"/>
@@ -133,6 +134,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.exe.release.137123664" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.exe.release">
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.link.option.libs.1247259447" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" useByScannerDiscovery="false" valueType="libs">
 									<listOptionValue builtIn="false" value="mysqlpp"/>
+									<listOptionValue builtIn="false" value="fmt"/>
 									<listOptionValue builtIn="false" value="xerces-c-3.2"/>
 									<listOptionValue builtIn="false" value="mysqlclient"/>
 									<listOptionValue builtIn="false" value="config"/>
