@@ -13,7 +13,11 @@
 
 #include <string>
 #include <tuple>
+#ifdef XUBUNTU2404
 #include <Magick++.h>
+#else
+#include <ImageMagick-6/Magick++.h>
+#endif
 
 class BannerCreator {
 

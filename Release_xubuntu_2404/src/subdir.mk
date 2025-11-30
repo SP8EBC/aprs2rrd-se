@@ -119,7 +119,7 @@ OBJS += \
 src/%.o: ../src/%.cpp src/subdir.mk
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C++ Compiler'
-	g++ -std=c++1y -DUSE_XERCES_3_2 -DMAGICKCORE_QUANTUM_DEPTH=16 -I/usr/include/mysql++ -I/usr/include/x86_64-linux-gnu/ImageMagick-6/ -I/usr/include/ImageMagick-6/ -I../lib/nlohman_json_3_7_1/include/ -I/usr/include/xercesc -I/usr/include/mysql -I/usr/include/curl -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
+	g++ -std=c++17 -DUSE_XERCES_3_2 -DXUBUNTU2404 -DMAGICKCORE_QUANTUM_DEPTH=16 -I/usr/include/mysql++ -I/usr/include/GraphicsMagick/ -I../lib/nlohman_json_3_11_3/include/ -I/usr/include/xercesc -I/usr/include/mysql -I/usr/include/curl -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
