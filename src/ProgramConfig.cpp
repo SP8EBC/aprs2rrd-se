@@ -282,7 +282,6 @@ void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCo
 		rPlots[ii].lookupValue("Type", temp);
 		cVectorPNGTemp.eType = data.SwitchPlotType(temp);
 		if (cVectorPNGTemp.eType == PlotType::WIND_SPD_GST ||
-			cVectorPNGTemp.eType == PlotType::WIND_DIR ||
 			cVectorPNGTemp.eType == PlotType::WIND_SPD ||
 			cVectorPNGTemp.eType == PlotType::WIND_GST) 
 			{

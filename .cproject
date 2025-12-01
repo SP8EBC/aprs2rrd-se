@@ -143,6 +143,7 @@
 									<listOptionValue builtIn="false" value="pthread"/>
 									<listOptionValue builtIn="false" value="boost_regex"/>
 									<listOptionValue builtIn="false" value="boost_thread"/>
+									<listOptionValue builtIn="false" value="boost_filesystem"/>
 									<listOptionValue builtIn="false" value="boost_system"/>
 									<listOptionValue builtIn="false" value="boost_unit_test_framework"/>
 									<listOptionValue builtIn="false" value="boost_date_time"/>
@@ -371,13 +372,16 @@
 		<configuration configurationName="Debug_xerces_3_2_json"/>
 		<configuration configurationName="Release_xerces_3_2"/>
 		<configuration configurationName="Debug_xerces_3_2"/>
+		<configuration configurationName="Debug_xubuntu_2404"/>
 		<configuration configurationName="Debug">
 			<resource resourceType="PROJECT" workspacePath="/APRS2RRD"/>
 		</configuration>
 		<configuration configurationName="Release">
 			<resource resourceType="PROJECT" workspacePath="/APRS2RRD"/>
 		</configuration>
+		<configuration configurationName="Release_xubuntu_2404"/>
 		<configuration configurationName="Release_xerces_3_2_json"/>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>
