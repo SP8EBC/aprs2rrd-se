@@ -556,7 +556,13 @@ void DataPresentation::GenerateWebiste(const AprsWXData & WX, const AprsWXData &
 				html << "</tr>" << std::endl;
 				html << "<tr>" << std::endl;
 				html << "<td class=table_caption>" << locale.windGusts << ":</td>" << std::endl;
-				html << "<td class=table_value id=gusts> " << WX.wind_gusts << " m/s </td>" << std::endl;
+				if (kmh) {
+					html << "<td class=table_value id=gusts> "<< WX.wind_gusts << " m/s  [ " << (int)(WX.wind_gusts * 3.6f) << " km/h ]</td>" << std::endl;
+				}
+				else {
+					html << "<td class=table_value id=gusts> "<< WX.wind_gusts << " m/s </td>" << std::endl;
+				}
+				//html << "<td class=table_value id=gusts> " << WX.wind_gusts << " m/s </td>" << std::endl;
 				html << "</tr>" << std::endl;
 				html << "<tr>" << std::endl;
 				html << "<td class=table_caption>" << locale.windDirection <<":</td><td class=table_value id=kierunek> " << WX.wind_direction << " stopni ";
