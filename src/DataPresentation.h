@@ -1,15 +1,15 @@
 #ifndef DATAPRESENCE_H
 #define DATAPRESENCE_H
 
-#include <string>
-#include <vector>
 #include <exception>
 #include <memory>
+#include <string>
+#include <vector>
 
 #include "AprsWXData.h"
-#include "PlotFileDefinition.h"
 #include "DataSourceConfig.h"
 #include "Locale.h"
+#include "PlotFileDefinition.h"
 
 using namespace std;
 
@@ -25,52 +25,49 @@ enum DataPresentationParametersPrint {
 	PRINT_RIGHT_SECONDARY
 };
 
-class DataPresentation
-{
-public:
-	DataPresentation();
-	~DataPresentation();
+class DataPresentation {
+  public:
+	DataPresentation ();
+	~DataPresentation ();
 
 	/**
 	 * Stores obtained weather data into RRD file(s)
 	 */
-	void FetchDataInRRD(const AprsWXData* const cInput, bool inhibitLog);
+	void FetchDataInRRD (const AprsWXData *const cInput, bool inhibitLog);
 
 	/**
 	 * Stores calulated differential measurements in RRD file(s)
 	 */
-	void FetchDiffInRRD(AprsWXData & data);
+	void FetchDiffInRRD (AprsWXData &data);
 
 	/**
 	 * Plots all configured graphs from RRD files
 	 */
-	void PlotGraphsFromRRD(void);
+	void PlotGraphsFromRRD (void);
 
 	/**
 	 * Generates HTML file
 	 */
-	void GenerateWebiste(const AprsWXData & WX, const AprsWXData & secondaryWX, const Locale & locale, const char * datetimeLocale);
+	void GenerateWebiste (const AprsWXData &WX, const AprsWXData &secondaryWX, const Locale &locale,
+						  const char *datetimeLocale);
 
 	/**
-	 * This method has a practical usage only when displaying two sources are enabled. It select out among few inputs
-	 * from different sources, basing on configuration data.
+	 * This method has a practical usage only when displaying two sources are enabled. It select out
+	 * among few inputs from different sources, basing on configuration data.
 	 */
-	void GetSecondarySource(const AprsWXData& aprsIS,
-			const AprsWXData& serial,
-			const AprsWXData& holfuy,
-			const AprsWXData& zywiec,
-			const AprsWXData& weatherlink,
-			AprsWXData& out);
-	PlotType SwitchPlotType(string input);
-	PlotGraphType SwitchPlotGraphType(string input);
-	RRAType SwitchRRAType(string input);
+	void GetSecondarySource (const AprsWXData &aprsIS, const AprsWXData &serial,
+							 const AprsWXData &holfuy, const AprsWXData &zywiec,
+							 const AprsWXData &weatherlink, AprsWXData &out);
+	PlotType SwitchPlotType (string input);
+	PlotGraphType SwitchPlotGraphType (string input);
+	RRAType SwitchRRAType (string input);
 
-	const std::string RevSwitchPlotType(PlotType in);
-	const std::string RevSwitchPlotGraphType(PlotGraphType in);
-	const std::string RevSwitchRRAType(RRAType in);
+	const std::string RevSwitchPlotType (PlotType in);
+	const std::string RevSwitchPlotGraphType (PlotGraphType in);
+	const std::string RevSwitchRRAType (RRAType in);
 
-	vector <RRDFileDefinition> vRRDFiles;
-	vector <PlotFileDefinition> vPNGFiles;
+	vector<RRDFileDefinition> vRRDFiles;
+	vector<PlotFileDefinition> vPNGFiles;
 
 	string WebsitePath;
 	string Plot0Path, Plot1Path, Plot2Path, Plot3Path, Plot4Path;
@@ -95,11 +92,17 @@ public:
 
 	bool colorfulResultTable;
 
-	bool kmh;	//!< plot kilometers per second
+	bool kmh; //!< plot kilometers per second
 
 	bool DebugOutput;
 
-	static std::string ParametersPrintEnumToStr(DataPresentationParametersPrint e) {
+	inline static const std::string linearRightAxis = "1:0";
+	inline static const std::string msToKmhRightAxis = "3.6:0";
+	
+	inline static const std::string kmhLabel = "km/h";
+
+	static std::string ParametersPrintEnumToStr (DataPresentationParametersPrint e)
+	{
 		switch (e) {
 		case PRINT_OFF: return "Print disable";
 		case PRINT_BOTH: return "Print enable for both";
@@ -109,9 +112,6 @@ public:
 
 		return "";
 	}
-
 };
-
-
 
 #endif // DATAPRESENCE_H

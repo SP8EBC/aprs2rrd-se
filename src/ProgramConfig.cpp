@@ -231,6 +231,13 @@ void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCo
 	data.PrintHumidity = this->parseParameterPrinting(std::move(temp));
 
 	try {
+		rWWW.lookupValue("Kmh", data.kmh);
+	}
+	catch (libconfig::SettingNotFoundException &ex) {
+		data.kmh = false;
+	}	
+
+	try {
 		const bool result = rWWW.lookupValue("PrintWind", temp);
 		if (result) {
 			data.PrintWind = this->parseParameterPrinting(std::move(temp));
@@ -274,6 +281,17 @@ void ProgramConfig::getDataPresentationConfig(DataPresentation& data, int& rrdCo
 
 		rPlots[ii].lookupValue("Type", temp);
 		cVectorPNGTemp.eType = data.SwitchPlotType(temp);
+		if (cVectorPNGTemp.eType == PlotType::WIND_SPD_GST ||
+			cVectorPNGTemp.eType == PlotType::WIND_DIR ||
+			cVectorPNGTemp.eType == PlotType::WIND_SPD ||
+			cVectorPNGTemp.eType == PlotType::WIND_GST) 
+			{
+				cVectorPNGTemp.isWind = true;
+			}
+			else
+			{
+				cVectorPNGTemp.isWind = false;
+			}
 		rPlots[ii].lookupValue("Path", cVectorPNGTemp.sPath);
 		rPlots[ii].lookupValue("DS0", cVectorPNGTemp.sDS0Path);
 		rPlots[ii].lookupValue("DS0Name", cVectorPNGTemp.sDS0Name);
@@ -1156,6 +1174,9 @@ void ProgramConfig::printConfigInPl(
 
         	}
         }
+		if (dataPresence.kmh) {
+			cout << "--- Kilometry na godzinę przy prędkości wiatru" << endl;
+		}
 		cout << endl;
 		cout << "--------KONFIGURACJA BANERA-----" << endl;
 		cout << "-- Plik wyjściowy: " << bannerCreator.outputFile << endl;

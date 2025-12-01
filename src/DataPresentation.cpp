@@ -65,7 +65,7 @@ void DataPresentation::FetchDiffInRRD(AprsWXData& data) {
 
 	if (diff_temperature_it != this->vRRDFiles.end()) {
 		command << "rrdtool update " << diff_temperature_it->sPath << " " << seconds << ":" << data.temperature;
-		::system(command.str().c_str());
+		(void)::system(command.str().c_str());
 		if (this->DebugOutput == true)
 			cout << command.str() << endl;
 	}
@@ -73,7 +73,7 @@ void DataPresentation::FetchDiffInRRD(AprsWXData& data) {
 	if (diff_winddir_it != this->vRRDFiles.end()) {
 		command.str("");
 		command << "rrdtool update " << diff_winddir_it->sPath << " " << seconds << ":" << data.wind_direction;
-		::system(command.str().c_str());
+		(void)::system(command.str().c_str());
 		if (this->DebugOutput == true)
 			cout << command.str() << endl;
 	}
@@ -81,7 +81,7 @@ void DataPresentation::FetchDiffInRRD(AprsWXData& data) {
 	if (diff_windspd_it != this->vRRDFiles.end()) {
 		command.str("");
 		command << "rrdtool update " << diff_windspd_it->sPath << " " << seconds << ":" << data.wind_speed;
-		::system(command.str().c_str());
+		(void)::system(command.str().c_str());
 		if (this->DebugOutput == true)
 			cout << command.str() << endl;
 	}
@@ -89,7 +89,7 @@ void DataPresentation::FetchDiffInRRD(AprsWXData& data) {
 	if (diff_windgst_it != this->vRRDFiles.end()) {
 		command.str("");
 		command << "rrdtool update " << diff_windgst_it->sPath << " " << seconds << ":" << data.wind_gusts;
-		::system(command.str().c_str());
+		(void)::system(command.str().c_str());
 		if (this->DebugOutput == true)
 			cout << command.str() << endl;
 	}
@@ -232,6 +232,22 @@ void DataPresentation::PlotGraphsFromRRD ()
 			exp << " ";
 		}
 
+		std::string rightAxisScale;
+		if (kmh && this->vPNGFiles[i].isWind) {
+			rightAxisScale = msToKmhRightAxis;
+		}
+		else {
+			rightAxisScale = linearRightAxis;
+		}
+
+		std::string rightAxisLabel;
+		if (kmh && this->vPNGFiles[i].isWind) {
+			rightAxisLabel = kmhLabel;
+		}
+		else {
+			rightAxisLabel = this->vPNGFiles[i].Axis.c_str ();
+		}
+
 		memset (command, 0x00, sizeof (command));
 		if (this->vPNGFiles[i].DoubleDS == false) {
 			rraType = this->RevSwitchRRAType (this->vPNGFiles[i].eDS0RRAType);
@@ -239,7 +255,7 @@ void DataPresentation::PlotGraphsFromRRD ()
 
 			sprintf (command,
 					 "rrdtool graph %s --width %d --height %d --title \"%s\" --vertical-label "
-					 "\"%s\" --lower-limit %.4e --upper-limit %.4e --rigid %s %s --right-axis 1:0 "
+					 "\"%s\" --lower-limit %.4e --upper-limit %.4e --rigid %s %s --right-axis %s "
 					 "--right-axis-label \"%s\" --x-grid %s --start %d --end %d DEF:%s=%s:%s:%s "
 					 "%s:%s#%.6x",
 					 this->vPNGFiles[i].sPath.c_str (),		//!< rrdtool graph %s
@@ -251,7 +267,8 @@ void DataPresentation::PlotGraphsFromRRD ()
 					 this->vPNGFiles[i].MaxScale,			//!< --upper-limit %.4e
 					 scalestep.str ().c_str (),				//!< --rigid %s
 					 exp.str ().c_str (),					//!< %s
-					 this->vPNGFiles[i].Axis.c_str (),		//!< --right-axis-label \"%s\"
+					 rightAxisScale.c_str(),				//!< --right-axis %s
+					 rightAxisLabel.c_str(),				//!< --right-axis-label \"%s\"
 					 xgrid.str ().c_str (),					//!< --x-grid %s
 					 currtimeint - (this->vPNGFiles[i].timeScaleLn * 60),		//!< --start %d
 					 currtimeint,												//!< --end %d
@@ -272,7 +289,7 @@ void DataPresentation::PlotGraphsFromRRD ()
 
 			sprintf (command,
 					 "rrdtool graph %s --width %d --height %d --title \"%s\" --vertical-label "
-					 "\"%s\" --lower-limit %.4e --upper-limit %.4e --rigid %s %s --right-axis 1:0 "
+					 "\"%s\" --lower-limit %.4e --upper-limit %.4e --rigid %s %s --right-axis %s "
 					 "--right-axis-label \"%s\" --x-grid %s --start %d --end %d DEF:%s=%s:%s:%s "
 					 "DEF:%s=%s:%s:%s %s:%s#%.6x:%s %s:%s#%.6x:%s",
 					 this->vPNGFiles[i].sPath.c_str (),		//!< rrdtool graph %s
@@ -284,7 +301,8 @@ void DataPresentation::PlotGraphsFromRRD ()
 					 this->vPNGFiles[i].MaxScale,			//!< --upper-limit %.4e
 					 scalestep.str ().c_str (),				//!< --rigid %s
 					 exp.str ().c_str (),					//!< %s
-					 this->vPNGFiles[i].Axis.c_str (),		//!< --right-axis-label \"%s\"
+					 rightAxisScale.c_str(),				//!< --right-axis %s
+					 rightAxisLabel.c_str(),				//!< --right-axis-label \"%s\"
 					 xgrid.str ().c_str (),					//!< --x-grid %s
 					 currtimeint - (this->vPNGFiles[i].timeScaleLn * 60),	//!< --start %d
 					 currtimeint,											//!< --end %d

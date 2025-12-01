@@ -38,9 +38,8 @@ public:
 
 	string Title;
 	int Width, Height;
-	string Axis, AxisR;
+	string Axis;
 	float MinScale, MaxScale;
-	float MinScaleR, MaxScaleR;
 	string LongTimescaleFormat;
 
 	int ScaleStep, LabelStep;
@@ -48,6 +47,8 @@ public:
 	int Exponent;
 
 	int timeScaleLn;
+
+	bool isWind; //!< It is important only if km/h should be displayed
 };
 
 

@@ -26,15 +26,15 @@ PlotFileDefinition::PlotFileDefinition() {
 	this->LabelStep = 0;
 	this->Exponent = -1;
 	this->DoubleDS = false;
-	this->MinScaleR = 0.0f;
 	this->MaxScale = 0.0f;
 	this->eDS0RRAType = RRAType::NNN;
 	this->eDS1RRAType = RRAType::NNN;
 
 	this->timeScaleLn = 20 * 3600;
 
-	this->MaxScaleR = 0.0f;
 	this->MinScale = 0.0f;
+
+	this->isWind = false;
 }
 
 void PlotFileDefinition::Zero(void) {
