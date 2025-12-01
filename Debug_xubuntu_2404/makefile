@@ -71,7 +71,7 @@ main-build: APRS2RRD
 APRS2RRD: $(OBJS) $(USER_OBJS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C++ Linker'
-	g++ -L/lib -L/usr/lib -L/lib/x86_64-linux-gnu -L/lib/i386-linux-gnu -o "APRS2RRD" $(OBJS) $(USER_OBJS) $(LIBS) -lmysqlpp -lxerces-c-3.2 -lmysqlclient -lconfig -lconfig++ -lfmt -lcurl -lpthread -lboost_filesystem -lboost_regex -lboost_thread -lboost_system -lboost_unit_test_framework -lboost_date_time -lGraphicsMagick++ -lGraphicsMagick -lGraphicsMagickWand
+	g++ -L/lib -L/lib/x86_64-linux-gnu -L/lib/i386-linux-gnu -L/usr/lib -o "APRS2RRD" $(OBJS) $(USER_OBJS) $(LIBS) -lmysqlpp -lfmt -lxerces-c-3.2 -lmysqlclient -lconfig -lconfig++ -lcurl -lpthread -lboost_filesystem -lboost_regex -lboost_thread -lboost_system -lboost_unit_test_framework -lboost_date_time -lGraphicsMagick++ -lGraphicsMagick -lGraphicsMagickWand
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -79,7 +79,7 @@ APRS2RRD: $(OBJS) $(USER_OBJS) makefile $(OPTIONAL_TOOL_DEPS)
 ./src/%.o: ../src/%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C++ Compiler'
-	g++ -std=c++17 -DUSE_XERCES_3_2 -DXUBUNTU2404 -DMAGICKCORE_QUANTUM_DEPTH=16 -I/usr/include/mysql++ -I/usr/include/GraphicsMagick/ -I../lib/nlohman_json_3_11_3/include/ -I/usr/include/xercesc -I/usr/include/mysql -I/usr/include/curl -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
+	g++ -std=c++17 -DUSE_XERCES_3_2 -DXUBUNTU2404 -DMAGICKCORE_QUANTUM_DEPTH=16 -I/usr/include/mysql++ -I/usr/include/GraphicsMagick/ -I../lib/nlohman_json_3_11_3/include/ -I/usr/include/xercesc -I/usr/include/mysql -I/usr/include/curl -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
@@ -89,5 +89,6 @@ clean:
 	-@echo ' '
 
 .PHONY: all APRS2RRD clean dependents
+
 
 -include ../makefile.targets

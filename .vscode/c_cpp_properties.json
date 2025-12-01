@@ -4,10 +4,9 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${workspaceFolder}/lib/nlohman_json_3_7_1/include/",
+                "${workspaceFolder}/lib/nlohman_json_3_11_3/include/",
                 "/usr/include/x86_64-linux-gnu/",
-                "/usr/include/x86_64-linux-gnu/ImageMagick-6/",
-                "/usr/include/ImageMagick-6/",
+                "/usr/include/GraphicsMagick/",
                 "/usr/include/mysql++",
                 "/usr/include/xercesc",
                 "/usr/include/mysql",

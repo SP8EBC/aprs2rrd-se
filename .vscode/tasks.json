@@ -4,28 +4,56 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "make Debug_xerces_3_2",
+            "label": "make Release_xubuntu_2404",
             "type": "shell",
             "command": "make",
             "args": [
                 ""
             ],
             "options": {
-                "cwd": "${workspaceFolder}/Debug_xerces_3_2"
+                "cwd": "${workspaceFolder}/Release_xubuntu_2404"
             },
             "problemMatcher": [
                 "$gcc"
             ]
         },
         {
-            "label": "clean Debug_xerces_3_2",
+            "label": "clean Release_xubuntu_2404",
             "type": "shell",
             "command": "make",
             "args": [
                 "clean"
             ],
             "options": {
-                "cwd": "${workspaceFolder}/Debug_xerces_3_2"
+                "cwd": "${workspaceFolder}/Release_xubuntu_2404"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "make Debug_xubuntu_2404",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                ""
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/Debug_xubuntu_2404"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ]
+        },
+        {
+            "label": "clean Debug_xubuntu_2404",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "clean"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/Debug_xubuntu_2404"
             },
             "problemMatcher": [
                 "$gcc"
