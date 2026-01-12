@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(gdb) Debug_xerces_3_2",
+            "name": "(gdb) Debug_xubuntu_2404",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/Debug_xerces_3_2/APRS2RRD",
+            "program": "${workspaceFolder}/Debug_xubuntu_2404/APRS2RRD",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

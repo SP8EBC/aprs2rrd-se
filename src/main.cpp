@@ -390,14 +390,14 @@ int main(int argc, char **argv){
 			}
 		}
 
+		// waiting for new frame to be reveived
+		asioThread->receive(false);
+
+		// starting serial receive
+		serialThread->receive(false);
+
 		while (isConnectionAlive) {
 			try {
-				// waiting for new frame to be reveived
-				asioThread->receive(false);
-
-				// starting serial receive
-				serialThread->receive(false);
-
 				if (aprsConfig.enable || serialConfig.enable) {
 					// waiting for new data
 					wait_for_data();
@@ -405,6 +405,12 @@ int main(int argc, char **argv){
 
 				// check if legit packet has been received asynchronously from APRS-IS or serial port
 				tcpOrSerialPacketGood = asioThread->isPacketValid() || serialThread->isPacketValid();
+
+				// waiting for new frame to be reveived
+				asioThread->receive(false);
+
+				// starting serial receive
+				serialThread->receive(false);
 
 				//std::cout << "--- main:282 - tcpOrSerialPacketGood: " << boost::lexical_cast<std::string>(tcpOrSerialPacketGood) << std::endl;
 
@@ -425,9 +431,14 @@ int main(int argc, char **argv){
 						// marking if this packet was received from primary or secondary callsign (or none of them)
 						wxIsTemp.CheckPrimaryOrSecondaryAprsis(sourceConfig);
 
-						// storing the telemetry values in db. This metod checks internally if that function is enabled
-						// and telemetry data are valid.
-						mysqlDb.InsertTelmetry(telemetry, programConfig.getStationName());
+						try {
+							// storing the telemetry values in db. This metod checks internally if that function is enabled
+							// and telemetry data are valid.
+							mysqlDb.InsertTelmetry(telemetry, programConfig.getStationName());
+						}
+						catch (std::exception &e) {
+							cout << "--- main:440 - cannot put telemetry to db - std::exception " << e.what() << std::endl;
+						}
 
 						// wait for another packet if not WX data has been received. Protect against
 						// flooding with a lot of data from Holfuy after each heartbeat message from APRS-IS
@@ -461,7 +472,7 @@ int main(int argc, char **argv){
 
 						zywiecMeteo->parseJson(response, wxZywiec);
 
-						std::cout << "--- main:464 - Parsing data from Zywiec county meteo system API" << std::endl;
+						std::cout << "--- main:475 - Parsing data from Zywiec county meteo system API" << std::endl;
 
 						wxZywiec.PrintData();
 					}
@@ -474,7 +485,7 @@ int main(int argc, char **argv){
 
 						holfuyClient->getWxData(wxHolfuy);
 
-						std::cout << "--- main:477 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
+						std::cout << "--- main:488 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
 
 						wxHolfuy.PrintData();
 					}
@@ -556,7 +567,7 @@ int main(int argc, char **argv){
 
 					if (!wxTarget.valid) {
 						if (batchMode) {
-							std::cout << "-- main:559 - No valid data have been received from configured sources!!" << std::endl;
+							std::cout << "-- main:570 - No valid data have been received from configured sources!!" << std::endl;
 
 							throw std::exception();
 						}
@@ -581,7 +592,7 @@ int main(int argc, char **argv){
 					// exit immediately witout performing any changes
 
 					// printing target data
-					std::cout << "--- main:584 - Printing target WX data which will be used for further processing." << std::endl;
+					std::cout << "--- main:595 - Printing target WX data which will be used for further processing." << std::endl;
 					wxTarget.PrintData();
 
 					// limiting slew rates for measurements
@@ -676,10 +687,14 @@ int main(int argc, char **argv){
 						}
 					}
 
+					if (Debug) {
+						cout << "--- main.cpp:691 - Processing done. Current universal time: " << boost::posix_time::to_simple_string(boost::posix_time::microsec_clock::universal_time()) << std::endl;	
+					}
+
 				}
 				else {
 					if (Debug) {
-						cout << "--- main.cpp:682 - This is not valid APRS packet. Current time: " << boost::posix_time::to_simple_string(boost::posix_time::microsec_clock::universal_time()) << std::endl;
+						//cout << "--- main.cpp:697 - This is not valid APRS packet. Current universal time: " << boost::posix_time::to_simple_string(boost::posix_time::microsec_clock::universal_time()) << std::endl;
 					}
 
 					//if (Debug)
@@ -691,11 +706,11 @@ int main(int argc, char **argv){
 			catch (ConnectionTimeoutEx &e) {
 				// if connection is timed out break internal loop to allow reconnecting
 				isConnectionAlive = false;
-				cout << "--- main:694 - ConnectionTimeoutEx thrown at: " << boost::posix_time::to_simple_string(boost::posix_time::microsec_clock::universal_time()) << std::endl;
+				cout << "--- main:709 - ConnectionTimeoutEx thrown at: " << boost::posix_time::to_simple_string(boost::posix_time::microsec_clock::universal_time()) << std::endl;
 				break;
 			}
 			catch (std::exception &e) {
-				cout << "--- main:698 - std::exception " << e.what() << std::endl;
+				cout << "--- main:713 - std::exception " << e.what() << std::endl;
 
 				if (exitOnException) {
 					std::cout << "--- Exiting application";
@@ -705,7 +720,7 @@ int main(int argc, char **argv){
 				}
 			}
 			catch (...) {
-				cout << "--- main:708 - Unknown exception thrown during processing!" << std::endl;
+				cout << "--- main:723 - Unknown exception thrown during processing!" << std::endl;
 
 				if (exitOnException) {
 					std::cout << "--- Exiting application";
@@ -721,7 +736,7 @@ int main(int argc, char **argv){
 			break;
 		}
 
-		std::cout << "--- main:724 - Connection to APRS server died. Reconnecting.." << std::endl;
+		std::cout << "--- main:739 - Connection to APRS server died. Reconnecting.." << std::endl;
 
 	} while (mainLoopExit);		// end of main loop
 

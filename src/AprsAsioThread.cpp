@@ -8,7 +8,7 @@
 #include "AprsAsioThread.h"
 #include "ReturnValues.h"
 #include "ConnectionTimeoutEx.h"
-
+#include "TimeTools.h"
 #include "SOFTWARE_VERSION.h"
 
 #include <boost/lexical_cast.hpp>
@@ -26,7 +26,8 @@ AprsAsioThread::AprsAsioThread(AprsThreadConfig & config, uint8_t timeoutInSecon
 																						syncCondition(syncCondition),
 																						syncLock(syncLock),
 																						outputPacketValid(false),
-																						timeout(timeoutInSeconds)
+																						timeout(timeoutInSeconds),
+																						outputPacketMutex()
 {
 	char buffer[256];
 
@@ -123,8 +124,12 @@ void AprsAsioThread::receive(bool wait) {
 	if (!this->conf.enable)
 		return;
 
+	if (DebugOutput) {
+			std::cout << "--- AprsAsioThread::receive:128 - receiving started. Current universal time: " << boost::posix_time::to_simple_string(boost::posix_time::microsec_clock::universal_time()) << std::endl;
+	}
+
 	// starting asynchronous read which will last until end of line will be received
-	boost::asio::async_read_until(*this->tsocket, this->in_buf, "\r\n", boost::bind(&AprsAsioThread::newLineCallback, this, _1));
+	boost::asio::async_read_until(*this->tsocket, this->in_buf, "\r", boost::bind(&AprsAsioThread::newLineCallback, this, _1));
 
 	if (wait) {
 		std::unique_lock<std::mutex> lock(*this->syncLock);
@@ -174,7 +179,9 @@ void AprsAsioThread::newLineCallback(const boost::system::error_code& ec) {
 		} while (begin != end);	// until we reach the end of the streambuf
 
 		if (this->DebugOutput)
-			std::cout << "--- AprsAsioThread::newLineCallback:177 - rx done" << std::endl;
+			std::cout << "--- AprsAsioThread::newLineCallback:182 - rx done. Current universal time: " << boost::posix_time::to_simple_string(boost::posix_time::microsec_clock::universal_time()) << std::endl;
+
+		this->outputPacketMutex.lock();
 
 		// clearing target object
 		this->outputPacket.clear();
@@ -194,6 +201,8 @@ void AprsAsioThread::newLineCallback(const boost::system::error_code& ec) {
 		else {
 			this->outputPacketValid = false;
 		}
+
+		this->outputPacketMutex.unlock();
 
 		this->syncCondition->notify_all();
 
@@ -217,7 +226,14 @@ bool AprsAsioThread::isConnected() {
 }
 
 AprsPacket AprsAsioThread::getPacket() {
-	return this->outputPacket;
+	this->outputPacketMutex.lock();
+
+	AprsPacket out (this->outputPacket);
+
+	this->outputPacketMutex.unlock();
+
+	// yeap. this will make a second copy of AprsPacket. So be it
+	return out;
 }
 
 bool AprsAsioThread::isPacketValid() {
@@ -225,7 +241,7 @@ bool AprsAsioThread::isPacketValid() {
 }
 
 AprsAsioThread::~AprsAsioThread() {
-	std::cout << "--- AprsAsioThread:228 -  destructor";
+	std::cout << "--- AprsAsioThread:244 -  destructor";
 
 //	this->tsocket.shutdown(boost::asio::ip::tcp::socket::shutdown_both);
 	//this->tsocket.close();

@@ -64,6 +64,8 @@ class AprsAsioThread {
     // AprsPacket copy to store data received
     AprsPacket outputPacket;
 
+	std::mutex outputPacketMutex;
+
     // flag which will confirm that data stored inside 'outputPacket' are valid
     bool outputPacketValid;
 

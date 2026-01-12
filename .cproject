@@ -80,7 +80,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Thingspeak_test.cpp|AprsWXDataPositionless_test.cpp|BannerCreator_test.cpp|WeatherlinkClient_test.cpp|ZywiecMeteo_test.cpp|PressureCalculator_test.cpp|DiffCalculator_test.cpp|HolfuyClient_test.cpp|SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+						<entry excluding="main.cpp|Thingspeak_test.cpp|AprsWXDataPositionless_test.cpp|BannerCreator_test.cpp|WeatherlinkClient_test.cpp|ZywiecMeteo_test.cpp|DiffCalculator_test.cpp|HolfuyClient_test.cpp|SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -167,7 +167,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Thingspeak_test.cpp|AprsWXDataPositionless_test.cpp|BannerCreator_test.cpp|WeatherlinkClient_test.cpp|ZywiecMeteo_test.cpp|PressureCalculator_test.cpp|DiffCalculator_test.cpp|HolfuyClient_test.cpp|SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+						<entry excluding="main.cpp|Thingspeak_test.cpp|AprsWXDataPositionless_test.cpp|BannerCreator_test.cpp|WeatherlinkClient_test.cpp|ZywiecMeteo_test.cpp|DiffCalculator_test.cpp|HolfuyClient_test.cpp|SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -255,7 +255,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Thingspeak_test.cpp|AprsWXDataPositionless_test.cpp|BannerCreator_test.cpp|WeatherlinkClient_test.cpp|ZywiecMeteo_test.cpp|PressureCalculator_test.cpp|DiffCalculator_test.cpp|HolfuyClient_test.cpp|SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+						<entry excluding="main.cpp|Thingspeak_test.cpp|AprsWXDataPositionless_test.cpp|BannerCreator_test.cpp|WeatherlinkClient_test.cpp|ZywiecMeteo_test.cpp|DiffCalculator_test.cpp|HolfuyClient_test.cpp|SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -342,7 +342,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Thingspeak_test.cpp|AprsWXDataPositionless_test.cpp|BannerCreator_test.cpp|WeatherlinkClient_test.cpp|ZywiecMeteo_test.cpp|PressureCalculator_test.cpp|DiffCalculator_test.cpp|HolfuyClient_test.cpp|SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+						<entry excluding="main.cpp|Thingspeak_test.cpp|AprsWXDataPositionless_test.cpp|BannerCreator_test.cpp|WeatherlinkClient_test.cpp|ZywiecMeteo_test.cpp|DiffCalculator_test.cpp|HolfuyClient_test.cpp|SerialAsioThread_test.cpp|Ax25Decoder_test.cpp|ProgramConfig_test.cpp|AprsPacket_test.cpp|AprsWXData_test.cpp|SlewRateLimiter_test.cpp|AprsAsioThread_test.cpp|Telemetry_test.cpp" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

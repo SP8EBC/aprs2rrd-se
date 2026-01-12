@@ -1,3 +1,7 @@
+test_wdir/debug.log.err
+test_wdir/rrd/
+test_wdir/szczyrkowski/
+
 #Debug/
 APRS2RRD
 
