@@ -693,12 +693,11 @@ int main(int argc, char **argv){
 
 				}
 				else {
-					if (Debug) {
-						//cout << "--- main.cpp:697 - This is not valid APRS packet. Current universal time: " << boost::posix_time::to_simple_string(boost::posix_time::microsec_clock::universal_time()) << std::endl;
-					}
+					// restart receiving
+					asioThread->receive(false);
 
-					//if (Debug)
-					//	cout << "--- main.cpp:386 - Inserting data from previous frame into RRD file" << endl;
+					serialThread->receive(false);
+
 					// insert previous data into RRD file
 					dataPresence.FetchDataInRRD(&wxLastTarget, true);
 				}
@@ -706,11 +705,11 @@ int main(int argc, char **argv){
 			catch (ConnectionTimeoutEx &e) {
 				// if connection is timed out break internal loop to allow reconnecting
 				isConnectionAlive = false;
-				cout << "--- main:709 - ConnectionTimeoutEx thrown at: " << boost::posix_time::to_simple_string(boost::posix_time::microsec_clock::universal_time()) << std::endl;
+				cout << "--- main:708 - ConnectionTimeoutEx thrown at: " << boost::posix_time::to_simple_string(boost::posix_time::microsec_clock::universal_time()) << std::endl;
 				break;
 			}
 			catch (std::exception &e) {
-				cout << "--- main:713 - std::exception " << e.what() << std::endl;
+				cout << "--- main:712 - std::exception " << e.what() << std::endl;
 
 				if (exitOnException) {
 					std::cout << "--- Exiting application";
@@ -720,7 +719,7 @@ int main(int argc, char **argv){
 				}
 			}
 			catch (...) {
-				cout << "--- main:723 - Unknown exception thrown during processing!" << std::endl;
+				cout << "--- main:722 - Unknown exception thrown during processing!" << std::endl;
 
 				if (exitOnException) {
 					std::cout << "--- Exiting application";
@@ -736,7 +735,7 @@ int main(int argc, char **argv){
 			break;
 		}
 
-		std::cout << "--- main:739 - Connection to APRS server died. Reconnecting.." << std::endl;
+		std::cout << "--- main:738 - Connection to APRS server died. Reconnecting.." << std::endl;
 
 	} while (mainLoopExit);		// end of main loop
 

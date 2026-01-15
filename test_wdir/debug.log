@@ -1,7 +1,7 @@
-------------- APRS2RRD version 1.9.1-01082023 --------------
----------- Startup time in UTC 2023-Aug-06 08:24:22 -----------
+------------- APRS2RRD version 1.15-12012026 --------------
+---------- Startup time in UTC 2026-Jan-12 18:44:24 -----------
 ---------------------------------------------------------------
---- Current LC_TIME locale: C
+--- Current LC_TIME locale: pl_PL.UTF-8
 --- Current LC_NUMERIC locale: en_US.UTF-8
 
 --------KONFIGURACJA BAZY DANYCH-----
@@ -9,19 +9,19 @@
 --- Port: 3306
 --- Użytkownik: aprs2rrd
 --- Nazwa bazy: aprs2rrd
---- Nazwa tabeli: bezmiech
+--- Nazwa tabeli: szczyrkowski
 --- Hasło nie jest wyświetlane
---- rc.preinsert zostanie wykonany
+--- Zapis pomiarów różnocowych włączony.
 --- Zapis telemetrii włączony.
 
 --------KONFIGURACJA ŁĄCZNOŚCI Z SERWEREM APRS-----
---- Adres Serwera: austria.aprs2.net
+--- Adres Serwera: csngrad.aprs2.net
 --- Port Serwera: 14580
---- Znak pierwszej  monitorowanej stacji: SR8WXB
---- SSID pierwszej monitorowanej stacji: 1
+--- Znak pierwszej  monitorowanej stacji: SR9SMR
+--- SSID pierwszej monitorowanej stacji: 0
 --- Znak drugiej monitorowanej stacji: 
 --- SSID drugiej monitorowanej stacji: 0
---- Własny znak: NOCALL
+--- Własny znak: SQ8EBC
 --- Aprs Secret: 12345
 
 --------KONFIGURACJA ŹRÓDEŁ DANYCH-----
@@ -30,94 +30,91 @@
 --- Wiatr: IS_PRIMARY
 --- Wilgotnosc: IS_PRIMARY
 
+--------KONFIGURACJA OGRANICZNIKA SZYBKOŚCI NARASTANIA--------
+----- Jeżeli zmiana parametrów w dwóch kolejnych ramkach -----
+----- będzie większa niż poniższa, to zmiana ta zostanie -----
+------------------ ograniczona do poniższych -----------------
+--- Maksymalna zmiana temperatury: 0.8
+--- Maksymalna zmiana ciśnienia: 1
+--- Maksymalna zmiana prędkoci wiatru: 3
+--- Maksymalna zmiana porywów wiatru: 5
+--- Maksymalna zmiana wilgotności: 2
+
 -------- KONFIGURACJA PRZELICZANIA CIŚNIENIA --------
 --- Stacja mierzy: QFE - real pressure at altitude where station is located
 --- Przelicz na: QNH - pressure recalculated to the sea level
---- Wysokość zainstalowania stacji: 620
+--- Wysokość zainstalowania stacji: 530
 
 --------KONFIGURACJA PLIKÓW RRD-----
---- Typ: TEMPERATURE - Ścieżka: ./test_wdir/temperatura.rrd
---- Typ: QNH - Ścieżka: ./test_wdir/cisnienie.rrd
---- Typ: WIND_SPD - Ścieżka: ./test_wdir/predkosc.rrd
---- Typ: WIND_GST - Ścieżka: ./test_wdir/szkwaly.rrd
---- Typ: WIND_SPD - Ścieżka: ./test_wdir/predkosc_4min.rrd
---- Typ: WIND_GST - Ścieżka: ./test_wdir/szkwaly_4min.rrd
---- Typ: WIND_DIR - Ścieżka: ./test_wdir/kierunek.rrd
+--- Typ: TEMPERATURE - Ścieżka: ./test_wdir/rrd/temperatura2.rrd
+--- Typ: QNH - Ścieżka: ./test_wdir/rrd/cisnienie.rrd
+--- Typ: WIND_SPD - Ścieżka: ./test_wdir/rrd/predkosc.rrd
+--- Typ: WIND_GST - Ścieżka: ./test_wdir/rrd/szkwaly.rrd
+--- Typ: WIND_DIR - Ścieżka: ./test_wdir/rrd/kierunek.rrd
 
 --------KONFIGURACJA GENEROWANEJ STRONY-----
---- Ścieżka zapisu pliku html: ./test_wdir/index.html
---- Tytuł generowanej strony: Bezmiechowa - Akademicki Ośrodek Szybowcowy PRz
---- Nagłówek: Stacja pogodowa SR8WXB -- AOS Bezmiechowa Górna
---- Wiersz pomimędzy danymi num. a wykresami: 
---- Stopka: Wykonawca i odpowiedzialny za pracę stacji: Mateusz Lubecki - tel: +48 660 43 44 46<br>Akademicki Ośrodek Szybowcowy Politechnika Rzeszowska
+--- Ścieżka zapisu pliku html: ./test_wdir/szczyrkowski/index.html
+--- Tytuł generowanej strony: Szczyrk Mountain Resort - Warunki pogodowe na Hali Skrzyczeńskiej
+--- Nagłówek: Stacja pogodowa SR9SMR -- Hala Skrzyczeńska
+--- Wiersz pomimędzy danymi num. a wykresami: <a href="http://jaworzyna.pogoda.cc/">Odczyty ze stacji pogodowej na Jaworzynie Skryczeńskiej</a><br><a href="http://skrzyczne.pogoda.cc/">Odczyty ze stacji pogodowej na Skrzycznem</a><br>Odczyty dostępne również w aplikacji mobilnej <a href="https://play.google.com/store/apps/details?id=cc.pogoda.mobile.meteosystem">Meteo System</a>
+--- Stopka: Wykonawca: ML Elektronika Mateusz Lubecki - tel: +48 660 43 44 46<br>Szczyrkowski Ośrodek Narciarski SA, Szczyrk Mountain Resort
 --- Style CSS będą ładowane w zależności od temperatury, blue-style.css dla ujemnych i green-style.css dla dodatnich
---- Link do dodatkowych info zostanie wygenerowany
 --- Wyświetlanie wiatru: Print enable for both
 --- Wyświetlanie ciśnienia: Print enable for both
 --- Wyświetlanie temperatury: Print enable for both
 --- Wyświetlanie wilgotności: Print disable
---- Korekcja kierunku wiatru
+--- Dodatkowa grafika nad wykresami: mapa-stacji-meteo.png
+--- Link ustawiony na dodatkowej grafice: https://pogoda.cc/
+--- Kilometry na godzinę przy prędkości wiatru
 
 --------KONFIGURACJA BANERA-----
--- Plik wyjściowy: ./test_wdir/baner.png
+-- Plik wyjściowy: 
 
 --------KONFIGURACJA WYKRESÓW-----
---- Ilość wykresów do wygenerowania: 4
+--- Ilość wykresów do wygenerowania: 3
 -----------------------
 --- WYKRES NUMER: 0
 --- Tytuł wykresu: Temperatura na szczycie
 --- Opis osi Y: Stopnie C
 --- Krok Osi i etykiet osi Y: 0:0
---- Ścieżka do zapisu pliku PNG: ./test_wdir/temperaturaqnh.png
---- Typ wykresu: WIND_SPD_GST / WIND_SPD_GST
---- Ścieżka do PIERWSZEGO DS: ./test_wdir/temperatura.rrd
+--- Ścieżka do zapisu pliku PNG: ./test_wdir/szczyrkowski/temperaturaqnh.png
+--- Typ wykresu: TEMPERATURE / TEMPERATURE
+--- Ścieżka do PIERWSZEGO DS: ./test_wdir/rrd/temperatura2.rrd
 --- Opis pierwszego DS: temperatura
 --- Typ RRA w pierwszym DS: AVERAGE
 --- Rodzaj kreślenia pierwszego DS: AREA / AREA
 --- Kolor kreślenia pierwszego DS: ff9900
 -----------------------
 --- WYKRES NUMER: 1
---- Tytuł wykresu: Prędkość wiatru na szczycie
+--- Tytuł wykresu: Prędkość wiatru
 --- Opis osi Y: m/s
 --- Krok Osi i etykiet osi Y: 0:0
---- Ścieżka do zapisu pliku PNG: ./test_wdir/predkosc.png
+--- Ścieżka do zapisu pliku PNG: ./test_wdir/szczyrkowski/predkosc.png
 --- Typ wykresu: WIND_SPD_GST / WIND_SPD_GST
---- Ścieżka do PIERWSZEGO DS: ./test_wdir/predkosc.rrd
+--- Ścieżka do PIERWSZEGO DS: ./test_wdir/rrd/predkosc.rrd
 --- Opis pierwszego DS: predkosc
 --- Typ RRA w pierwszym DS: AVERAGE
 --- Rodzaj kreślenia pierwszego DS: AREA / AREA
 --- Kolor kreślenia pierwszego DS: ff0000
---- Ścieżka do DRUGIEGO DS: ./test_wdir/szkwaly.rrd
+--- Ścieżka do DRUGIEGO DS: ./test_wdir/rrd/szkwaly.rrd
 --- Opis drugiego DS: szkwaly
 --- Typ RRA w drugim DS: AVERAGE
 --- Rodzaj kreślenia drugiego DS: LINE2 / LINE2
 --- Kolor kreślenia drugiego DS: ff
---- Wysokość wykresu: 600
---- Szerokość wykresu: 900
+--- Wysokość wykresu: 650
+--- Szerokość wykresu: 1100
 -----------------------
 --- WYKRES NUMER: 2
---- Tytuł wykresu: Kierunek wiatru na szczycie
+--- Tytuł wykresu: Kierunek wiatru
 --- Opis osi Y: stopnie
 --- Krok Osi i etykiet osi Y: 0:0
---- Ścieżka do zapisu pliku PNG: ./test_wdir/kierunek.png
+--- Ścieżka do zapisu pliku PNG: ./test_wdir/szczyrkowski/kierunek.png
 --- Typ wykresu: WIND_DIR / WIND_DIR
---- Ścieżka do PIERWSZEGO DS: ./test_wdir/kierunek.rrd
+--- Ścieżka do PIERWSZEGO DS: ./test_wdir/rrd/kierunek.rrd
 --- Opis pierwszego DS: kierunek
 --- Typ RRA w pierwszym DS: AVERAGE
 --- Rodzaj kreślenia pierwszego DS: LINE2 / LINE2
 --- Kolor kreślenia pierwszego DS: ff0000
------------------------
---- WYKRES NUMER: 3
---- Tytuł wykresu: Cisnienie QNH - Ciśnienie przeliczone do poziomu morza na podstawie ciśnienia lokalnego. 
---- Opis osi Y: hPa
---- Krok Osi i etykiet osi Y: 5:1
---- Ścieżka do zapisu pliku PNG: ./test_wdir/cisnienie.png
---- Typ wykresu: WIND_SPD_GST / WIND_SPD_GST
---- Ścieżka do PIERWSZEGO DS: ./test_wdir/cisnienie.rrd
---- Opis pierwszego DS: cisnienie
---- Typ RRA w pierwszym DS: AVERAGE
---- Rodzaj kreślenia pierwszego DS: LINE2 / LINE2
---- Kolor kreślenia pierwszego DS: 9900
 
 --------ZWROTY UŻYWANE DO GENEROWANIA STRONY WWW (LOKALIZACJA)-----
 --- Strona wygenerowana przy pomocy programu
@@ -131,11 +128,11 @@
 --- Aktualne Porywy
 --- Aktualna Prędkość Wiatru
 
---- main:239 - exitOnException: 1
---- AprsAsioThread::connectedCallback:104 - loginString = user NOCALL pass 12345 vers APRS2RRD 1.9.1-01082023 filter b/SR8WXB-1 
+--- main:277 - exitOnException: 1
+--- AprsAsioThread::connectedCallback:104 - loginString = user SQ8EBC pass 12345 vers APRS2RRD 1.15-12012026 filter b/SR9SMR 
 
-# aprsc 2.1.14-g5e22b37
-# logresp NOCALL unverified, server T2AUSTRIA
+# aprsc 2.1.20-gdaa359f
+# logresp SQ8EBC unverified, server T2CSNGRAD
 --- AprsAsioThread::newLineCallback:177 - rx done
---- main.cpp:519 - This is not valid APRS packet
---- DataPresentation::FetchDataInRRD:108 - Input data is invalid and cannot be used
+--- main.cpp:682 - This is not valid APRS packet. Current time: 2026-Jan-12 18:44:25.569004
+--- DataPresentation::FetchDataInRRD:119 - Input data is invalid and cannot be used
