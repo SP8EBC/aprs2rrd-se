@@ -406,16 +406,16 @@ int main(int argc, char **argv){
 				// check if legit packet has been received asynchronously from APRS-IS or serial port
 				tcpOrSerialPacketGood = asioThread->isPacketValid() || serialThread->isPacketValid();
 
-				// waiting for new frame to be reveived
-				asioThread->receive(false);
-
-				// starting serial receive
-				serialThread->receive(false);
-
 				//std::cout << "--- main:282 - tcpOrSerialPacketGood: " << boost::lexical_cast<std::string>(tcpOrSerialPacketGood) << std::endl;
 
 				// checkig if correct data has been received
 				if (tcpOrSerialPacketGood || batchMode) {
+
+					// waiting for new frame to be reveived
+					asioThread->receive(false);
+
+					// starting serial receive
+					serialThread->receive(false);
 
 					// checking from what input data has been received
 					if (asioThread->isPacketValid()) {
