@@ -71,6 +71,8 @@ class AprsAsioThread {
 
     bool connected;
 
+	bool hasPacketAlready;
+
     // timeout value in seconds
     uint8_t timeout;
 
@@ -100,6 +102,10 @@ public:
 
 	bool isEnabled() {
 		return this->conf.enable;
+	}
+
+	bool getHasPacketAlready() {
+		return this->hasPacketAlready;
 	}
 
 	bool DebugOutput;

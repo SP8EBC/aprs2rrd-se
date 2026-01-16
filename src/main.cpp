@@ -399,8 +399,13 @@ int main(int argc, char **argv){
 		while (isConnectionAlive) {
 			try {
 				if (aprsConfig.enable || serialConfig.enable) {
-					// waiting for new data
-					wait_for_data();
+					if (asioThread->getHasPacketAlready()) {
+						cout << "--- main:403 - packet has been received from APRS-IS before a call for waiting" << std::endl;
+					}
+					else {
+						// waiting for new data
+						wait_for_data();
+					}
 				}
 
 				// check if legit packet has been received asynchronously from APRS-IS or serial port
@@ -437,7 +442,7 @@ int main(int argc, char **argv){
 							mysqlDb.InsertTelmetry(telemetry, programConfig.getStationName());
 						}
 						catch (std::exception &e) {
-							cout << "--- main:440 - cannot put telemetry to db - std::exception " << e.what() << std::endl;
+							cout << "--- main:445 - cannot put telemetry to db - std::exception " << e.what() << std::endl;
 						}
 
 						// wait for another packet if not WX data has been received. Protect against
@@ -472,7 +477,7 @@ int main(int argc, char **argv){
 
 						zywiecMeteo->parseJson(response, wxZywiec);
 
-						std::cout << "--- main:475 - Parsing data from Zywiec county meteo system API" << std::endl;
+						std::cout << "--- main:480 - Parsing data from Zywiec county meteo system API" << std::endl;
 
 						wxZywiec.PrintData();
 					}
@@ -485,7 +490,7 @@ int main(int argc, char **argv){
 
 						holfuyClient->getWxData(wxHolfuy);
 
-						std::cout << "--- main:488 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
+						std::cout << "--- main:493 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
 
 						wxHolfuy.PrintData();
 					}
@@ -567,7 +572,7 @@ int main(int argc, char **argv){
 
 					if (!wxTarget.valid) {
 						if (batchMode) {
-							std::cout << "-- main:570 - No valid data have been received from configured sources!!" << std::endl;
+							std::cout << "-- main:575 - No valid data have been received from configured sources!!" << std::endl;
 
 							throw std::exception();
 						}
@@ -592,7 +597,7 @@ int main(int argc, char **argv){
 					// exit immediately witout performing any changes
 
 					// printing target data
-					std::cout << "--- main:595 - Printing target WX data which will be used for further processing." << std::endl;
+					std::cout << "--- main:600 - Printing target WX data which will be used for further processing." << std::endl;
 					wxTarget.PrintData();
 
 					// limiting slew rates for measurements
@@ -688,11 +693,15 @@ int main(int argc, char **argv){
 					}
 
 					if (Debug) {
-						cout << "--- main.cpp:691 - Processing done. Current universal time: " << boost::posix_time::to_simple_string(boost::posix_time::microsec_clock::universal_time()) << std::endl;	
+						cout << "--- main.cpp:696 - Processing done. Current universal time: " << boost::posix_time::to_simple_string(boost::posix_time::microsec_clock::universal_time()) << std::endl;	
 					}
 
 				}
 				else {
+					if (Debug) {
+						cout << "--- main.cpp:702 - This not valid APRS packet. " << std::endl;	
+					}
+
 					// restart receiving
 					asioThread->receive(false);
 
@@ -705,11 +714,11 @@ int main(int argc, char **argv){
 			catch (ConnectionTimeoutEx &e) {
 				// if connection is timed out break internal loop to allow reconnecting
 				isConnectionAlive = false;
-				cout << "--- main:708 - ConnectionTimeoutEx thrown at: " << boost::posix_time::to_simple_string(boost::posix_time::microsec_clock::universal_time()) << std::endl;
+				cout << "--- main:717 - ConnectionTimeoutEx thrown at: " << boost::posix_time::to_simple_string(boost::posix_time::microsec_clock::universal_time()) << std::endl;
 				break;
 			}
 			catch (std::exception &e) {
-				cout << "--- main:712 - std::exception " << e.what() << std::endl;
+				cout << "--- main:721 - std::exception " << e.what() << std::endl;
 
 				if (exitOnException) {
 					std::cout << "--- Exiting application";
@@ -719,7 +728,7 @@ int main(int argc, char **argv){
 				}
 			}
 			catch (...) {
-				cout << "--- main:722 - Unknown exception thrown during processing!" << std::endl;
+				cout << "--- main:731 - Unknown exception thrown during processing!" << std::endl;
 
 				if (exitOnException) {
 					std::cout << "--- Exiting application";

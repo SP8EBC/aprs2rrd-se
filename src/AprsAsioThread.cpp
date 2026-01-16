@@ -27,6 +27,7 @@ AprsAsioThread::AprsAsioThread(AprsThreadConfig & config, uint8_t timeoutInSecon
 																						syncLock(syncLock),
 																						outputPacketValid(false),
 																						timeout(timeoutInSeconds),
+																						hasPacketAlready(false),
 																						outputPacketMutex()
 {
 	char buffer[256];
@@ -128,6 +129,8 @@ void AprsAsioThread::receive(bool wait) {
 			std::cout << "--- AprsAsioThread::receive:128 - receiving started. Current universal time: " << boost::posix_time::to_simple_string(boost::posix_time::microsec_clock::universal_time()) << std::endl;
 	}
 
+	this->hasPacketAlready = false;
+
 	// starting asynchronous read which will last until end of line will be received
 	boost::asio::async_read_until(*this->tsocket, this->in_buf, "\r", boost::bind(&AprsAsioThread::newLineCallback, this, _1));
 
@@ -201,6 +204,8 @@ void AprsAsioThread::newLineCallback(const boost::system::error_code& ec) {
 		else {
 			this->outputPacketValid = false;
 		}
+
+		this->hasPacketAlready = true;
 
 		this->outputPacketMutex.unlock();
 
