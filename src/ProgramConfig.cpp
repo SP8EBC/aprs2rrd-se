@@ -131,6 +131,13 @@ void ProgramConfig::getAprsThreadConfig(AprsThreadConfig& aprs) {
 		rAprsIS.lookupValue("MyPasswd", aprs.Passwd);
 
 		try {
+			rAprsIS.lookupValue("CallsignRegexVerification", aprs.callsignRegexVerification);
+		}
+		catch (libconfig::SettingNotFoundException &ex) {
+			aprs.callsignRegexVerification = true;
+		}
+
+		try {
 			rAprsIS.lookupValue("SecondaryCall", aprs.SecondaryCall);
 			rAprsIS.lookupValue("SecondarySSID", aprs.SecondarySSID);
 		}

@@ -229,6 +229,8 @@ int main(int argc, char **argv){
 		sourceConfig.zywiecNumber = zywiecMeteoConfig.stationId;
 		sourceConfig.davisWeatherlinkNumber = weatherlinkClient.config.DID;
 
+		AprsPacket::CallsignRegexVerification = aprsConfig.callsignRegexVerification;
+
 		set_locale();
 
 		(void)setlocale(LC_NUMERIC, "en_US.UTF-8");
@@ -275,6 +277,7 @@ int main(int argc, char **argv){
 			thingspeakConfig);
 
 	cout << "--- main:277 - exitOnException: " << exitOnException << endl;
+	cout << "--- main:277 - AprsPacket::CallsignRegexVerification: " << AprsPacket::CallsignRegexVerification << endl;
 
 	serialThread = new SerialAsioThread(syncCondition, syncLock, serialConfig.serialPort, serialConfig.baudrate);
 
@@ -307,7 +310,7 @@ int main(int argc, char **argv){
 	mainLoopExit = !batchMode;
 
 	if ((aprxLogParserConfig.enabled && aprsConfig.enable) || (aprxLogParserConfig.enabled && serialConfig.enable)) {
-		std::cout << "--- main:310 - You cannot use APRX rf-log file parser and aprs-is client at the same time" << std::endl;
+		std::cout << "--- main:313 - You cannot use APRX rf-log file parser and aprs-is client at the same time" << std::endl;
 		return -7;
 	}
 	else if (aprxLogParserConfig.enabled) {
@@ -323,12 +326,12 @@ int main(int argc, char **argv){
 	}
 
 	if (!batchMode && !aprsConfig.enable && !serialConfig.enable) {
-		std::cout << "--- main:326 - You cannot run continuous mode w/o APRS-IS connection or Serial port enabled" << std::endl;
+		std::cout << "--- main:329 - You cannot run continuous mode w/o APRS-IS connection or Serial port enabled" << std::endl;
 		return -6;
 	}
 
 	if (batchMode) {
-		std::cout << "--- main:331 - RUNNING IN BATCH MODE" << std::endl;
+		std::cout << "--- main:334 - RUNNING IN BATCH MODE" << std::endl;
 	}
 
 	// main loop
@@ -371,7 +374,7 @@ int main(int argc, char **argv){
 
 			//  check if any packets have been found
 			if (unfilteredPackets.size() == 0) {
-				std::cout << "--- main:374 - No weather packets have been found in rf-log" << std::endl;
+				std::cout << "--- main:377 - No weather packets have been found in rf-log" << std::endl;
 				// no sense in continuing execution
 				isConnectionAlive = false;
 			}
@@ -381,7 +384,7 @@ int main(int argc, char **argv){
 			}
 
 			if (wxDataFromAprx.size() == 0) {
-				std::cout << "--- main:384 - No weather packets from rf-log left after filtering" << std::endl;
+				std::cout << "--- main:387 - No weather packets from rf-log left after filtering" << std::endl;
 				// no sense in continuing execution
 				isConnectionAlive = false;			
 			}
@@ -400,7 +403,7 @@ int main(int argc, char **argv){
 			try {
 				if (aprsConfig.enable || serialConfig.enable) {
 					if (asioThread->getHasPacketAlready()) {
-						cout << "--- main:403 - packet has been received from APRS-IS before a call for waiting" << std::endl;
+						cout << "--- main:406 - packet has been received from APRS-IS before a call for waiting" << std::endl;
 					}
 					else {
 						// waiting for new data
@@ -442,7 +445,7 @@ int main(int argc, char **argv){
 							mysqlDb.InsertTelmetry(telemetry, programConfig.getStationName());
 						}
 						catch (std::exception &e) {
-							cout << "--- main:445 - cannot put telemetry to db - std::exception " << e.what() << std::endl;
+							cout << "--- main:448 - cannot put telemetry to db - std::exception " << e.what() << std::endl;
 						}
 
 						// wait for another packet if not WX data has been received. Protect against
@@ -477,7 +480,7 @@ int main(int argc, char **argv){
 
 						zywiecMeteo->parseJson(response, wxZywiec);
 
-						std::cout << "--- main:480 - Parsing data from Zywiec county meteo system API" << std::endl;
+						std::cout << "--- main:483 - Parsing data from Zywiec county meteo system API" << std::endl;
 
 						wxZywiec.PrintData();
 					}
@@ -490,7 +493,7 @@ int main(int argc, char **argv){
 
 						holfuyClient->getWxData(wxHolfuy);
 
-						std::cout << "--- main:493 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
+						std::cout << "--- main:496 - Printing data downloaded & parsed from Holfuy API. Ignore 'use' flags" << std::endl;
 
 						wxHolfuy.PrintData();
 					}
@@ -572,7 +575,7 @@ int main(int argc, char **argv){
 
 					if (!wxTarget.valid) {
 						if (batchMode) {
-							std::cout << "-- main:575 - No valid data have been received from configured sources!!" << std::endl;
+							std::cout << "-- main:578 - No valid data have been received from configured sources!!" << std::endl;
 
 							throw std::exception();
 						}
@@ -597,7 +600,7 @@ int main(int argc, char **argv){
 					// exit immediately witout performing any changes
 
 					// printing target data
-					std::cout << "--- main:600 - Printing target WX data which will be used for further processing." << std::endl;
+					std::cout << "--- main:603 - Printing target WX data which will be used for further processing." << std::endl;
 					wxTarget.PrintData();
 
 					// limiting slew rates for measurements
@@ -693,13 +696,13 @@ int main(int argc, char **argv){
 					}
 
 					if (Debug) {
-						cout << "--- main.cpp:696 - Processing done. Current universal time: " << boost::posix_time::to_simple_string(boost::posix_time::microsec_clock::universal_time()) << std::endl;	
+						cout << "--- main.cpp:699 - Processing done. Current universal time: " << boost::posix_time::to_simple_string(boost::posix_time::microsec_clock::universal_time()) << std::endl;	
 					}
 
 				}
 				else {
 					if (Debug) {
-						cout << "--- main.cpp:702 - This not valid APRS packet. " << std::endl;	
+						cout << "--- main.cpp:705 - This not valid APRS packet. " << std::endl;	
 					}
 
 					// restart receiving
@@ -714,11 +717,11 @@ int main(int argc, char **argv){
 			catch (ConnectionTimeoutEx &e) {
 				// if connection is timed out break internal loop to allow reconnecting
 				isConnectionAlive = false;
-				cout << "--- main:717 - ConnectionTimeoutEx thrown at: " << boost::posix_time::to_simple_string(boost::posix_time::microsec_clock::universal_time()) << std::endl;
+				cout << "--- main:720 - ConnectionTimeoutEx thrown at: " << boost::posix_time::to_simple_string(boost::posix_time::microsec_clock::universal_time()) << std::endl;
 				break;
 			}
 			catch (std::exception &e) {
-				cout << "--- main:721 - std::exception " << e.what() << std::endl;
+				cout << "--- main:724 - std::exception " << e.what() << std::endl;
 
 				if (exitOnException) {
 					std::cout << "--- Exiting application";
@@ -728,7 +731,7 @@ int main(int argc, char **argv){
 				}
 			}
 			catch (...) {
-				cout << "--- main:731 - Unknown exception thrown during processing!" << std::endl;
+				cout << "--- main:734 - Unknown exception thrown during processing!" << std::endl;
 
 				if (exitOnException) {
 					std::cout << "--- Exiting application";
@@ -744,7 +747,7 @@ int main(int argc, char **argv){
 			break;
 		}
 
-		std::cout << "--- main:738 - Connection to APRS server died. Reconnecting.." << std::endl;
+		std::cout << "--- main:750 - Connection to APRS server died. Reconnecting.." << std::endl;
 
 	} while (mainLoopExit);		// end of main loop
 

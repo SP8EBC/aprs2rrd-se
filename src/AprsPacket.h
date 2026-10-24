@@ -29,6 +29,8 @@ class AprsPacket
 {
     private:
     public:
+        static bool CallsignRegexVerification;
+
         std::string DestAddr;   // Destination address, sliced from packer. In APRS it works as Device-ID
         std::string SrcAddr;    // Source address
         uint8_t SrcSSID;  // SSID of Source

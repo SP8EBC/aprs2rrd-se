@@ -1,35 +1,41 @@
-Running 6 test cases...
-Entering test suite "AprsWXData_test"
-Entering test case "correct_wx_frame_1"
-../src/AprsWXData_test.cpp(37): info: check wx.humidity == 99 passed
-../src/AprsWXData_test.cpp(38): info: difference{%} between wx.temperature{2.77777791} and 2.7{2.7000000000000002} doesn't exceed 3%
-../src/AprsWXData_test.cpp(39): info: check wx.pressure == 1003 passed
-../src/AprsWXData_test.cpp(40): info: check wx.wind_direction == 313 passed
-../src/AprsWXData_test.cpp(42): info: check wx.valid passed
-Leaving test case "correct_wx_frame_1"; testing time: 1741mks
-Entering test case "corrupted_frame_1"
-../src/AprsWXData_test.cpp(54): info: check !wx.valid passed
-Leaving test case "corrupted_frame_1"; testing time: 368mks
-Entering test case "corrupted_frame_2"
-../src/AprsWXData_test.cpp(65): info: check !wx.valid passed
-Leaving test case "corrupted_frame_2"; testing time: 273mks
-Entering test case "correct_wx_without_h"
-../src/AprsWXData_test.cpp(77): info: difference{%} between wx.temperature{2.77777791} and 2.7{2.7000000000000002} doesn't exceed 3%
-../src/AprsWXData_test.cpp(78): info: check wx.pressure == 1003 passed
-../src/AprsWXData_test.cpp(79): info: check wx.wind_direction == 313 passed
-../src/AprsWXData_test.cpp(81): info: check wx.valid passed
-Leaving test case "correct_wx_without_h"; testing time: 1031mks
-Entering test case "correct_wx_less_than100hpa"
-../src/AprsWXData_test.cpp(93): info: difference{%} between wx.temperature{2.77777791} and 2.7{2.7000000000000002} doesn't exceed 3%
-../src/AprsWXData_test.cpp(94): info: check wx.pressure == 997 passed
-../src/AprsWXData_test.cpp(95): info: check wx.wind_direction == 313 passed
-../src/AprsWXData_test.cpp(97): info: check wx.valid passed
-Leaving test case "correct_wx_less_than100hpa"; testing time: 1025mks
-Entering test case "correct_wx_less_than100hpa_h"
-../src/AprsWXData_test.cpp(110): error in "correct_wx_less_than100hpa_h": check wx.humidity == 99 failed
-../src/AprsWXData_test.cpp(111): info: difference{%} between wx.temperature{0} and 0.0{0} doesn't exceed 3%
-../src/AprsWXData_test.cpp(112): info: check wx.pressure == 991 passed
-../src/AprsWXData_test.cpp(113): info: check wx.wind_direction == 332 passed
-../src/AprsWXData_test.cpp(115): info: check wx.valid passed
-Leaving test case "correct_wx_less_than100hpa_h"; testing time: 1520mks
-Leaving test suite "AprsWXData_test"
+Running 7 test cases...
+Entering test module "AprsWXData_test"
+src/AprsWXData_test.cpp(29): Entering test case "correct_wx_frame_1"
+src/AprsWXData_test.cpp(37): info: check wx.humidity == 99 has passed
+src/AprsWXData_test.cpp(38): info: difference{} between wx.temperature{2.77777791} and 2.7{2.7000000000000002} doesn't exceed 3%
+src/AprsWXData_test.cpp(39): info: check wx.pressure == 1003 has passed
+src/AprsWXData_test.cpp(40): info: check wx.wind_direction == 313 has passed
+src/AprsWXData_test.cpp(42): info: check wx.valid has passed
+src/AprsWXData_test.cpp(29): Leaving test case "correct_wx_frame_1"; testing time: 551us
+src/AprsWXData_test.cpp(46): Entering test case "corrupted_frame_1"
+src/AprsWXData_test.cpp(54): error: in "corrupted_frame_1": check !wx.valid has failed
+src/AprsWXData_test.cpp(46): Leaving test case "corrupted_frame_1"; testing time: 205us
+src/AprsWXData_test.cpp(57): Entering test case "corrupted_frame_2"
+src/AprsWXData_test.cpp(65): info: check !wx.valid has passed
+src/AprsWXData_test.cpp(57): Leaving test case "corrupted_frame_2"; testing time: 86us
+src/AprsWXData_test.cpp(68): Entering test case "correct_wx_without_h"
+src/AprsWXData_test.cpp(77): info: difference{} between wx.temperature{2.77777791} and 2.7{2.7000000000000002} doesn't exceed 3%
+src/AprsWXData_test.cpp(78): info: check wx.pressure == 1003 has passed
+src/AprsWXData_test.cpp(79): info: check wx.wind_direction == 313 has passed
+src/AprsWXData_test.cpp(81): info: check wx.valid has passed
+src/AprsWXData_test.cpp(68): Leaving test case "correct_wx_without_h"; testing time: 391us
+src/AprsWXData_test.cpp(84): Entering test case "correct_wx_less_than100hpa"
+src/AprsWXData_test.cpp(93): info: difference{} between wx.temperature{2.77777791} and 2.7{2.7000000000000002} doesn't exceed 3%
+src/AprsWXData_test.cpp(94): info: check wx.pressure == 997 has passed
+src/AprsWXData_test.cpp(95): info: check wx.wind_direction == 313 has passed
+src/AprsWXData_test.cpp(97): info: check wx.valid has passed
+src/AprsWXData_test.cpp(84): Leaving test case "correct_wx_less_than100hpa"; testing time: 320us
+src/AprsWXData_test.cpp(102): Entering test case "correct_wx_less_than100hpa_h"
+src/AprsWXData_test.cpp(110): info: check wx.humidity == 99 has passed
+src/AprsWXData_test.cpp(111): info: difference{} between wx.temperature{0} and 0.0{0} doesn't exceed 3%
+src/AprsWXData_test.cpp(112): info: check wx.pressure == 991 has passed
+src/AprsWXData_test.cpp(113): info: check wx.wind_direction == 332 has passed
+src/AprsWXData_test.cpp(115): info: check wx.valid has passed
+src/AprsWXData_test.cpp(102): Leaving test case "correct_wx_less_than100hpa_h"; testing time: 477us
+src/AprsWXData_test.cpp(118): Entering test case "correct_glidernet_with_position"
+src/AprsWXData_test.cpp(126): info: check wx.humidity == 62 has passed
+src/AprsWXData_test.cpp(127): info: difference{} between wx.temperature{7.77777767} and 7.7{7.7000000000000002} doesn't exceed 3%
+src/AprsWXData_test.cpp(128): info: check wx.wind_direction == 7 has passed
+src/AprsWXData_test.cpp(130): info: check wx.valid has passed
+src/AprsWXData_test.cpp(118): Leaving test case "correct_glidernet_with_position"; testing time: 466us
+Leaving test module "AprsWXData_test"; testing time: 2571us

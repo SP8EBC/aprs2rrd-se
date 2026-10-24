@@ -14,6 +14,8 @@
 
 using namespace std;
 
+bool AprsPacket::CallsignRegexVerification = true;
+
 AprsPacket::AprsPacket() {
     this->SrcSSID = 0;
     this->DstSSID = 0;
@@ -41,7 +43,7 @@ bool AprsPacket::SeparateCallSsid(const std::string& input, std::string& call,
 
 		boost::split(callAndSsid, in, boost::is_any_of("-"));
 
-		// check if Ssid has a valid leght, not greater than 6 characters
+		// check if Ssid has a valid length, not greater than 6 characters
 		if (callAndSsid.at(0).size() > 6)
 			return false;
 
@@ -135,12 +137,23 @@ int AprsPacket::ParseAPRSISData(const char* tInputBuffer, int buff_len, AprsPack
 	bool separatingReturn = true;
 
 	// checkig if input buffer is valid
-	if (tInputBuffer == nullptr)
-		return NOT_VALID_APRS_PACKET;
+	if (tInputBuffer == nullptr) {
+		return INPUT_BUFFER_NULL;
+	}
+
+	// check if input buffer is not empty
+	if (*tInputBuffer == 0x00) {
+		return INPUT_BUFFER_EMPTY;
+	}
+
+	// check if input buffer contains APRS server status message
+	if (*tInputBuffer == '#') {
+		return SERVER_STATUS_MSG_DETECTED;
+	}
 
 	// check if input buffer is valid
-    if (*tInputBuffer == '#' || *tInputBuffer == 0x00 || buff_len > 1000 || buff_len < 5)
-		return NOT_VALID_APRS_PACKET;
+    if (buff_len > 1000 || buff_len < 5)
+		return INPUT_BUFFER_TOO_SHORT_LONG;
 
     // converting to string
 	std::string input(tInputBuffer, buff_len);
@@ -157,17 +170,19 @@ int AprsPacket::ParseAPRSISData(const char* tInputBuffer, int buff_len, AprsPack
 	// there must be at least one '>' character which will separate soruce from
 	// the rest of frame
 	if (sepratedBySource.size() < 2)
-		return NOT_VALID_APRS_PACKET;
+		return NO_SOURCE_CALLSIGN_SEPARATOR;
 
 	// separating a callsign from the SSID
 	separatingReturn = AprsPacket::SeparateCallSsid(sepratedBySource.at(0), cTarget->SrcAddr, cTarget->SrcSSID, false);
 
 	if (!separatingReturn)
-		return NOT_VALID_APRS_PACKET;
+		return SOURCE_CALLSIGN_INVALID;
 
-	// checking if the callsign match with regex
-	if (!boost::regex_match(cTarget->SrcAddr, callsignPattern))
-		return NOT_VALID_APRS_PACKET;
+	if (CallsignRegexVerification) {
+		// checking if the callsign match with regex
+		if (!boost::regex_match(cTarget->SrcAddr, callsignPattern))
+			return SOURCE_CALLSIGN_REGEX_FAIL;
+	}
 
 	// the 'sepratedBySource' vector may consist more than 2 elements if received frame consist
 	// status message which is identified by '>' character before it. All in all the APRS2RRD
@@ -249,10 +264,10 @@ int AprsPacket::ParseAPRSISData(const char* tInputBuffer, int buff_len, AprsPack
 			cTarget->Path.push_back(pelem);
 		}
 		catch (const boost::bad_lexical_cast& ex) {
-			return NOT_VALID_APRS_PACKET;
+			return BAD_LEXICAL_CAST_THROWN;
 		}
 		catch (const std::bad_cast& ex) {
-			return NOT_VALID_APRS_PACKET;
+			return BAD_CAST_THROWN;
 		}
 
 	}
@@ -330,9 +345,11 @@ int AprsPacket::ParseAprxRfLogData(const char* tInputBuffer, int buff_len, AprsP
 	if (!separatingReturn)
 		return NOT_VALID_APRS_PACKET;
 
-	// checking if the callsign match with regex
-	if (!boost::regex_match(cTarget->SrcAddr, callsignPattern))
-		return NOT_VALID_APRS_PACKET;
+	if (CallsignRegexVerification) {
+		// checking if the callsign match with regex
+		if (!boost::regex_match(cTarget->SrcAddr, callsignPattern))
+			return NOT_VALID_APRS_PACKET;
+	}
 
 	// the 'sepratedBySource' vector may consist more than 2 elements if received frame consist
 	// status message which is identified by '>' character before it. All in all the APRS2RRD

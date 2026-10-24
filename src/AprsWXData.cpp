@@ -51,26 +51,55 @@ int AprsWXData::ParseData(AprsPacket input, AprsWXData* output) {
 
     int i = 0;
     int conv_temp;
-    //char *src;
+    size_t inputStringOffset = 0;	// offset applied while creating std::string from input.Data
     std::vector<std::string> extractedWx;	// this vector will be used as an output from boost::split method
 
     output->valid = false;
 
     if (*(input.Data) == '_') {
 		if (AprsWXData::DebugOutput == true) {
-			std::cout << "AprsWXData::ParseData:65 - this is positionless weather frame" << endl;
+			std::cout << "AprsWXData::ParseData:61 - this is positionless weather frame" << endl;
 		}
 		return AprsWXDataPositionless::ParseData(input.DataAsStr, output);
 	}
-    
-	if (*(input.Data) != '!' && *(input.Data) != '@') {
+
+	// weather frame with position and date, received probably from GLIDERNET server
+	// these looks like below
+	// "/091316h4925.06N/01835.71E_007/000g000t046h62b04300 sF1 cr1 -0.1dB +0.0kHz"
+	if (*(input.Data) == '/') {
+		// iterate through string to looks if there is a weather frame inside
+		size_t it = 0;
+		while (it++ < 32) {
+			const char supposedUnderscore = *(input.Data + it);
+			const char supposedSlash = *(input.Data + it + 4);
+
+			if (supposedUnderscore == '_' && supposedSlash == '/')
+			{
+				inputStringOffset = it;
+				std::cout << "AprsWXData::ParseData:79 - found WX data in time&position frame fmt: " << input.Data + inputStringOffset << endl;
+				break;
+			}
+		}
+
+		if (it >= 32)
+		{
+			std::cout << "AprsWXData::ParseData:86 - fail to decode WX data with timestamp and position" << endl;
+	        output->valid = false;
+ 	        return -1;     // to nie sa dane pogodowe
+		}
+
+	}
+	else if (*(input.Data) != '!' && *(input.Data) != '@') {
         output->valid = false;
         return -1;     // to nie sa dane pogodowe
 
     }
+	else {
+		;
+	}
 
     // converting char array to copy of string class for convinence
-    std::string source(input.Data);
+    std::string source(input.Data + inputStringOffset);
 
     // the 'split' method doesn't copy a character which was used as split point!
     boost::split(extractedWx, source, boost::is_any_of("_"));
@@ -95,6 +124,11 @@ int AprsWXData::ParseData(AprsPacket input, AprsWXData* output) {
     output->rain_day = 0;
     output->valid = false;
 
+	// workaround broken GLIDERNET weather frames format, which is not
+	// aprs compliant and have parameters thrown here and there in bad order!!!!
+	std::string::iterator itHumidity = std::find(source.begin(), source.end(), 'h');
+	std::string::iterator itPressure = std::find(source.begin(), source.end(), 'b');
+
     //i++;    // przeskoczenie na pierwszy znak danych meteo
     if (AprsWXData::CopyConvert('/',wxData,conv_temp,i) == 0)   // kierunek    this->wind_direction = conv_temp;
     	output->wind_direction = conv_temp;
@@ -111,33 +145,48 @@ int AprsWXData::ParseData(AprsPacket input, AprsWXData* output) {
 	else
 		return -1;
     i++;
-    if (AprsWXData::CopyConvert('r',wxData,conv_temp,i) == 0)   // temperatura
+    if (AprsWXData::CopyConvert(3U,wxData,conv_temp,i) == 0)   // temperatura
     	output->temperature = ((float)conv_temp - 32) / 9 * 5;
 	else
 		return -1;
-    i++;
-    if (AprsWXData::CopyConvert('p',wxData,conv_temp,i) == 0)   // deszcz przez ostania godzine
-    	output->rain60 = conv_temp;
-	else
-		return -1;
-	i++;
-    if (AprsWXData::CopyConvert('P',wxData,conv_temp,i) == 0)   // deszcz przez ostania godzine
-    	output->rain24 = conv_temp;
-	else
-		return -1;
-	i++;
-    if (AprsWXData::CopyConvert('b',wxData,conv_temp,i) == 0)   // deszcz przez ostania godzine
-    	output->rain_day = conv_temp;
-	else
-		return -1;
-	i++;
-    if (AprsWXData::CopyConvert((unsigned)5,wxData,conv_temp,i) == 0)   // ciśnienie
-    	output->pressure = conv_temp / 10;
-	else;
-	i++;
-    if (AprsWXData::CopyConvert((unsigned)3,wxData,conv_temp,i) == 0)
-    	output->humidity = conv_temp;
-	else;
+    i++;			
+
+	// let's ignore rain at the moment -> we don't use this at the moment. 
+
+    // if (AprsWXData::CopyConvert('p',wxData,conv_temp,i) == 0)   // deszcz przez ostania godzine
+    // 	output->rain60 = conv_temp;
+	// else
+	// 	return -1;
+	// i++;
+    // if (AprsWXData::CopyConvert('P',wxData,conv_temp,i) == 0)   // deszcz przez ostania godzine
+    // 	output->rain24 = conv_temp;
+	// else
+	// 	return -1;
+	// i++;
+    // if (AprsWXData::CopyConvert('b',wxData,conv_temp,i) == 0)   // deszcz przez ostania godzine
+    // 	output->rain_day = conv_temp;
+	// else
+	// 	return -1;
+	// i++;
+
+	// parse remaining stuff using iterator from find function
+	if (itPressure != source.end())
+	{
+		int zero = 0;
+		std::string pressure(itPressure + 1, source.end());
+
+		if (AprsWXData::CopyConvert((unsigned)5,pressure,conv_temp,zero) == 0)   // ciśnienie
+			output->pressure = conv_temp / 10;
+	}
+
+	if (itHumidity != source.end())
+	{
+		int zero = 0;
+		std::string humidity(itHumidity + 1, source.end());
+		if (AprsWXData::CopyConvert((unsigned)2,humidity,conv_temp,zero) == 0)   // ciśnienie
+	    	output->humidity = conv_temp;
+	}
+
     output->valid = true;
 
     output->ssid = input.SrcSSID;
@@ -167,22 +216,22 @@ void AprsWXData::ZeroCorrection(queue <AprsWXData> & qMeteo) {
 		if (this->temperature == 0 || this->humidity == 0 || this->pressure == 0) {
 			temp = qMeteo.back();
 			if (this->DebugOutput == true)
-				cout << "--- AprsWXData::ZeroCorrection:172 - doing zero correction ";
+				cout << "--- AprsWXData::ZeroCorrection:219 - doing zero correction ";
 		}
 		else;
 		if (this->temperature == 0) {
 			if (this->DebugOutput == true)
-				cout << "--- AprsWXData::ZeroCorrection:177 - t: " << this->temperature << " -> " << temp.temperature << "; ";
+				cout << "--- AprsWXData::ZeroCorrection:224 - t: " << this->temperature << " -> " << temp.temperature << "; ";
 			this->temperature = temp.temperature;
 		}
 		if (this->humidity == 0) {
 			if (this->DebugOutput == true)
-				cout << "--- AprsWXData::ZeroCorrection:182 - h: " << this->humidity << " -> " << temp.humidity << "; ";
+				cout << "--- AprsWXData::ZeroCorrection:229 - h: " << this->humidity << " -> " << temp.humidity << "; ";
 			this->humidity = temp.humidity;
 		}
 		if (this->pressure == 0) {
 			if (this->DebugOutput == true)
-				cout << "--- AprsWXData::ZeroCorrection:187 - p: " << this->humidity << " -> " << temp.humidity << "; ";
+				cout << "--- AprsWXData::ZeroCorrection:234 - p: " << this->humidity << " -> " << temp.humidity << "; ";
 			this->pressure = temp.pressure;
 		}
 	}
@@ -349,7 +398,7 @@ AprsWXData& AprsWXData::operator -(AprsWXData& _in) {
 	// scalar values are subtracted directly
 	if (_in.humidity && this->humidity) {
 		if (AprsWXData::DebugOutput) {
-			std::cout << "--- AprsWXData::operator -:354 - subtracting humidity parameters" << std::endl;
+			std::cout << "--- AprsWXData::operator -:401 - subtracting humidity parameters" << std::endl;
 		}
 
 		this->humidity = ::abs(this->humidity - _in.humidity);
@@ -357,7 +406,7 @@ AprsWXData& AprsWXData::operator -(AprsWXData& _in) {
 
 	if (_in.useTemperature && this->useTemperature) {
 		if (AprsWXData::DebugOutput) {
-			std::cout << "--- AprsWXData::operator -:362 - subtracting temperature parameters" << std::endl;
+			std::cout << "--- AprsWXData::operator -:409 - subtracting temperature parameters" << std::endl;
 		}
 
 		this->temperature -= _in.temperature;
@@ -365,7 +414,7 @@ AprsWXData& AprsWXData::operator -(AprsWXData& _in) {
 
 	if (_in.usePressure && this->usePressure) {
 		if (AprsWXData::DebugOutput) {
-			std::cout << "--- AprsWXData::operator -:370 - subtracting pressure parameters" << std::endl;
+			std::cout << "--- AprsWXData::operator -:417 - subtracting pressure parameters" << std::endl;
 		}
 
 		this->pressure = ::abs(this->pressure - _in.pressure);
@@ -374,7 +423,7 @@ AprsWXData& AprsWXData::operator -(AprsWXData& _in) {
 
 	if (_in.useWind && this->useWind) {
 		if (AprsWXData::DebugOutput) {
-			std::cout << "--- AprsWXData::operator -:379 - subtracting wind parameters" << std::endl;
+			std::cout << "--- AprsWXData::operator -:426 - subtracting wind parameters" << std::endl;
 		}
 
 		// wind direction is a vector value so there are always two

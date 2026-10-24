@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_CASE(brokenSSID)
 //	BOOST_CHECK(out.ToISOriginator.Call == "SR6NKB");
 //	BOOST_CHECK(out.ToISOriginator.SSID == 0);
 
-	BOOST_CHECK_EQUAL(result, NOT_VALID_APRS_PACKET);
+	BOOST_CHECK_EQUAL(result, SOURCE_CALLSIGN_INVALID);
 
 }
 
@@ -178,7 +178,7 @@ BOOST_AUTO_TEST_CASE(packetWithBrokenSrcCall)
 
 	parsingResult = AprsPacket::ParseAPRSISData((char*)input.c_str(), input.size(), &out);
 
-	BOOST_CHECK_EQUAL(parsingResult, NOT_VALID_APRS_PACKET);
+	BOOST_CHECK_LT(parsingResult, OK);
 
 
 }
@@ -193,7 +193,29 @@ BOOST_AUTO_TEST_CASE(packetWithBrokenPath)
 
 	parsingResult = AprsPacket::ParseAPRSISData((char*)input.c_str(), input.size(), &out);
 
-	BOOST_CHECK_EQUAL(parsingResult, NOT_VALID_APRS_PACKET);
+	BOOST_CHECK_LT(parsingResult, OK);
 
 
+}
+
+BOOST_AUTO_TEST_CASE(glidernetFanet)
+{
+	std::string input = "FNTEBAB9D>OGNFNT,qAS,HalaskN:/091316h4925.06N/01835.71E_007/000g000t046h62b04300 sF1 cr1 -0.1dB +0.0kHz";
+
+	AprsPacket out;
+	AprsPacket::CallsignRegexVerification = false;
+	
+	int result = AprsPacket::ParseAPRSISData((char*)input.c_str(), input.size(), &out);
+	AprsPacket::CallsignRegexVerification = true;
+
+	BOOST_CHECK_EQUAL(OK, result);
+	BOOST_CHECK(out.SrcAddr == "FNTEBAB9D");
+	BOOST_CHECK(out.SrcSSID == 0);
+	BOOST_CHECK(out.DestAddr == "OGNFNT");
+	BOOST_CHECK(out.DstSSID == 0);
+	BOOST_CHECK_EQUAL(out.Path.size(), 0);
+	BOOST_CHECK(strcmp(out.Data, "/091316h4925.06N/01835.71E_007/000g000t046h62b04300 sF1 cr1 -0.1dB +0.0kHz") == 0);
+
+//	BOOST_CHECK(out.ToISOriginator.Call == "SR6NKB");
+//	BOOST_CHECK(out.ToISOriginator.SSID == 0);
 }

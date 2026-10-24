@@ -25,6 +25,8 @@ public:
 
 	bool RetryServerLookup;
 
+	bool callsignRegexVerification;
+
 	std::string getStationCallStr();
 	std::string getSecondaryCallStr();
 

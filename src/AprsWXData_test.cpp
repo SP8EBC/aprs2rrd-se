@@ -85,7 +85,7 @@ BOOST_AUTO_TEST_CASE(correct_wx_less_than100hpa) {
 	AprsPacket packet;
 	AprsWXData wx;
 
-	memcpy(packet.Data, "!4946.09N/01902.33E_313/002g004t037r...p...P...b9970", 54);
+	memcpy(packet.Data, "!4946.09N/01902.33E_313/002g004t037r...p...P...b9970\0\0", 54);
 
 	AprsWXData::ParseData(packet, &wx);
 
@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE(correct_wx_less_than100hpa_h) {
 	AprsPacket packet;
 	AprsWXData wx;
 
-	memcpy(packet.Data, "!4946.09N/01902.33E_332/001g004t032r...p...P...b9910h99", 57);
+	memcpy(packet.Data, "!4946.09N/01902.33E_332/001g004t032r...p...P...b9910h99\0\0", 57);
 
 	AprsWXData::ParseData(packet, &wx);
 
@@ -114,3 +114,19 @@ BOOST_AUTO_TEST_CASE(correct_wx_less_than100hpa_h) {
 
 	BOOST_CHECK(wx.valid);
 }
+
+BOOST_AUTO_TEST_CASE(correct_glidernet_with_position) {
+	AprsPacket packet;
+	AprsWXData wx;
+
+	memcpy(packet.Data, "/091316h4925.06N/01835.71E_007/000g000t046h62b04300 sF1 cr1 -0.1dB +0.0kHz", 75);
+
+	AprsWXData::ParseData(packet, &wx);
+
+	BOOST_CHECK_EQUAL(wx.humidity, 62);
+	BOOST_CHECK_CLOSE(wx.temperature, 7.7, 3);	// the third parameter is a maximum percentage deviation which is acceptable
+	BOOST_CHECK_EQUAL(wx.wind_direction, 7);
+
+	BOOST_CHECK(wx.valid);
+}
+
